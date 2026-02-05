@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  redis:
+    image: redis:latest
+    command: redis-server --requirepass "${REDIS_PASSWORD}"
+    environment:
+      REDIS_PASSWORD: xBase!@#456 # Replace with your actual password
+    ports:
+      - target: 6379
+        published: 16379
+        mode: host
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.labels.role==infra01"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
+    driver: local

@@ -1,0 +1,45 @@
+@import "./override.module";
+.customPageContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh !important;
+  width: 100%;
+
+}
+.loginFormContainer {
+  height:100vh;
+  display:flex;
+  width:100%;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+.customSvgBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 350px;
+  height: 100vh;
+  z-index: -1;
+  opacity: 0.2;
+}
+
+.customFormLogin {
+  background-color: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 50px;
+  margin: 0 50px !important;
+  width: 100%;
+  max-width:550px;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .customFormLogin {
+    margin: 0 10px !important;
+  }
+}

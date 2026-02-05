@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "chart.js": "^4.4.7",
+    "react-chartjs-2": "^5.2.0",
+    "react-leaflet-custom-control": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/react-chartjs-2": "^2.5.7"
+  }
+}

@@ -1,0 +1,51 @@
+/* Container styling */
+.wifiSignal {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  width: 50px;
+  height: 30px;
+  justify-content: center;
+}
+
+/* Common styling for each bar */
+.bar {
+  display: block;
+  width: 5px;
+  background-color: #ccc;
+  border-radius: 2px;
+  animation: signal-wave 1.2s ease-in-out infinite;
+}
+.barActive {
+  background-color: green;
+}
+/* Styling for each bar with increasing heights */
+.bar1 {
+  height: 5px;
+  animation-delay: 0s;
+}
+
+.bar2 {
+  height: 10px;
+  animation-delay: 0.2s;
+}
+
+.bar3 {
+  height: 15px;
+  animation-delay: 0.4s;
+}
+
+.bar4 {
+  height: 20px;
+  animation-delay: 0.6s;
+}
+
+/* Keyframe animation for signal bars */
+@keyframes signalWave {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.5); /* Increase the height of the bars */
+  }
+}

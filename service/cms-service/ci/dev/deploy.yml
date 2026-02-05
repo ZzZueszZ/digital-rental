@@ -1,0 +1,17 @@
+version: '3'
+services:
+  xbase-cms-backend:
+    image: vunt/xbase_cms_backend:__DOCKER_TAG__
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: 20m
+    networks:
+      - pronet
+
+networks:
+  pronet:
+    external:
+      name: pronet

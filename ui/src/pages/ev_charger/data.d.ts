@@ -1,0 +1,16 @@
+import {LatLng} from "leaflet";
+
+export interface Marker {
+  pos: LatLng;
+  active: boolean;
+  status: number;
+  stationId: string;
+  stationName: string;
+  address: string;
+  chargingInfo?: {
+    image?: string;
+    licensePlate: string;
+    startTime: string;
+    duration: number;
+  };
+}

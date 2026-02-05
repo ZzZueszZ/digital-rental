@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "app.module.email.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enables or disables the EmailStarter completely. If disabled, no EmailStarter bean will be available in the application context."
+    }
+  ]
+}

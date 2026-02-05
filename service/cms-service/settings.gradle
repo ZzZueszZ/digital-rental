@@ -1,0 +1,11 @@
+rootProject.name = 'cms-service'
+
+if(Boolean.valueOf(DEBUG_PROTOS)){
+    include ':platform-protos'
+    project(':platform-protos').projectDir = new File("../../platform-protos/java")
+}
+
+if(Boolean.valueOf(DEBUG_MICROSERVICE)){
+    include ':microservice-starter'
+    project(':microservice-starter').projectDir = new File("../microservice-starter")
+}

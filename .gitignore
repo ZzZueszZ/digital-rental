@@ -1,0 +1,38 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!ui/ant-prod/src/main/**/build/
+!ui/ant-prod/src/test/**/build/
+src/main/resources/application-default.yml
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.configurations
+.springBeans
+.sts4-cache
+bin/
+!ui/ant-prod/src/main/**/bin/
+!ui/ant-prod/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!ui/ant-prod/src/main/**/out/
+!ui/ant-prod/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/

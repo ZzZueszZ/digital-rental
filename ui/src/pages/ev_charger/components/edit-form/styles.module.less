@@ -1,0 +1,81 @@
+.modalContent {
+  display: flex;
+  gap: 20px;
+}
+
+.formSection {
+  flex: 1;
+  max-width: 400px;
+}
+
+.mapSection {
+  flex: 2;
+  height: 500px;
+
+  :global {
+    .leaflet-container {
+      height: 100%;
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+.mapControls {
+  position: absolute;
+  bottom: 15px;
+  right: 10px;
+  z-index: 1000;
+  display: flex;
+  gap: 10px;
+}
+
+.searchBox {
+  position: absolute;
+  top: 10px;
+  left: 50px;
+  z-index: 1000;
+  width: 300px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.searchInput {
+  width: 100%;
+  :global {
+    .ant-select-selector {
+      border-radius: 4px !important;
+    }
+  }
+}
+
+.searchResults {
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.searchItem {
+  padding: 8px 12px;
+  cursor: pointer;
+  &:hover {
+    background: #f5f5f5;
+  }
+}
+
+.container {
+  position: absolute;
+  bottom: 15px;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.locationMarker {
+  padding-right: 10px;
+}

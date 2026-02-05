@@ -1,0 +1,17 @@
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: cms_mysql_dev
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: cms_dev
+      MYSQL_USER: cms_dev
+      MYSQL_PASSWORD: "cms_dev!@#456"
+      MYSQL_ROOT_PASSWORD: your_root_password
+    ports:
+      - "33003:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

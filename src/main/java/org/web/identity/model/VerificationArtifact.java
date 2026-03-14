@@ -3,6 +3,7 @@ package org.web.identity.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.web.common.enums.VerificationArtifactStatus;
 import org.web.common.enums.VerificationArtifactType;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,11 @@ public class VerificationArtifact {
     @Enumerated(EnumType.STRING)
     @Column(name = "artifact_type", nullable = false, length = 30)
     private VerificationArtifactType artifactType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "artifact_status", nullable = false, length = 30)
+    @Builder.Default
+    private VerificationArtifactStatus artifactStatus = VerificationArtifactStatus.UPLOADED;
 
     @Column(name = "storage_key", nullable = false, length = 500)
     private String storageKey;

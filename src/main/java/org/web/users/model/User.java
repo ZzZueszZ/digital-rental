@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.web.authentication.model.AppRole;
 import org.web.common.enums.AccountStatus;
 import org.web.common.enums.KycStatus;
+import org.web.common.enums.TrustLevel;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -47,6 +48,11 @@ public class User {
     @Column(name = "kyc_status", nullable = false, length = 30)
     @Builder.Default
     private KycStatus kycStatus = KycStatus.NOT_STARTED;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trust_level", nullable = false, length = 30)
+    @Builder.Default
+    private TrustLevel trustLevel = TrustLevel.BASIC;
 
     @Column(name = "email_verified", nullable = false)
     @Builder.Default

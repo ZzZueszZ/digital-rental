@@ -3,6 +3,7 @@ package org.web.identity.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.web.common.enums.DecisionSource;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +30,10 @@ public class VerificationResult {
 
     @Column(name = "ocr_confidence")
     private Double ocrConfidence;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "decision_source", length = 50)
+    private DecisionSource decisionSource;
 
     @Column(name = "document_valid")
     private Boolean documentValid;

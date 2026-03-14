@@ -21,6 +21,9 @@ public class AppRole {
     @Column(unique = true, nullable = false)
     private String code;
 
+    @Column(name = "description", length = 255)
+    private String description;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_permissions",

@@ -9,10 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.web.common.dto.ApiResponse;
-import org.web.users.criteria.UserCriteria;
-import org.web.users.dto.UserCreateRequest;
+import org.web.users.dto.criteria.UserCriteria;
+import org.web.users.dto.request.UserCreateRequest;
 import org.web.users.dto.UserResponse;
-import org.web.users.dto.UserUpdateRequest;
+import org.web.users.dto.request.UserUpdateRequest;
 import org.web.users.service.UserService;
 
 @RestController

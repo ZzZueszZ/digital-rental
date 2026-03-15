@@ -1,4 +1,4 @@
-package org.web.users.dto;
+package org.web.users.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

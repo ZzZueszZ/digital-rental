@@ -8,4 +8,5 @@ import org.web.users.model.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
     boolean existsByEmail(String email);
+    java.util.Optional<User> findByEmail(String email);
 }

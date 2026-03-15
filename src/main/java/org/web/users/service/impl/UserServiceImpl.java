@@ -1,4 +1,4 @@
-package org.web.users.service;
+package org.web.users.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,15 +13,16 @@ import org.web.authentication.repository.AppRoleRepository;
 import org.web.common.enums.AccountStatus;
 import org.web.common.enums.RoleName;
 import org.web.common.exceptions.ApplicationException;
-import org.web.users.criteria.UserCriteria;
-import org.web.users.dto.UserCreateRequest;
+import org.web.users.dto.criteria.UserCriteria;
+import org.web.users.dto.request.UserCreateRequest;
 import org.web.users.dto.UserResponse;
-import org.web.users.dto.UserUpdateRequest;
+import org.web.users.dto.request.UserUpdateRequest;
 import org.web.users.mapper.UserMapper;
 import org.web.users.model.User;
 import org.web.users.repository.UserRepository;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Join;
+import org.web.users.service.UserService;
 
 import java.util.ArrayList;
 import java.util.HashSet;

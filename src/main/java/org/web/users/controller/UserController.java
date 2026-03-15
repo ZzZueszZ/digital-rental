@@ -1,4 +1,4 @@
-package org.web.users.web;
+package org.web.users.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import org.web.users.dto.request.UserUpdateRequest;
 import org.web.users.service.UserService;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 

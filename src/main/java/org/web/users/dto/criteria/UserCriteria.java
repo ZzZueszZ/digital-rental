@@ -1,4 +1,4 @@
-package org.web.users.criteria;
+package org.web.users.dto.criteria;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

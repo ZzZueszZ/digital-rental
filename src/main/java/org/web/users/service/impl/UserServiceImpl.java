@@ -175,6 +175,11 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
+        
+        if (user.getAccountStatus() == AccountStatus.DELETED) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "User is already deleted");
+        }
+
         // Perform soft delete
         user.setAccountStatus(AccountStatus.DELETED);
         user.setEnabled(false);
@@ -186,6 +191,11 @@ public class UserServiceImpl implements UserService {
     public void restoreUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
+        
+        if (user.getAccountStatus() == AccountStatus.ACTIVE) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "User is already active");
+        }
+
         user.setAccountStatus(AccountStatus.ACTIVE);
         user.setEnabled(true);
         userRepository.save(user);
@@ -194,22 +204,56 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUsers(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Please provide at least one user ID");
+        }
+
         List<User> users = userRepository.findAllById(ids);
-        users.forEach(user -> {
-            user.setAccountStatus(AccountStatus.DELETED);
-            user.setEnabled(false);
-        });
+        if (users.isEmpty()) {
+            throw new ApplicationException(HttpStatus.NOT_FOUND, "No valid users found for the provided IDs");
+        }
+
+        boolean hasChanges = false;
+        for (User user : users) {
+             if (user.getAccountStatus() != AccountStatus.DELETED) {
+                 user.setAccountStatus(AccountStatus.DELETED);
+                 user.setEnabled(false);
+                 hasChanges = true;
+             }
+        }
+
+        if (!hasChanges) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "All provided users are already deleted");
+        }
+
         userRepository.saveAll(users);
     }
 
     @Override
     @Transactional
     public void restoreUsers(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Please provide at least one user ID");
+        }
+
         List<User> users = userRepository.findAllById(ids);
-        users.forEach(user -> {
-            user.setAccountStatus(AccountStatus.ACTIVE);
-            user.setEnabled(true);
-        });
+        if (users.isEmpty()) {
+            throw new ApplicationException(HttpStatus.NOT_FOUND, "No valid users found for the provided IDs");
+        }
+
+        boolean hasChanges = false;
+        for (User user : users) {
+             if (user.getAccountStatus() != AccountStatus.ACTIVE) {
+                 user.setAccountStatus(AccountStatus.ACTIVE);
+                 user.setEnabled(true);
+                 hasChanges = true;
+             }
+        }
+
+        if (!hasChanges) {
+             throw new ApplicationException(HttpStatus.BAD_REQUEST, "All provided users are already active");
+        }
+
         userRepository.saveAll(users);
     }
 

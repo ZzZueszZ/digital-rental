@@ -67,7 +67,51 @@ public class UserServiceImpl implements UserService {
             }
             if (criteria.getAccountStatus() != null) {
                 predicates.add(cb.equal(root.get("accountStatus"), criteria.getAccountStatus()));
+            } else {
+                // By default, exclude DELETED users
+                predicates.add(cb.notEqual(root.get("accountStatus"), AccountStatus.DELETED));
             }
+            if (criteria.getKycStatus() != null) {
+                predicates.add(cb.equal(root.get("kycStatus"), criteria.getKycStatus()));
+            }
+            if (criteria.getTrustLevel() != null) {
+                predicates.add(cb.equal(root.get("trustLevel"), criteria.getTrustLevel()));
+            }
+            if (criteria.getRole() != null) {
+                Join<User, AppRole> rolesJoin = root.join("roles");
+                predicates.add(cb.equal(rolesJoin.get("code"), criteria.getRole().name()));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return userRepository.findAll(spec, pageable)
+                .map(userMapper::toUserResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserResponse> getDeletedUsers(UserCriteria criteria, Pageable pageable) {
+        Specification<User> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (criteria.getKeyword() != null && !criteria.getKeyword().isBlank()) {
+                String pattern = "%" + criteria.getKeyword().toLowerCase() + "%";
+                predicates.add(cb.or(
+                        cb.like(cb.lower(root.get("email")), pattern),
+                        cb.like(cb.lower(root.get("phone")), pattern)
+                ));
+            }
+            if (criteria.getEmail() != null && !criteria.getEmail().isBlank()) {
+                predicates.add(cb.equal(root.get("email"), criteria.getEmail()));
+            }
+            if (criteria.getPhone() != null && !criteria.getPhone().isBlank()) {
+                predicates.add(cb.equal(root.get("phone"), criteria.getPhone()));
+            }
+            
+            // Strictly get only DELETED users
+            predicates.add(cb.equal(root.get("accountStatus"), AccountStatus.DELETED));
+            
             if (criteria.getKycStatus() != null) {
                 predicates.add(cb.equal(root.get("kycStatus"), criteria.getKycStatus()));
             }

@@ -32,6 +32,16 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.successfulPageResponse("Users retrieved successfully", users));
     }
 
+    @GetMapping("/deleted")
+    @PreAuthorize("hasAuthority('USER_READ')")
+    public ResponseEntity<ApiResponse<java.util.List<UserResponse>>> getDeletedUsers(
+            UserCriteria criteria,
+            Pageable pageable) {
+
+        Page<UserResponse> users = userService.getDeletedUsers(criteria, pageable);
+        return ResponseEntity.ok(ApiResponse.successfulPageResponse("Deleted users retrieved successfully", users));
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable Long id) {

@@ -9,6 +9,7 @@ import org.web.users.dto.request.UserUpdateRequest;
 
 public interface UserService {
     Page<UserResponse> getUsers(UserCriteria criteria, Pageable pageable);
+    Page<UserResponse> getDeletedUsers(UserCriteria criteria, Pageable pageable);
     UserResponse getUserById(Long id);
     UserResponse createUser(UserCreateRequest request);
     UserResponse updateUser(Long id, UserUpdateRequest request);

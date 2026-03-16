@@ -23,6 +23,9 @@ import org.web.users.repository.UserRepository;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Join;
 import org.web.users.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
+import org.web.authentication.service.ActivationTokenProvider;
+import org.web.common.mails.MailService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,6 +40,11 @@ public class UserServiceImpl implements UserService {
     private final AppRoleRepository roleRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
+    private final ActivationTokenProvider activationTokenProvider;
+
+    @Value("${app.activation.base-url:http://localhost:8080/api/auth/activate}")
+    private String activationBaseUrl;
 
     @Override
     @Transactional(readOnly = true)
@@ -97,6 +105,8 @@ public class UserServiceImpl implements UserService {
                 .email(request.getEmail())
                 .phone(request.getPhone())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .accountStatus(AccountStatus.PENDING)
+                .enabled(true)
                 .build();
 
         Set<AppRole> assignedRoles = new HashSet<>();
@@ -114,6 +124,10 @@ public class UserServiceImpl implements UserService {
         user.setRoles(assignedRoles);
 
         User savedUser = userRepository.save(user);
+
+        String activationToken = activationTokenProvider.generate(savedUser);
+        mailService.sendActivationEmail(savedUser, buildActivationLink(activationToken));
+
         return userMapper.toUserResponse(savedUser);
     }
 
@@ -165,5 +179,12 @@ public class UserServiceImpl implements UserService {
         user.setAccountStatus(AccountStatus.DELETED);
         user.setEnabled(false);
         userRepository.save(user);
+    }
+
+    private String buildActivationLink(String token) {
+        String base = activationBaseUrl.endsWith("/")
+                ? activationBaseUrl.substring(0, activationBaseUrl.length() - 1)
+                : activationBaseUrl;
+        return base.contains("?") ? base + "&token=" + token : base + "?token=" + token;
     }
 }

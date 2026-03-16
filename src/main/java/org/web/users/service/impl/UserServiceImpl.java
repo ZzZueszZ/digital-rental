@@ -181,6 +181,38 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    @Transactional
+    public void restoreUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
+        user.setAccountStatus(AccountStatus.ACTIVE);
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUsers(List<Long> ids) {
+        List<User> users = userRepository.findAllById(ids);
+        users.forEach(user -> {
+            user.setAccountStatus(AccountStatus.DELETED);
+            user.setEnabled(false);
+        });
+        userRepository.saveAll(users);
+    }
+
+    @Override
+    @Transactional
+    public void restoreUsers(List<Long> ids) {
+        List<User> users = userRepository.findAllById(ids);
+        users.forEach(user -> {
+            user.setAccountStatus(AccountStatus.ACTIVE);
+            user.setEnabled(true);
+        });
+        userRepository.saveAll(users);
+    }
+
     private String buildActivationLink(String token) {
         String base = activationBaseUrl.endsWith("/")
                 ? activationBaseUrl.substring(0, activationBaseUrl.length() - 1)

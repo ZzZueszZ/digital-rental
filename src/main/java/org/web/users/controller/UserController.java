@@ -62,4 +62,25 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.ok(ApiResponse.successfulResponse("User deleted successfully"));
     }
+
+    @PutMapping("/{id}/restore")
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    public ResponseEntity<ApiResponse<Void>> restoreUser(@PathVariable Long id) {
+        userService.restoreUser(id);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("User restored successfully"));
+    }
+
+    @DeleteMapping
+    @PreAuthorize("hasAuthority('USER_DELETE')")
+    public ResponseEntity<ApiResponse<Void>> deleteUsers(@RequestBody java.util.List<Long> ids) {
+        userService.deleteUsers(ids);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Users deleted successfully"));
+    }
+
+    @PutMapping("/restore")
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    public ResponseEntity<ApiResponse<Void>> restoreUsers(@RequestBody java.util.List<Long> ids) {
+        userService.restoreUsers(ids);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Users restored successfully"));
+    }
 }

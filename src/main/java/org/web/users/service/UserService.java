@@ -13,4 +13,7 @@ public interface UserService {
     UserResponse createUser(UserCreateRequest request);
     UserResponse updateUser(Long id, UserUpdateRequest request);
     void deleteUser(Long id);
+    void restoreUser(Long id);
+    void deleteUsers(java.util.List<Long> ids);
+    void restoreUsers(java.util.List<Long> ids);
 }

@@ -30,6 +30,12 @@ public class PermissionSeeder implements CommandLineRunner {
         // ================= USER PROFILE =================
         create("USER_PROFILE_READ", "Can read their own profile details");
         create("USER_PROFILE_UPDATE", "Can update their own profile details");
+
+        // ================= ROLES & PERMISSIONS =================
+        create("ROLE_READ", "Read role list and details");
+        create("ROLE_WRITE", "Create, update, delete roles and assign permissions");
+        create("PERMISSION_READ", "Read permission list");
+        create("PERMISSION_WRITE", "Create, update, delete permissions");
     }
 
     private void create(String name, String desc) {

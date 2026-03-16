@@ -42,6 +42,10 @@ public class RolePermissionSeeder implements CommandLineRunner {
         addPerm(admin, "USER_UPDATE");
         addPerm(admin, "USER_DELETE");
 
+        // ADMIN gets READ-ONLY access to Roles and Permissions
+        addPerm(admin, "ROLE_READ");
+        addPerm(admin, "PERMISSION_READ");
+
         roleRepository.save(admin);
 
         // ================= SUPER ADMIN =================

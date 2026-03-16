@@ -10,5 +10,5 @@ public interface PermissionService {
     PermissionResponse update(Long id, PermissionRequest request);
     void delete(Long id);
     PermissionResponse getById(Long id);
-    List<PermissionResponse> getAll();
+    org.springframework.data.domain.Page<PermissionResponse> getPermissions(org.springframework.data.domain.Pageable pageable);
 }

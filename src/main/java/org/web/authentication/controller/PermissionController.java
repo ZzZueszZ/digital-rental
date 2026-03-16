@@ -53,7 +53,7 @@ public class PermissionController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('PERMISSION_READ')")
-    public ResponseEntity<ApiResponse<List<PermissionResponse>>> getAll() {
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Permissions retrieved successfully", permissionService.getAll()));
+    public ResponseEntity<ApiResponse<java.util.List<PermissionResponse>>> getPermissions(org.springframework.data.domain.Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.successfulPageResponse("Permissions retrieved successfully", permissionService.getPermissions(pageable)));
     }
 }

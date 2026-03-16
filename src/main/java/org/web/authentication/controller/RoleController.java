@@ -54,8 +54,8 @@ public class RoleController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_READ')")
-    public ResponseEntity<ApiResponse<List<RoleResponse>>> getAll() {
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Roles retrieved successfully", roleService.getAll()));
+    public ResponseEntity<ApiResponse<java.util.List<RoleResponse>>> getRoles(org.springframework.data.domain.Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.successfulPageResponse("Roles retrieved successfully", roleService.getRoles(pageable)));
     }
 
     @PostMapping("/{id}/permissions")

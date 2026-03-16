@@ -67,9 +67,8 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PermissionResponse> getAll() {
-        return permissionRepository.findAll().stream()
-                .map(permissionMapper::toResponse)
-                .collect(Collectors.toList());
+    public org.springframework.data.domain.Page<PermissionResponse> getPermissions(org.springframework.data.domain.Pageable pageable) {
+        return permissionRepository.findAll(pageable)
+                .map(permissionMapper::toResponse);
     }
 }

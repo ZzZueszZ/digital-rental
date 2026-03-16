@@ -24,18 +24,26 @@ public class AdminUserSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        if (userRepository.existsByEmail("tuhocbackend@gmail.com")) return;
+        if (!userRepository.existsByEmail("tuhocbackend@gmail.com")) {
+            var adminRole = roleRepository.findByCode("ADMIN").orElseThrow();
+            User admin = User.builder()
+                    .email("tuhocbackend@gmail.com")
+                    .passwordHash(passwordEncoder.encode("Admin@123"))
+                    .roles(Set.of(adminRole))
+                    .accountStatus(AccountStatus.ACTIVE)
+                    .build();
+            userRepository.save(admin);
+        }
 
-        var adminRole = roleRepository.findByCode("ADMIN")
-                .orElseThrow();
-
-        User admin = User.builder()
-                .email("tuhocbackend@gmail.com")
-                .passwordHash(passwordEncoder.encode("Admin@123"))
-                .roles(Set.of(adminRole))
-                .accountStatus(AccountStatus.ACTIVE)
-                .build();
-
-        userRepository.save(admin);
+        if (!userRepository.existsByEmail("superadmin@gmail.com")) {
+            var superAdminRole = roleRepository.findByCode("SUPER_ADMIN").orElseThrow();
+            User superAdmin = User.builder()
+                    .email("superadmin@gmail.com")
+                    .passwordHash(passwordEncoder.encode("Admin@123"))
+                    .roles(Set.of(superAdminRole))
+                    .accountStatus(AccountStatus.ACTIVE)
+                    .build();
+            userRepository.save(superAdmin);
+        }
     }
 }

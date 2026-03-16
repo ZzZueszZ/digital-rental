@@ -78,10 +78,9 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<RoleResponse> getAll() {
-        return roleRepository.findAll().stream()
-                .map(roleMapper::toResponse)
-                .collect(Collectors.toList());
+    public org.springframework.data.domain.Page<RoleResponse> getRoles(org.springframework.data.domain.Pageable pageable) {
+        return roleRepository.findAll(pageable)
+                .map(roleMapper::toResponse);
     }
 
     @Override

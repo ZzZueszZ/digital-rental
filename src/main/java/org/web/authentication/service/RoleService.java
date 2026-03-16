@@ -11,6 +11,6 @@ public interface RoleService {
     RoleResponse update(Long id, RoleRequest request);
     void delete(Long id);
     RoleResponse getById(Long id);
-    List<RoleResponse> getAll();
+    org.springframework.data.domain.Page<RoleResponse> getRoles(org.springframework.data.domain.Pageable pageable);
     RoleResponse assignPermissions(Long id, RoleAssignPermissionRequest request);
 }

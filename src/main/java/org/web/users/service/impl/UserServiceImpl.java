@@ -99,15 +99,19 @@ public class UserServiceImpl implements UserService {
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .build();
 
+        Set<AppRole> assignedRoles = new HashSet<>();
         if (request.getRoles() != null && !request.getRoles().isEmpty()) {
-            Set<AppRole> assignedRoles = new HashSet<>();
             for (RoleName roleName : request.getRoles()) {
                 AppRole appRole = roleRepository.findByCode(roleName.name())
                         .orElseThrow(() -> new ApplicationException(HttpStatus.BAD_REQUEST, "Role not found: " + roleName));
                 assignedRoles.add(appRole);
             }
-            user.setRoles(assignedRoles);
+        } else {
+            AppRole customerRole = roleRepository.findByCode(RoleName.CUSTOMER.name())
+                    .orElseThrow(() -> new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "CUSTOMER role not found"));
+            assignedRoles.add(customerRole);
         }
+        user.setRoles(assignedRoles);
 
         User savedUser = userRepository.save(user);
         return userMapper.toUserResponse(savedUser);

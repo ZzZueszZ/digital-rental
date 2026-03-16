@@ -130,6 +130,28 @@ public class GlobalExceptionHandler {
                 )
         );
     }
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<String>> handleDataIntegrityViolation(org.springframework.dao.DataIntegrityViolationException ex) {
+        String message = ex.getMostSpecificCause().getMessage();
+        String errorMessage = "Data integrity violation";
+        
+        if (message != null) {
+            if (message.contains("uk_users_phone") || message.contains("phone") || message.contains("uk_phone")) {
+                errorMessage = "Phone number already exists";
+            } else if (message.contains("uk_users_email") || message.contains("email") || message.contains("uk_email")) {
+                errorMessage = "Email already exists";
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                ApiResponse.failedResponse(
+                        HttpStatus.CONFLICT.value(),
+                        "Data conflict",
+                        errorMessage
+                )
+        );
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<String>> handleUnexpected(Exception ex) {
         ex.printStackTrace();

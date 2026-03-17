@@ -42,6 +42,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final ActivationTokenProvider activationTokenProvider;
+    private final org.web.users.repository.UserProfileRepository userProfileRepository;
 
     @Value("${app.activation.base-url:http://localhost:8080/api/auth/activate}")
     private String activationBaseUrl;
@@ -168,6 +169,12 @@ public class UserServiceImpl implements UserService {
         user.setRoles(assignedRoles);
 
         User savedUser = userRepository.save(user);
+
+        // Auto create empty user profile
+        org.web.users.model.UserProfile userProfile = org.web.users.model.UserProfile.builder()
+                .user(savedUser)
+                .build();
+        userProfileRepository.save(userProfile);
 
         String activationToken = activationTokenProvider.generate(savedUser);
         mailService.sendActivationEmail(savedUser, buildActivationLink(activationToken));

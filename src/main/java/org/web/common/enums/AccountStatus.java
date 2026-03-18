@@ -5,5 +5,6 @@ public enum AccountStatus {
     ACTIVE,
     SUSPENDED,
     BANNED,
+    DISABLED,
     DELETED
 }

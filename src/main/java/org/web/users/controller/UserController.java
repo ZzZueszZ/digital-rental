@@ -14,6 +14,9 @@ import org.web.users.dto.request.UserCreateRequest;
 import org.web.users.dto.UserResponse;
 import org.web.users.dto.request.UserUpdateRequest;
 import org.web.users.service.UserService;
+import org.web.users.service.UserProfileService;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
 @RestController
 @RequestMapping("/users")
@@ -21,6 +24,7 @@ import org.web.users.service.UserService;
 public class UserController {
 
     private final UserService userService;
+    private final UserProfileService userProfileService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('USER_READ')")
@@ -66,6 +70,15 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.successfulResponse("User updated successfully", response));
     }
 
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    public ResponseEntity<ApiResponse<UserResponse>> updateUserStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody org.web.users.dto.request.UserStatusUpdateRequest request) {
+        UserResponse response = userService.updateStatus(id, request.getStatus());
+        return ResponseEntity.ok(ApiResponse.successfulResponse("User status updated successfully", response));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('USER_DELETE')")
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
@@ -82,15 +95,50 @@ public class UserController {
 
     @DeleteMapping
     @PreAuthorize("hasAuthority('USER_DELETE')")
-    public ResponseEntity<ApiResponse<Void>> deleteUsers(@RequestBody java.util.List<Long> ids) {
-        userService.deleteUsers(ids);
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Users deleted successfully"));
+    public ResponseEntity<ApiResponse<java.util.Map<String, Object>>> deleteUsers(@RequestBody java.util.List<Long> ids) {
+        java.util.Map<String, Object> result = userService.deleteUsers(ids);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Users deleted successfully", result));
     }
 
     @PutMapping("/restore")
     @PreAuthorize("hasAuthority('USER_UPDATE')")
-    public ResponseEntity<ApiResponse<Void>> restoreUsers(@RequestBody java.util.List<Long> ids) {
-        userService.restoreUsers(ids);
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Users restored successfully"));
+    public ResponseEntity<ApiResponse<java.util.Map<String, Object>>> restoreUsers(@RequestBody java.util.List<Long> ids) {
+        java.util.Map<String, Object> result = userService.restoreUsers(ids);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Users restored successfully", result));
+    }
+
+    // --- ADMIN PROFILE ENDPOINTS ---
+    
+    @GetMapping("/{id}/profile")
+    @PreAuthorize("hasAuthority('USER_READ')")
+    public ResponseEntity<ApiResponse<org.web.users.dto.response.UserProfileResponse>> getProfileByAdmin(
+            @PathVariable Long id) {
+        org.web.users.dto.response.UserProfileResponse response = userProfileService.getProfileById(id);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Profile retrieved successfully", response));
+    }
+
+    @PutMapping("/{id}/profile")
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    public ResponseEntity<ApiResponse<org.web.users.dto.response.UserProfileResponse>> updateProfileByAdmin(
+            @PathVariable Long id,
+            @Valid @RequestBody org.web.users.dto.request.UserProfileUpdateRequest request) {
+        org.web.users.dto.response.UserProfileResponse response = userProfileService.updateProfileById(id, request);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Profile updated successfully", response));
+    }
+
+    @PostMapping(value = "/{id}/profile/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    public ResponseEntity<ApiResponse<org.web.users.dto.response.UserProfileResponse>> uploadAvatarByAdmin(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+        org.web.users.dto.response.UserProfileResponse response = userProfileService.uploadAvatarById(id, file);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Avatar updated successfully", response));
+    }
+
+    @DeleteMapping("/{id}/profile/avatar")
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    public ResponseEntity<ApiResponse<Void>> deleteAvatarByAdmin(@PathVariable Long id) {
+        userProfileService.deleteAvatarById(id);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Avatar deleted successfully"));
     }
 }

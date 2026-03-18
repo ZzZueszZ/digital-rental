@@ -9,4 +9,10 @@ public interface UserProfileService {
     UserProfileResponse updateMyProfile(UserProfileUpdateRequest request);
     UserProfileResponse uploadMyAvatar(MultipartFile file);
     void deleteMyAvatar();
+    
+    // Admin operations
+    UserProfileResponse getProfileById(Long userId);
+    UserProfileResponse updateProfileById(Long userId, UserProfileUpdateRequest request);
+    UserProfileResponse uploadAvatarById(Long userId, MultipartFile file);
+    void deleteAvatarById(Long userId);
 }

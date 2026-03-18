@@ -6,6 +6,10 @@ import org.web.users.dto.criteria.UserCriteria;
 import org.web.users.dto.request.UserCreateRequest;
 import org.web.users.dto.UserResponse;
 import org.web.users.dto.request.UserUpdateRequest;
+import org.web.common.enums.AccountStatus;
+
+import java.util.List;
+import java.util.Map;
 
 public interface UserService {
     Page<UserResponse> getUsers(UserCriteria criteria, Pageable pageable);
@@ -13,8 +17,9 @@ public interface UserService {
     UserResponse getUserById(Long id);
     UserResponse createUser(UserCreateRequest request);
     UserResponse updateUser(Long id, UserUpdateRequest request);
+    UserResponse updateStatus(Long id, AccountStatus status);
     void deleteUser(Long id);
     void restoreUser(Long id);
-    void deleteUsers(java.util.List<Long> ids);
-    void restoreUsers(java.util.List<Long> ids);
+    Map<String, Object> deleteUsers(List<Long> ids);
+    Map<String, Object> restoreUsers(List<Long> ids);
 }

@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final MailService mailService;
     private final ActivationTokenProvider activationTokenProvider;
     private final org.web.users.repository.UserProfileRepository userProfileRepository;
+    private final org.web.users.service.UserAuditLogService userAuditLogService;
 
     @Value("${app.activation.base-url:http://localhost:8080/api/auth/activate}")
     private String activationBaseUrl;
@@ -179,6 +180,8 @@ public class UserServiceImpl implements UserService {
         String activationToken = activationTokenProvider.generate(savedUser);
         mailService.sendActivationEmail(savedUser, buildActivationLink(activationToken));
 
+        userAuditLogService.logAction(savedUser, "CREATE_USER", "User account created with email: " + savedUser.getEmail());
+
         return userMapper.toUserResponse(savedUser);
     }
 
@@ -218,7 +221,54 @@ public class UserServiceImpl implements UserService {
         }
 
         User updatedUser = userRepository.save(user);
+        userAuditLogService.logAction(updatedUser, "UPDATE_USER", "Updated user details. New Status: " + updatedUser.getAccountStatus());
         return userMapper.toUserResponse(updatedUser);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse updateStatus(Long id, AccountStatus newStatus) {
+        if (newStatus != AccountStatus.ACTIVE && newStatus != AccountStatus.DISABLED) {
+            throw new ApplicationException(
+                    HttpStatus.BAD_REQUEST,
+                    "Không được phép cập nhật thủ công sang trạng thái " + newStatus + ". Chỉ ACTIVE hoặc DISABLED có thể được đặt thủ công."
+            );
+        }
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+
+        if (user.getAccountStatus() == AccountStatus.DELETED) {
+            throw new ApplicationException(
+                    HttpStatus.BAD_REQUEST,
+                    "Người dùng đã bị xóa. Không thể thay đổi trạng thái thủ công. Sử dụng chức năng khôi phục."
+            );
+        }
+
+        AccountStatus currentStatus = user.getAccountStatus();
+
+        switch (currentStatus) {
+            case PENDING:
+                if (newStatus == AccountStatus.ACTIVE) {
+                    throw new ApplicationException(
+                            HttpStatus.BAD_REQUEST,
+                            "Không thể kích hoạt thủ công người dùng đang chờ. Người dùng phải xác minh email!"
+                    );
+                }
+                break;
+            case ACTIVE:
+            case DISABLED:
+                break;
+            default:
+                throw new ApplicationException(HttpStatus.BAD_REQUEST, "Trạng thái hiện tại không hợp lệ");
+        }
+
+        user.setAccountStatus(newStatus);
+        User saved = userRepository.save(user);
+
+        userAuditLogService.logAction(saved, "UPDATE_STATUS", "Status updated from " + currentStatus + " to " + newStatus);
+
+        return userMapper.toUserResponse(saved);
     }
 
     @Override
@@ -235,6 +285,7 @@ public class UserServiceImpl implements UserService {
         user.setAccountStatus(AccountStatus.DELETED);
         user.setEnabled(false);
         userRepository.save(user);
+        userAuditLogService.logAction(user, "SOFT_DELETE_USER", "Soft deleted user id: " + id);
     }
 
     @Override
@@ -250,62 +301,83 @@ public class UserServiceImpl implements UserService {
         user.setAccountStatus(AccountStatus.ACTIVE);
         user.setEnabled(true);
         userRepository.save(user);
+        userAuditLogService.logAction(user, "RESTORE_USER", "Restored user id: " + id);
     }
 
     @Override
     @Transactional
-    public void deleteUsers(List<Long> ids) {
+    public java.util.Map<String, Object> deleteUsers(List<Long> ids) {
         if (ids == null || ids.isEmpty()) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Please provide at least one user ID");
+            return java.util.Collections.emptyMap();
         }
 
         List<User> users = userRepository.findAllById(ids);
-        if (users.isEmpty()) {
-            throw new ApplicationException(HttpStatus.NOT_FOUND, "No valid users found for the provided IDs");
-        }
-
-        boolean hasChanges = false;
+        List<Long> deletedIds = new java.util.ArrayList<>();
+        
         for (User user : users) {
              if (user.getAccountStatus() != AccountStatus.DELETED) {
                  user.setAccountStatus(AccountStatus.DELETED);
                  user.setEnabled(false);
-                 hasChanges = true;
+                 deletedIds.add(user.getId());
              }
         }
 
-        if (!hasChanges) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "All provided users are already deleted");
+        if (!deletedIds.isEmpty()) {
+             userRepository.saveAll(users.stream().filter(u -> deletedIds.contains(u.getId())).toList());
+             for (User user : users) {
+                 if (deletedIds.contains(user.getId())) {
+                     userAuditLogService.logAction(user, "BATCH_SOFT_DELETE_USER", "Soft deleted via batch request");
+                 }
+             }
         }
 
-        userRepository.saveAll(users);
+        java.util.Map<String, Object> result = new java.util.HashMap<>();
+        result.put("requestedIds", ids);
+        result.put("deletedIds", deletedIds);
+        
+        List<Long> notDeletedIds = new java.util.ArrayList<>(ids);
+        notDeletedIds.removeAll(deletedIds);
+        result.put("notDeletedIds", notDeletedIds);
+        
+        return result;
     }
 
     @Override
     @Transactional
-    public void restoreUsers(List<Long> ids) {
+    public java.util.Map<String, Object> restoreUsers(List<Long> ids) {
         if (ids == null || ids.isEmpty()) {
-             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Please provide at least one user ID");
+            return java.util.Collections.emptyMap();
         }
 
         List<User> users = userRepository.findAllById(ids);
-        if (users.isEmpty()) {
-            throw new ApplicationException(HttpStatus.NOT_FOUND, "No valid users found for the provided IDs");
-        }
-
-        boolean hasChanges = false;
+        List<Long> restoredIds = new java.util.ArrayList<>();
+        
         for (User user : users) {
-             if (user.getAccountStatus() != AccountStatus.ACTIVE) {
+             if (user.getAccountStatus() == AccountStatus.DELETED) {
                  user.setAccountStatus(AccountStatus.ACTIVE);
                  user.setEnabled(true);
-                 hasChanges = true;
+                 restoredIds.add(user.getId());
              }
         }
 
-        if (!hasChanges) {
-             throw new ApplicationException(HttpStatus.BAD_REQUEST, "All provided users are already active");
+        if (!restoredIds.isEmpty()) {
+             userRepository.saveAll(users.stream().filter(u -> restoredIds.contains(u.getId())).toList());
+             for (User user : users) {
+                 if (restoredIds.contains(user.getId())) {
+                     userAuditLogService.logAction(user, "BATCH_RESTORE_USER", "Restored via batch request");
+                 }
+             }
         }
 
-        userRepository.saveAll(users);
+        java.util.Map<String, Object> result = new java.util.HashMap<>();
+        result.put("requestedIds", ids);
+        result.put("restoredIds", restoredIds);
+        
+        List<Long> notRestoredIds = new java.util.ArrayList<>(ids);
+        notRestoredIds.removeAll(restoredIds);
+        result.put("notRestoredIds", notRestoredIds);
+        
+        return result;
     }
 
     private String buildActivationLink(String token) {

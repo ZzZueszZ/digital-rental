@@ -106,4 +106,57 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .updatedAt(profile.getUpdatedAt())
                 .build();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserProfileResponse getProfileById(Long userId) {
+        UserProfile profile = userProfileRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Hồ sơ không tồn tại cho user id: " + userId));
+        return mapToResponse(profile);
+    }
+
+    @Override
+    @Transactional
+    public UserProfileResponse updateProfileById(Long userId, UserProfileUpdateRequest request) {
+        UserProfile profile = userProfileRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Hồ sơ không tồn tại cho user id: " + userId));
+
+        if (request.getFullName() != null) profile.setFullName(request.getFullName());
+        if (request.getFirstName() != null) profile.setFirstName(request.getFirstName());
+        if (request.getLastName() != null) profile.setLastName(request.getLastName());
+        if (request.getGender() != null) profile.setGender(request.getGender());
+        if (request.getDateOfBirth() != null) profile.setDateOfBirth(request.getDateOfBirth());
+        if (request.getOccupation() != null) profile.setOccupation(request.getOccupation());
+        if (request.getCompanyName() != null) profile.setCompanyName(request.getCompanyName());
+
+        return mapToResponse(userProfileRepository.save(profile));
+    }
+
+    @Override
+    @Transactional
+    public UserProfileResponse uploadAvatarById(Long userId, MultipartFile file) {
+        UserProfile profile = userProfileRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Hồ sơ không tồn tại cho user id: " + userId));
+
+        String savedImageUrl = profile.getAvatarUrl() != null 
+                             ? FileUploadUtil.replaceImage(profile.getAvatarUrl(), file)
+                             : FileUploadUtil.saveImage(file);
+
+        profile.setAvatarUrl(savedImageUrl);
+
+        return mapToResponse(userProfileRepository.save(profile));
+    }
+
+    @Override
+    @Transactional
+    public void deleteAvatarById(Long userId) {
+        UserProfile profile = userProfileRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Hồ sơ không tồn tại cho user id: " + userId));
+
+        if (profile.getAvatarUrl() != null) {
+            FileUploadUtil.deleteImage(profile.getAvatarUrl());
+            profile.setAvatarUrl(null);
+            userProfileRepository.save(profile);
+        }
+    }
 }

@@ -18,11 +18,11 @@ public class UserAuditLogController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('USER_READ')") // Admin only
-    public ResponseEntity<ApiResponse<Page<UserAuditLogResponse>>> getAuditLogs(
+    public ResponseEntity<ApiResponse<java.util.List<UserAuditLogResponse>>> getAuditLogs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         
         Page<UserAuditLogResponse> logs = userAuditLogService.getAllAuditLogs(page, size);
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Audit logs retrieved successfully", logs));
+        return ResponseEntity.ok(ApiResponse.successfulPageResponse("Audit logs retrieved successfully", logs));
     }
 }

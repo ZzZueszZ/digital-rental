@@ -51,4 +51,23 @@ public class MailService {
             System.err.println("Failed to send OTP email to: " + user.getEmail());
         }
     }
+
+    public void sendResetPasswordEmail(User user, String newPassword) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(user.getEmail());
+        message.setSubject("Mật khẩu tài khoản Lenshub đã được đặt lại");
+        message.setText("Xin chào,\n\n"
+                + "Quản trị viên đã đặt lại mật khẩu cho tài khoản của bạn.\n"
+                + "Mật khẩu mới của bạn là: " + newPassword + "\n\n"
+                + "Vui lòng đăng nhập và đổi mật khẩu ngay sau khi nhận được email này.\n\n"
+                + "Trân trọng,\nLenshub Team");
+
+        try {
+            mailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to send reset password email to: " + user.getEmail());
+        }
+    }
 }

@@ -233,39 +233,33 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse updateStatus(Long id, AccountStatus newStatus) {
-        if (newStatus != AccountStatus.ACTIVE && newStatus != AccountStatus.DISABLED) {
-            throw new ApplicationException(
-                    HttpStatus.BAD_REQUEST,
-                    "Không được phép cập nhật thủ công sang trạng thái " + newStatus + ". Chỉ ACTIVE hoặc DISABLED có thể được đặt thủ công."
-            );
-        }
-
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
 
-        if (user.getAccountStatus() == AccountStatus.DELETED) {
-            throw new ApplicationException(
-                    HttpStatus.BAD_REQUEST,
-                    "Người dùng đã bị xóa. Không thể thay đổi trạng thái thủ công. Sử dụng chức năng khôi phục."
-            );
-        }
-
         AccountStatus currentStatus = user.getAccountStatus();
 
-        switch (currentStatus) {
-            case PENDING:
-                if (newStatus == AccountStatus.ACTIVE) {
-                    throw new ApplicationException(
-                            HttpStatus.BAD_REQUEST,
-                            "Không thể kích hoạt thủ công người dùng đang chờ. Người dùng phải xác minh email!"
-                    );
-                }
-                break;
-            case ACTIVE:
-            case DISABLED:
-                break;
-            default:
-                throw new ApplicationException(HttpStatus.BAD_REQUEST, "Trạng thái hiện tại không hợp lệ");
+        if (currentStatus == AccountStatus.DELETED) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST,
+                    "Người dùng đã bị xóa. Không thể thay đổi trạng thái. Sử dụng chức năng khôi phục.");
+        }
+
+        if (currentStatus == newStatus) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST,
+                    "Người dùng đã ở trạng thái " + newStatus);
+        }
+
+        // Validate allowed transitions
+        boolean allowed = switch (currentStatus) {
+            case PENDING -> newStatus == AccountStatus.ACTIVE || newStatus == AccountStatus.SUSPENDED || newStatus == AccountStatus.DISABLED;
+            case ACTIVE -> newStatus == AccountStatus.SUSPENDED || newStatus == AccountStatus.DISABLED;
+            case SUSPENDED -> newStatus == AccountStatus.ACTIVE || newStatus == AccountStatus.DISABLED;
+            case DISABLED -> newStatus == AccountStatus.ACTIVE;
+            default -> false;
+        };
+
+        if (!allowed) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST,
+                    "Không thể chuyển từ " + currentStatus + " sang " + newStatus);
         }
 
         user.setAccountStatus(newStatus);
@@ -277,6 +271,70 @@ public class UserServiceImpl implements UserService {
                 "{\"status\":\"" + newStatus + "\"}");
 
         return userMapper.toUserResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse lockUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+
+        if (!user.isAccountNonLocked()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Tài khoản đã bị khóa");
+        }
+
+        user.setAccountNonLocked(false);
+        User saved = userRepository.save(user);
+
+        auditLogService.logAction("USER", saved.getId(), "LOCK_USER",
+                "Admin locked user account",
+                "{\"accountNonLocked\":true}",
+                "{\"accountNonLocked\":false}");
+
+        return userMapper.toUserResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse unlockUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+
+        if (user.isAccountNonLocked()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Tài khoản chưa bị khóa");
+        }
+
+        int oldFailedAttempts = user.getFailedLoginAttempts();
+        user.setAccountNonLocked(true);
+        user.setFailedLoginAttempts(0);
+        user.setLockedUntil(null);
+        User saved = userRepository.save(user);
+
+        auditLogService.logAction("USER", saved.getId(), "UNLOCK_USER",
+                "Admin unlocked user account",
+                "{\"accountNonLocked\":false,\"failedLoginAttempts\":" + oldFailedAttempts + "}",
+                "{\"accountNonLocked\":true,\"failedLoginAttempts\":0}");
+
+        return userMapper.toUserResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public void resetPasswordByAdmin(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+
+        // Generate random 6-digit password
+        String randomPassword = String.format("%06d", new java.util.Random().nextInt(1000000));
+
+        user.setPasswordHash(passwordEncoder.encode(randomPassword));
+        userRepository.save(user);
+
+        // Send new password to user email
+        mailService.sendResetPasswordEmail(user, randomPassword);
+
+        auditLogService.logAction("USER", user.getId(), "ADMIN_RESET_PASSWORD",
+                "Admin reset password for user", null, null);
     }
 
     @Override

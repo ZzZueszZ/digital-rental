@@ -18,6 +18,9 @@ public interface UserService {
     UserResponse createUser(UserCreateRequest request);
     UserResponse updateUser(Long id, UserUpdateRequest request);
     UserResponse updateStatus(Long id, AccountStatus status);
+    UserResponse lockUser(Long id);
+    UserResponse unlockUser(Long id);
+    void resetPasswordByAdmin(Long id);
     void deleteUser(Long id);
     void restoreUser(Long id);
     Map<String, Object> deleteUsers(List<Long> ids);

@@ -107,6 +107,31 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.successfulResponse("Users restored successfully", result));
     }
 
+    // --- LOCK / UNLOCK ---
+
+    @PutMapping("/{id}/lock")
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    public ResponseEntity<ApiResponse<UserResponse>> lockUser(@PathVariable Long id) {
+        UserResponse response = userService.lockUser(id);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("User locked successfully", response));
+    }
+
+    @PutMapping("/{id}/unlock")
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    public ResponseEntity<ApiResponse<UserResponse>> unlockUser(@PathVariable Long id) {
+        UserResponse response = userService.unlockUser(id);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("User unlocked successfully", response));
+    }
+
+    // --- RESET PASSWORD ---
+
+    @PutMapping("/{id}/reset-password")
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    public ResponseEntity<ApiResponse<Void>> resetPasswordByAdmin(@PathVariable Long id) {
+        userService.resetPasswordByAdmin(id);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Password reset successfully. New password sent to user email."));
+    }
+
     // --- ADMIN PROFILE ENDPOINTS ---
     
     @GetMapping("/{id}/profile")

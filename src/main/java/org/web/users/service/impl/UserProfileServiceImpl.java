@@ -59,8 +59,10 @@ public class UserProfileServiceImpl implements UserProfileService {
         UserProfile profile = userProfileRepository.findById(user.getId())
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User profile not found"));
 
-        String savedImageUrl = profile.getAvatarUrl() != null 
-                             ? FileUploadUtil.replaceImage(profile.getAvatarUrl(), file)
+        String oldAvatarUrl = profile.getAvatarUrl();
+
+        String savedImageUrl = oldAvatarUrl != null 
+                             ? FileUploadUtil.replaceImage(oldAvatarUrl, file)
                              : FileUploadUtil.saveImage(file);
 
         profile.setAvatarUrl(savedImageUrl);
@@ -68,7 +70,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         UserProfile saved = userProfileRepository.save(profile);
         auditLogService.logAction("PROFILE", user.getId(), "UPLOAD_AVATAR",
                 "User uploaded avatar",
-                profile.getAvatarUrl() != null ? "{\"avatarUrl\":\"" + profile.getAvatarUrl() + "\"}" : null,
+                oldAvatarUrl != null ? "{\"avatarUrl\":\"" + oldAvatarUrl + "\"}" : null,
                 "{\"avatarUrl\":\"" + savedImageUrl + "\"}");
         return mapToResponse(saved);
     }

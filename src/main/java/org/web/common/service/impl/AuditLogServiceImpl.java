@@ -107,19 +107,27 @@ public class AuditLogServiceImpl implements AuditLogService {
         return null;
     }
 
-    private AuditLogResponse mapToResponse(AuditLog log) {
+    private AuditLogResponse mapToResponse(AuditLog auditLog) {
+        String actorEmail = null;
+        if (auditLog.getActorUserId() != null) {
+            actorEmail = userRepository.findById(auditLog.getActorUserId())
+                    .map(u -> u.getEmail())
+                    .orElse(null);
+        }
+
         return AuditLogResponse.builder()
-                .id(log.getId())
-                .actorUserId(log.getActorUserId())
-                .targetType(log.getTargetType())
-                .targetId(log.getTargetId())
-                .action(log.getAction())
-                .description(log.getDescription())
-                .oldValue(log.getOldValue())
-                .newValue(log.getNewValue())
-                .ipAddress(log.getIpAddress())
-                .userAgent(log.getUserAgent())
-                .createdAt(log.getCreatedAt())
+                .id(auditLog.getId())
+                .actorUserId(auditLog.getActorUserId())
+                .actorEmail(actorEmail)
+                .targetType(auditLog.getTargetType())
+                .targetId(auditLog.getTargetId())
+                .action(auditLog.getAction())
+                .description(auditLog.getDescription())
+                .oldValue(auditLog.getOldValue())
+                .newValue(auditLog.getNewValue())
+                .ipAddress(auditLog.getIpAddress())
+                .userAgent(auditLog.getUserAgent())
+                .createdAt(auditLog.getCreatedAt())
                 .build();
     }
 }

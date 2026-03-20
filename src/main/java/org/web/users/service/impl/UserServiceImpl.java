@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserResponse getUserById(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findWithRolesById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
         return userMapper.toUserResponse(user);
     }
@@ -192,7 +192,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse updateUser(Long id, UserUpdateRequest request) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findWithRolesById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
 
         if (request.getPhone() != null) {
@@ -233,7 +233,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse updateStatus(Long id, AccountStatus newStatus) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findWithRolesById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
 
         AccountStatus currentStatus = user.getAccountStatus();
@@ -276,7 +276,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse lockUser(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findWithRolesById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
 
         if (!user.isAccountNonLocked()) {
@@ -297,7 +297,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse unlockUser(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findWithRolesById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
 
         if (user.isAccountNonLocked()) {
@@ -321,7 +321,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void resetPasswordByAdmin(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findWithRolesById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
 
         // Generate random 6-digit password
@@ -340,7 +340,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findWithRolesById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
         
         if (user.getAccountStatus() == AccountStatus.DELETED) {
@@ -360,7 +360,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void restoreUser(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findWithRolesById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
         
         if (user.getAccountStatus() == AccountStatus.ACTIVE) {

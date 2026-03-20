@@ -14,4 +14,8 @@ public interface ShippingAddressService {
     
     // Admin support
     List<ShippingAddressResponse> getByUserId(Long userId);
+    ShippingAddressResponse createByUserId(Long userId, ShippingAddressRequest request);
+    ShippingAddressResponse updateByUserId(Long userId, Long addressId, ShippingAddressRequest request);
+    void deleteByUserId(Long userId, Long addressId);
+    ShippingAddressResponse setDefaultByUserId(Long userId, Long addressId);
 }

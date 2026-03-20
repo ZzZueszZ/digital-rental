@@ -42,8 +42,10 @@ public class PermissionSeeder implements CommandLineRunner {
         create("CATEGORY_WRITE", "Can create, update, delete categories (Admin only)");
 
         // ================= ADDRESS =================
-        create("ADDRESS_READ", "Can view their own and others shipping addresses");
-        create("ADDRESS_WRITE", "Can manage shipping addresses");
+        create("ADDRESS_READ", "Can view their own shipping addresses");
+        create("ADDRESS_READ_ALL", "Can view all users shipping addresses (Admin/Staff only)");
+        create("ADDRESS_WRITE", "Can manage their own shipping addresses");
+        create("ADDRESS_WRITE_ALL", "Can manage all users shipping addresses (Admin only)");
     }
 
     private void create(String name, String desc) {

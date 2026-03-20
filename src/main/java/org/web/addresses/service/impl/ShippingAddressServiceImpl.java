@@ -40,7 +40,67 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
     @Transactional
     public ShippingAddressResponse createAddress(ShippingAddressRequest request) {
         User user = getCurrentUser();
+        return createAddressForUser(user, request);
+    }
 
+    @Override
+    @Transactional
+    public ShippingAddressResponse updateAddress(Long id, ShippingAddressRequest request) {
+        User user = getCurrentUser();
+        return updateAddressForUser(user, id, request);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAddress(Long id) {
+        User user = getCurrentUser();
+        deleteAddressForUser(user, id);
+    }
+
+    @Override
+    @Transactional
+    public ShippingAddressResponse setDefaultAddress(Long id) {
+        User user = getCurrentUser();
+        return setDefaultAddressForUser(user, id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ShippingAddressResponse> getByUserId(Long userId) {
+        User user = findUserById(userId);
+        return mapper.toResponses(addressRepository.findByUserOrderByIsDefaultDescCreatedAtDesc(user));
+    }
+
+    @Override
+    @Transactional
+    public ShippingAddressResponse createByUserId(Long userId, ShippingAddressRequest request) {
+        User user = findUserById(userId);
+        return createAddressForUser(user, request);
+    }
+
+    @Override
+    @Transactional
+    public ShippingAddressResponse updateByUserId(Long userId, Long addressId, ShippingAddressRequest request) {
+        User user = findUserById(userId);
+        return updateAddressForUser(user, addressId, request);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByUserId(Long userId, Long addressId) {
+        User user = findUserById(userId);
+        deleteAddressForUser(user, addressId);
+    }
+
+    @Override
+    @Transactional
+    public ShippingAddressResponse setDefaultByUserId(Long userId, Long addressId) {
+        User user = findUserById(userId);
+        return setDefaultAddressForUser(user, addressId);
+    }
+
+    // Helper methods for internal reuse
+    private ShippingAddressResponse createAddressForUser(User user, ShippingAddressRequest request) {
         ShippingAddress address = ShippingAddress.builder()
                 .user(user)
                 .receiverName(request.getReceiverName())
@@ -53,7 +113,6 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
                 .isDefault(false)
                 .build();
 
-        // If it's the 1st address or user explicitly wants it to be default
         boolean shouldBeDefault = Boolean.TRUE.equals(request.getSetAsDefault()) || addressRepository.countByUser(user) == 0;
 
         if (shouldBeDefault) {
@@ -64,18 +123,15 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
         ShippingAddress saved = addressRepository.save(address);
 
         auditLogService.logAction("ADDRESS", saved.getId(), "CREATE_ADDRESS",
-                "User created shipping address: " + saved.getReceiverName() + " (" + saved.getReceiverPhone() + ")",
+                "Created shipping address for user " + user.getId() + ": " + saved.getReceiverName(),
                 null,
                 "{\"fullAddress\":\"" + saved.getFullAddress() + "\",\"isDefault\":" + saved.isDefault() + "}");
 
         return mapper.toResponse(saved);
     }
 
-    @Override
-    @Transactional
-    public ShippingAddressResponse updateAddress(Long id, ShippingAddressRequest request) {
-        User user = getCurrentUser();
-        ShippingAddress address = addressRepository.findByIdAndUser(id, user)
+    private ShippingAddressResponse updateAddressForUser(User user, Long addressId, ShippingAddressRequest request) {
+        ShippingAddress address = addressRepository.findByIdAndUser(addressId, user)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Địa chỉ không tồn tại"));
 
         String oldDetails = "{\"fullAddress\":\"" + address.getFullAddress() + "\",\"isDefault\":" + address.isDefault() + "}";
@@ -96,18 +152,15 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
         ShippingAddress saved = addressRepository.save(address);
 
         auditLogService.logAction("ADDRESS", saved.getId(), "UPDATE_ADDRESS",
-                "User updated shipping address: " + saved.getId(),
+                "Updated shipping address: " + saved.getId(),
                 oldDetails,
                 "{\"fullAddress\":\"" + saved.getFullAddress() + "\",\"isDefault\":" + saved.isDefault() + "}");
 
         return mapper.toResponse(saved);
     }
 
-    @Override
-    @Transactional
-    public void deleteAddress(Long id) {
-        User user = getCurrentUser();
-        ShippingAddress address = addressRepository.findByIdAndUser(id, user)
+    private void deleteAddressForUser(User user, Long addressId) {
+        ShippingAddress address = addressRepository.findByIdAndUser(addressId, user)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Địa chỉ không tồn tại"));
 
         if (address.isDefault()) {
@@ -115,16 +168,11 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
         }
 
         addressRepository.delete(address);
-
-        auditLogService.logAction("ADDRESS", id, "DELETE_ADDRESS",
-                "User deleted shipping address", null, null);
+        auditLogService.logAction("ADDRESS", addressId, "DELETE_ADDRESS", "Deleted shipping address", null, null);
     }
 
-    @Override
-    @Transactional
-    public ShippingAddressResponse setDefaultAddress(Long id) {
-        User user = getCurrentUser();
-        ShippingAddress address = addressRepository.findByIdAndUser(id, user)
+    private ShippingAddressResponse setDefaultAddressForUser(User user, Long addressId) {
+        ShippingAddress address = addressRepository.findByIdAndUser(addressId, user)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Địa chỉ không tồn tại"));
 
         if (!address.isDefault()) {
@@ -132,19 +180,16 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
             address.setDefault(true);
             address = addressRepository.save(address);
 
-            auditLogService.logAction("ADDRESS", id, "SET_DEFAULT_ADDRESS",
-                    "User set address as default", null, "{\"isDefault\":true}");
+            auditLogService.logAction("ADDRESS", addressId, "SET_DEFAULT_ADDRESS",
+                    "Set address as default", null, "{\"isDefault\":true}");
         }
 
         return mapper.toResponse(address);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<ShippingAddressResponse> getByUserId(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found"));
-        return mapper.toResponses(addressRepository.findByUserOrderByIsDefaultDescCreatedAtDesc(user));
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
     }
 
     private void handlePreviousDefault(User user) {

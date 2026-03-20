@@ -1,6 +1,5 @@
 package org.web.seeders;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -31,7 +30,7 @@ public class RolePermissionSeeder implements CommandLineRunner {
 
         // ================= ADMIN =================
         admin.setPermissions(new HashSet<>());
-        
+
         // ADMIN gets STAFF permissions + CREATE, UPDATE, DELETE for users
         addPerm(admin, "AUTH_LOGOUT");
         addPerm(admin, "AUTH_REFRESH");
@@ -49,8 +48,10 @@ public class RolePermissionSeeder implements CommandLineRunner {
         // Category management
         addPerm(admin, "CATEGORY_READ");
         addPerm(admin, "CATEGORY_WRITE");
-        addPerm(admin, "ADDRESS_READ");
-        addPerm(admin, "ADDRESS_WRITE");
+
+        // Address management for all users
+        addPerm(admin, "ADDRESS_READ_ALL");
+        addPerm(admin, "ADDRESS_WRITE_ALL");
 
         roleRepository.save(admin);
 
@@ -61,7 +62,7 @@ public class RolePermissionSeeder implements CommandLineRunner {
 
         // ================= STAFF =================
         staff.setPermissions(new HashSet<>());
-        
+
         // STAFF gets CUSTOMER permissions + USER_READ
         addPerm(staff, "AUTH_LOGOUT");
         addPerm(staff, "AUTH_REFRESH");
@@ -69,7 +70,9 @@ public class RolePermissionSeeder implements CommandLineRunner {
         addPerm(staff, "USER_PROFILE_UPDATE");
         addPerm(staff, "USER_READ");
         addPerm(staff, "CATEGORY_READ");
-        addPerm(staff, "ADDRESS_READ");
+
+        // Address read for all users
+        addPerm(staff, "ADDRESS_READ_ALL");
 
         roleRepository.save(staff);
 
@@ -81,6 +84,8 @@ public class RolePermissionSeeder implements CommandLineRunner {
         addPerm(customer, "AUTH_REFRESH");
         addPerm(customer, "USER_PROFILE_READ");
         addPerm(customer, "USER_PROFILE_UPDATE");
+
+        // Customer can manage their own addresses
         addPerm(customer, "ADDRESS_READ");
         addPerm(customer, "ADDRESS_WRITE");
 
@@ -95,4 +100,3 @@ public class RolePermissionSeeder implements CommandLineRunner {
         });
     }
 }
-

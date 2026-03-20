@@ -2,10 +2,9 @@ package org.web.identity.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.web.common.enums.VerificationSessionStatus;
 import org.web.common.enums.VerificationType;
+import org.web.common.model.BaseAuditEntity;
 import org.web.users.model.User;
 
 import java.time.LocalDateTime;
@@ -17,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VerificationSession {
+public class VerificationSession extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,12 +50,4 @@ public class VerificationSession {
 
     @Column(name = "review_note", length = 1000)
     private String reviewNote;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 }

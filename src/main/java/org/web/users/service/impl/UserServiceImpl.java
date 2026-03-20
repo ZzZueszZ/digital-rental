@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     private final MailService mailService;
     private final ActivationTokenProvider activationTokenProvider;
     private final org.web.users.repository.UserProfileRepository userProfileRepository;
-    private final org.web.users.service.UserAuditLogService userAuditLogService;
+    private final org.web.common.service.AuditLogService auditLogService;
 
     @Value("${app.activation.base-url:http://localhost:8080/api/auth/activate}")
     private String activationBaseUrl;
@@ -180,7 +180,11 @@ public class UserServiceImpl implements UserService {
         String activationToken = activationTokenProvider.generate(savedUser);
         mailService.sendActivationEmail(savedUser, buildActivationLink(activationToken));
 
-        userAuditLogService.logAction(savedUser, "CREATE_USER", "User account created with email: " + savedUser.getEmail());
+
+        auditLogService.logAction("USER", savedUser.getId(), "CREATE_USER",
+                "User account created with email: " + savedUser.getEmail(),
+                null,
+                "{\"email\":\"" + savedUser.getEmail() + "\",\"roles\":" + savedUser.getRoles().stream().map(r -> "\"" + r.getCode() + "\"").toList() + "}");
 
         return userMapper.toUserResponse(savedUser);
     }
@@ -221,7 +225,8 @@ public class UserServiceImpl implements UserService {
         }
 
         User updatedUser = userRepository.save(user);
-        userAuditLogService.logAction(updatedUser, "UPDATE_USER", "Updated user details. New Status: " + updatedUser.getAccountStatus());
+        auditLogService.logAction("USER", updatedUser.getId(), "UPDATE_USER",
+                "Updated user details", null, null);
         return userMapper.toUserResponse(updatedUser);
     }
 
@@ -266,7 +271,10 @@ public class UserServiceImpl implements UserService {
         user.setAccountStatus(newStatus);
         User saved = userRepository.save(user);
 
-        userAuditLogService.logAction(saved, "UPDATE_STATUS", "Status updated from " + currentStatus + " to " + newStatus);
+        auditLogService.logAction("USER", saved.getId(), "UPDATE_STATUS",
+                "Status updated",
+                "{\"status\":\"" + currentStatus + "\"}",
+                "{\"status\":\"" + newStatus + "\"}");
 
         return userMapper.toUserResponse(saved);
     }
@@ -285,7 +293,10 @@ public class UserServiceImpl implements UserService {
         user.setAccountStatus(AccountStatus.DELETED);
         user.setEnabled(false);
         userRepository.save(user);
-        userAuditLogService.logAction(user, "SOFT_DELETE_USER", "Soft deleted user id: " + id);
+        auditLogService.logAction("USER", user.getId(), "SOFT_DELETE",
+                "Soft deleted user",
+                "{\"status\":\"" + AccountStatus.ACTIVE + "\"}",
+                "{\"status\":\"" + AccountStatus.DELETED + "\"}");
     }
 
     @Override
@@ -301,7 +312,10 @@ public class UserServiceImpl implements UserService {
         user.setAccountStatus(AccountStatus.ACTIVE);
         user.setEnabled(true);
         userRepository.save(user);
-        userAuditLogService.logAction(user, "RESTORE_USER", "Restored user id: " + id);
+        auditLogService.logAction("USER", user.getId(), "RESTORE",
+                "Restored user",
+                "{\"status\":\"" + AccountStatus.DELETED + "\"}",
+                "{\"status\":\"" + AccountStatus.ACTIVE + "\"}");
     }
 
     @Override
@@ -326,7 +340,8 @@ public class UserServiceImpl implements UserService {
              userRepository.saveAll(users.stream().filter(u -> deletedIds.contains(u.getId())).toList());
              for (User user : users) {
                  if (deletedIds.contains(user.getId())) {
-                     userAuditLogService.logAction(user, "BATCH_SOFT_DELETE_USER", "Soft deleted via batch request");
+                     auditLogService.logAction("USER", user.getId(), "BATCH_SOFT_DELETE",
+                             "Soft deleted via batch request", null, null);
                  }
              }
         }
@@ -364,7 +379,8 @@ public class UserServiceImpl implements UserService {
              userRepository.saveAll(users.stream().filter(u -> restoredIds.contains(u.getId())).toList());
              for (User user : users) {
                  if (restoredIds.contains(user.getId())) {
-                     userAuditLogService.logAction(user, "BATCH_RESTORE_USER", "Restored via batch request");
+                     auditLogService.logAction("USER", user.getId(), "BATCH_RESTORE",
+                             "Restored via batch request", null, null);
                  }
              }
         }

@@ -23,6 +23,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
     private final UserRepository userRepository;
+    private final org.web.common.service.AuditLogService auditLogService;
 
     @Override
     @Transactional(readOnly = true)
@@ -64,7 +65,12 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         profile.setAvatarUrl(savedImageUrl);
 
-        return mapToResponse(userProfileRepository.save(profile));
+        UserProfile saved = userProfileRepository.save(profile);
+        auditLogService.logAction("PROFILE", user.getId(), "UPLOAD_AVATAR",
+                "User uploaded avatar",
+                profile.getAvatarUrl() != null ? "{\"avatarUrl\":\"" + profile.getAvatarUrl() + "\"}" : null,
+                "{\"avatarUrl\":\"" + savedImageUrl + "\"}");
+        return mapToResponse(saved);
     }
 
     @Override
@@ -75,9 +81,13 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User profile not found"));
 
         if (profile.getAvatarUrl() != null) {
+            String oldUrl = profile.getAvatarUrl();
             FileUploadUtil.deleteImage(profile.getAvatarUrl());
             profile.setAvatarUrl(null);
             userProfileRepository.save(profile);
+            auditLogService.logAction("PROFILE", user.getId(), "DELETE_AVATAR",
+                    "User deleted avatar",
+                    "{\"avatarUrl\":\"" + oldUrl + "\"}", null);
         }
     }
 

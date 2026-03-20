@@ -2,12 +2,11 @@ package org.web.users.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.web.authentication.model.AppRole;
 import org.web.common.enums.AccountStatus;
 import org.web.common.enums.KycStatus;
 import org.web.common.enums.TrustLevel;
+import org.web.common.model.BaseAuditEntity;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -24,7 +23,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -79,14 +78,6 @@ public class User {
 
     @Column(name = "locked_until")
     private LocalDateTime lockedUntil;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

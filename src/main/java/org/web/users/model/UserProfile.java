@@ -2,9 +2,8 @@ package org.web.users.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.web.common.enums.Gender;
+import org.web.common.model.BaseAuditEntity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserProfile {
+public class UserProfile extends BaseAuditEntity {
 
     @Id
     private Long id;
@@ -50,12 +49,4 @@ public class UserProfile {
 
     @Column(name = "company_name", length = 200)
     private String companyName;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 }

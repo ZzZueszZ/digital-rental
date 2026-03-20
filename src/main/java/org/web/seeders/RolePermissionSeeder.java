@@ -46,6 +46,10 @@ public class RolePermissionSeeder implements CommandLineRunner {
         addPerm(admin, "ROLE_READ");
         addPerm(admin, "PERMISSION_READ");
 
+        // Category management
+        addPerm(admin, "CATEGORY_READ");
+        addPerm(admin, "CATEGORY_WRITE");
+
         roleRepository.save(admin);
 
         // ================= SUPER ADMIN =================
@@ -62,6 +66,7 @@ public class RolePermissionSeeder implements CommandLineRunner {
         addPerm(staff, "USER_PROFILE_READ");
         addPerm(staff, "USER_PROFILE_UPDATE");
         addPerm(staff, "USER_READ");
+        addPerm(staff, "CATEGORY_READ");
 
         roleRepository.save(staff);
 

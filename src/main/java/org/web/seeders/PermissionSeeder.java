@@ -36,6 +36,10 @@ public class PermissionSeeder implements CommandLineRunner {
         create("ROLE_WRITE", "Create, update, delete roles and assign permissions");
         create("PERMISSION_READ", "Read permission list");
         create("PERMISSION_WRITE", "Create, update, delete permissions");
+
+        // ================= CATEGORY =================
+        create("CATEGORY_READ", "Can view category list and details");
+        create("CATEGORY_WRITE", "Can create, update, delete categories (Admin only)");
     }
 
     private void create(String name, String desc) {

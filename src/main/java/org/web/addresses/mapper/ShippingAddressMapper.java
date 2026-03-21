@@ -18,6 +18,7 @@ public class ShippingAddressMapper {
                 .receiverPhone(address.getReceiverPhone())
                 .fullAddress(address.getFullAddress())
                 .province(address.getProvince())
+                .provinceDisplayName(address.getProvince() != null ? address.getProvince().getDisplayName() : null)
                 .district(address.getDistrict())
                 .ward(address.getWard())
                 .detailAddress(address.getDetailAddress())

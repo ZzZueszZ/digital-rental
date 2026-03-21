@@ -2,6 +2,7 @@ package org.web.addresses.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.web.common.enums.City;
 import org.web.common.model.BaseAuditEntity;
 import org.web.users.model.User;
 
@@ -31,8 +32,9 @@ public class ShippingAddress extends BaseAuditEntity {
     @Column(name = "full_address", nullable = false, length = 500)
     private String fullAddress;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "province")
-    private String province;
+    private City province;
 
     @Column(name = "district")
     private String district;

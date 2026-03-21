@@ -2,6 +2,7 @@ package org.web.addresses.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.web.common.enums.City;
 
 @Getter
 @Setter
@@ -19,7 +20,7 @@ public class ShippingAddressRequest {
     @NotBlank(message = "Địa chỉ đầy đủ không được để trống")
     private String fullAddress;
 
-    private String province;
+    private City province;
     private String district;
     private String ward;
     private String detailAddress;

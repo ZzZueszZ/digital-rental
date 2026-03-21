@@ -1,6 +1,7 @@
 package org.web.addresses.dto.response;
 
 import lombok.*;
+import org.web.common.enums.City;
 import java.time.LocalDateTime;
 
 @Getter
@@ -13,7 +14,8 @@ public class ShippingAddressResponse {
     private String receiverName;
     private String receiverPhone;
     private String fullAddress;
-    private String province;
+    private City province;
+    private String provinceDisplayName;
     private String district;
     private String ward;
     private String detailAddress;

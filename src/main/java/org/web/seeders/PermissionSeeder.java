@@ -71,6 +71,10 @@ public class PermissionSeeder implements CommandLineRunner {
 
         // ================= REVIEW =================
         create("REVIEW_MANAGE", "Can view all, hide/unhide and review reported comments (Admin/Staff)");
+
+        // ================= SUPPORT =================
+        create("SUPPORT_READ", "Can view support tickets (Admin/Staff)");
+        create("SUPPORT_WRITE", "Can reply and manage support tickets (Admin/Staff)");
     }
 
 

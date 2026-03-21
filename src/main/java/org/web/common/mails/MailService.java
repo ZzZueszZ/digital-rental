@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.web.support.model.SupportTicket;
 import org.web.users.model.User;
 
 @Service
@@ -68,6 +70,24 @@ public class MailService {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to send reset password email to: " + user.getEmail());
+        }
+    }
+
+    public void sendSupportReplyEmail(SupportTicket ticket, String replyMessage) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(ticket.getEmail());
+        message.setSubject("Re: [Lenshub Support] " + ticket.getSubject());
+        message.setText("Xin chào " + ticket.getName() + ",\n\n"
+                + "Chúng tôi đã nhận được yêu cầu hỗ trợ của bạn và đây là phản hồi:\n\n"
+                + replyMessage + "\n\n"
+                + "Trân trọng,\nLenshub Support Team");
+
+        try {
+            mailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to send support reply email to: " + ticket.getEmail());
         }
     }
 }

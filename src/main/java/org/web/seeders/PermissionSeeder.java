@@ -63,6 +63,11 @@ public class PermissionSeeder implements CommandLineRunner {
         create("VOUCHER_READ", "Can view vouchers (Admin/Staff)");
         create("VOUCHER_WRITE", "Can create/update/deactivate vouchers (Admin only)");
         create("VOUCHER_STATUS_MANAGE", "Can activate vouchers (Admin/Staff)");
+
+        // ================= ORDER =================
+        create("ORDER_READ", "Can view own orders and confirm receipt (Customer)");
+        create("ORDER_WRITE", "Can checkout and create orders (Customer)");
+        create("ORDER_MANAGE", "Can view all orders, logs and update status (Admin/Staff)");
     }
 
 

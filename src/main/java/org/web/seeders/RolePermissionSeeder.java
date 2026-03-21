@@ -66,6 +66,9 @@ public class RolePermissionSeeder implements CommandLineRunner {
         addPerm(admin, "VOUCHER_WRITE");
         addPerm(admin, "VOUCHER_STATUS_MANAGE");
 
+        // Orders
+        addPerm(admin, "ORDER_MANAGE");
+
         roleRepository.save(admin);
 
         // ================= SUPER ADMIN =================
@@ -95,6 +98,9 @@ public class RolePermissionSeeder implements CommandLineRunner {
         addPerm(staff, "VOUCHER_READ");
         addPerm(staff, "VOUCHER_STATUS_MANAGE");
 
+        // Orders
+        addPerm(staff, "ORDER_MANAGE");
+
         roleRepository.save(staff);
 
         // ================= CUSTOMER =================
@@ -113,6 +119,10 @@ public class RolePermissionSeeder implements CommandLineRunner {
         // Cart
         addPerm(customer, "CART_READ");
         addPerm(customer, "CART_WRITE");
+
+        // Orders
+        addPerm(customer, "ORDER_READ");
+        addPerm(customer, "ORDER_WRITE");
 
         roleRepository.save(customer);
 

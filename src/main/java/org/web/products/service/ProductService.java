@@ -26,6 +26,8 @@ public interface ProductService {
     ProductResponse updatePrice(Long id, ProductPriceUpdateRequest request);
 
     void softDelete(Long id);
+    
+    Page<ProductResponse> getTrashedProducts(Pageable pageable);
 
     void restore(Long id);
 

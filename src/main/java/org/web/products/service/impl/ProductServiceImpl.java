@@ -264,6 +264,10 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Product not found"));
         
+        if (product.getDeletedAt() != null) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Sản phẩm đã bị xóa");
+        }
+
         product.setActive(false);
         product.setDeletedAt(LocalDateTime.now());
         productRepository.save(product);
@@ -277,11 +281,22 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Product not found"));
 
+        if (product.getDeletedAt() == null) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Sản phẩm chưa bị xóa, không thể khôi phục");
+        }
+
         product.setActive(true);
         product.setDeletedAt(null);
         productRepository.save(product);
 
         auditLogService.logAction("PRODUCT", id, "RESTORE_PRODUCT", "Restored product", null, null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> getTrashedProducts(Pageable pageable) {
+        Specification<Product> spec = (root, query, cb) -> cb.isNotNull(root.get("deletedAt"));
+        return productRepository.findAll(spec, pageable).map(ProductMapper::toResponse);
     }
 
     @Override

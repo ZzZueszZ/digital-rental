@@ -92,6 +92,20 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponse.successfulResponse("Xóa sản phẩm thành công"));
     }
 
+    // ADMIN: Xem các sản phẩm đã xoá (thùng rác)
+    @GetMapping("/trashed")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getTrashedProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "deletedAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction
+    ) {
+        Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Page<ProductResponse> result = productService.getTrashedProducts(PageRequest.of(page, size, sort));
+        return ResponseEntity.ok(ApiResponse.successfulPageResponse("Lấy danh sách sản phẩm đã xoá thành công", result));
+    }
+
     // ADMIN: Khôi phục
     @PutMapping("/{id}/restore")
     @PreAuthorize("hasAuthority('PRODUCT_WRITE')")

@@ -148,7 +148,7 @@ public class ProductServiceImpl implements ProductService {
                 .isForRent(request.getIsForRent() != null ? request.getIsForRent() : true)
                 .isForSale(request.getIsForSale() != null ? request.getIsForSale() : false)
                 .brand(request.getBrand())
-                .quantity(request.getQuantity() != null ? request.getQuantity() : 0)
+                .quantity(0)
                 .mainImageUrl(mainImageUrl)
                 .category(category)
                 .isActive(true)
@@ -208,7 +208,6 @@ public class ProductServiceImpl implements ProductService {
         if (request.getBrand() != null) product.setBrand(request.getBrand());
         if (request.getIsForRent() != null) product.setForRent(request.getIsForRent());
         if (request.getIsForSale() != null) product.setForSale(request.getIsForSale());
-        if (request.getQuantity() != null) product.setQuantity(request.getQuantity());
 
         if (request.getSpecifications() != null) {
             product.getSpecifications().clear();

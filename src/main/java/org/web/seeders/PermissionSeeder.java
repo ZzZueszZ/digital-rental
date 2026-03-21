@@ -50,7 +50,12 @@ public class PermissionSeeder implements CommandLineRunner {
         // ================= PRODUCT =================
         create("PRODUCT_READ", "Can view all product details, inventory and history (Admin/Staff)");
         create("PRODUCT_WRITE", "Can manage all product details, gallery and prices (Admin only)");
+
+        // ================= INVENTORY =================
+        create("INVENTORY_READ", "Can view inventory audit logs (Admin/Staff)");
+        create("INVENTORY_WRITE", "Can adjust product stock (Admin only)");
     }
+
 
     private void create(String name, String desc) {
         permissionRepository.findByName(name).orElseGet(() -> {

@@ -24,6 +24,5 @@ public class ProductRequest {
     private String brand;
     private java.util.List<ProductSpecificationDto> specifications;
     
-    private Integer quantity;
     private Long categoryId;
 }

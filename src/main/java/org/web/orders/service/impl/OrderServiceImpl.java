@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.web.addresses.model.ShippingAddress;
+import org.web.addresses.repository.ShippingAddressRepository;
 import org.web.carts.model.CartItem;
 import org.web.carts.repository.CartItemRepository;
 import org.web.common.enums.OrderStatus;
@@ -48,6 +50,7 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
     private final VoucherService voucherService;
     private final AuditLogService auditLogService;
+    private final ShippingAddressRepository shippingAddressRepository;
 
     @Override
     @Transactional
@@ -90,6 +93,18 @@ public class OrderServiceImpl implements OrderService {
         String shippingName = request.getShippingName();
         String shippingPhone = request.getShippingPhone();
         String shippingAddress = request.getShippingAddress();
+
+        if (request.getShippingAddressId() != null) {
+            ShippingAddress savedAddress = shippingAddressRepository.findByIdAndUser(request.getShippingAddressId(), user)
+                    .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Địa chỉ nhận hàng không tồn tại"));
+            shippingName = savedAddress.getReceiverName();
+            shippingPhone = savedAddress.getReceiverPhone();
+            shippingAddress = savedAddress.getFullAddress();
+        }
+
+        if (!StringUtils.hasText(shippingName) || !StringUtils.hasText(shippingPhone) || !StringUtils.hasText(shippingAddress)) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Thiếu thông tin nhận hàng");
+        }
 
         BigDecimal discountAmount = BigDecimal.ZERO;
         String voucherCode = null;
@@ -213,6 +228,18 @@ public class OrderServiceImpl implements OrderService {
         String shippingName = request.getShippingName();
         String shippingPhone = request.getShippingPhone();
         String shippingAddress = request.getShippingAddress();
+
+        if (request.getShippingAddressId() != null) {
+            ShippingAddress savedAddress = shippingAddressRepository.findByIdAndUser(request.getShippingAddressId(), user)
+                    .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Địa chỉ nhận hàng không tồn tại"));
+            shippingName = savedAddress.getReceiverName();
+            shippingPhone = savedAddress.getReceiverPhone();
+            shippingAddress = savedAddress.getFullAddress();
+        }
+
+        if (!StringUtils.hasText(shippingName) || !StringUtils.hasText(shippingPhone) || !StringUtils.hasText(shippingAddress)) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Thiếu thông tin nhận hàng");
+        }
 
         BigDecimal discountAmount = BigDecimal.ZERO;
         String voucherCode = null;

@@ -18,14 +18,11 @@ public class CheckoutRequest {
     @Valid
     private List<CheckoutItemRequest> items;
 
-    @NotBlank(message = "Shipping name is required")
     private String shippingName;
-
-    @NotBlank(message = "Shipping phone is required")
     private String shippingPhone;
-
-    @NotBlank(message = "Shipping address is required")
     private String shippingAddress;
+
+    private Long shippingAddressId;
 
     @NotNull(message = "Payment method is required")
     private PaymentMethod paymentMethod;

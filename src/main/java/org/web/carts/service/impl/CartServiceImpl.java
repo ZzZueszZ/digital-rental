@@ -109,15 +109,21 @@ public class CartServiceImpl implements CartService {
                 .filter(item -> item.getUser().getId().equals(user.getId()))
                 .collect(Collectors.toList());
 
-        if (!userItems.isEmpty()) {
-            cartItemRepository.deleteAll(userItems);
+        if (userItems.isEmpty()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Không có sản phẩm nào hợp lệ để xóa");
         }
+        
+        cartItemRepository.deleteAll(userItems);
     }
 
     @Override
     @Transactional
     public void clearCart(User user) {
-        cartItemRepository.deleteByUser(user);
+        List<CartItem> items = cartItemRepository.findByUserOrderByCreatedAtDesc(user);
+        if (items.isEmpty()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Giỏ hàng hiện đang rỗng");
+        }
+        cartItemRepository.deleteAll(items);
     }
 
     private CartItemResponse mapToResponse(CartItem item) {

@@ -92,6 +92,10 @@ public class VoucherServiceImpl implements VoucherService {
         Voucher voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy voucher!"));
 
+        if (voucher.getStatus() == VoucherStatus.INACTIVE) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Mã giảm giá đã ở trạng thái vô hiệu hóa!");
+        }
+
         voucher.setStatus(VoucherStatus.INACTIVE);
         voucherRepository.save(voucher);
         
@@ -103,6 +107,10 @@ public class VoucherServiceImpl implements VoucherService {
     public void activate(Long id) {
         Voucher voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy voucher!"));
+
+        if (voucher.getStatus() == VoucherStatus.ACTIVE) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Mã giảm giá đã ở trạng thái kích hoạt!");
+        }
 
         LocalDateTime now = LocalDateTime.now();
         if (voucher.getEndDate() != null && now.isAfter(voucher.getEndDate())) {

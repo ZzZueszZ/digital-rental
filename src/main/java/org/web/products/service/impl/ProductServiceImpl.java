@@ -18,6 +18,8 @@ import org.web.common.exceptions.ApplicationException;
 import org.web.common.service.AuditLogService;
 import org.web.common.utils.FileUploadUtil;
 import org.web.products.dto.request.ProductCriteria;
+import org.web.products.dto.request.ProductInfoUpdateRequest;
+import org.web.products.dto.request.ProductPriceUpdateRequest;
 import org.web.products.dto.request.ProductRequest;
 import org.web.products.dto.response.GalleryImageResponse;
 import org.web.products.dto.response.PriceHistoryResponse;
@@ -184,30 +186,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductResponse update(Long id, ProductRequest request, MultipartFile image) {
+    public ProductResponse updateInfo(Long id, ProductInfoUpdateRequest request, MultipartFile image) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Product not found"));
 
-        String oldDetails = "{\"name\":\"" + product.getName() + "\",\"rent\":" + product.getRentPricePerDay() + "}";
-        User actor = getCurrentUser();
-
-        // Check Rent Price Change
-        if (request.getRentPricePerDay() != null && comparePrices(product.getRentPricePerDay(), request.getRentPricePerDay())) {
-            savePriceHistory(product, "RENT", product.getRentPricePerDay(), request.getRentPricePerDay(), actor);
-            product.setRentPricePerDay(request.getRentPricePerDay());
-        }
-
-        // Check Sale Price Change
-        if (request.getSalePrice() != null && comparePrices(product.getSalePrice(), request.getSalePrice())) {
-            savePriceHistory(product, "SALE", product.getSalePrice(), request.getSalePrice(), actor);
-            product.setSalePrice(request.getSalePrice());
-        }
+        String oldDetails = "{\"name\":\"" + product.getName() + "\"}";
 
         if (request.getName() != null) product.setName(request.getName());
         if (request.getDescription() != null) product.setDescription(request.getDescription());
         if (request.getBrand() != null) product.setBrand(request.getBrand());
-        if (request.getIsForRent() != null) product.setForRent(request.getIsForRent());
-        if (request.getIsForSale() != null) product.setForSale(request.getIsForSale());
 
         if (request.getSpecifications() != null) {
             product.getSpecifications().clear();
@@ -233,8 +220,40 @@ public class ProductServiceImpl implements ProductService {
 
         Product saved = productRepository.save(product);
 
-        auditLogService.logAction("PRODUCT", id, "UPDATE_PRODUCT",
-                "Updated product: " + id, oldDetails, "{\"name\":\"" + saved.getName() + "\"}");
+        auditLogService.logAction("PRODUCT", id, "UPDATE_PRODUCT_INFO",
+                "Updated product info: " + id, oldDetails, "{\"name\":\"" + saved.getName() + "\"}");
+
+        return ProductMapper.toResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public ProductResponse updatePrice(Long id, ProductPriceUpdateRequest request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Product not found"));
+
+        String oldDetails = "{\"rent\":" + product.getRentPricePerDay() + ",\"sale\":" + product.getSalePrice() + "}";
+        User actor = getCurrentUser();
+
+        // Check Rent Price Change
+        if (request.getRentPricePerDay() != null && comparePrices(product.getRentPricePerDay(), request.getRentPricePerDay())) {
+            savePriceHistory(product, "RENT", product.getRentPricePerDay(), request.getRentPricePerDay(), actor);
+            product.setRentPricePerDay(request.getRentPricePerDay());
+        }
+
+        // Check Sale Price Change
+        if (request.getSalePrice() != null && comparePrices(product.getSalePrice(), request.getSalePrice())) {
+            savePriceHistory(product, "SALE", product.getSalePrice(), request.getSalePrice(), actor);
+            product.setSalePrice(request.getSalePrice());
+        }
+
+        if (request.getIsForRent() != null) product.setForRent(request.getIsForRent());
+        if (request.getIsForSale() != null) product.setForSale(request.getIsForSale());
+
+        Product saved = productRepository.save(product);
+
+        auditLogService.logAction("PRODUCT", id, "UPDATE_PRODUCT_PRICE",
+                "Updated product pricing: " + id, oldDetails, "{\"rent\":" + saved.getRentPricePerDay() + ",\"sale\":" + saved.getSalePrice() + "}");
 
         return ProductMapper.toResponse(saved);
     }

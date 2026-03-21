@@ -61,16 +61,27 @@ public class ProductController {
                 .body(ApiResponse.successfulResponse(HttpStatus.CREATED.value(), "Tạo sản phẩm thành công", response));
     }
 
-    // ADMIN: Cập nhật sản phẩm
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // ADMIN: Cập nhật thông tin cơ bản sản phẩm
+    @PutMapping(value = "/{id}/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('PRODUCT_WRITE')")
-    public ResponseEntity<ApiResponse<ProductResponse>> update(
+    public ResponseEntity<ApiResponse<ProductResponse>> updateInfo(
             @PathVariable Long id,
-            @ModelAttribute @Valid ProductRequest request,
+            @ModelAttribute @Valid org.web.products.dto.request.ProductInfoUpdateRequest request,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
-        ProductResponse response = productService.update(id, request, image);
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Cập nhật sản phẩm thành công", response));
+        ProductResponse response = productService.updateInfo(id, request, image);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Cập nhật thông tin sản phẩm thành công", response));
+    }
+
+    // ADMIN: Cập nhật giá sản phẩm
+    @PutMapping(value = "/{id}/price", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('PRODUCT_WRITE')")
+    public ResponseEntity<ApiResponse<ProductResponse>> updatePrice(
+            @PathVariable Long id,
+            @ModelAttribute @Valid org.web.products.dto.request.ProductPriceUpdateRequest request
+    ) {
+        ProductResponse response = productService.updatePrice(id, request);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Cập nhật giá sản phẩm thành công", response));
     }
 
     // ADMIN: Xóa mềm

@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import org.web.products.dto.request.ProductCriteria;
+import org.web.products.dto.request.ProductInfoUpdateRequest;
+import org.web.products.dto.request.ProductPriceUpdateRequest;
 import org.web.products.dto.request.ProductRequest;
 import org.web.products.dto.response.GalleryImageResponse;
 import org.web.products.dto.response.PriceHistoryResponse;
@@ -19,7 +21,9 @@ public interface ProductService {
 
     ProductResponse create(ProductRequest request, MultipartFile image);
 
-    ProductResponse update(Long id, ProductRequest request, MultipartFile image);
+    ProductResponse updateInfo(Long id, ProductInfoUpdateRequest request, MultipartFile image);
+
+    ProductResponse updatePrice(Long id, ProductPriceUpdateRequest request);
 
     void softDelete(Long id);
 

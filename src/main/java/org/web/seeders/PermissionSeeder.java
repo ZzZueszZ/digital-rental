@@ -54,7 +54,12 @@ public class PermissionSeeder implements CommandLineRunner {
         // ================= INVENTORY =================
         create("INVENTORY_READ", "Can view inventory audit logs (Admin/Staff)");
         create("INVENTORY_WRITE", "Can adjust product stock (Admin only)");
+
+        // ================= CART =================
+        create("CART_READ", "Can view cart (Customer)");
+        create("CART_WRITE", "Can modify cart items (Customer)");
     }
+
 
 
     private void create(String name, String desc) {

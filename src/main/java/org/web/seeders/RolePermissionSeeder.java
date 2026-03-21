@@ -101,6 +101,10 @@ public class RolePermissionSeeder implements CommandLineRunner {
         addPerm(customer, "ADDRESS_READ");
         addPerm(customer, "ADDRESS_WRITE");
 
+        // Cart
+        addPerm(customer, "CART_READ");
+        addPerm(customer, "CART_WRITE");
+
         roleRepository.save(customer);
 
         System.out.println(">>> RolePermissionSeeder: permissions assigned.");

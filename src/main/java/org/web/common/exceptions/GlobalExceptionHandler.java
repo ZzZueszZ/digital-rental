@@ -152,6 +152,17 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(org.springframework.web.HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ApiResponse<String>> handleMediaTypeNotSupported(org.springframework.web.HttpMediaTypeNotSupportedException ex) {
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(
+                ApiResponse.failedResponse(
+                        HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),
+                        "Lỗi định dạng Media Type: Vui lòng chuyển Body format sang JSON thay vì Text trong Postman",
+                        ex.getMessage()
+                )
+        );
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<String>> handleUnexpected(Exception ex) {
         ex.printStackTrace();

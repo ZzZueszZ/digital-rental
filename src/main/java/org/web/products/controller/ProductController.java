@@ -53,7 +53,7 @@ public class ProductController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('PRODUCT_WRITE')")
     public ResponseEntity<ApiResponse<ProductResponse>> create(
-            @RequestPart("product") @Valid ProductRequest request,
+            @ModelAttribute @Valid ProductRequest request,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         ProductResponse response = productService.create(request, image);
@@ -66,7 +66,7 @@ public class ProductController {
     @PreAuthorize("hasAuthority('PRODUCT_WRITE')")
     public ResponseEntity<ApiResponse<ProductResponse>> update(
             @PathVariable Long id,
-            @RequestPart("product") @Valid ProductRequest request,
+            @ModelAttribute @Valid ProductRequest request,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         ProductResponse response = productService.update(id, request, image);

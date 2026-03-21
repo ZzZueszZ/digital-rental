@@ -148,12 +148,22 @@ public class ProductServiceImpl implements ProductService {
                 .isForRent(request.getIsForRent() != null ? request.getIsForRent() : true)
                 .isForSale(request.getIsForSale() != null ? request.getIsForSale() : false)
                 .brand(request.getBrand())
-                .specifications(request.getSpecifications())
                 .quantity(request.getQuantity() != null ? request.getQuantity() : 0)
                 .mainImageUrl(mainImageUrl)
                 .category(category)
                 .isActive(true)
                 .build();
+
+        if (request.getSpecifications() != null) {
+            java.util.List<org.web.products.model.ProductSpecification> specs = request.getSpecifications().stream()
+                    .map(dto -> org.web.products.model.ProductSpecification.builder()
+                            .product(product)
+                            .specKey(dto.getSpecKey())
+                            .specValue(dto.getSpecValue())
+                            .build())
+                    .collect(Collectors.toList());
+            product.setSpecifications(specs);
+        }
 
         Product saved = productRepository.save(product);
 
@@ -198,8 +208,19 @@ public class ProductServiceImpl implements ProductService {
         if (request.getBrand() != null) product.setBrand(request.getBrand());
         if (request.getIsForRent() != null) product.setForRent(request.getIsForRent());
         if (request.getIsForSale() != null) product.setForSale(request.getIsForSale());
-        if (request.getSpecifications() != null) product.setSpecifications(request.getSpecifications());
         if (request.getQuantity() != null) product.setQuantity(request.getQuantity());
+
+        if (request.getSpecifications() != null) {
+            product.getSpecifications().clear();
+            java.util.List<org.web.products.model.ProductSpecification> specs = request.getSpecifications().stream()
+                    .map(dto -> org.web.products.model.ProductSpecification.builder()
+                            .product(product)
+                            .specKey(dto.getSpecKey())
+                            .specValue(dto.getSpecValue())
+                            .build())
+                    .collect(Collectors.toList());
+            product.getSpecifications().addAll(specs);
+        }
 
         if (request.getCategoryId() != null) {
             Category cat = categoryRepository.findById(request.getCategoryId())

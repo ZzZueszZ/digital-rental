@@ -22,7 +22,7 @@ public class ProductRequest {
     private Boolean isForSale;
     
     private String brand;
-    private String specifications; // JSON string
+    private java.util.List<ProductSpecificationDto> specifications;
     
     private Integer quantity;
     private Long categoryId;

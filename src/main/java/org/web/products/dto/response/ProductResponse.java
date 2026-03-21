@@ -22,7 +22,7 @@ public class ProductResponse {
     
     private String mainImageUrl;
     private String brand;
-    private String specifications;
+    private List<ProductSpecificationResponse> specifications;
     
     private int quantity;
     private boolean isActive;

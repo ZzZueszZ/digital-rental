@@ -48,9 +48,6 @@ public class Product extends BaseAuditEntity {
 
     private String brand;
 
-    @Column(columnDefinition = "TEXT")
-    private String specifications; // JSON string for technical specs (Sensor, Focal length, Mount...)
-
     @Column(nullable = false)
     @Builder.Default
     private boolean isActive = true;
@@ -69,6 +66,10 @@ public class Product extends BaseAuditEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ProductImage> gallery = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ProductSpecification> specifications = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

@@ -61,6 +61,11 @@ public class RolePermissionSeeder implements CommandLineRunner {
         addPerm(admin, "INVENTORY_READ");
         addPerm(admin, "INVENTORY_WRITE");
 
+        // Vouchers
+        addPerm(admin, "VOUCHER_READ");
+        addPerm(admin, "VOUCHER_WRITE");
+        addPerm(admin, "VOUCHER_STATUS_MANAGE");
+
         roleRepository.save(admin);
 
         // ================= SUPER ADMIN =================
@@ -85,6 +90,10 @@ public class RolePermissionSeeder implements CommandLineRunner {
 
         // Inventory
         addPerm(staff, "INVENTORY_READ");
+
+        // Vouchers
+        addPerm(staff, "VOUCHER_READ");
+        addPerm(staff, "VOUCHER_STATUS_MANAGE");
 
         roleRepository.save(staff);
 

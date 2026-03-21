@@ -58,6 +58,11 @@ public class PermissionSeeder implements CommandLineRunner {
         // ================= CART =================
         create("CART_READ", "Can view cart (Customer)");
         create("CART_WRITE", "Can modify cart items (Customer)");
+
+        // ================= VOUCHER =================
+        create("VOUCHER_READ", "Can view vouchers (Admin/Staff)");
+        create("VOUCHER_WRITE", "Can create/update/deactivate vouchers (Admin only)");
+        create("VOUCHER_STATUS_MANAGE", "Can activate vouchers (Admin/Staff)");
     }
 
 

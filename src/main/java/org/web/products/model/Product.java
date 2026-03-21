@@ -59,6 +59,14 @@ public class Product extends BaseAuditEntity {
     @Builder.Default
     private int quantity = 0;
 
+    @Column(name = "rating_average", precision = 3, scale = 2)
+    @Builder.Default
+    private BigDecimal ratingAverage = BigDecimal.ZERO;
+
+    @Column(name = "review_count")
+    @Builder.Default
+    private int reviewCount = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;

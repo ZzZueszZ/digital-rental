@@ -69,6 +69,9 @@ public class RolePermissionSeeder implements CommandLineRunner {
         // Orders
         addPerm(admin, "ORDER_MANAGE");
 
+        // Reviews
+        addPerm(admin, "REVIEW_MANAGE");
+
         roleRepository.save(admin);
 
         // ================= SUPER ADMIN =================
@@ -100,6 +103,9 @@ public class RolePermissionSeeder implements CommandLineRunner {
 
         // Orders
         addPerm(staff, "ORDER_MANAGE");
+
+        // Reviews
+        addPerm(staff, "REVIEW_MANAGE");
 
         roleRepository.save(staff);
 

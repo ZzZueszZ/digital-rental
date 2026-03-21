@@ -46,6 +46,10 @@ public class PermissionSeeder implements CommandLineRunner {
         create("ADDRESS_READ_ALL", "Can view all users shipping addresses (Admin/Staff only)");
         create("ADDRESS_WRITE", "Can manage their own shipping addresses");
         create("ADDRESS_WRITE_ALL", "Can manage all users shipping addresses (Admin only)");
+
+        // ================= PRODUCT =================
+        create("PRODUCT_READ", "Can view all product details, inventory and history (Admin/Staff)");
+        create("PRODUCT_WRITE", "Can manage all product details, gallery and prices (Admin only)");
     }
 
     private void create(String name, String desc) {

@@ -19,7 +19,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Order(4)
 public class AdminUserSeeder implements CommandLineRunner {
-
+    
     private final UserRepository userRepository;
     private final AppRoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;

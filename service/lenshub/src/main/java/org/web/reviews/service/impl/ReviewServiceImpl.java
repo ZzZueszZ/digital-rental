@@ -1,0 +1,296 @@
+package org.web.reviews.service.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.web.common.enums.OrderStatus;
+import org.web.common.exceptions.ApplicationException;
+import org.web.common.utils.FileUploadUtil;
+import org.web.orders.model.Order;
+import org.web.orders.model.OrderItem;
+import org.web.orders.repository.OrderItemRepository;
+import org.web.orders.repository.OrderRepository;
+import org.web.products.model.Product;
+import org.web.products.repository.ProductRepository;
+import org.web.reviews.ReviewMapper;
+import org.web.reviews.dto.request.ReviewCreateRequest;
+import org.web.reviews.dto.request.ReviewUpdateRequest;
+import org.web.reviews.dto.response.ReviewListResponse;
+import org.web.reviews.dto.response.ReviewResponse;
+import org.web.reviews.model.Review;
+import org.web.reviews.model.ReviewImage;
+import org.web.reviews.repository.ReviewRepository;
+import org.web.reviews.service.ReviewService;
+import org.web.users.model.User;
+import org.web.users.repository.UserRepository;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.Objects;
+
+@Service
+@RequiredArgsConstructor
+public class ReviewServiceImpl implements ReviewService {
+
+    private final ReviewRepository reviewRepository;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final ReviewMapper reviewMapper;
+
+    @Override
+    @Transactional
+    public ReviewResponse create(Long userId, ReviewCreateRequest request, List<MultipartFile> images) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy sản phẩm"));
+
+        List<OrderItem> purchasedItems = orderItemRepository
+                .findByProductAndOrder_UserAndOrder_StatusOrderByOrder_CreatedAtDesc(product, user, OrderStatus.COMPLETED);
+
+        if (purchasedItems.isEmpty()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Bạn chỉ có thể đánh giá các sản phẩm từ đơn hàng đã HOÀN THÀNH");
+        }
+
+        Order order = null;
+        if (request.getOrderId() != null) {
+            order = orderRepository.findById(request.getOrderId())
+                    .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn hàng"));
+            if (!order.getUser().getId().equals(userId)) {
+                throw new ApplicationException(HttpStatus.FORBIDDEN, "Đơn hàng này không thuộc về bạn");
+            }
+            if (order.getStatus() != OrderStatus.COMPLETED) {
+                throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái HOÀN THÀNH mới có thể đánh giá");
+            }
+            boolean orderContainsProduct = purchasedItems.stream()
+                    .anyMatch(oi -> oi.getOrder().getId().equals(request.getOrderId()));
+            if (!orderContainsProduct) {
+                throw new ApplicationException(HttpStatus.BAD_REQUEST, "Không tìm thấy sản phẩm trong đơn hàng đã chỉ định");
+            }
+        } else {
+            order = purchasedItems.get(0).getOrder();
+        }
+
+        if (reviewRepository.existsByUserAndProductAndOrder(user, product, order)) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Bạn đã đánh giá sản phẩm này cho đơn hàng này rồi");
+        }
+
+        Review review = Review.builder()
+                .user(user)
+                .product(product)
+                .order(order)
+                .rating(request.getRating())
+                .content(request.getContent())
+                .hidden(false)
+                .build();
+
+        Review saved = reviewRepository.save(review);
+
+        if (images != null && !images.isEmpty()) {
+            for (MultipartFile file : images) {
+                String url = FileUploadUtil.saveImage(file);
+                if (url == null) continue;
+                ReviewImage img = ReviewImage.builder()
+                        .review(saved)
+                        .imageUrl(url)
+                        .build();
+                saved.getImages().add(img);
+            }
+        }
+
+        saved = reviewRepository.save(saved);
+        updateProductRating(product.getId());
+
+        return reviewMapper.toResponse(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ReviewListResponse listByProduct(Long productId, int page, int size) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy sản phẩm"));
+
+        Page<Review> reviews = reviewRepository.findByProductAndHiddenFalse(
+                product,
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+        );
+
+        Double avg = reviewRepository.findAverageRating(productId);
+        Long count = reviewRepository.countActiveReviews(productId);
+
+        return ReviewListResponse.builder()
+                .reviews(reviews.map(reviewMapper::toResponse))
+                .averageRating(BigDecimal.valueOf(avg == null ? 0.0 : avg).setScale(2, RoundingMode.HALF_UP))
+                .totalReviews(count != null ? count : 0L)
+                .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ReviewResponse> listMyReviewsByProduct(Long userId, Long productId, int page, int size) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy sản phẩm"));
+
+        Page<Review> reviews = reviewRepository.findByUserAndProductAndHiddenFalse(
+                user,
+                product,
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+        );
+
+        return reviews.map(reviewMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ReviewResponse> listAll(int page, int size) {
+        Page<Review> reviews = reviewRepository.findAll(
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+        );
+        return reviews.map(reviewMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ReviewResponse> listReported(int page, int size) {
+        Page<Review> reviews = reviewRepository.findReported(
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+        );
+        return reviews.map(reviewMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ReviewResponse> listHidden(int page, int size) {
+        Page<Review> reviews = reviewRepository.findByHiddenTrue(
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+        );
+        return reviews.map(reviewMapper::toResponse);
+    }
+
+    @Override
+    @Transactional
+    public void report(Long userId, Long reviewId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found"));
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đánh giá"));
+
+        if (review.getUser().getId().equals(userId)) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Bạn không thể báo cáo đánh giá của chính mình");
+        }
+
+        if (review.getReporters().contains(user)) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Bạn đã báo cáo đánh giá này rồi");
+        }
+
+        review.getReporters().add(user);
+        reviewRepository.save(review);
+    }
+
+    @Override
+    @Transactional
+    public void hide(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đánh giá"));
+        if (!review.getHidden()) {
+            review.setHidden(true);
+            reviewRepository.save(review);
+            updateProductRating(review.getProduct().getId());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void unhide(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đánh giá"));
+        if (review.getHidden()) {
+            review.setHidden(false);
+            reviewRepository.save(review);
+            updateProductRating(review.getProduct().getId());
+        }
+    }
+
+    @Override
+    @Transactional
+    public ReviewResponse update(Long userId, ReviewUpdateRequest request, List<MultipartFile> images, Long reviewId, boolean canManage) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đánh giá"));
+
+        if (!Objects.equals(review.getUser().getId(), userId) && !canManage) {
+            throw new ApplicationException(HttpStatus.FORBIDDEN, "Bạn không thể cập nhật đánh giá này");
+        }
+
+        if (request.getRating() != null) {
+            review.setRating(request.getRating());
+        }
+        if (request.getContent() != null) {
+            review.setContent(request.getContent());
+        }
+
+        if (images != null) {
+            if (review.getImages() != null) {
+                review.getImages().forEach(img -> FileUploadUtil.deleteImage(img.getImageUrl()));
+                review.getImages().clear();
+            }
+            for (MultipartFile file : images) {
+                String url = FileUploadUtil.saveImage(file);
+                if (url == null) continue;
+                ReviewImage img = ReviewImage.builder()
+                        .review(review)
+                        .imageUrl(url)
+                        .build();
+                review.getImages().add(img);
+            }
+        }
+
+        review = reviewRepository.save(review);
+        updateProductRating(review.getProduct().getId());
+        return reviewMapper.toResponse(review);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long userId, Long reviewId, boolean canManage) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Review not found"));
+
+        if (!Objects.equals(review.getUser().getId(), userId) && !canManage) {
+            throw new ApplicationException(HttpStatus.FORBIDDEN, "Bạn không thể xóa đánh giá này");
+        }
+
+        if (review.getImages() != null) {
+            review.getImages().forEach(img -> FileUploadUtil.deleteImage(img.getImageUrl()));
+        }
+        reviewRepository.delete(review);
+        updateProductRating(review.getProduct().getId());
+    }
+
+    private void updateProductRating(Long productId) {
+        Double avg = reviewRepository.findAverageRating(productId);
+        Long count = reviewRepository.countActiveReviews(productId);
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Product not found"));
+
+        BigDecimal average = BigDecimal.valueOf(avg == null ? 0.0 : avg)
+                .setScale(2, RoundingMode.HALF_UP);
+        product.setRatingAverage(average);
+        product.setReviewCount(count != null ? count.intValue() : 0);
+
+        productRepository.save(product);
+    }
+}

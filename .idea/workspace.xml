@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e1ff62f6-8049-4df7-8361-6ddac974626d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/addresses/controller/ShippingAddressController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/addresses/dto/request/ShippingAddressRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/addresses/dto/response/ShippingAddressResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/addresses/mapper/ShippingAddressMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/addresses/model/ShippingAddress.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/addresses/repository/ShippingAddressRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/addresses/service/ShippingAddressService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/addresses/service/impl/ShippingAddressServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/controller/AuthController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/controller/PermissionController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/controller/RoleController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/ActivateAccountRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/ChangeEmailRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/ChangePasswordRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/ForgotPasswordRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/IntrospectRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/LoginRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/PermissionRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/RefreshTokenRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/RegisterRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/ResendActivationRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/ResetPasswordRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/RoleAssignPermissionRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/request/RoleRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/response/IntrospectResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/response/LoginResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/response/PermissionResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/response/RefreshTokenResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/dto/response/RoleResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/mapper/PermissionMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/mapper/RoleMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/model/AccountActivationToken.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/model/AppRole.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/model/PasswordResetToken.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/model/Permission.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/model/RefreshToken.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/repository/AccountActivationTokenRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/repository/AppRoleRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/repository/AuthRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/repository/PasswordResetTokenRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/repository/PermissionRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/repository/RefreshTokenRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/service/ActivationTokenProvider.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/service/AuthService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/service/PermissionService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/service/RoleService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/service/impl/AuthServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/service/impl/PermissionServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/authentication/service/impl/RoleServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/carts/controller/CartController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/carts/dto/request/AddToCartRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/carts/dto/request/RemoveCartItemsRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/carts/dto/request/UpdateCartItemRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/carts/dto/response/CartItemResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/carts/model/CartItem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/carts/repository/CartItemRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/carts/service/CartService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/carts/service/impl/CartServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/categories/controller/CategoryController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/categories/dto/request/CategoryCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/categories/dto/request/CategoryUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/categories/dto/response/CategoryResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/categories/mapper/CategoryMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/categories/model/Category.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/categories/repository/CategoryRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/categories/service/CategoryService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/categories/service/impl/CategoryServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/controller/AuditLogController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/dto/ApiResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/dto/AuditLogResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/AccountStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/City.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/DecisionSource.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/DocumentType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/Gender.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/IdentityVerificationStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/KycStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/OrderStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/PaymentMethod.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/PaymentStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/ReviewAction.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/RiskLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/RoleName.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/SupportStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/SupportSubject.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/TrustLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/VerificationArtifactStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/VerificationArtifactType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/VerificationSessionStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/VerificationType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/VoucherScope.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/VoucherStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/enums/VoucherType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/exceptions/ApplicationException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/exceptions/GlobalExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/mails/MailService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/model/AuditLog.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/model/BaseAuditEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/repository/AuditLogRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/service/AuditLogService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/service/impl/AuditLogServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/common/utils/FileUploadUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/configs/MapperConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/configs/OpenApiConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/configs/SchedulerConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/configs/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/configs/StartupInitializer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/configs/WebConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/model/FaceVerificationResult.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/model/RiskAssessment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/model/UserIdentity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/model/VerificationArtifact.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/model/VerificationResult.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/model/VerificationReview.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/model/VerificationSession.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/repository/FaceVerificationResultRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/repository/RiskAssessmentRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/repository/UserIdentityRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/repository/VerificationArtifactRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/repository/VerificationResultRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/identity/repository/VerificationSessionRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/inventory/controller/InventoryController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/inventory/dto/request/AdjustStockRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/inventory/dto/response/InventoryAuditResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/inventory/model/InventoryAuditLog.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/inventory/repository/InventoryAuditLogRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/inventory/service/InventoryService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/inventory/service/impl/InventoryServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/controller/OrderController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/dto/request/CheckoutFromCartRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/dto/request/CheckoutItemRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/dto/request/CheckoutRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/dto/request/UpdateOrderStatusRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/dto/response/OrderItemResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/dto/response/OrderResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/mapper/OrderMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/model/Order.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/model/OrderItem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/repository/OrderItemRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/repository/OrderRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/service/OrderService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/orders/service/impl/OrderServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/payments/controller/PaymentTransactionLogController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/payments/dto/PaymentLogResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/payments/model/PaymentTransactionLog.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/payments/repository/PaymentTransactionLogRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/payments/vnpay/VnPayConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/payments/vnpay/VnPayPaymentController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/payments/vnpay/VnPayService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/payments/vnpay/VnPayUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/payments/vnpay/dto/VnPayReturnResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/controller/ProductController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/dto/request/ProductCriteria.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/dto/request/ProductInfoUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/dto/request/ProductPriceUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/dto/request/ProductRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/dto/request/ProductSpecificationDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/dto/response/GalleryImageResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/dto/response/PriceHistoryResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/dto/response/ProductResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/dto/response/ProductSpecificationResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/mapper/ProductMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/model/Product.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/model/ProductImage.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/model/ProductPriceHistory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/model/ProductSpecification.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/repository/ProductImageRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/repository/ProductPriceHistoryRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/repository/ProductRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/service/ProductService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/products/service/impl/ProductServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/reviews/ReviewMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/reviews/controller/ReviewController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/reviews/dto/request/ReviewCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/reviews/dto/request/ReviewUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/reviews/dto/response/ReviewListResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/reviews/dto/response/ReviewResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/reviews/model/Review.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/reviews/model/ReviewImage.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/reviews/repository/ReviewRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/reviews/service/ReviewService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/reviews/service/impl/ReviewServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/security/CustomAccessDeniedHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/security/CustomAuthenticationEntryPoint.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/security/JwtAuthenticationFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/security/JwtUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/security/TokenBlacklistService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/seeders/AdminUserSeeder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/seeders/PermissionSeeder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/seeders/RolePermissionSeeder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/seeders/RoleSeeder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/support/controller/SupportTicketController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/support/dto/request/SupportTicketReplyRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/support/dto/request/SupportTicketRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/support/dto/response/SupportTicketResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/support/model/SupportTicket.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/support/repository/SupportTicketRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/support/service/SupportTicketService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/support/service/impl/SupportTicketServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/controller/UserController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/controller/UserProfileController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/dto/UserResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/dto/criteria/UserCriteria.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/dto/request/UserCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/dto/request/UserProfileUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/dto/request/UserStatusUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/dto/request/UserUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/dto/response/UserProfileResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/mapper/UserMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/model/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/model/UserProfile.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/repository/UserProfileRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/repository/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/service/UserProfileService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/service/UserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/service/impl/UserProfileServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/users/service/impl/UserServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/vouchers/controller/VoucherController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/vouchers/dto/request/VoucherApplyRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/vouchers/dto/request/VoucherCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/vouchers/dto/request/VoucherUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/vouchers/dto/response/VoucherApplyResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/vouchers/dto/response/VoucherResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/vouchers/mapper/VoucherMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/vouchers/model/Voucher.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/vouchers/repository/VoucherRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/vouchers/service/VoucherService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/web/vouchers/service/impl/VoucherServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "git-widget-placeholder": "lenshub",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/zyna/Nga/KLTN/digital-rental/service/lenshub",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.32098.37" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.32098.37" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e1ff62f6-8049-4df7-8361-6ddac974626d" name="Changes" comment="" />
+      <created>1774111335766</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1774111335766</updated>
+      <workItem from="1774111337641" duration="74000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

@@ -1,0 +1,179 @@
+package org.web.common.exceptions;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.web.common.dto.ApiResponse;
+
+import java.util.*;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    // Lỗi validate đầu vào (@Valid)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationException(MethodArgumentNotValidException ex) {
+
+        Map<String, String> fieldErrors = new LinkedHashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = error instanceof FieldError fe ? fe.getField() : error.getObjectName();
+            String message = error.getDefaultMessage() != null
+                    ? error.getDefaultMessage()
+                    : "Invalid value";
+            fieldErrors.put(fieldName, message);
+        });
+
+        ApiResponse<Map<String, String>> body = ApiResponse.failedResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation failed",
+                fieldErrors
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    @ExceptionHandler(ApplicationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleApplicationException(ApplicationException ex) {
+
+        Object payload = null;
+
+        // Ưu tiên errors nếu có
+        if (ex.getErrors() != null && !ex.getErrors().isEmpty()) {
+            payload = Map.of("errors", ex.getErrors());
+        }
+        // Nếu không có errors mà có data tuỳ biến -> dùng data
+        else if (ex.getData() != null) {
+            payload = ex.getData();
+        }
+
+        ApiResponse<Object> body = ApiResponse.failedResponse(
+                ex.getHttpStatus().value(),
+                ex.getMessage(),
+                payload
+        );
+
+        return ResponseEntity.status(ex.getHttpStatus()).body(body);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, WebRequest request) {
+
+        Map<String, String> errors = new HashMap<>();
+
+        if (ex.getCause() instanceof InvalidFormatException ife) {
+            String fieldName = ife.getPath().stream()
+                    .map(JsonMappingException.Reference::getFieldName)
+                    .filter(name -> name != null)
+                    .findFirst()
+                    .orElse("unknown");
+            String errorMessage = String.format(
+                    "Invalid format for '%s'. Expected data type: %s",
+                    fieldName, ife.getTargetType().getSimpleName()
+            );
+            errors.put(fieldName, errorMessage);
+        } else {
+            errors.put("general", "Invalid JSON input data. Please check format and data type");
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                ApiResponse.failedResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Invalid JSON input data",
+                        errors
+                )
+        );
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<String>> handleNoResource(NoResourceFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                ApiResponse.failedResponse(
+                        HttpStatus.NOT_FOUND.value(),
+                        "Resource not found",
+                        ex.getMessage()
+                )
+        );
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<String>> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(
+                ApiResponse.failedResponse(
+                        HttpStatus.METHOD_NOT_ALLOWED.value(),
+                        "Method not supported",
+                        ex.getMessage()
+                )
+        );
+    }
+
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<String>> handleTypeMismatch(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException ex) {
+        String name = ex.getName();
+        String type = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown";
+        Object value = ex.getValue();
+        String message = String.format("Parameter '%s' must be of type '%s'", name, type);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                ApiResponse.failedResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Invalid parameter type",
+                        message
+                )
+        );
+    }
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<String>> handleDataIntegrityViolation(org.springframework.dao.DataIntegrityViolationException ex) {
+        String message = ex.getMostSpecificCause().getMessage();
+        String errorMessage = "Data integrity violation";
+        
+        if (message != null) {
+            if (message.contains("uk_users_phone") || message.contains("phone") || message.contains("uk_phone")) {
+                errorMessage = "Phone number already exists";
+            } else if (message.contains("uk_users_email") || message.contains("email") || message.contains("uk_email")) {
+                errorMessage = "Email already exists";
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                ApiResponse.failedResponse(
+                        HttpStatus.CONFLICT.value(),
+                        "Data conflict",
+                        errorMessage
+                )
+        );
+    }
+
+    @ExceptionHandler(org.springframework.web.HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ApiResponse<String>> handleMediaTypeNotSupported(org.springframework.web.HttpMediaTypeNotSupportedException ex) {
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(
+                ApiResponse.failedResponse(
+                        HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),
+                        "Lỗi định dạng Media Type: Vui lòng chuyển Body format sang JSON thay vì Text trong Postman",
+                        ex.getMessage()
+                )
+        );
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<String>> handleUnexpected(Exception ex) {
+        ex.printStackTrace();
+
+        ApiResponse<String> body = ApiResponse.failedResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Internal server error",
+                ex.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+    }
+}
+

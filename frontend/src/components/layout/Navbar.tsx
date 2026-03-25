@@ -17,11 +17,16 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4 md:px-8 max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
-          <Link href="/" className="flex items-center gap-2 font-bold text-2xl tracking-tight">
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-bold text-2xl tracking-tight"
+          >
             <div className="bg-primary p-1.5 rounded-lg">
               <Camera className="h-6 w-6 text-primary-foreground" />
             </div>
-            <span>Lens<span className="text-muted-foreground font-normal">Hub</span></span>
+            <span>
+              Lens<span className="text-muted-foreground font-normal">Hub</span>
+            </span>
           </Link>
 
           <div className="hidden md:ml-10 md:flex">
@@ -39,28 +44,44 @@ export function Navbar() {
                               Professional Gear
                             </div>
                             <p className="text-sm leading-tight text-muted-foreground">
-                              Rent the latest mirrorless cameras, lenses, and lighting equipment.
+                              Rent the latest mirrorless cameras, lenses, and
+                              lighting equipment.
                             </p>
                           </div>
                         </NavigationMenuLink>
                       </div>
-                      <Link href="/rent/cameras" className="block p-2 hover:bg-accent rounded-md">Cameras</Link>
-                      <Link href="/rent/lenses" className="block p-2 hover:bg-accent rounded-md">Lenses</Link>
-                      <Link href="/rent/lighting" className="block p-2 hover:bg-accent rounded-md">Lighting</Link>
+                      <Link
+                        href="/rent/cameras"
+                        className="block p-2 hover:bg-accent rounded-md"
+                      >
+                        Cameras
+                      </Link>
+                      <Link
+                        href="/rent/lenses"
+                        className="block p-2 hover:bg-accent rounded-md"
+                      >
+                        Lenses
+                      </Link>
+                      <Link
+                        href="/rent/lighting"
+                        className="block p-2 hover:bg-accent rounded-md"
+                      >
+                        Lighting
+                      </Link>
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuLink 
-                    href="/shop" 
+                  <NavigationMenuLink
+                    href="/shop"
                     className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
                   >
                     Shop New
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuLink 
-                    href="/about" 
+                  <NavigationMenuLink
+                    href="/about"
                     className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
                   >
                     About
@@ -87,9 +108,7 @@ export function Navbar() {
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu className="h-5 w-5" />
           </Button>
-          <Button className="hidden md:flex ml-2">
-            Rent Goods
-          </Button>
+          <Button className="hidden md:flex ml-2">Rent Goods</Button>
         </div>
       </div>
     </nav>

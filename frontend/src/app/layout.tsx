@@ -16,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "LensHub | Photography Equipment Sales & Rentals",
-  description: "Your one-stop shop for photography equipment sales and rentals.",
+  description:
+    "Your one-stop shop for photography equipment sales and rentals.",
 };
 
 export default function RootLayout({

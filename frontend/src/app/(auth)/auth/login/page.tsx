@@ -1,25 +1,37 @@
-import { LoginForm } from '@/components/auth/LoginForm';
-import Image from 'next/image';
+'use client'
+
+import { LoginForm } from '@/components/auth/LoginForm'
+import { LoginHero } from '@/components/auth/AuthHero'
+import Link from 'next/link'
+import Routers from '@/constants/routers'
+import { ChevronLeft, Share2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default function LoginPage() {
   return (
-    <main className='min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-[#0c0c0c]'>
-      {/* Left: Industrial Photography Hero */}
-      <div className='hidden lg:block relative overflow-hidden'>
-        <Image
-          src='/modern_photography_hero.png'
-          alt='Studio Visuals Lens'
-          fill
-          className='object-cover grayscale brightness-75'
-          priority
-        />
-        <div className='absolute inset-0 bg-gradient-to-r from-black/20 to-[#0c0c0c]' />
+    <div className='min-h-screen bg-white flex flex-col'>
+      {/* Top Navigation */}
+      <div className='p-6 flex justify-between items-center'>
+        <Link href={Routers.HOME}>
+          <Button
+            variant='outline'
+            size='icon'
+            className='rounded-full h-12 w-12 border-slate-200 hover:bg-slate-50'
+          >
+            <ChevronLeft className='h-6 w-6 text-slate-900' />
+          </Button>
+        </Link>
+        <Button variant='ghost' size='icon' className='rounded-full h-12 w-12'>
+          <Share2 className='h-6 w-6 text-slate-900' />
+        </Button>
       </div>
 
-      {/* Right: Authentication Form */}
-      <div className='flex items-center justify-center p-8 md:p-16'>
-        <LoginForm />
-      </div>
-    </main>
-  );
+      <main className='flex-1 flex items-center px-4 pb-12'>
+        <div className='max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center'>
+          <LoginHero />
+          <LoginForm />
+        </div>
+      </main>
+    </div>
+  )
 }

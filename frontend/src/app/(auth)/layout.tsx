@@ -9,7 +9,7 @@ export default function AuthLayout({
 }>) {
   return (
     <GuestGuard>
-      <div className='min-h-screen bg-zinc-950'>{children}</div>
+      <div className='min-h-screen bg-white'>{children}</div>
     </GuestGuard>
   )
 }

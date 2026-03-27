@@ -4,25 +4,22 @@ export const registerSchema = z
   .object({
     fullName: z
       .string()
-      .min(1, 'Full name is required')
-      .max(100, 'Full name must be less than 100 characters'),
+      .min(1, 'Vui lòng nhập họ và tên')
+      .max(100, 'Họ tên không được quá 100 ký tự'),
     email: z
       .string()
-      .min(1, 'Email is required')
-      .email('Invalid email format')
-      .max(100, 'Email must be less than 100 characters'),
+      .min(1, 'Vui lòng nhập email')
+      .email('Email không hợp lệ')
+      .max(100, 'Email không được quá 100 ký tự'),
     password: z
       .string()
-      .min(1, 'Password is required')
-      .min(6, 'Password must be at least 6 characters')
-      .max(100, 'Password must be less than 100 characters'),
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
-    agreeToTOS: z.literal(true, {
-      errorMap: () => ({ message: 'You must agree to the Terms of Service' }),
-    }),
+      .min(1, 'Vui lòng nhập mật khẩu')
+      .min(6, 'Mật khẩu tối thiểu 6 ký tự')
+      .max(100, 'Mật khẩu không được quá 100 ký tự'),
+    confirmPassword: z.string().min(1, 'Vui lòng xác nhận mật khẩu'),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: 'Mật khẩu không khớp',
     path: ['confirmPassword'],
   });
 

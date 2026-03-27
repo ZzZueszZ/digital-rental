@@ -27,9 +27,9 @@ export function Navbar() {
             <div className="w-10 h-10 bg-[#ff8c5a] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-500">
               <Camera className="h-5 w-5 text-black" />
             </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-black tracking-tighter text-white uppercase font-heading leading-none">Studio</span>
-              <span className="text-lg font-black tracking-tighter text-[#ff8c5a] uppercase font-heading leading-none">Visuals</span>
+            <div className="flex flex-col select-none">
+              <span className="text-xl font-black tracking-tighter text-white uppercase font-heading leading-none">Studio</span>
+              <span className="text-xl font-black tracking-tighter text-[#ff8c5a] uppercase font-heading leading-none">Visuals</span>
             </div>
           </Link>
 
@@ -38,7 +38,7 @@ export function Navbar() {
             <NavigationMenu>
               <NavigationMenuList className="gap-1">
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent text-zinc-500 hover:text-white font-bold text-xs uppercase tracking-widest transition-colors data-[state=open]:text-white">
+                  <NavigationMenuTrigger className="bg-transparent text-zinc-500 hover:text-white font-bold text-sm uppercase tracking-widest transition-colors data-[state=open]:text-white">
                     Thiết Bị
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>

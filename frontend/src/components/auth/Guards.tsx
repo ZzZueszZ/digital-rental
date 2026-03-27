@@ -109,10 +109,10 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className='min-h-screen bg-zinc-950 grid place-items-center'>
-        <div className='flex flex-col items-center gap-4 text-zinc-400'>
-          <div className='w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin' />
-          <span className='text-sm font-medium tracking-wide'>Authenticating session...</span>
+      <div className='min-h-screen bg-white grid place-items-center'>
+        <div className='flex flex-col items-center gap-4 text-slate-400'>
+          <div className='w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin' />
+          <span className='text-sm font-medium tracking-wide'>Đang xác thực...</span>
         </div>
       </div>
     );
@@ -135,10 +135,10 @@ export function GuestGuard({ children }: { children: React.ReactNode }) {
 
   if (isLoading || isAuthenticated) {
     return (
-      <div className='min-h-screen bg-zinc-950 grid place-items-center'>
-        <div className='flex flex-col items-center gap-4 text-zinc-400'>
-          <div className='w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin' />
-          <span className='text-sm font-medium tracking-wide'>Checking status...</span>
+      <div className='min-h-screen bg-white grid place-items-center'>
+        <div className='flex flex-col items-center gap-4 text-slate-400'>
+          <div className='w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin' />
+          <span className='text-sm font-medium tracking-wide'>Đang kiểm tra...</span>
         </div>
       </div>
     );
@@ -169,8 +169,8 @@ export function RoleGuard({ children, allowedRoles }: { children: React.ReactNod
 
   if (isLoading || !isAuthenticated || !user || !user.roles.some((role: Role) => allowedRoles.includes(role))) {
     return (
-      <div className='min-h-screen bg-zinc-950 grid place-items-center'>
-        <div className='w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin' />
+      <div className='min-h-screen bg-white grid place-items-center'>
+        <div className='w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin' />
       </div>
     );
   }

@@ -7,13 +7,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { registerSchema, type RegisterRequest } from '@/schemas/auth/register';
 import { authService } from '@/services/auth';
 import Routers from '@/constants/routers';
-import { cn } from '@/lib/utils';
 
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,138 +25,151 @@ export function RegisterForm() {
     formState: { errors, isSubmitting },
   } = useForm<RegisterRequest>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { 
-      fullName: '', 
-      email: '', 
-      password: '', 
+    defaultValues: {
+      fullName: '',
+      email: '',
+      password: '',
       confirmPassword: '',
-      agreeToTOS: true
     },
   });
 
   const onSubmit = async (values: RegisterRequest) => {
     try {
-      const res = await authService.register(values);
-      if (res.data.success) {
-        toast.success('Đăng ký thành công. Vui lòng kiểm tra email kích hoạt.');
-        router.push(Routers.VERIFY);
-      }
+      const payload = {
+        fullName: values.fullName,
+        email: values.email,
+        password: values.password,
+      };
+
+      const res = await authService.register(payload);
+      toast.success(res.data.message || 'Đăng ký thành công, vui lòng kiểm tra email');
+      router.push(Routers.VERIFY);
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
-      toast.error(err?.response?.data?.message || 'Đăng ký không thành công');
+      const message = err?.response?.data?.message || 'Đăng ký thất bại, vui lòng thử lại';
+      toast.error(message);
     }
   };
 
   return (
-    <div className='w-full max-w-md space-y-12 animate-in fade-in slide-in-from-right-8 duration-700'>
-      {/* Branding */}
-      <div className='space-y-3'>
-        <h2 className='text-3xl font-black text-[#ff8c5a] tracking-tight font-heading'>Studio Visuals</h2>
-        <h3 className='text-2xl font-bold text-white font-heading'>Tạo tài khoản mới</h3>
+    <div className='w-full max-w-md mx-auto lg:mx-0'>
+      {/* Header for Mobile only */}
+      <div className='lg:hidden space-y-4 mb-8 text-center'>
+        <h1 className='text-4xl font-bold tracking-tight text-slate-900'>Tạo tài khoản</h1>
+        <p className='text-lg text-slate-500'>Bắt đầu hành trình của bạn</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
-        {/* Full Name */}
-        <div className='space-y-3'>
-          <label className='text-[10px] font-black text-zinc-400 uppercase tracking-widest px-1'>Họ và Tên</label>
+      <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
+        <div className='space-y-2'>
+          <label className='text-base font-bold text-slate-900'>Họ và Tên</label>
           <Input
-            placeholder='Họ và tên của bạn'
+            placeholder='Nhập họ và tên'
             {...register('fullName')}
-            className={cn(
-              'h-14 bg-[#1a1a1a] border-[#2a2a2a] rounded-xl px-5 text-white placeholder:text-zinc-700 transition-all focus:ring-1 focus:ring-[#ff8c5a]/50 focus:border-[#ff8c5a]/50',
-              errors.fullName && 'border-red-500/50'
-            )}
+            className='h-14 bg-slate-100/80 border-transparent rounded-xl focus-visible:bg-white focus-visible:ring-1 focus-visible:ring-slate-200 text-base px-5'
           />
-          {errors.fullName && <p className='text-[10px] font-bold text-red-500 uppercase px-1'>{errors.fullName.message}</p>}
+          {errors.fullName && (
+            <p className='text-sm text-red-500 font-medium'>{errors.fullName.message}</p>
+          )}
         </div>
 
-        {/* Email */}
-        <div className='space-y-3'>
-          <label className='text-[10px] font-black text-zinc-400 uppercase tracking-widest px-1'>Địa chỉ Email</label>
+        <div className='space-y-2'>
+          <label className='text-base font-bold text-slate-900'>Email</label>
           <Input
-            placeholder='alex@studiovisuals.com'
+            placeholder='Nhập địa chỉ email của bạn'
+            type='email'
             {...register('email')}
-            className={cn(
-              'h-14 bg-[#1a1a1a] border-[#2a2a2a] rounded-xl px-5 text-white placeholder:text-zinc-700 transition-all focus:ring-1 focus:ring-[#ff8c5a]/50 focus:border-[#ff8c5a]/50',
-              errors.email && 'border-red-500/50'
-            )}
+            className='h-14 bg-slate-100/80 border-transparent rounded-xl focus-visible:bg-white focus-visible:ring-1 focus-visible:ring-slate-200 text-base px-5'
           />
-          {errors.email && <p className='text-[10px] font-bold text-red-500 uppercase px-1'>{errors.email.message}</p>}
+          {errors.email && (
+            <p className='text-sm text-red-500 font-medium'>{errors.email.message}</p>
+          )}
         </div>
 
-        {/* Password */}
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-          <div className='space-y-3'>
-            <label className='text-[10px] font-black text-zinc-400 uppercase tracking-widest px-1'>Mật mã</label>
-            <div className='relative group'>
-              <Input
-                type={showPassword ? 'text' : 'password'}
-                placeholder='••••••••'
-                {...register('password')}
-                className={cn(
-                  'h-14 bg-[#1a1a1a] border-[#2a2a2a] rounded-xl px-5 pr-14 text-white transition-all focus:ring-1 focus:ring-[#ff8c5a]/50 focus:border-[#ff8c5a]/50',
-                  errors.password && 'border-red-500/50'
-                )}
-              />
-              <button
-                type='button'
-                onClick={() => setShowPassword(!showPassword)}
-                className='absolute right-5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors'
-              >
-                {showPassword ? <EyeOff className='w-4 h-4' /> : <Eye className='w-4 h-4' />}
-              </button>
-            </div>
-          </div>
-
-          <div className='space-y-3'>
-            <label className='text-[10px] font-black text-zinc-400 uppercase tracking-widest px-1'>Xác nhận</label>
+        <div className='space-y-2'>
+          <label className='text-base font-bold text-slate-900'>Mật khẩu</label>
+          <div className='relative'>
             <Input
-              type='password'
-              placeholder='••••••••'
-              {...register('confirmPassword')}
-              className={cn(
-                'h-14 bg-[#1a1a1a] border-[#2a2a2a] rounded-xl px-5 text-white transition-all focus:ring-1 focus:ring-[#ff8c5a]/50 focus:border-[#ff8c5a]/50',
-                errors.confirmPassword && 'border-red-500/50'
-              )}
+              placeholder='Nhập mật khẩu'
+              type={showPassword ? 'text' : 'password'}
+              {...register('password')}
+              className='h-14 bg-slate-100/80 border-transparent rounded-xl focus-visible:bg-white focus-visible:ring-1 focus-visible:ring-slate-200 text-base px-5 pr-12'
             />
+            <button
+              type='button'
+              onClick={() => setShowPassword(!showPassword)}
+              className='absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-900 transition'
+            >
+              {showPassword ? <EyeOff className='size-5' /> : <Eye className='size-5' />}
+            </button>
           </div>
+          {errors.password && (
+            <p className='text-sm text-red-500 font-medium'>{errors.password.message}</p>
+          )}
         </div>
 
-        {/* TOS Checkbox */}
-        <div className='flex items-center gap-3 p-4 bg-[#1a1a1a] border border-white/5 rounded-2xl'>
-          <input 
-            type="checkbox" 
-            {...register('agreeToTOS')}
-            id="agreeToTOS"
-            className="w-4 h-4 rounded border-[#2a2a2a] bg-[#0c0c0c] text-[#ff8c5a] focus:ring-[#ff8c5a]/50"
+        <div className='space-y-2'>
+          <label className='text-base font-bold text-slate-900'>Xác nhận mật khẩu</label>
+          <Input
+            placeholder='Nhập lại mật khẩu'
+            type='password'
+            {...register('confirmPassword')}
+            className='h-14 bg-slate-100/80 border-transparent rounded-xl focus-visible:bg-white focus-visible:ring-1 focus-visible:ring-slate-200 text-base px-5'
           />
-          <label htmlFor="agreeToTOS" className='text-[10px] text-zinc-400 font-bold uppercase tracking-widest leading-relaxed'>
-            Tôi đồng ý với các <Link href="/tos" className='text-[#ff8c5a] hover:underline'>Điều khoản Studio</Link>.
-          </label>
+          {errors.confirmPassword && (
+            <p className='text-sm text-red-500 font-medium'>{errors.confirmPassword.message}</p>
+          )}
         </div>
 
-        {/* Submit */}
         <Button
+          className='w-full h-14 text-lg font-bold bg-slate-900 hover:bg-black text-white rounded-xl shadow-lg transition-all active:scale-[0.98]'
           type='submit'
           disabled={isSubmitting}
-          className='w-full h-16 bg-linear-to-r from-[#ffae8f] to-[#f97316] text-zinc-950 hover:brightness-110 font-black text-sm uppercase tracking-[0.2em] rounded-full shadow-2xl active:scale-[0.98] transition-all disabled:opacity-50'
         >
-          {isSubmitting ? 'ĐANG KHỞI TẠO...' : 'ĐĂNG KÝ NGAY'}
+          {isSubmitting ? 'Đang tạo tài khoản...' : 'Đăng ký'}
         </Button>
       </form>
 
-      {/* Footer */}
-      <div className='pt-8 text-center'>
-        <p className='text-zinc-500 text-[10px] font-black uppercase tracking-widest'>
-          Đã có tài khoản?{' '}
-          <Link
-            href={Routers.LOGIN}
-            className='text-white hover:text-[#ff8c5a] transition-all ml-1'
-          >
-            Đăng nhập
-          </Link>
-        </p>
+      {/* Divider */}
+      <div className='relative my-10 text-center'>
+        <div className='absolute inset-0 flex items-center'>
+          <div className='w-full border-t border-slate-200'></div>
+        </div>
+        <span className='relative bg-white px-4 text-sm font-medium text-slate-400 uppercase tracking-widest'>
+          Hoặc
+        </span>
       </div>
+
+      {/* Social Login */}
+      <div className='space-y-4'>
+        <Button
+          variant='outline'
+          className='w-full h-14 justify-center gap-3 rounded-xl border-slate-200 text-slate-900 font-bold hover:bg-slate-50 transition-all'
+        >
+          <Image
+            src='https://www.svgrepo.com/show/475656/google-color.svg'
+            width={20}
+            height={20}
+            alt='Google'
+          />
+          Đăng ký với Google
+        </Button>
+        <Button className='w-full h-14 justify-center gap-3 rounded-xl bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold transition-all shadow-md'>
+          <svg className='w-5 h-5 fill-current' viewBox='0 0 24 24'>
+            <path d='M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z' />
+          </svg>
+          Đăng ký với Facebook
+        </Button>
+      </div>
+
+      <p className='mt-10 text-center text-base font-medium text-slate-500'>
+        Đã có tài khoản?{' '}
+        <Link
+          href={Routers.LOGIN}
+          className='text-slate-900 border-b-2 border-slate-900 font-bold hover:text-black hover:border-black transition-all pb-0.5 ml-1'
+        >
+          Đăng nhập ngay
+        </Link>
+      </p>
     </div>
   );
 }

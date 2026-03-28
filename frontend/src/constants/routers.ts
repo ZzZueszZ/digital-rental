@@ -9,7 +9,6 @@ export const Routers = {
   RESET_PASSWORD: '/auth/reset-password',
   ADMIN: '/admin',
   STAFF: '/staff',
-  SHIPPER: '/shipper',
   FORBIDDEN: '/403',
 } as const;
 

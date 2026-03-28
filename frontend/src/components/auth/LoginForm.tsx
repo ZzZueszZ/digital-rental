@@ -61,7 +61,13 @@ export function LoginForm() {
     setPendingEmail(null);
     try {
       const { data: res } = await authService.login(values);
-      const { accessToken, refreshToken, user } = res.data;
+      const payload = res.data;
+      if (!payload) {
+        toast.error('Phản hồi từ server không hợp lệ');
+        return;
+      }
+
+      const { accessToken, refreshToken, user } = payload;
 
       await persistRefreshTokenCookie(refreshToken);
       setAccessToken(accessToken);
@@ -76,12 +82,10 @@ export function LoginForm() {
       }
 
       const roles = user.roles ?? [];
-      if (roles.includes(Role.ADMIN)) {
+      if (roles.includes(Role.SUPER_ADMIN) || roles.includes(Role.ADMIN)) {
         window.location.href = Routers.ADMIN;
       } else if (roles.includes(Role.STAFF)) {
         window.location.href = Routers.STAFF;
-      } else if (roles.includes(Role.SHIPPER)) {
-        window.location.href = Routers.SHIPPER;
       } else {
         window.location.href = Routers.HOME;
       }

@@ -11,10 +11,11 @@ import { removeRefreshTokenCookie } from '@/lib/refresh-token-client';
 import { authService } from '@/services/auth';
 import { useAuthStore } from '@/store/auth';
 import { Role } from '@/constants/enum/role';
+import type { UserResponse } from '@/types/user';
 
-const fetchMe = async () => {
+const fetchMe = async (): Promise<UserResponse> => {
   const res = await authService.me();
-  return res.data.data;
+  return res.data.data as UserResponse;
 };
 
 export function useAuthSession(options?: { redirectToLogin?: boolean }) {

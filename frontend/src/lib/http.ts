@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { getAccessToken, setAccessToken, useAuthStore } from '@/store/auth';
 import { getRefreshTokenFromCookie, removeRefreshTokenCookie, persistRefreshTokenCookie } from './refresh-token-client';
 import Routers from '@/constants/routers';
@@ -29,7 +29,7 @@ http.interceptors.request.use(
 http.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as any;
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
     if (error.response?.status === 401 && !originalRequest._retry && !isLoggingOut) {
       originalRequest._retry = true;
@@ -79,7 +79,7 @@ export const refreshAccessToken = async () => {
     setAccessToken(accessToken);
     await persistRefreshTokenCookie(newRefreshToken);
     return accessToken;
-  } catch (error) {
+  } catch {
     return null;
   }
 };

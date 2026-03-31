@@ -9,20 +9,20 @@ import { Button } from '@/components/ui/button'
 
 export default function LoginPage() {
   return (
-    <div className='min-h-screen bg-white flex flex-col'>
+    <div className='min-h-screen bg-[#0c0c0c] flex flex-col'>
       {/* Top Navigation */}
-      <div className='p-6 flex justify-between items-center'>
+      <div className='p-6 flex justify-between items-center relative z-10'>
         <Link href={Routers.HOME}>
           <Button
             variant='outline'
             size='icon'
-            className='rounded-full h-12 w-12 border-slate-200 hover:bg-slate-50'
+            className='rounded-full h-12 w-12 border-white/10 hover:bg-white/5 bg-transparent text-white focus-visible:ring-[#ff8c5a]'
           >
-            <ChevronLeft className='h-6 w-6 text-slate-900' />
+            <ChevronLeft className='h-6 w-6' />
           </Button>
         </Link>
-        <Button variant='ghost' size='icon' className='rounded-full h-12 w-12'>
-          <Share2 className='h-6 w-6 text-slate-900' />
+        <Button variant='ghost' size='icon' className='rounded-full h-12 w-12 text-white hover:bg-white/5'>
+          <Share2 className='h-6 w-6' />
         </Button>
       </div>
 

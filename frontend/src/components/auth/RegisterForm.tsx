@@ -55,17 +55,17 @@ export function RegisterForm() {
     <div className='w-full max-w-md mx-auto lg:mx-0'>
       {/* Header for Mobile only */}
       <div className='lg:hidden space-y-4 mb-8 text-center'>
-        <h1 className='text-4xl font-bold tracking-tight text-slate-900'>Tạo tài khoản</h1>
-        <p className='text-lg text-slate-500'>Bắt đầu hành trình của bạn</p>
+        <h1 className='text-4xl font-bold tracking-tight text-white'>Tạo tài khoản</h1>
+        <p className='text-lg text-zinc-400'>Bắt đầu hành trình của bạn</p>
       </div>
 
       <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
         <div className='space-y-2'>
-          <label className='text-base font-bold text-slate-900'>Họ và Tên</label>
+          <label className='text-base font-bold text-white'>Họ và Tên</label>
           <Input
             placeholder='Nhập họ và tên'
             {...register('fullName')}
-            className='h-14 bg-slate-100/80 border-transparent rounded-xl focus-visible:bg-white focus-visible:ring-1 focus-visible:ring-slate-200 text-base px-5'
+            className='h-14 bg-zinc-900/50 border-white/10 text-white rounded-xl focus-visible:bg-zinc-900 focus-visible:ring-1 focus-visible:ring-[#ff8c5a] text-base px-5'
           />
           {errors.fullName && (
             <p className='text-sm text-red-500 font-medium'>{errors.fullName.message}</p>
@@ -73,12 +73,12 @@ export function RegisterForm() {
         </div>
 
         <div className='space-y-2'>
-          <label className='text-base font-bold text-slate-900'>Email</label>
+          <label className='text-base font-bold text-white'>Email</label>
           <Input
             placeholder='Nhập địa chỉ email của bạn'
             type='email'
             {...register('email')}
-            className='h-14 bg-slate-100/80 border-transparent rounded-xl focus-visible:bg-white focus-visible:ring-1 focus-visible:ring-slate-200 text-base px-5'
+            className='h-14 bg-zinc-900/50 border-white/10 text-white rounded-xl focus-visible:bg-zinc-900 focus-visible:ring-1 focus-visible:ring-[#ff8c5a] text-base px-5'
           />
           {errors.email && (
             <p className='text-sm text-red-500 font-medium'>{errors.email.message}</p>
@@ -86,18 +86,18 @@ export function RegisterForm() {
         </div>
 
         <div className='space-y-2'>
-          <label className='text-base font-bold text-slate-900'>Mật khẩu</label>
+          <label className='text-base font-bold text-white'>Mật khẩu</label>
           <div className='relative'>
             <Input
               placeholder='Nhập mật khẩu'
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
-              className='h-14 bg-slate-100/80 border-transparent rounded-xl focus-visible:bg-white focus-visible:ring-1 focus-visible:ring-slate-200 text-base px-5 pr-12'
+              className='h-14 bg-zinc-900/50 border-white/10 text-white rounded-xl focus-visible:bg-zinc-900 focus-visible:ring-1 focus-visible:ring-[#ff8c5a] text-base px-5 pr-12'
             />
             <button
               type='button'
               onClick={() => setShowPassword(!showPassword)}
-              className='absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-900 transition'
+              className='absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition'
             >
               {showPassword ? <EyeOff className='size-5' /> : <Eye className='size-5' />}
             </button>
@@ -108,12 +108,12 @@ export function RegisterForm() {
         </div>
 
         <div className='space-y-2'>
-          <label className='text-base font-bold text-slate-900'>Xác nhận mật khẩu</label>
+          <label className='text-base font-bold text-white'>Xác nhận mật khẩu</label>
           <Input
             placeholder='Nhập lại mật khẩu'
             type='password'
             {...register('confirmPassword')}
-            className='h-14 bg-slate-100/80 border-transparent rounded-xl focus-visible:bg-white focus-visible:ring-1 focus-visible:ring-slate-200 text-base px-5'
+            className='h-14 bg-zinc-900/50 border-white/10 text-white rounded-xl focus-visible:bg-zinc-900 focus-visible:ring-1 focus-visible:ring-[#ff8c5a] text-base px-5'
           />
           {errors.confirmPassword && (
             <p className='text-sm text-red-500 font-medium'>{errors.confirmPassword.message}</p>
@@ -121,7 +121,7 @@ export function RegisterForm() {
         </div>
 
         <Button
-          className='w-full h-14 text-lg font-bold bg-slate-900 hover:bg-black text-white rounded-xl shadow-lg transition-all active:scale-[0.98]'
+          className='w-full h-14 text-lg font-bold bg-[#ff8c5a] hover:bg-[#ff6b3a] text-black rounded-xl shadow-[0_0_15px_rgba(255,140,90,0.3)] transition-all active:scale-[0.98]'
           type='submit'
           disabled={isSubmitting}
         >
@@ -132,9 +132,9 @@ export function RegisterForm() {
       {/* Divider */}
       <div className='relative my-10 text-center'>
         <div className='absolute inset-0 flex items-center'>
-          <div className='w-full border-t border-slate-200'></div>
+          <div className='w-full border-t border-white/10'></div>
         </div>
-        <span className='relative bg-white px-4 text-sm font-medium text-slate-400 uppercase tracking-widest'>
+        <span className='relative bg-[#0c0c0c] px-4 text-sm font-medium text-zinc-500 uppercase tracking-widest'>
           Hoặc
         </span>
       </div>
@@ -143,7 +143,7 @@ export function RegisterForm() {
       <div className='space-y-4'>
         <Button
           variant='outline'
-          className='w-full h-14 justify-center gap-3 rounded-xl border-slate-200 text-slate-900 font-bold hover:bg-slate-50 transition-all'
+          className='w-full h-14 justify-center gap-3 rounded-xl border-white/10 text-white font-bold hover:bg-white/5 bg-transparent transition-all'
         >
           <Image
             src='https://www.svgrepo.com/show/475656/google-color.svg'
@@ -161,11 +161,11 @@ export function RegisterForm() {
         </Button>
       </div>
 
-      <p className='mt-10 text-center text-base font-medium text-slate-500'>
+      <p className='mt-10 text-center text-base font-medium text-zinc-400'>
         Đã có tài khoản?{' '}
         <Link
           href={Routers.LOGIN}
-          className='text-slate-900 border-b-2 border-slate-900 font-bold hover:text-black hover:border-black transition-all pb-0.5 ml-1'
+          className='text-white border-b-2 border-white font-bold hover:text-[#ff8c5a] hover:border-[#ff8c5a] transition-all pb-0.5 ml-1'
         >
           Đăng nhập ngay
         </Link>

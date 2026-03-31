@@ -13,10 +13,10 @@ export function AuthHero({ title, subtitle, imageSrc, imageAlt }: AuthHeroProps)
   return (
     <div className='hidden lg:flex flex-col items-start justify-center relative pl-8'>
       <div className='space-y-4 mb-8'>
-        <h1 className='text-6xl font-bold tracking-tight text-slate-900 leading-[1.1]'>
+        <h1 className='text-6xl font-bold tracking-tight text-white leading-[1.1]'>
           {title}
         </h1>
-        <p className='text-2xl text-slate-500 font-medium'>
+        <p className='text-2xl text-zinc-400 font-medium'>
           {subtitle}
         </p>
       </div>

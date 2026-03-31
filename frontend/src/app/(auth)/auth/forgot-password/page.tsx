@@ -210,7 +210,7 @@ export default function ForgotPasswordPage() {
               <h1 className='text-6xl font-bold tracking-tight text-white leading-[1.1]'>
                 {step === 1 ? 'Quên mật khẩu?' : 'Đặt lại mật khẩu'}
               </h1>
-              <p className='text-2xl text-zinc-400 font-medium'>
+              <p className='text-2xl text-on-surface-variant font-medium'>
                 {step === 1
                   ? 'Nhập email để nhận mã xác thực'
                   : 'Nhập mã OTP và mật khẩu mới'}
@@ -246,20 +246,20 @@ export default function ForgotPasswordPage() {
                   <h1 className='text-4xl font-bold tracking-tight text-white'>
                     Quên mật khẩu?
                   </h1>
-                  <p className='text-lg text-zinc-400'>Nhập email để nhận mã xác thực OTP</p>
+                  <p className='text-[1.125rem] text-on-surface-variant font-medium'>Nhập email để nhận mã xác thực OTP</p>
                 </div>
 
                 <form onSubmit={emailForm.handleSubmit(handleSendOtp)} className='space-y-6'>
-                  <div className='space-y-2'>
-                    <label className='text-base font-bold text-white'>Email</label>
+                  <div className='space-y-3'>
+                    <label className='text-[1.125rem] font-medium text-white'>Email</label>
                     <Input
                       placeholder='Nhập địa chỉ email của bạn'
                       type='email'
                       {...emailForm.register('email')}
-                      className='h-14 bg-zinc-900/50 border-white/10 text-white rounded-xl focus-visible:bg-zinc-900 focus-visible:ring-1 focus-visible:ring-[#ff8c5a] text-base px-5'
+                      className={`h-14 bg-surface-container-highest border-transparent rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-secondary focus-visible:border-secondary caret-secondary text-white text-[1.125rem] px-5 shadow-inner ${emailForm.formState.errors.email ? 'border-b-2 border-b-error' : ''}`}
                     />
                     {emailForm.formState.errors.email && (
-                      <p className='text-sm text-red-500 font-medium'>
+                      <p className='text-sm text-error font-medium'>
                         {emailForm.formState.errors.email.message}
                       </p>
                     )}
@@ -267,7 +267,7 @@ export default function ForgotPasswordPage() {
 
                   <Button
                     type='submit'
-                    className='w-full h-14 text-lg font-bold bg-[#ff8c5a] hover:bg-[#ff6b3a] text-black rounded-xl shadow-[0_0_15px_rgba(255,140,90,0.3)] transition-all active:scale-[0.98] gap-2'
+                    className='w-full h-14 text-lg font-bold bg-linear-to-br from-primary to-on-primary-container text-[#131313] rounded-full hover:brightness-110 shadow-[0_4px_20px_rgba(255,181,154,0.3)] transition-all active:scale-98 gap-2 mt-2'
                     disabled={emailForm.formState.isSubmitting}
                   >
                     {emailForm.formState.isSubmitting ? (
@@ -281,11 +281,11 @@ export default function ForgotPasswordPage() {
                   </Button>
                 </form>
 
-                <p className='mt-10 text-center text-base font-medium text-zinc-400'>
+                <p className='mt-10 text-center text-[1.125rem] text-on-surface-variant'>
                   Nhớ mật khẩu?{' '}
                   <Link
                     href={Routers.LOGIN}
-                    className='text-white border-b-2 border-white font-bold hover:text-[#ff8c5a] hover:border-[#ff8c5a] transition-all pb-0.5 ml-1'
+                    className='text-primary-fixed underline decoration-2 underline-offset-4 hover:text-white transition-all ml-1 font-bold'
                   >
                     Đăng nhập
                   </Link>
@@ -304,14 +304,14 @@ export default function ForgotPasswordPage() {
                 {/* OTP info */}
                 <div className='mb-8'>
                   <h2 className='text-2xl font-bold text-white hidden lg:block'>
-                    Chúng tôi đã gửi mã OTP
+                    Đã gửi mã OTP
                   </h2>
-                  <p className='text-sm text-zinc-400 mt-2'>
+                  <p className='text-[1.125rem] text-on-surface-variant font-medium mt-2'>
                     Nhập mã xác thực đã gửi đến{' '}
-                    <span className='font-bold text-zinc-200'>{email}</span>
+                    <span className='font-bold text-white'>{email}</span>
                     <button
                       onClick={() => { setStep(1); setOtp('') }}
-                      className='text-[#ff8c5a] font-bold ml-2 hover:underline underline-offset-4'
+                      className='text-primary-fixed font-bold ml-2 underline underline-offset-4 decoration-2 hover:text-[#ffb59a] transition-colors'
                     >
                       Sửa
                     </button>
@@ -324,25 +324,25 @@ export default function ForgotPasswordPage() {
                     <OtpInput value={otp} onChange={setOtp} />
 
                     {/* Resend row */}
-                    <div className='flex items-center justify-between text-sm'>
-                      <span className='text-zinc-500'>
+                    <div className='flex items-center justify-between text-[1rem] font-medium'>
+                      <span className='text-on-surface-variant'>
                         Không nhận được mã?{' '}
                         <button
                           type='button'
                           onClick={handleResendOtp}
                           disabled={countdown > 0}
-                          className={`font-bold underline underline-offset-4 transition-colors ${
+                          className={`font-bold underline underline-offset-4 decoration-2 transition-colors ${
                             countdown > 0
-                              ? 'text-zinc-700 cursor-not-allowed'
-                              : 'text-white hover:text-[#ff8c5a]'
+                              ? 'text-zinc-600 cursor-not-allowed'
+                              : 'text-primary-fixed hover:text-[#ffb59a]'
                           }`}
                         >
                           Gửi lại
                         </button>
                       </span>
                       {countdown > 0 && (
-                        <span className='flex items-center gap-1.5 text-zinc-500 tabular-nums'>
-                          <span className='w-2 h-2 rounded-full bg-zinc-700 animate-pulse' />
+                        <span className='flex items-center gap-1.5 text-on-surface-variant tabular-nums'>
+                          <span className='w-2 h-2 rounded-full bg-secondary animate-pulse' />
                           {countdown}s
                         </span>
                       )}
@@ -350,50 +350,50 @@ export default function ForgotPasswordPage() {
                   </div>
 
                   {/* New password */}
-                  <div className='space-y-2'>
-                    <label className='text-base font-bold text-white'>Mật khẩu mới</label>
+                  <div className='space-y-3'>
+                    <label className='text-[1.125rem] font-medium text-white'>Mật khẩu mới</label>
                     <div className='relative'>
                       <Input
                         type={showNewPassword ? 'text' : 'password'}
                         placeholder='Tối thiểu 6 ký tự'
                         {...resetForm.register('newPassword')}
-                        className='h-14 bg-zinc-900/50 border-white/10 text-white rounded-xl focus-visible:bg-zinc-900 focus-visible:ring-1 focus-visible:ring-[#ff8c5a] text-base px-5 pr-12'
+                        className={`h-14 bg-surface-container-highest border-transparent rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-secondary focus-visible:border-secondary caret-secondary text-white text-[1.125rem] px-5 pr-12 shadow-inner ${resetForm.formState.errors.newPassword ? 'border-b-2 border-b-error' : ''}`}
                       />
                       <button
                         type='button'
                         onClick={() => setShowNewPassword(!showNewPassword)}
-                        className='absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition'
+                        className='absolute right-5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-white transition'
                       >
                         {showNewPassword ? <EyeOff className='size-5' /> : <Eye className='size-5' />}
                       </button>
                     </div>
                     {resetForm.formState.errors.newPassword && (
-                      <p className='text-sm text-red-500 font-medium'>
+                      <p className='text-sm text-error font-medium'>
                         {resetForm.formState.errors.newPassword.message}
                       </p>
                     )}
                   </div>
 
                   {/* Confirm password */}
-                  <div className='space-y-2'>
-                    <label className='text-base font-bold text-white'>Xác nhận mật khẩu</label>
+                  <div className='space-y-3'>
+                    <label className='text-[1.125rem] font-medium text-white'>Xác nhận mật khẩu</label>
                     <div className='relative'>
                       <Input
                         type={showConfirmPassword ? 'text' : 'password'}
                         placeholder='Nhập lại mật khẩu mới'
                         {...resetForm.register('confirmPassword')}
-                        className='h-14 bg-zinc-900/50 border-white/10 text-white rounded-xl focus-visible:bg-zinc-900 focus-visible:ring-1 focus-visible:ring-[#ff8c5a] text-base px-5 pr-12'
+                        className={`h-14 bg-surface-container-highest border-transparent rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-secondary focus-visible:border-secondary caret-secondary text-white text-[1.125rem] px-5 pr-12 shadow-inner ${resetForm.formState.errors.confirmPassword ? 'border-b-2 border-b-error' : ''}`}
                       />
                       <button
                         type='button'
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className='absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition'
+                        className='absolute right-5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-white transition'
                       >
                         {showConfirmPassword ? <EyeOff className='size-5' /> : <Eye className='size-5' />}
                       </button>
                     </div>
                     {resetForm.formState.errors.confirmPassword && (
-                      <p className='text-sm text-red-500 font-medium'>
+                      <p className='text-sm text-error font-medium'>
                         {resetForm.formState.errors.confirmPassword.message}
                       </p>
                     )}
@@ -402,7 +402,7 @@ export default function ForgotPasswordPage() {
                   {/* Submit */}
                   <Button
                     type='submit'
-                    className='w-full h-14 text-lg font-bold bg-[#ff8c5a] hover:bg-[#ff6b3a] text-black rounded-xl shadow-[0_0_15px_rgba(255,140,90,0.3)] transition-all active:scale-[0.98] gap-2'
+                    className='w-full h-14 mt-4 text-lg font-bold bg-linear-to-br from-primary to-on-primary-container text-[#131313] rounded-full hover:brightness-110 shadow-[0_4px_20px_rgba(255,181,154,0.3)] transition-all active:scale-98 gap-2'
                     disabled={resetForm.formState.isSubmitting}
                   >
                     {resetForm.formState.isSubmitting ? (
@@ -416,11 +416,11 @@ export default function ForgotPasswordPage() {
                   </Button>
                 </form>
 
-                <p className='mt-10 text-center text-base font-medium text-zinc-400'>
+                <p className='mt-10 text-center text-[1.125rem] text-on-surface-variant'>
                   Nhớ mật khẩu?{' '}
                   <Link
                     href={Routers.LOGIN}
-                    className='text-white border-b-2 border-white font-bold hover:text-[#ff8c5a] hover:border-[#ff8c5a] transition-all pb-0.5 ml-1'
+                    className='text-primary-fixed underline decoration-2 underline-offset-4 hover:text-white transition-all ml-1 font-bold'
                   >
                     Đăng nhập
                   </Link>

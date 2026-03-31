@@ -1,29 +1,12 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono, Be_Vietnam_Pro } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import '@/styles/globals.css'
 import { Providers } from '@/app/providers'
 
-// UI chính (Sans)
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin', 'latin-ext'],
-  weight: ['100', '200', '300', '400', '500', '600', '700'],
-  display: 'swap',
-})
-
-// Font code / Price / UI Mono
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin', 'latin-ext'],
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-})
-
-// Font heading Brand Việt Nam
-const beVietnam = Be_Vietnam_Pro({
-  variable: '--font-be-vietnam',
-  subsets: ['latin', 'latin-ext', 'vietnamese'],
-  weight: ['400', '500', '600', '700', '800'],
+// Typography: Functional Voice (Inter)
+const fontInter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
   display: 'swap',
 })
 
@@ -41,7 +24,7 @@ export default function RootLayout({
     <html lang='vi' suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} ${beVietnam.variable} antialiased bg-white text-gray-900`}
+        className={`${fontInter.variable} font-sans antialiased bg-white text-gray-900`}
       >
         {/* Strip browser-extension-injected attributes (e.g. Bitdefender's bis_skin_checked) before React hydration */}
         <script

@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { ProductListSection } from "@/components/home/ProductListSection";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -101,27 +102,29 @@ export default function Home() {
         </section>
 
         {/* Category Sector */}
-        <section className="py-40 bg-[#0c0c0c]">
+        <section className="min-h-svh flex items-center py-10 bg-[#0c0c0c]">
           <div className="container mx-auto px-6 md:px-12 max-w-[1600px]">
-            <div className="flex flex-col lg:flex-row justify-between items-end gap-10 mb-24">
+            <div className="flex flex-col lg:flex-row justify-between items-end gap-10 mb-12">
               <div className="max-w-xl">
-                <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase font-heading mb-6 italic">
-                  Hệ Sinh Thái
+                <h2 className="text-4xl md:text-[3.5rem] font-bold text-white tracking-tight mb-4 leading-tight">
+                  <span className="bg-linear-to-br from-[#ffd9c7] to-[#ff8c5a] bg-clip-text text-transparent italic pr-2">
+                    Hệ sinh thái.
+                  </span>
                 </h2>
-                <p className="text-zinc-500 font-bold uppercase tracking-[0.3em] text-[10px] leading-relaxed">
+                <p className="text-on-surface-variant text-base md:text-lg font-medium leading-relaxed max-w-lg mt-4">
                   Lựa chọn từ các thương hiệu máy ảnh và ống kính hàng đầu thế
-                  giới.
+                  giới để hoàn thiện bộ công cụ hình ảnh của bạn.
                 </p>
               </div>
               <Button
                 variant="link"
-                className="text-[#ff8c5a] hover:text-white font-black uppercase tracking-[0.3em] text-[10px] transition-all"
+                className="text-white hover:text-[#ff8c5a] font-bold tracking-widest text-xs transition-all uppercase"
               >
-                Khám phá kho vũ khí <ChevronRight className="w-4 h-4 ml-2" />
+                KHÁM PHÁ VŨ KHÍ <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 {
                   title: "Ống Kính Suite",
@@ -146,7 +149,7 @@ export default function Home() {
                 },
               ].map((cat) => (
                 <div key={cat.title} className="group cursor-pointer">
-                  <div className="relative h-[650px] rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#111111] transition-all duration-700 group-hover:border-[#ff8c5a]/30 group-hover:shadow-[0_40px_100px_rgba(255,140,90,0.1)]">
+                  <div className="relative h-[60svh] max-h-[500px] min-h-[350px] rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#111111] transition-all duration-700 group-hover:border-[#ff8c5a]/30 group-hover:shadow-[0_40px_100px_rgba(255,140,90,0.1)]">
                     <Image
                       src={cat.image}
                       alt={cat.title}
@@ -154,18 +157,18 @@ export default function Home() {
                       className="object-cover opacity-30 grayscale transition-all duration-1000 group-hover:scale-105 group-hover:grayscale-0 group-hover:opacity-70"
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-[#0c0c0c] via-transparent to-transparent flex flex-col justify-end p-12">
-                      <p className="text-[#ff8c5a] text-[10px] font-black uppercase tracking-[0.4em] mb-4">
+                      <p className="text-[#ff8c5a] text-xs font-bold tracking-widest uppercase mb-3">
                         {cat.desc}
                       </p>
-                      <h3 className="text-4xl font-black text-white uppercase font-heading leading-none mb-4">
+                      <h3 className="text-3xl font-bold text-white tracking-tight mb-4">
                         {cat.title}
                       </h3>
                       <div className="flex items-center gap-4">
-                        <span className="text-zinc-600 font-bold uppercase tracking-widest text-[10px]">
+                        <span className="text-on-surface-variant font-medium tracking-wide text-xs">
                           {cat.count} Thiết bị sẵn sàng
                         </span>
                         <div className="flex-1 h-px bg-white/10" />
-                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-[#ff8c5a] group-hover:text-black transition-all">
+                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-[#ff8c5a] group-hover:text-[#131313] transition-all">
                           <ArrowRight className="w-4 h-4" />
                         </div>
                       </div>
@@ -176,6 +179,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Product List Sector */}
+        <ProductListSection />
 
         {/* Feature Sectors */}
         <section className="py-40 bg-[#0c0c0c] border-y border-white/5">

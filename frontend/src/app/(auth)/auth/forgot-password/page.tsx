@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Routers from '@/constants/routers'
 import { authService } from '@/services/auth'
+import { useImageColor } from '@/hooks/useImageColor'
 
 // Step 1: Email schema
 const emailSchema = z.object({
@@ -181,8 +182,13 @@ export default function ForgotPasswordPage() {
     }
   }
 
+  const bgColor = useImageColor('/images/auth-login-hero.png')
+
   return (
-    <div className='min-h-screen bg-[#0c0c0c] flex flex-col'>
+    <div 
+      className='min-h-screen flex flex-col transition-colors duration-1000'
+      style={{ backgroundColor: bgColor || '#0c0c0c' }}
+    >
       {/* Top Navigation */}
       <div className='p-6 flex items-center relative z-10'>
         <Link href={Routers.LOGIN}>
@@ -210,13 +216,21 @@ export default function ForgotPasswordPage() {
                   : 'Nhập mã OTP và mật khẩu mới'}
               </p>
             </div>
-            <div className='relative w-full max-w-lg'>
+            <div 
+              className='relative w-full max-w-lg overflow-hidden'
+              style={{
+                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%)',
+                WebkitMaskComposite: 'source-in',
+                maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%)',
+                maskComposite: 'intersect',
+              }}
+            >
               <Image
                 src='/images/auth-login-hero.png'
                 alt='Reset password illustration'
                 width={600}
                 height={500}
-                className='w-full h-auto object-contain scale-110'
+                className='w-full h-auto object-contain scale-[1.15]'
                 priority
               />
             </div>

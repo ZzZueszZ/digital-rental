@@ -20,13 +20,21 @@ export function AuthHero({ title, subtitle, imageSrc, imageAlt }: AuthHeroProps)
           {subtitle}
         </p>
       </div>
-      <div className='relative w-full max-w-lg'>
+      <div 
+        className='relative w-full max-w-lg overflow-hidden'
+        style={{
+          WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%)',
+          WebkitMaskComposite: 'source-in',
+          maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%)',
+          maskComposite: 'intersect',
+        }}
+      >
         <Image
           src={imageSrc}
           alt={imageAlt}
           width={600}
           height={500}
-          className='w-full h-auto object-contain scale-110'
+          className='w-full h-auto object-contain scale-[1.15]'
           priority
         />
       </div>

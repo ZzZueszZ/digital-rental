@@ -6,10 +6,16 @@ import Link from 'next/link'
 import Routers from '@/constants/routers'
 import { ChevronLeft, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useImageColor } from '@/hooks/useImageColor'
 
 export default function RegisterPage() {
+  const bgColor = useImageColor('/images/auth-register-hero.png')
+
   return (
-    <div className='min-h-screen bg-[#0c0c0c] flex flex-col'>
+    <div 
+      className='min-h-screen flex flex-col transition-colors duration-1000'
+      style={{ backgroundColor: bgColor || '#0c0c0c' }}
+    >
       {/* Top Navigation */}
       <div className='p-6 flex justify-between items-center relative z-10'>
         <Link href={Routers.LOGIN}>

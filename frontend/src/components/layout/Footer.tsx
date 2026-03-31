@@ -3,27 +3,28 @@ import { Camera, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-[#0c0c0c] text-white pt-24 pb-12 border-t border-white/5 overflow-hidden relative select-none">
-      <div className="container mx-auto px-6 md:px-12 max-w-[1600px] relative z-10">
-        <div className="grid grid-cols-1 gap-16 lg:grid-cols-4 lg:gap-8">
+    <footer className="bg-[#0c0c0c] text-white pt-24 pb-12 border-t border-white/5 relative z-10">
+      <div className="container mx-auto px-6 md:px-12 max-w-[1600px]">
+        <div className="grid grid-cols-1 gap-16 lg:grid-cols-4 lg:gap-12">
           
           {/* Brand & Mission */}
-          <div className="flex flex-col gap-8 lg:col-span-2">
-            <Link href="/" className="group flex items-center gap-4 transition-all">
-              <div className="w-12 h-12 bg-[#ff8c5a] rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform duration-700">
-                <Camera className="h-6 w-6 text-black" />
+          <div className="flex flex-col gap-6 lg:col-span-1">
+            <Link href="/" className="group flex items-center gap-3 transition-all">
+              <div className="w-10 h-10 bg-[#e85d04] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-500">
+                <Camera className="h-5 w-5 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-black tracking-tighter text-white uppercase font-heading leading-none">Studio</span>
-                <span className="text-xl font-black tracking-tighter text-[#ff8c5a] uppercase font-heading leading-none">Visuals</span>
+                <span className="text-xl font-bold tracking-tight text-white leading-none">
+                  Digital<span className="text-[#e85d04]">Rental</span>
+                </span>
               </div>
             </Link>
-            <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest max-w-md leading-loose">
-              Dịch vụ cho thuê thiết bị nhiếp ảnh hàng đầu. Nâng tầm tác phẩm của bạn với hệ thống Gear chất lượng nhất.
+            <p className="text-sm text-[#a1a1aa] font-medium leading-relaxed max-w-xs mt-2">
+              Nền tảng cung cấp dịch vụ thuê thiết bị sản xuất hình ảnh và video chuyên nghiệp hàng đầu.
             </p>
             <div className="flex gap-4 pt-4">
               {[Instagram, Facebook, Twitter, Youtube].map((Icon, i) => (
-                <Link key={i} href="#" className="w-10 h-10 rounded-xl bg-zinc-900 border border-white/5 flex items-center justify-center text-zinc-400 hover:text-[#ff8c5a] hover:bg-zinc-800 transition-all">
+                <Link key={i} href="#" className="w-10 h-10 rounded-full bg-[#161616] border border-white/5 flex items-center justify-center text-[#a1a1aa] hover:text-white hover:bg-[#e85d04] transition-all duration-300">
                   <Icon className="h-4 w-4" />
                 </Link>
               ))}
@@ -31,23 +32,44 @@ export function Footer() {
           </div>
 
           {/* Links Grid */}
-          <div className="grid grid-cols-2 gap-8 lg:col-span-2">
-            <div className="space-y-8">
-              <h4 className="text-[10px] font-black text-[#ff8c5a] uppercase tracking-[0.4em]">Danh Mục</h4>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 lg:col-span-3 lg:ml-auto w-full pt-4 lg:pt-0">
+            {/* Column 1 */}
+            <div className="space-y-6">
+              <h4 className="text-[13px] font-bold text-white tracking-widest uppercase mb-6">Danh Mục</h4>
               <ul className="space-y-4">
-                {["Ống Kính Suite", "Máy Ảnh Cinema", "Ánh Sáng Studio", "Không Gian Thuê"].map((item) => (
+                {["Máy Ảnh", "Ống Kính", "Ánh Sáng", "Phụ Kiện", "Không Gian Thuê"].map((item) => (
                   <li key={item}>
-                    <Link href="#" className="text-[11px] font-bold text-zinc-500 hover:text-white transition-colors uppercase tracking-widest">{item}</Link>
+                    <Link href="#" className="text-sm font-medium text-[#a1a1aa] hover:text-[#e85d04] transition-colors">
+                      {item}
+                    </Link>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="space-y-8">
-              <h4 className="text-[10px] font-black text-[#ff8c5a] uppercase tracking-[0.4em]">Hỗ Trợ</h4>
+            
+            {/* Column 2 */}
+            <div className="space-y-6">
+              <h4 className="text-[13px] font-bold text-white tracking-widest uppercase mb-6">Dịch Vụ</h4>
               <ul className="space-y-4">
-                {["Trung Tâm Trợ Giúp", "Vận Chuyển", "Chính Sách Thuê", "Bảo Mật"].map((item) => (
+                {["Thuê Thiết Bị", "Bảo Đảm Thiết Bị", "Giao Nhận Tận Nơi", "Cho Doanh Nghiệp"].map((item) => (
                   <li key={item}>
-                    <Link href="#" className="text-[11px] font-bold text-zinc-500 hover:text-white transition-colors uppercase tracking-widest">{item}</Link>
+                    <Link href="#" className="text-sm font-medium text-[#a1a1aa] hover:text-[#e85d04] transition-colors">
+                      {item}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            {/* Column 3 */}
+            <div className="space-y-6">
+              <h4 className="text-[13px] font-bold text-white tracking-widest uppercase mb-6">Hỗ Trợ</h4>
+              <ul className="space-y-4">
+                {["Trung Tâm Trợ Giúp", "Chính Sách Vận Chuyển", "Bảo Hành & Đổi Trả", "Điều Khoản Dịch Vụ"].map((item) => (
+                  <li key={item}>
+                    <Link href="#" className="text-sm font-medium text-[#a1a1aa] hover:text-[#e85d04] transition-colors">
+                      {item}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -55,18 +77,16 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Newsletter & Copyright */}
-        <div className="mt-24 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-zinc-600">
-            <span>© 2026 Studio Visuals Inc.</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#ff8c5a]" />
-            <span>Đã Đăng Ký Bản Quyền</span>
+        {/* Copyright */}
+        <div className="mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-sm font-medium text-[#71717a]">
+            © {new Date().getFullYear()} Digital Rental. Mọi bản quyền được bảo lưu.
           </div>
 
-          <div className="flex gap-8 text-[9px] font-black uppercase tracking-[0.5em] text-zinc-600">
-            <Link href="#" className="hover:text-[#ff8c5a] transition-colors">Bảo Mật</Link>
-            <Link href="#" className="hover:text-[#ff8c5a] transition-colors">Điều Khoản</Link>
-            <Link href="#" className="hover:text-[#ff8c5a] transition-colors">Cookies</Link>
+          <div className="flex gap-6 text-sm font-medium text-[#71717a]">
+            <Link href="#" className="hover:text-white transition-colors">Bảo Mật</Link>
+            <Link href="#" className="hover:text-white transition-colors">Điều Khoản</Link>
+            <Link href="#" className="hover:text-white transition-colors">Cookies</Link>
           </div>
         </div>
       </div>

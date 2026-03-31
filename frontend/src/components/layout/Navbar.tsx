@@ -3,9 +3,21 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  Camera, Search, User, ShoppingBag, Menu, X,
-  Zap, Sparkles, LogOut, Settings, LayoutDashboard,
-  ChevronRight, Home, Package, Info,
+  Camera,
+  Search,
+  User,
+  ShoppingBag,
+  Menu,
+  X,
+  Zap,
+  Sparkles,
+  LogOut,
+  Settings,
+  LayoutDashboard,
+  ChevronRight,
+  Home,
+  Package,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,8 +41,9 @@ import { Role } from "@/constants/enum/role";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, isAuthenticated, isLoading, logout } = useAuthSession({ redirectToLogin: false });
-
+  const { user, isAuthenticated, isLoading, logout } = useAuthSession({
+    redirectToLogin: false,
+  });
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -46,7 +59,11 @@ export function Navbar() {
 
   const getDashboardLink = () => {
     if (!user?.roles) return null;
-    if (user.roles.includes(Role.SUPER_ADMIN) || user.roles.includes(Role.ADMIN)) return Routers.ADMIN;
+    if (
+      user.roles.includes(Role.SUPER_ADMIN) ||
+      user.roles.includes(Role.ADMIN)
+    )
+      return Routers.ADMIN;
     if (user.roles.includes(Role.STAFF)) return Routers.STAFF;
     return null;
   };
@@ -62,16 +79,22 @@ export function Navbar() {
     <>
       <nav className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-white/5 select-none">
         <div className="container flex h-16 lg:h-20 items-center justify-between px-4 sm:px-6 md:px-12 max-w-[1600px] mx-auto">
-
           {/* Logo */}
           <div className="flex items-center gap-6 lg:gap-12">
-            <Link href="/" className="group flex items-center gap-2.5 transition-all">
+            <Link
+              href="/"
+              className="group flex items-center gap-2.5 transition-all"
+            >
               <div className="w-9 h-9 lg:w-10 lg:h-10 bg-[#ff8c5a] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-500">
                 <Camera className="h-4 w-4 lg:h-5 lg:w-5 text-black" />
               </div>
               <div className="flex flex-col select-none">
-                <span className="text-lg lg:text-xl font-black tracking-tighter text-white uppercase font-heading leading-none">Studio</span>
-                <span className="text-lg lg:text-xl font-black tracking-tighter text-[#ff8c5a] uppercase font-heading leading-none">Visuals</span>
+                <span className="text-lg lg:text-xl font-black tracking-tighter text-white uppercase font-heading leading-none">
+                  Studio
+                </span>
+                <span className="text-lg lg:text-xl font-black tracking-tighter text-[#ff8c5a] uppercase font-heading leading-none">
+                  Visuals
+                </span>
               </div>
             </Link>
 
@@ -87,31 +110,60 @@ export function Navbar() {
                       <div className="p-6 w-[700px] bg-[#0c0c0c] border border-white/5 rounded-[2rem] shadow-2xl flex gap-6">
                         <div className="flex-1 bg-zinc-900/50 p-6 rounded-2xl border border-white/5">
                           <Zap className="w-8 h-8 text-[#ff8c5a] mb-4" />
-                          <h4 className="text-xl font-black text-white uppercase font-heading mb-3">Kho Vũ Khí</h4>
+                          <h4 className="text-xl font-black text-white uppercase font-heading mb-3">
+                            Kho Vũ Khí
+                          </h4>
                           <p className="text-zinc-500 text-xs leading-relaxed mb-4 font-medium">
-                            Khám phá các dòng máy ảnh và ống kính chuyên nghiệp nhất hiện nay.
+                            Khám phá các dòng máy ảnh và ống kính chuyên nghiệp
+                            nhất hiện nay.
                           </p>
-                          <Button variant="outline" className="rounded-full border-white/10 text-white font-black uppercase text-[9px] tracking-widest px-6 h-10 hover:bg-[#ff8c5a] hover:text-black transition-all">Xem Tất Cả</Button>
+                          <Button
+                            variant="outline"
+                            className="rounded-full border-white/10 text-white font-black uppercase text-[9px] tracking-widest px-6 h-10 hover:bg-[#ff8c5a] hover:text-black transition-all"
+                          >
+                            Xem Tất Cả
+                          </Button>
                         </div>
                         <div className="flex-1 grid grid-cols-1 gap-2">
-                          <Link href="/rentals" className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-900 transition-all">
+                          <Link
+                            href="/rentals"
+                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-900 transition-all"
+                          >
                             <div>
-                              <p className="text-white font-bold text-xs uppercase tracking-widest">Máy Ảnh</p>
-                              <p className="text-zinc-500 text-[9px] font-bold uppercase mt-0.5">Mirrorless & Cinema</p>
+                              <p className="text-white font-bold text-xs uppercase tracking-widest">
+                                Máy Ảnh
+                              </p>
+                              <p className="text-zinc-500 text-[9px] font-bold uppercase mt-0.5">
+                                Mirrorless & Cinema
+                              </p>
                             </div>
                             <Sparkles className="w-3 h-3 text-[#ff8c5a] opacity-0 group-hover:opacity-100 transition-all" />
                           </Link>
-                          <Link href="/rentals" className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-900 transition-all">
+                          <Link
+                            href="/rentals"
+                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-900 transition-all"
+                          >
                             <div>
-                              <p className="text-white font-bold text-xs uppercase tracking-widest">Ống Kính</p>
-                              <p className="text-zinc-500 text-[9px] font-bold uppercase mt-0.5">Prime & Zoom</p>
+                              <p className="text-white font-bold text-xs uppercase tracking-widest">
+                                Ống Kính
+                              </p>
+                              <p className="text-zinc-500 text-[9px] font-bold uppercase mt-0.5">
+                                Prime & Zoom
+                              </p>
                             </div>
                             <Sparkles className="w-3 h-3 text-[#ff8c5a] opacity-0 group-hover:opacity-100 transition-all" />
                           </Link>
-                          <Link href="/rentals" className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-900 transition-all">
+                          <Link
+                            href="/rentals"
+                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-900 transition-all"
+                          >
                             <div>
-                              <p className="text-white font-bold text-xs uppercase tracking-widest">Ánh Sáng</p>
-                              <p className="text-zinc-500 text-[9px] font-bold uppercase mt-0.5">Phòng Studio & Ngoại Cảnh</p>
+                              <p className="text-white font-bold text-xs uppercase tracking-widest">
+                                Ánh Sáng
+                              </p>
+                              <p className="text-zinc-500 text-[9px] font-bold uppercase mt-0.5">
+                                Phòng Studio & Ngoại Cảnh
+                              </p>
                             </div>
                             <Sparkles className="w-3 h-3 text-[#ff8c5a] opacity-0 group-hover:opacity-100 transition-all" />
                           </Link>
@@ -152,7 +204,11 @@ export function Navbar() {
             </div>
 
             {/* Mobile Search */}
-            <Button variant="ghost" size="icon" className="lg:hidden w-9 h-9 rounded-xl hover:bg-zinc-900 transition-all">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden w-9 h-9 rounded-xl hover:bg-zinc-900 transition-all"
+            >
               <Search className="h-4 w-4 text-zinc-400" />
             </Button>
 
@@ -162,9 +218,7 @@ export function Navbar() {
                 <div className="w-10 h-10 rounded-xl bg-zinc-900/50 animate-pulse" />
               ) : isAuthenticated && user ? (
                 <DropdownMenu>
-                  <DropdownMenuTrigger
-                    className="w-10 h-10 rounded-xl hover:bg-zinc-900 transition-all cursor-pointer flex items-center justify-center group"
-                  >
+                  <DropdownMenuTrigger className="w-10 h-10 rounded-xl hover:bg-zinc-900 transition-all cursor-pointer flex items-center justify-center group">
                     <User className="h-4 w-4 text-zinc-500 group-hover:text-white" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
@@ -172,33 +226,50 @@ export function Navbar() {
                     className="w-64 bg-[#0c0c0c] border border-white/10 rounded-2xl p-2 shadow-2xl"
                   >
                     <div className="px-3 py-3 mb-1">
-                      <p className="text-sm font-bold text-white truncate">{user.email}</p>
+                      <p className="text-sm font-bold text-white truncate">
+                        {user.email}
+                      </p>
                       <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-1">
-                        {user.roles?.join(', ') || 'Customer'}
+                        {user.roles?.join(", ") || "Customer"}
                       </p>
                     </div>
                     <DropdownMenuSeparator className="bg-white/5" />
 
                     {dashboardLink && (
                       <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-zinc-900 focus:text-white">
-                        <Link href={dashboardLink} className="flex items-center gap-3 px-3 py-2.5 w-full">
+                        <Link
+                          href={dashboardLink}
+                          className="flex items-center gap-3 px-3 py-2.5 w-full"
+                        >
                           <LayoutDashboard className="w-4 h-4 text-[#ff8c5a]" />
-                          <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest">Dashboard</span>
+                          <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest">
+                            Dashboard
+                          </span>
                         </Link>
                       </DropdownMenuItem>
                     )}
 
                     <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-zinc-900 focus:text-white">
-                      <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 w-full">
+                      <Link
+                        href="/profile"
+                        className="flex items-center gap-3 px-3 py-2.5 w-full"
+                      >
                         <User className="w-4 h-4 text-zinc-400" />
-                        <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest">Tài Khoản</span>
+                        <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest">
+                          Tài Khoản
+                        </span>
                       </Link>
                     </DropdownMenuItem>
 
                     <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-zinc-900 focus:text-white">
-                      <Link href="/profile/settings" className="flex items-center gap-3 px-3 py-2.5 w-full">
+                      <Link
+                        href="/profile/settings"
+                        className="flex items-center gap-3 px-3 py-2.5 w-full"
+                      >
                         <Settings className="w-4 h-4 text-zinc-400" />
-                        <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest">Cài Đặt</span>
+                        <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest">
+                          Cài Đặt
+                        </span>
                       </Link>
                     </DropdownMenuItem>
 
@@ -210,7 +281,9 @@ export function Navbar() {
                     >
                       <div className="flex items-center gap-3 px-3 py-2.5">
                         <LogOut className="w-4 h-4 text-red-400" />
-                        <span className="text-xs font-bold text-red-400 uppercase tracking-widest">Đăng Xuất</span>
+                        <span className="text-xs font-bold text-red-400 uppercase tracking-widest">
+                          Đăng Xuất
+                        </span>
                       </div>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -229,7 +302,10 @@ export function Navbar() {
               {isLoading ? (
                 <div className="w-9 h-9 rounded-xl bg-zinc-900/50 animate-pulse" />
               ) : isAuthenticated && user ? (
-                <Link href="/profile" className="w-9 h-9 rounded-xl hover:bg-zinc-900 transition-all flex items-center justify-center group">
+                <Link
+                  href="/profile"
+                  className="w-9 h-9 rounded-xl hover:bg-zinc-900 transition-all flex items-center justify-center group"
+                >
                   <User className="h-4 w-4 text-zinc-500 group-hover:text-white" />
                 </Link>
               ) : (
@@ -243,7 +319,11 @@ export function Navbar() {
             </div>
 
             {/* Shopping Bag */}
-            <Button variant="ghost" size="icon" className="relative w-9 h-9 lg:w-10 lg:h-10 rounded-xl hover:bg-zinc-900 transition-all group">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative w-9 h-9 lg:w-10 lg:h-10 rounded-xl hover:bg-zinc-900 transition-all group"
+            >
               <ShoppingBag className="h-4 w-4 text-zinc-500 group-hover:text-white" />
               <span className="absolute top-1 right-1 lg:top-1.5 lg:right-1.5 flex h-3.5 w-3.5 lg:h-4 lg:w-4 items-center justify-center rounded-full bg-[#ff8c5a] text-[7px] lg:text-[8px] font-black text-black">
                 0
@@ -274,7 +354,9 @@ export function Navbar() {
       {/* ─── Mobile Menu Overlay ─── */}
       <div
         className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
-          mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          mobileMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setMobileMenuOpen(false)}
       />
@@ -288,7 +370,9 @@ export function Navbar() {
         <div className="flex flex-col h-full">
           {/* Mobile Menu Header */}
           <div className="flex items-center justify-between h-16 px-5 border-b border-white/5">
-            <span className="text-xs font-black text-zinc-500 uppercase tracking-[0.3em]">Menu</span>
+            <span className="text-xs font-black text-zinc-500 uppercase tracking-[0.3em]">
+              Menu
+            </span>
             <button
               onClick={() => setMobileMenuOpen(false)}
               className="w-9 h-9 rounded-xl bg-zinc-900 flex items-center justify-center transition-all active:scale-95"
@@ -303,13 +387,15 @@ export function Navbar() {
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-2xl bg-linear-to-br from-[#ff8c5a] to-[#ff6b3a] flex items-center justify-center shrink-0">
                   <span className="text-sm font-black text-black uppercase">
-                    {user.email?.charAt(0) || 'U'}
+                    {user.email?.charAt(0) || "U"}
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-white truncate">{user.email}</p>
+                  <p className="text-sm font-bold text-white truncate">
+                    {user.email}
+                  </p>
                   <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5">
-                    {user.roles?.join(', ') || 'Customer'}
+                    {user.roles?.join(", ") || "Customer"}
                   </p>
                 </div>
               </div>
@@ -319,7 +405,9 @@ export function Navbar() {
           {/* Mobile Menu Navigation */}
           <div className="flex-1 overflow-y-auto py-4">
             <div className="px-3 space-y-1">
-              <p className="px-3 py-2 text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">Điều Hướng</p>
+              <p className="px-3 py-2 text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">
+                Điều Hướng
+              </p>
 
               <Link
                 href="/"
@@ -327,7 +415,9 @@ export function Navbar() {
                 className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-300 hover:bg-zinc-900 hover:text-white transition-all group"
               >
                 <Home className="w-4 h-4 text-zinc-500 group-hover:text-[#ff8c5a]" />
-                <span className="text-xs font-bold uppercase tracking-widest">Trang Chủ</span>
+                <span className="text-xs font-bold uppercase tracking-widest">
+                  Trang Chủ
+                </span>
                 <ChevronRight className="w-3 h-3 text-zinc-700 ml-auto group-hover:text-zinc-500" />
               </Link>
 
@@ -337,7 +427,9 @@ export function Navbar() {
                 className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-300 hover:bg-zinc-900 hover:text-white transition-all group"
               >
                 <Camera className="w-4 h-4 text-zinc-500 group-hover:text-[#ff8c5a]" />
-                <span className="text-xs font-bold uppercase tracking-widest">Thiết Bị</span>
+                <span className="text-xs font-bold uppercase tracking-widest">
+                  Thiết Bị
+                </span>
                 <ChevronRight className="w-3 h-3 text-zinc-700 ml-auto group-hover:text-zinc-500" />
               </Link>
 
@@ -347,7 +439,9 @@ export function Navbar() {
                 className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-300 hover:bg-zinc-900 hover:text-white transition-all group"
               >
                 <Package className="w-4 h-4 text-zinc-500 group-hover:text-[#ff8c5a]" />
-                <span className="text-xs font-bold uppercase tracking-widest">Sản Phẩm Mới</span>
+                <span className="text-xs font-bold uppercase tracking-widest">
+                  Sản Phẩm Mới
+                </span>
                 <ChevronRight className="w-3 h-3 text-zinc-700 ml-auto group-hover:text-zinc-500" />
               </Link>
 
@@ -357,7 +451,9 @@ export function Navbar() {
                 className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-300 hover:bg-zinc-900 hover:text-white transition-all group"
               >
                 <Info className="w-4 h-4 text-zinc-500 group-hover:text-[#ff8c5a]" />
-                <span className="text-xs font-bold uppercase tracking-widest">Về Chúng Tôi</span>
+                <span className="text-xs font-bold uppercase tracking-widest">
+                  Về Chúng Tôi
+                </span>
                 <ChevronRight className="w-3 h-3 text-zinc-700 ml-auto group-hover:text-zinc-500" />
               </Link>
             </div>
@@ -365,7 +461,9 @@ export function Navbar() {
             {/* Mobile Menu Account Section */}
             {!isLoading && isAuthenticated && user && (
               <div className="px-3 mt-4 space-y-1">
-                <p className="px-3 py-2 text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">Tài Khoản</p>
+                <p className="px-3 py-2 text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">
+                  Tài Khoản
+                </p>
 
                 {dashboardLink && (
                   <Link
@@ -374,7 +472,9 @@ export function Navbar() {
                     className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-300 hover:bg-zinc-900 hover:text-white transition-all group"
                   >
                     <LayoutDashboard className="w-4 h-4 text-[#ff8c5a]" />
-                    <span className="text-xs font-bold uppercase tracking-widest">Dashboard</span>
+                    <span className="text-xs font-bold uppercase tracking-widest">
+                      Dashboard
+                    </span>
                     <ChevronRight className="w-3 h-3 text-zinc-700 ml-auto group-hover:text-zinc-500" />
                   </Link>
                 )}
@@ -385,7 +485,9 @@ export function Navbar() {
                   className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-300 hover:bg-zinc-900 hover:text-white transition-all group"
                 >
                   <User className="w-4 h-4 text-zinc-500 group-hover:text-[#ff8c5a]" />
-                  <span className="text-xs font-bold uppercase tracking-widest">Tài Khoản</span>
+                  <span className="text-xs font-bold uppercase tracking-widest">
+                    Tài Khoản
+                  </span>
                   <ChevronRight className="w-3 h-3 text-zinc-700 ml-auto group-hover:text-zinc-500" />
                 </Link>
 
@@ -395,7 +497,9 @@ export function Navbar() {
                   className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-300 hover:bg-zinc-900 hover:text-white transition-all group"
                 >
                   <Settings className="w-4 h-4 text-zinc-500 group-hover:text-[#ff8c5a]" />
-                  <span className="text-xs font-bold uppercase tracking-widest">Cài Đặt</span>
+                  <span className="text-xs font-bold uppercase tracking-widest">
+                    Cài Đặt
+                  </span>
                   <ChevronRight className="w-3 h-3 text-zinc-700 ml-auto group-hover:text-zinc-500" />
                 </Link>
               </div>
@@ -422,7 +526,10 @@ export function Navbar() {
               </>
             ) : (
               <>
-                <Link href={Routers.LOGIN} onClick={() => setMobileMenuOpen(false)}>
+                <Link
+                  href={Routers.LOGIN}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
                   <Button className="w-full h-12 rounded-xl bg-white text-black hover:bg-[#ff8c5a] font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-[0.98] transition-all">
                     Đăng Nhập
                   </Button>

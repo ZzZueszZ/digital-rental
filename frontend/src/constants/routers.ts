@@ -8,6 +8,7 @@ export const Routers = {
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',
   ADMIN: '/admin',
+  SUPER_ADMIN: '/super-admin',
   STAFF: '/staff',
   FORBIDDEN: '/403',
 } as const;

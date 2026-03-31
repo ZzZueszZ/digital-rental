@@ -183,40 +183,59 @@ export default function Home() {
         {/* Product List Sector */}
         <ProductListSection />
 
-        {/* Feature Sectors */}
-        <section className="py-40 bg-[#0c0c0c] border-y border-white/5">
-          <div className="container mx-auto px-6 md:px-12 max-w-[1600px]">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20">
+        {/* Feature Sectors - Premium Redesign */}
+        <section className="py-32 bg-[#0c0c0c] relative">
+          {/* Subtle background glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#ff8c5a] opacity-[0.03] blur-[120px] pointer-events-none rounded-full" />
+
+          <div className="container relative z-10 mx-auto px-6 md:px-12 max-w-[1600px]">
+            <div className="text-center mb-20">
+              <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">
+                Dịch vụ <span className="text-[#ff8c5a] italic">Đỉnh cao.</span>
+              </h2>
+              <p className="text-on-surface-variant font-medium">
+                Bảo chứng cho chất lượng và độ tín nhiệm hàng đầu trong ngành
+                thuê mua thiết bị.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 {
-                  icon: <ShieldAlert />,
-                  title: "Bảo hiểm Trọn Gói",
-                  desc: "Yên tâm tác nghiệp với các gói bảo hiểm hư hỏng toàn diện.",
+                  icon: <ShieldAlert className="w-8 h-8" />,
+                  title: "Bảo hiểm Toàn diện",
+                  desc: "Chính sách bảo hiểm minh bạch, bảo vệ quyền lợi tối đa cho rủi ro hư hỏng thiết bị.",
                 },
                 {
-                  icon: <Clock />,
-                  title: "Giao nhận 24H",
-                  desc: "Hệ thống logistics chuyên nghiệp đảm bảo thiết bị đúng hẹn.",
+                  icon: <Clock className="w-8 h-8" />,
+                  title: "Giao nhận Tốc hành",
+                  desc: "Mạng lưới hậu cần chuyên nghiệp, đảm bảo giao thiết bị đúng nơi, đúng thời điểm.",
                 },
                 {
-                  icon: <HardDrive />,
-                  title: "Kiểm định Pro",
-                  desc: "Chất lượng thiết bị luôn ở mức hoàn hảo trước khi xuất kho.",
+                  icon: <HardDrive className="w-8 h-8" />,
+                  title: "Kiểm định Gắt gao",
+                  desc: "Mỗi thiết bị đều trải qua quy trình kiểm tra 12 bước trước khi bàn giao cho bạn.",
                 },
                 {
-                  icon: <Zap />,
-                  title: "Ưu tiên Thành viên",
-                  desc: "Đặt thuê tức thì với hệ thống hàng chờ thông minh.",
+                  icon: <Zap className="w-8 h-8" />,
+                  title: "Hỗ trợ 24/7",
+                  desc: "Đội ngũ kỹ thuật viên túc trực để giải quyết mọi vấn đề phát sinh tức thì.",
                 },
               ].map((f, i) => (
-                <div key={i} className="space-y-6 group">
-                  <div className="w-14 h-14 bg-zinc-900 border border-white/5 rounded-2xl flex items-center justify-center text-[#ff8c5a] transition-all duration-500 group-hover:bg-[#ff8c5a] group-hover:text-black group-hover:-translate-y-2">
+                <div
+                  key={i}
+                  className="group relative p-8 rounded-[2.5rem] bg-[#111111] border border-white/5 hover:border-[#ff8c5a]/30 overflow-hidden transition-all duration-500 hover:shadow-[0_20px_80px_rgba(255,140,90,0.08)] hover:-translate-y-2"
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff8c5a] opacity-0 group-hover:opacity-10 blur-[60px] transition-opacity duration-500" />
+
+                  <div className="w-16 h-16 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center text-[#ff8c5a] mb-8 transition-all duration-500 group-hover:scale-110 group-hover:bg-[#ff8c5a] group-hover:text-black shadow-lg">
                     {f.icon}
                   </div>
-                  <h4 className="text-lg font-black text-white uppercase tracking-tighter">
+
+                  <h4 className="text-xl font-bold text-white mb-4">
                     {f.title}
                   </h4>
-                  <p className="text-zinc-600 font-bold uppercase tracking-widest text-[9px] leading-relaxed italic">
+                  <p className="text-[#888888] text-sm leading-relaxed font-medium">
                     {f.desc}
                   </p>
                 </div>
@@ -225,21 +244,44 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Closing CTA */}
-        <section className="py-60 relative overflow-hidden bg-[#0c0c0c]">
-          <div className="container relative z-10 mx-auto px-6 md:px-12 max-w-[1600px] text-center">
-            <h2 className="text-7xl md:text-9xl font-black text-white tracking-tighter uppercase font-heading mb-12">
-              STUDIO <br />{" "}
-              <span className="text-[#ff8c5a] italic">CONNECT.</span>
-            </h2>
-            <p className="text-zinc-500 font-bold uppercase tracking-[0.4em] text-[10px] mb-16 max-w-2xl mx-auto leading-relaxed px-4">
-              Trở thành một phần của cộng đồng sáng tạo hình ảnh chuyên nghiệp.
-              Đăng ký ngay để nhận ưu đãi cho lần thuê đầu tiên.
-            </p>
-            <div className="flex justify-center">
-              <Button className="rounded-full px-20 h-24 bg-white text-black hover:bg-[#ff8c5a] font-black uppercase text-xs tracking-[0.5em] shadow-2xl active:scale-95 transition-all group">
-                Đăng Ký Ngay{" "}
-                <ArrowRight className="ml-5 w-6 h-6 group-hover:translate-x-3 transition-transform" />
+        {/* Closing CTA - Full Bleed Redesign */}
+        <section className="relative h-[70svh] min-h-[600px] w-full flex items-center overflow-hidden border-t border-white/5 bg-[#0c0c0c]">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/images/studio_cta_bg.png"
+              alt="Professional Photography Studio Background"
+              fill
+              className="object-cover object-right-bottom mix-blend-lighten opacity-80"
+              priority
+            />
+            {/* Gradient overlay to ensure text is readable on the left */}
+            <div className="absolute inset-0 bg-linear-to-r from-[#0c0c0c] via-[#0c0c0c]/80 to-transparent" />
+            <div className="absolute inset-0 bg-black/10" />
+          </div>
+          
+          {/* Content Container (Left Aligned) */}
+          <div className="container relative z-10 mx-auto px-6 md:px-12 max-w-[1600px]">
+            <div className="max-w-2xl px-4 md:px-0">
+              {/* Badge */}
+              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#efc352] mb-6">
+                <span className="text-[11px] font-black text-black tracking-[0.08em] uppercase">
+                  Ưu Đãi Giới Hạn
+                </span>
+              </div>
+              
+              {/* Heading */}
+              <h2 className="text-4xl md:text-5xl lg:text-[4rem] font-black text-white tracking-tight leading-[1.1] uppercase mb-6">
+                SẴN SÀNG KIẾN TẠO <br />KHUNG HÌNH XUẤT CHÚNG
+              </h2>
+              
+              {/* Subtitle */}
+              <p className="text-[#a1a1aa] text-base md:text-[1.125rem] font-medium mb-10 leading-relaxed max-w-lg">
+                Tham gia cộng đồng chuyên nghiệp trong chuỗi trải nghiệm 3 ngày cùng mạng lưới thiết bị lớn nhất bắt đầu tại Digital Rental.
+              </p>
+              
+              {/* Button */}
+              <Button className="rounded-full px-10 h-14 bg-[#e85d04] text-white hover:bg-[#ff7b00] text-sm font-bold tracking-[0.08em] uppercase shadow-[0_4px_20px_rgba(232,93,4,0.3)] transition-all active:scale-95 border-none">
+                BẮT ĐẦU NGAY
               </Button>
             </div>
           </div>

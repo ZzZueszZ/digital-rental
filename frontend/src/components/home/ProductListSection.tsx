@@ -6,7 +6,6 @@ import { ChevronLeft, ChevronRight, Camera, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/services/api";
 
-
 interface Pagination {
   pageNumber: number;
   pageSize: number;
@@ -43,7 +42,7 @@ export function ProductListSection() {
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  const pageSize = 8; // Fetch a moderate amount like 8
+  const pageSize = 20; // Default amount is 20 items per page
 
   const fetchProducts = async (page: number) => {
     try {
@@ -54,6 +53,7 @@ export function ProductListSection() {
           size: pageSize,
           sortBy: "createdAt",
           direction: "desc",
+          forSale: true,
         },
       });
       if (res.data?.success) {
@@ -78,52 +78,40 @@ export function ProductListSection() {
     }).format(amount);
   };
 
-  const hasNextPage = pagination ? currentPage < pagination.totalPages - 1 : false;
+  const hasNextPage = pagination
+    ? currentPage < pagination.totalPages - 1
+    : false;
   const hasPrevPage = currentPage > 0;
 
   const getImageUrl = (url: string | null) => {
     if (!url) return "";
     if (url.startsWith("http")) return url;
     // Assuming relative path from backend (e.g., /api/uploads/...)
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, '') || "http://localhost:8080";
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") ||
+      "http://localhost:8080";
     return `${baseUrl}${url}`;
   };
 
   return (
-    <section className="py-24 bg-[#0c0c0c] border-t border-white/5 relative">
+    <section
+      id="product-section"
+      className="py-24 bg-[#0c0c0c] border-t border-white/5 relative"
+    >
       <div className="container mx-auto px-6 md:px-12 max-w-[1600px]">
-        
         {/* Section Header */}
         <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
           <div>
             <h2 className="text-4xl md:text-[3.5rem] font-bold text-white tracking-tight leading-tight">
-              Tuyển tập <br className="hidden md:block" />
-              <span className="bg-linear-to-br from-[#ffd9c7] to-[#ff8c5a] bg-clip-text text-transparent italic pr-2">Chuyên nghiệp.</span>
+              Cửa hàng{""}
+              <span className="bg-linear-to-br from-[#ffd9c7] to-[#ff8c5a] bg-clip-text text-transparent italic pr-2">
+                Thiết bị.
+              </span>
             </h2>
             <p className="text-on-surface-variant text-base font-medium max-w-lg mt-4 leading-relaxed">
-              Những công cụ quay chụp tối tân nhất vừa cập bến Digital Rental. Chọn lựa vũ khí cho dự án tiếp theo của bạn.
+              Các sản phẩm và phụ kiện máy ảnh chính hãng đang được mở bán. Nâng
+              cấp bộ gear chuyên nghiệp của bạn ngay hôm nay.
             </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              disabled={!hasPrevPage || isLoading}
-              onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
-              className="h-12 w-12 rounded-full border-white/10 bg-[#111111] text-white hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-[#111111]"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              disabled={!hasNextPage || isLoading}
-              onClick={() => setCurrentPage((p) => p + 1)}
-              className="h-12 w-12 rounded-full border-white/10 bg-[#111111] text-white hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-[#111111]"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
           </div>
         </div>
 
@@ -131,7 +119,10 @@ export function ProductListSection() {
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(pageSize)].map((_, i) => (
-              <div key={i} className="h-[420px] rounded-[2rem] bg-white/5 animate-pulse" />
+              <div
+                key={i}
+                className="h-[420px] rounded-[2rem] bg-white/5 animate-pulse"
+              />
             ))}
           </div>
         ) : products.length > 0 ? (
@@ -180,14 +171,22 @@ export function ProductListSection() {
                     <div>
                       {product.forSale && product.salePrice ? (
                         <p className="text-on-surface-variant text-xs font-medium">
-                          Giá mua: <span className="text-white font-bold">{formatVND(product.salePrice)}</span>
+                          Giá mua:{" "}
+                          <span className="text-white font-bold">
+                            {formatVND(product.salePrice)}
+                          </span>
                         </p>
                       ) : (
-                        <p className="text-on-surface-variant text-xs font-medium">Chỉ cho thuê</p>
+                        <p className="text-on-surface-variant text-xs font-medium">
+                          Chỉ cho thuê
+                        </p>
                       )}
                     </div>
-                    
-                    <Button size="icon" className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#ff8c5a] text-white hover:text-black transition-all">
+
+                    <Button
+                      size="icon"
+                      className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#ff8c5a] text-white hover:text-black transition-all"
+                    >
                       <ArrowRight className="w-4 h-4" />
                     </Button>
                   </div>
@@ -202,15 +201,71 @@ export function ProductListSection() {
           </div>
         )}
 
-        {/* View All CTA */}
-        {products.length > 0 && (
-          <div className="mt-16 flex justify-center">
-            <Button variant="outline" size="lg" className="rounded-full px-10 h-14 text-sm font-bold tracking-widest border-white/10 bg-transparent text-white hover:bg-white hover:text-black transition-all active:scale-95 uppercase">
-              XEM TẤT CẢ VŨ KHÍ
+        {/* Pagination Component */}
+        {products.length > 0 && pagination && pagination.totalPages >= 1 && (
+          <div className="mt-16 flex flex-wrap justify-center items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={!hasPrevPage || isLoading}
+              onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+              className="h-12 w-12 rounded-full border-white/10 bg-[#111111] text-white hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-[#111111]"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+
+            {[...Array(pagination.totalPages)].map((_, i) => {
+              // Sliding window of pages
+              if (
+                i === 0 ||
+                i === pagination.totalPages - 1 ||
+                (i >= currentPage - 1 && i <= currentPage + 1)
+              ) {
+                return (
+                  <Button
+                    key={i}
+                    variant={currentPage === i ? "default" : "outline"}
+                    onClick={() => {
+                      setCurrentPage(i);
+                      window.scrollTo({
+                        top: document.getElementById("product-section")
+                          ?.offsetTop,
+                        behavior: "smooth",
+                      });
+                    }}
+                    className={`h-12 w-12 rounded-full border-white/10 font-bold transition-all ${
+                      currentPage === i
+                        ? "bg-[#ff8c5a] text-black border-[#ff8c5a]"
+                        : "bg-[#111111] text-white hover:bg-white/10"
+                    }`}
+                  >
+                    {i + 1}
+                  </Button>
+                );
+              } else if (i === currentPage - 2 || i === currentPage + 2) {
+                return (
+                  <span
+                    key={i}
+                    className="text-white/30 px-2 font-bold select-none"
+                  >
+                    ...
+                  </span>
+                );
+              }
+              return null;
+            })}
+
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={!hasNextPage || isLoading}
+              onClick={() => setCurrentPage((p) => p + 1)}
+              className="h-12 w-12 rounded-full border-white/10 bg-[#111111] text-white hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-[#111111]"
+            >
+              <ChevronRight className="h-5 w-5" />
             </Button>
           </div>
         )}
-
       </div>
     </section>
   );

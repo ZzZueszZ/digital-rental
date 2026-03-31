@@ -82,7 +82,9 @@ export function LoginForm() {
       }
 
       const roles = payload.user.roles ?? [];
-      if (roles.includes(Role.SUPER_ADMIN) || roles.includes(Role.ADMIN)) {
+      if (roles.includes(Role.SUPER_ADMIN)) {
+        window.location.href = Routers.SUPER_ADMIN;
+      } else if (roles.includes(Role.ADMIN)) {
         window.location.href = Routers.ADMIN;
       } else if (roles.includes(Role.STAFF)) {
         window.location.href = Routers.STAFF;

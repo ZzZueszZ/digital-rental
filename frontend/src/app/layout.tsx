@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang='vi' suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${fontInter.variable} font-sans antialiased bg-white text-gray-900`}
+        className={`${fontInter.variable} font-sans antialiased bg-white text-gray-900 overflow-x-hidden`}
       >
         {/* Strip browser-extension-injected attributes (e.g. Bitdefender's bis_skin_checked) before React hydration */}
         <script

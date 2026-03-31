@@ -111,7 +111,7 @@ export function Navbar() {
                         <div className="flex-1 bg-zinc-900/50 p-6 rounded-2xl border border-white/5">
                           <Zap className="w-8 h-8 text-[#ff8c5a] mb-4" />
                           <h4 className="text-xl font-black text-white uppercase font-heading mb-3">
-                            Kho Vũ Khí
+                            Kho Thiết Bị
                           </h4>
                           <p className="text-zinc-500 text-xs leading-relaxed mb-4 font-medium">
                             Khám phá các dòng máy ảnh và ống kính chuyên nghiệp

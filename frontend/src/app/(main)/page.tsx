@@ -120,7 +120,7 @@ export default function Home() {
                 variant="link"
                 className="text-white hover:text-[#ff8c5a] font-bold tracking-widest text-xs transition-all uppercase"
               >
-                KHÁM PHÁ VŨ KHÍ <ChevronRight className="w-4 h-4 ml-2" />
+                KHÁM PHÁ THIẾT BỊ <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
 
@@ -184,7 +184,7 @@ export default function Home() {
         <ProductListSection />
 
         {/* Feature Sectors - Premium Redesign */}
-        <section className="py-32 bg-[#0c0c0c] relative">
+        <section className="py-32 bg-[#0c0c0c] relative overflow-hidden">
           {/* Subtle background glow */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#ff8c5a] opacity-[0.03] blur-[120px] pointer-events-none rounded-full" />
 
@@ -251,7 +251,7 @@ export default function Home() {
               src="/images/studio_cta_bg.png"
               alt="Professional Photography Studio Background"
               fill
-              className="object-cover object-right-bottom mix-blend-lighten opacity-80"
+              className="object-cover object-bottom-right mix-blend-lighten opacity-80"
               priority
             />
             {/* Gradient overlay to ensure text is readable on the left */}

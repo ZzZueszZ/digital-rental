@@ -1,23 +1,22 @@
-import { http, setIsLoggingOut } from '@/lib/http'
-import { useAuthStore } from '@/store/auth'
-import { removeRefreshTokenCookie } from '@/lib/refresh-token-client'
-import type { LoginRequest, LoginResponse } from '@/schemas/auth/login'
-import type { UserResponse } from '@/types/user'
+import { http, setIsLoggingOut } from "@/lib/http";
+import { useAuthStore } from "@/store/auth";
+import { removeRefreshTokenCookie } from "@/lib/refresh-token-client";
+import type { LoginRequest, LoginResponse } from "@/schemas/auth/login";
+import type { UserResponse } from "@/types/user";
 import type {
   ChangePasswordRequest,
   ForgotPasswordRequest,
   ResetPasswordRequest,
   ChangeEmailRequest,
   ResendActivationRequest,
-} from '@/types/auth'
+} from "@/types/auth";
 
-const AUTH_PATH = '/auth'
-const USER_PATH = '/users'
+const AUTH_PATH = "/auth";
 
 export interface RegisterPayload {
-  fullName: string
-  email: string
-  password: string
+  fullName: string;
+  email: string;
+  password: string;
 }
 
 export const authService = {
@@ -27,17 +26,16 @@ export const authService = {
   register: (payload: RegisterPayload) =>
     http.post<IBackendRes<UserResponse>>(`${AUTH_PATH}/register`, payload),
 
-  me: () =>
-    http.get<IBackendRes<UserResponse>>(`${USER_PATH}/me`),
+  me: () => http.get<IBackendRes<UserResponse>>(`/profile`),
 
   logout: async () => {
-    setIsLoggingOut(true)
+    setIsLoggingOut(true);
     try {
-      await http.post<IBackendRes<unknown>>(`${AUTH_PATH}/logout`)
+      await http.post<IBackendRes<unknown>>(`${AUTH_PATH}/logout`);
     } finally {
-      useAuthStore.getState().clear()
-      await removeRefreshTokenCookie()
-      setIsLoggingOut(false)
+      useAuthStore.getState().clear();
+      await removeRefreshTokenCookie();
+      setIsLoggingOut(false);
     }
   },
 
@@ -58,4 +56,4 @@ export const authService = {
 
   changeEmail: (payload: ChangeEmailRequest) =>
     http.post<IBackendRes<unknown>>(`${AUTH_PATH}/change-email`, payload),
-}
+};

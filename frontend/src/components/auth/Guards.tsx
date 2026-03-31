@@ -170,7 +170,7 @@ export function RoleGuard({ children, allowedRoles }: { children: React.ReactNod
     }
   }, [isAuthenticated, isLoading, user, allowedRoles, router]);
 
-  if (isLoading || !isAuthenticated || !user || !user.roles.some((role: Role) => allowedRoles.includes(role))) {
+  if (isLoading || !isAuthenticated || !user || !user.roles?.some((role: Role) => allowedRoles.includes(role))) {
     return (
       <div className='min-h-screen bg-white grid place-items-center'>
         <div className='w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin' />

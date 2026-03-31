@@ -1,8 +1,8 @@
-public enum AccountStatus {
-    PENDING,
-    ACTIVE,
-    SUSPENDED,
-    BANNED,
-    DISABLED,
-    DELETED
+export enum AccountStatus {
+  PENDING,
+  ACTIVE,
+  SUSPENDED,
+  BANNED,
+  DISABLED,
+  DELETED,
 }

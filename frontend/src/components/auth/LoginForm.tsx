@@ -1,34 +1,34 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
-import { Eye, EyeOff, Mail } from 'lucide-react';
-import { useQueryClient } from '@tanstack/react-query';
-import Image from 'next/image';
+import { useState } from 'react'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
+import { Eye, EyeOff, Mail } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
+import Image from 'next/image'
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { loginSchema, type LoginRequest } from '@/schemas/auth/login';
-import { authService } from '@/services/auth';
-import { useAuthStore } from '@/store/auth';
-import { persistRefreshTokenCookie } from '@/lib/refresh-token-client';
-import { AUTH_ME_QUERY_KEY } from '@/constants/query-keys';
-import Routers from '@/constants/routers';
-import { getValidRedirectUrl } from '@/lib/utils';
-import { Role } from '@/constants/enum/role';
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { loginSchema, type LoginRequest, type LoginResponse } from '@/schemas/auth/login'
+import { authService } from '@/services/auth'
+import { useAuthStore } from '@/store/auth'
+import { persistRefreshTokenCookie } from '@/lib/refresh-token-client'
+import { AUTH_ME_QUERY_KEY } from '@/constants/query-keys'
+import Routers from '@/constants/routers'
+import { getValidRedirectUrl } from '@/lib/utils'
+import { Role } from '@/constants/enum/role'
 
 export function LoginForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
-  const [isResendingActivation, setIsResendingActivation] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null)
+  const [isResendingActivation, setIsResendingActivation] = useState(false)
 
-  const searchParams = useSearchParams();
-  const queryClient = useQueryClient();
-  const setAccessToken = useAuthStore((state) => state.setAccessToken);
+  const searchParams = useSearchParams()
+  const queryClient = useQueryClient()
+  const setAccessToken = useAuthStore((state) => state.setAccessToken)
 
   const {
     register,
@@ -37,75 +37,71 @@ export function LoginForm() {
   } = useForm<LoginRequest>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
-  });
+  })
 
   const handleResendActivation = async () => {
-    if (!pendingEmail) return;
-    setIsResendingActivation(true);
+    if (!pendingEmail) return
+    setIsResendingActivation(true)
     try {
-      const res = await authService.resendActivation({ email: pendingEmail });
+      const res = await authService.resendActivation({ email: pendingEmail })
       if (res.data.success) {
-        toast.success('Email kích hoạt đã được gửi lại. Vui lòng kiểm tra hộp thư.');
+        toast.success('Email kích hoạt đã được gửi lại. Vui lòng kiểm tra hộp thư.')
       } else {
-        toast.error(res.data.message || 'Không thể gửi lại email kích hoạt');
+        toast.error(res.data.message || 'Không thể gửi lại email kích hoạt')
       }
     } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } };
-      toast.error(err?.response?.data?.message || 'Có lỗi xảy ra');
+      const err = error as { response?: { data?: { message?: string } } }
+      toast.error(err?.response?.data?.message || 'Có lỗi xảy ra')
     } finally {
-      setIsResendingActivation(false);
+      setIsResendingActivation(false)
     }
-  };
+  }
 
   const onSubmit = async (values: LoginRequest) => {
-    setPendingEmail(null);
+    setPendingEmail(null)
     try {
-      const { data: res } = await authService.login(values);
-      const payload = res.data;
-      if (!payload) {
-        toast.error('Phản hồi từ server không hợp lệ');
-        return;
-      }
+      const { data } = await authService.login(values)
+      const payload = data.data as LoginResponse
 
-      const { accessToken, refreshToken, user } = payload;
+      await persistRefreshTokenCookie(payload.refreshToken)
+      setAccessToken(payload.accessToken)
+      queryClient.setQueryData(AUTH_ME_QUERY_KEY, payload.user)
 
-      await persistRefreshTokenCookie(refreshToken);
-      setAccessToken(accessToken);
-      queryClient.setQueryData(AUTH_ME_QUERY_KEY, user);
+      toast.success(data.message || 'Đăng nhập thành công')
 
-      toast.success(res.message || 'Đăng nhập thành công');
-
-      const redirectUrl = getValidRedirectUrl(searchParams);
+      const redirectUrl = getValidRedirectUrl(searchParams)
       if (redirectUrl) {
-        window.location.href = redirectUrl;
-        return;
+        window.location.href = redirectUrl
+        return
       }
 
-      const roles = user.roles ?? [];
+      const roles = payload.user.roles ?? []
       if (roles.includes(Role.SUPER_ADMIN) || roles.includes(Role.ADMIN)) {
-        window.location.href = Routers.ADMIN;
+        window.location.href = Routers.ADMIN
       } else if (roles.includes(Role.STAFF)) {
-        window.location.href = Routers.STAFF;
+        window.location.href = Routers.STAFF
       } else {
-        window.location.href = Routers.HOME;
+        window.location.href = Routers.HOME
       }
     } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string }; status?: number } };
-      const message = err?.response?.data?.message || 'Đăng nhập thất bại, thử lại';
-      const statusCode = err?.response?.status;
+      const err = error as { response?: { data?: { message?: string }; status?: number }; message?: string }
+      const message =
+        err?.response?.data?.message || err?.message || 'Đăng nhập thất bại, thử lại'
+      const statusCode = err?.response?.status
 
+      // Check for PENDING account (403 or message contains activation-related text)
       if (
         statusCode === 403 ||
         message.toLowerCase().includes('chưa kích hoạt') ||
         message.toLowerCase().includes('pending') ||
         message.toLowerCase().includes('activate')
       ) {
-        setPendingEmail(values.email);
+        setPendingEmail(values.email)
       }
 
-      toast.error(message);
+      toast.error(message)
     }
-  };
+  }
 
   return (
     <div className='w-full max-w-md mx-auto lg:mx-0'>
@@ -235,5 +231,5 @@ export function LoginForm() {
         </Link>
       </p>
     </div>
-  );
+  )
 }

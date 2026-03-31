@@ -1,19 +1,20 @@
-import Cookies from 'js-cookie';
+export const persistRefreshTokenCookie = async (refreshToken: string) => {
+  if (typeof window === 'undefined') return
 
-const REFRESH_TOKEN_KEY = 'refreshToken';
+  const response = await fetch('/api/auth/refresh-token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken }),
+    credentials: 'same-origin',
+  })
 
-export const persistRefreshTokenCookie = async (token: string) => {
-  Cookies.set(REFRESH_TOKEN_KEY, token, {
-    expires: 7, // 7 days
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-  });
-};
-
-export const getRefreshTokenFromCookie = () => {
-  return Cookies.get(REFRESH_TOKEN_KEY);
-};
+  if (!response.ok) {
+    throw new Error('Failed to store refresh token')
+  }
+}
 
 export const removeRefreshTokenCookie = async () => {
-  Cookies.remove(REFRESH_TOKEN_KEY);
-};
+  if (typeof window === 'undefined') return
+
+  await fetch('/api/auth/refresh-token', { method: 'DELETE', credentials: 'same-origin' })
+}

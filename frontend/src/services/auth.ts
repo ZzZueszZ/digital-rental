@@ -1,21 +1,23 @@
-import { http, setIsLoggingOut } from '@/lib/http';
-import { useAuthStore } from '@/store/auth';
-import { removeRefreshTokenCookie } from '@/lib/refresh-token-client';
-import type { LoginRequest, LoginResponse } from '@/schemas/auth/login';
-import type { UserResponse } from '@/types/user';
+import { http, setIsLoggingOut } from '@/lib/http'
+import { useAuthStore } from '@/store/auth'
+import { removeRefreshTokenCookie } from '@/lib/refresh-token-client'
+import type { LoginRequest, LoginResponse } from '@/schemas/auth/login'
+import type { UserResponse } from '@/types/user'
 import type {
+  ChangePasswordRequest,
   ForgotPasswordRequest,
   ResetPasswordRequest,
+  ChangeEmailRequest,
   ResendActivationRequest,
-} from '@/types/auth';
+} from '@/types/auth'
 
-const AUTH_PATH = '/auth';
-const USER_PATH = '/users';
+const AUTH_PATH = '/auth'
+const USER_PATH = '/users'
 
 export interface RegisterPayload {
-  fullName: string;
-  email: string;
-  password: string;
+  fullName: string
+  email: string
+  password: string
 }
 
 export const authService = {
@@ -28,14 +30,14 @@ export const authService = {
   me: () =>
     http.get<IBackendRes<UserResponse>>(`${USER_PATH}/me`),
 
-  logout: async (refreshToken?: string) => {
-    setIsLoggingOut(true);
+  logout: async () => {
+    setIsLoggingOut(true)
     try {
-      await http.post(`${AUTH_PATH}/logout`, { refreshToken });
+      await http.post<IBackendRes<unknown>>(`${AUTH_PATH}/logout`)
     } finally {
-      useAuthStore.getState().clear();
-      await removeRefreshTokenCookie();
-      setIsLoggingOut(false);
+      useAuthStore.getState().clear()
+      await removeRefreshTokenCookie()
+      setIsLoggingOut(false)
     }
   },
 
@@ -45,9 +47,15 @@ export const authService = {
   activate: (token: string) =>
     http.get<IBackendRes<UserResponse>>(`${AUTH_PATH}/activate?token=${token}`),
 
+  changePassword: (payload: ChangePasswordRequest) =>
+    http.post<IBackendRes<unknown>>(`${AUTH_PATH}/change-password`, payload),
+
   forgotPassword: (payload: ForgotPasswordRequest) =>
     http.post<IBackendRes<string>>(`${AUTH_PATH}/forgot-password`, payload),
 
   resetPassword: (payload: ResetPasswordRequest) =>
     http.post<IBackendRes<string>>(`${AUTH_PATH}/reset-password`, payload),
-};
+
+  changeEmail: (payload: ChangeEmailRequest) =>
+    http.post<IBackendRes<unknown>>(`${AUTH_PATH}/change-email`, payload),
+}

@@ -85,6 +85,8 @@ export function useAuthSession(options?: { redirectToLogin?: boolean }) {
   const logout = useCallback(async () => {
     try {
       await authService.logout();
+    } catch {
+      // ignore server logout errors
     } finally {
       clearAccessToken();
       queryClient.removeQueries({ queryKey: AUTH_ME_QUERY_KEY });

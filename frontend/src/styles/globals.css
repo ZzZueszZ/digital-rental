@@ -97,11 +97,26 @@
 
 /* Global loading bar animation */
 @keyframes loading-bar {
-  0% { width: 0%; margin-left: 0%; }
-  20% { width: 30%; margin-left: 5%; }
-  50% { width: 40%; margin-left: 30%; }
-  80% { width: 25%; margin-left: 65%; }
-  100% { width: 5%; margin-left: 95%; }
+  0% {
+    width: 0%;
+    margin-left: 0%;
+  }
+  20% {
+    width: 30%;
+    margin-left: 5%;
+  }
+  50% {
+    width: 40%;
+    margin-left: 30%;
+  }
+  80% {
+    width: 25%;
+    margin-left: 65%;
+  }
+  100% {
+    width: 5%;
+    margin-left: 95%;
+  }
 }
 
 .animate-loading-bar {

@@ -35,11 +35,26 @@ interface Product {
   gallery: ProductImage[];
 }
 
-interface ApiResponse {
-  data: Product;
+interface Review {
+  id: number;
+  content: string;
+  rating: number;
+  userName: string;
+  createdAt: string;
+  userAvatar?: string | null;
+}
+
+interface MetaData {
+  averageRating: number;
+  totalReviews: number;
+}
+
+interface ApiResponse<T = unknown> {
+  data: T;
   message: string;
   statusCode: number;
   success: boolean;
+  meta?: MetaData;
 }
 
 export default function ProductDetailPage() {
@@ -49,6 +64,10 @@ export default function ProductDetailPage() {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [mainImageUrl, setMainImageUrl] = useState<string | null>(null);
+  
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewMeta, setReviewMeta] = useState<MetaData | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("specs"); // 'specs' or 'terms'
 
@@ -56,22 +75,31 @@ export default function ProductDetailPage() {
   useEffect(() => {
     if (!id) return;
 
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
-        const res = await api.get<ApiResponse>(`/products/${id}`);
-        if (res.data?.success) {
-          setProduct(res.data.data);
-          setMainImageUrl(res.data.data.mainImageUrl);
+        const [productRes, reviewRes] = await Promise.all([
+          api.get<ApiResponse<Product>>(`/products/${id}`),
+          api.get<ApiResponse<Review[]>>(`/reviews/product/${id}`)
+        ]);
+
+        if (productRes.data?.success) {
+          setProduct(productRes.data.data);
+          setMainImageUrl(productRes.data.data.mainImageUrl);
+        }
+
+        if (reviewRes.data?.success) {
+          setReviews(reviewRes.data.data);
+          setReviewMeta(reviewRes.data.meta || null);
         }
       } catch (error) {
-        console.error("Failed to fetch product:", error);
+        console.error("Failed to fetch data:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchProduct();
+    fetchData();
   }, [id]);
 
   const formatVND = (amount: number) => {
@@ -132,53 +160,56 @@ export default function ProductDetailPage() {
             
             {/* Main Image & Thumbnail Gallery */}
             <div className="space-y-4">
-              <div className="relative w-full aspect-square md:aspect-4/3 bg-linear-to-b from-[#1a1c20] to-[#0c0c0c] rounded-[2rem] border border-white/5 flex items-center justify-center overflow-hidden p-8 md:p-16 shadow-2xl">
+              <div className="relative w-full aspect-square md:aspect-4/3 bg-white rounded-[2.5rem] flex items-center justify-center overflow-hidden p-6 md:p-8 mask-[radial-gradient(circle_at_center,black_75%,transparent_100%)] group-hover:mask-[radial-gradient(circle_at_center,black_85%,transparent_100%)] transition-all duration-700">
                 {mainImageUrl ? (
                   <Image
                     src={getImageUrl(mainImageUrl)}
                     alt={product.name}
                     fill
                     unoptimized
-                    className="object-contain p-12 drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)] transition-transform duration-700 hover:scale-105"
+                    className="object-contain p-4 transition-transform duration-1000 group-hover:scale-110"
                   />
                 ) : (
-                  <Camera className="w-32 h-32 text-white/5" />
+                  <Camera className="w-32 h-32 text-black/5" />
                 )}
+                {/* Bloom Effect */}
+                <div className="absolute inset-0 bg-white/20 blur-3xl -z-10" />
               </div>
 
-              {/* Sub-gallery (dynamic) */}
+              {/* Sub-gallery (dynamic & resized) */}
               {product.gallery && product.gallery.length > 0 && (
-                <div className="grid grid-cols-4 gap-4">
+                <div className="flex flex-wrap gap-3 md:gap-4 mt-4">
                   {/* Insert main image as first thumbnail if not explicitly in gallery */}
                   <div
                     onClick={() => setMainImageUrl(product.mainImageUrl)}
-                    className={`relative aspect-square rounded-2xl border overflow-hidden cursor-pointer transition-all ${
+                    className={`w-20 md:w-28 shrink-0 aspect-4/3 relative rounded-xl overflow-hidden cursor-pointer transition-all duration-500 ${
                       mainImageUrl === product.mainImageUrl
-                        ? "border-[#ff8c5a] bg-linear-to-br from-[#1a1c20] to-[#111]"
-                        : "border-white/5 bg-[#111111] hover:border-white/20"
-                    } flex items-center justify-center`}
+                        ? "ring-2 ring-[#ff8c5a] ring-offset-2 ring-offset-[#0c0c0c] scale-105"
+                        : "opacity-40 hover:opacity-100"
+                    }`}
                   >
+                    <div className="absolute inset-0 bg-white" />
                     {product.mainImageUrl ? (
                       <Image
                         src={getImageUrl(product.mainImageUrl)}
                         alt="main thumb"
                         fill
                         unoptimized
-                        className="object-cover opacity-80"
+                        className="object-contain p-1.5 z-10"
                       />
                     ) : (
-                      <Camera className="w-8 h-8 text-white/20" />
+                      <Camera className="w-6 h-6 text-black/20 z-10" />
                     )}
                   </div>
 
-                  {product.gallery.slice(0, 3).map((img, idx) => {
-                    if (idx === 2 && product.gallery.length > 3) {
+                  {product.gallery.slice(0, 4).map((img, idx) => {
+                    if (idx === 3 && product.gallery.length > 4) {
                       return (
                         <div
                           key={img.id}
-                          className="relative aspect-square bg-[#0c0c0c] rounded-2xl border border-white/5 overflow-hidden flex items-center justify-center text-white/30 font-bold hover:text-white transition-colors cursor-pointer shadow-inner"
+                          className="w-20 md:w-28 shrink-0 aspect-4/3 relative bg-[#0c0c0c] rounded-xl border border-white/5 overflow-hidden flex items-center justify-center text-white/30 font-bold hover:text-white transition-colors cursor-pointer shadow-inner"
                         >
-                          +{product.gallery.length - 2}
+                          +{product.gallery.length - 3}
                         </div>
                       );
                     }
@@ -186,18 +217,19 @@ export default function ProductDetailPage() {
                       <div
                         key={img.id}
                         onClick={() => setMainImageUrl(img.url)}
-                        className={`relative aspect-square rounded-2xl border overflow-hidden cursor-pointer transition-all ${
+                        className={`w-20 md:w-28 shrink-0 aspect-4/3 relative rounded-xl overflow-hidden cursor-pointer transition-all duration-500 ${
                           mainImageUrl === img.url
-                            ? "border-[#ff8c5a] bg-linear-to-br from-[#1a1c20] to-[#111]"
-                            : "border-white/5 bg-[#111111] hover:border-white/20"
-                        } flex items-center justify-center`}
+                            ? "ring-2 ring-[#ff8c5a] ring-offset-2 ring-offset-[#0c0c0c] scale-105"
+                            : "opacity-40 hover:opacity-100"
+                        }`}
                       >
+                        <div className="absolute inset-0 bg-white" />
                         <Image
                           src={getImageUrl(img.url)}
                           alt={`gallery-${img.id}`}
                           fill
                           unoptimized
-                          className="object-cover opacity-80"
+                          className="object-contain p-1.5 z-10"
                         />
                       </div>
                     );
@@ -233,9 +265,11 @@ export default function ProductDetailPage() {
               <span className="px-3 py-1 rounded-sm bg-[#efc352]/10 text-[#efc352] text-[10px] font-black tracking-widest uppercase border border-[#efc352]/20">
                 NEW ARRIVAL
               </span>
-              <span className="flex items-center gap-1.5 text-[#ff8c5a] text-[11px] font-bold">
-                <Star className="w-3.5 h-3.5 fill-[#ff8c5a]" /> 4.9 <span className="text-zinc-500 font-medium ml-1">(128 Reviews)</span>
-              </span>
+              {reviewMeta && (
+                <span className="flex items-center gap-1.5 text-[#ff8c5a] text-[11px] font-bold">
+                  <Star className="w-3.5 h-3.5 fill-[#ff8c5a]" /> {(reviewMeta.averageRating || 0).toFixed(1)} <span className="text-zinc-500 font-medium ml-1">({reviewMeta.totalReviews || 0} Reviews)</span>
+                </span>
+              )}
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-[1.15] mb-6">
@@ -351,6 +385,58 @@ export default function ProductDetailPage() {
 
           </div>
         </div>
+
+        {/* Reviews Section */}
+        <div className="mt-24 border-t border-white/5 pt-16">
+          <div className="flex items-center gap-4 mb-10">
+            <h2 className="text-3xl font-bold text-white tracking-tight">
+              Đánh giá từ khách hàng
+            </h2>
+            {reviewMeta && (
+              <div className="flex items-center gap-2 bg-[#ff8c5a]/10 px-4 py-2 rounded-full border border-[#ff8c5a]/20">
+                <Star className="w-4 h-4 fill-[#ff8c5a] text-[#ff8c5a]" />
+                <span className="text-[#ff8c5a] font-bold">{reviewMeta.averageRating.toFixed(1)}</span>
+                <span className="text-zinc-500 font-medium text-sm">({reviewMeta.totalReviews} lượt)</span>
+              </div>
+            )}
+          </div>
+          
+          {reviews.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {reviews.map((r) => (
+                <div key={r.id} className="bg-[#111111] p-6 lg:p-8 rounded-[2rem] border border-white/5 hover:border-white/10 transition-colors">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#ff8c5a] to-[#e85d04] flex items-center justify-center font-bold text-white text-lg shadow-lg">
+                        {r.userName.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-bold text-white text-sm">{r.userName}</p>
+                        <p className="text-[11px] text-zinc-500 uppercase tracking-widest mt-0.5">
+                          {new Date(r.createdAt).toLocaleDateString("vi-VN", { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 mb-4">
+                    {Array.from({length: 5}).map((_, i) => (
+                      <Star key={i} className={`w-3.5 h-3.5 ${i < r.rating ? "fill-[#ff8c5a] text-[#ff8c5a]" : "text-zinc-700"}`} />
+                    ))}
+                  </div>
+                  <p className="text-sm text-[#a1a1aa] leading-relaxed">
+                    {r.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-[#111111] rounded-[2rem] border border-white/5">
+              <Star className="w-12 h-12 text-white/5 mx-auto mb-4" />
+              <p className="text-zinc-500 text-sm">Chưa có đánh giá nào cho sản phẩm này.</p>
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );

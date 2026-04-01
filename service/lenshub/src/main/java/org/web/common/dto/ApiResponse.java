@@ -110,4 +110,5 @@ public class ApiResponse<T> {
         private long totalElements;
     }
 
+    private java.util.Map<String, Object> meta;
 }

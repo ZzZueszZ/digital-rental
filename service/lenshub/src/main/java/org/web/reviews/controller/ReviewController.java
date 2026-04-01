@@ -149,17 +149,22 @@ public class ReviewController {
 
     @GetMapping("/product/{productId}")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<ReviewListResponse> listByProduct(
+    public ApiResponse<List<ReviewResponse>> listByProduct(
             @PathVariable Long productId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         ReviewListResponse data = reviewService.listByProduct(productId, page, size);
-        return ApiResponse.successfulResponse(
+        ApiResponse<List<ReviewResponse>> response = ApiResponse.successfulPageResponse(
                 HttpStatus.OK.value(),
                 "Lấy danh sách đánh giá thành công!",
-                data
+                data.getReviews()
         );
+        java.util.Map<String, Object> meta = new java.util.HashMap<>();
+        meta.put("averageRating", data.getAverageRating());
+        meta.put("totalReviews", data.getTotalReviews());
+        response.setMeta(meta);
+        return response;
     }
 
     @GetMapping("/my/product/{productId}")

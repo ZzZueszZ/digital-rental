@@ -192,9 +192,9 @@ public class ProductServiceImpl implements ProductService {
 
         String oldDetails = "{\"name\":\"" + product.getName() + "\"}";
 
-        if (request.getName() != null) product.setName(request.getName());
+        if (request.getName() != null && !request.getName().isBlank()) product.setName(request.getName());
         if (request.getDescription() != null) product.setDescription(request.getDescription());
-        if (request.getBrand() != null) product.setBrand(request.getBrand());
+        if (request.getBrand() != null && !request.getBrand().isBlank()) product.setBrand(request.getBrand());
 
         if (request.getSpecifications() != null) {
             product.getSpecifications().clear();

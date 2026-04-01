@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ChevronLeft, ChevronRight, Camera, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/services/api";
@@ -128,9 +129,10 @@ export function ProductListSection() {
         ) : products.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {products.map((product) => (
-              <div
+              <Link
                 key={product.id}
-                className="group relative h-[420px] rounded-[2rem] bg-[#111111] border border-white/5 overflow-hidden transition-all duration-500 hover:border-[#ff8c5a]/30 hover:shadow-[0_20px_60px_rgba(255,140,90,0.08)] flex flex-col"
+                href={`/products/${product.id}`}
+                className="group relative h-[420px] rounded-[2rem] bg-[#111111] border border-white/5 overflow-hidden transition-all duration-500 hover:border-[#ff8c5a]/30 hover:shadow-[0_20px_60px_rgba(255,140,90,0.08)] flex flex-col cursor-pointer"
               >
                 {/* Image Wrapper */}
                 <div className="relative h-[220px] w-full bg-[#161616] p-4 flex items-center justify-center overflow-hidden">
@@ -185,13 +187,14 @@ export function ProductListSection() {
 
                     <Button
                       size="icon"
-                      className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#ff8c5a] text-white hover:text-black transition-all"
+                      variant="ghost"
+                      className="w-10 h-10 rounded-full bg-white/5 group-hover:bg-[#ff8c5a] text-white group-hover:text-black transition-all"
                     >
                       <ArrowRight className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

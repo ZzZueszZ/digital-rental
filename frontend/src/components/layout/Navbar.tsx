@@ -235,7 +235,7 @@ export function Navbar() {
                     </div>
                     <DropdownMenuSeparator className="bg-white/5" />
 
-                     {dashboardLink && (
+                    {dashboardLink && (
                       <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-white/10 focus:text-white">
                         <Link
                           href={dashboardLink}
@@ -249,7 +249,7 @@ export function Navbar() {
                       </DropdownMenuItem>
                     )}
 
-                     <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-white/10 focus:text-white">
+                    <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-white/10 focus:text-white">
                       <Link
                         href="/profile"
                         className="flex items-center gap-3 px-3 py-2.5 w-full group"

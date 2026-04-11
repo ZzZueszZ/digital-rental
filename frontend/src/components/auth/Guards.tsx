@@ -12,6 +12,7 @@ import { authService } from '@/services/auth';
 import { useAuthStore } from '@/store/auth';
 import { Role } from '@/constants/enum/role';
 import type { UserResponse } from '@/types/user';
+import { FullPageLoading } from '@/components/common/full-page-loading';
 
 const fetchMe = async (): Promise<UserResponse> => {
   const res = await authService.me();
@@ -111,14 +112,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuthSession({ redirectToLogin: true });
 
   if (isLoading) {
-    return (
-      <div className='min-h-screen bg-white grid place-items-center'>
-        <div className='flex flex-col items-center gap-4 text-slate-400'>
-          <div className='w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin' />
-          <span className='text-sm font-medium tracking-wide'>Đang xác thực...</span>
-        </div>
-      </div>
-    );
+    return <FullPageLoading message="Đang xác thực" />;
   }
 
   if (!isAuthenticated) return null;
@@ -137,14 +131,7 @@ export function GuestGuard({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated, isLoading, router]);
 
   if (isLoading || isAuthenticated) {
-    return (
-      <div className='min-h-screen bg-white grid place-items-center'>
-        <div className='flex flex-col items-center gap-4 text-slate-400'>
-          <div className='w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin' />
-          <span className='text-sm font-medium tracking-wide'>Đang kiểm tra...</span>
-        </div>
-      </div>
-    );
+    return <FullPageLoading message="Đang kiểm tra" />;
   }
 
   return <>{children}</>;
@@ -171,11 +158,7 @@ export function RoleGuard({ children, allowedRoles }: { children: React.ReactNod
   }, [isAuthenticated, isLoading, user, allowedRoles, router]);
 
   if (isLoading || !isAuthenticated || !user || !user.roles?.some((role: Role) => allowedRoles.includes(role))) {
-    return (
-      <div className='min-h-screen bg-white grid place-items-center'>
-        <div className='w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin' />
-      </div>
-    );
+    return <FullPageLoading message="Đang kiểm tra quyền" />;
   }
 
   return <>{children}</>;

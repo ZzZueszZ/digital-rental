@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { createQueryClient } from "@/lib/query-client";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { LoadingOverlay } from "@/components/common/loading-overlay";
+import { SessionLoadingGuard } from "@/components/auth/session-loading-guard";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(createQueryClient);
@@ -14,9 +15,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        {children}
-        <LoadingOverlay />
-        <Toaster />
+        <SessionLoadingGuard>
+          {children}
+          <LoadingOverlay />
+          <Toaster />
+        </SessionLoadingGuard>
       </QueryClientProvider>
     </ThemeProvider>
   );

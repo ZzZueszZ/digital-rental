@@ -127,7 +127,7 @@ export function Navbar() {
                         <div className="flex-1 grid grid-cols-1 gap-2">
                           <Link
                             href="/rentals"
-                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-900 transition-all"
+                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-white/10 transition-all"
                           >
                             <div>
                               <p className="text-white font-bold text-xs uppercase tracking-widest">
@@ -141,7 +141,7 @@ export function Navbar() {
                           </Link>
                           <Link
                             href="/rentals"
-                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-900 transition-all"
+                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-white/10 transition-all"
                           >
                             <div>
                               <p className="text-white font-bold text-xs uppercase tracking-widest">
@@ -155,7 +155,7 @@ export function Navbar() {
                           </Link>
                           <Link
                             href="/rentals"
-                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-900 transition-all"
+                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-white/10 transition-all"
                           >
                             <div>
                               <p className="text-white font-bold text-xs uppercase tracking-widest">
@@ -207,7 +207,7 @@ export function Navbar() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden w-9 h-9 rounded-xl hover:bg-zinc-900 transition-all"
+              className="lg:hidden w-9 h-9 rounded-xl hover:bg-white/10 transition-all"
             >
               <Search className="h-4 w-4 text-zinc-400" />
             </Button>
@@ -218,7 +218,7 @@ export function Navbar() {
                 <div className="w-10 h-10 rounded-xl bg-zinc-900/50 animate-pulse" />
               ) : isAuthenticated && user ? (
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="w-10 h-10 rounded-xl hover:bg-zinc-900 transition-all cursor-pointer flex items-center justify-center group">
+                  <DropdownMenuTrigger className="w-10 h-10 rounded-xl hover:bg-white/10 transition-all cursor-pointer flex items-center justify-center group">
                     <User className="h-4 w-4 text-zinc-500 group-hover:text-white" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
@@ -235,39 +235,39 @@ export function Navbar() {
                     </div>
                     <DropdownMenuSeparator className="bg-white/5" />
 
-                    {dashboardLink && (
-                      <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-zinc-900 focus:text-white">
+                     {dashboardLink && (
+                      <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-white/10 focus:text-white">
                         <Link
                           href={dashboardLink}
-                          className="flex items-center gap-3 px-3 py-2.5 w-full"
+                          className="flex items-center gap-3 px-3 py-2.5 w-full group"
                         >
                           <LayoutDashboard className="w-4 h-4 text-[#ff8c5a]" />
-                          <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest">
+                          <span className="text-xs font-bold text-white uppercase tracking-widest">
                             Dashboard
                           </span>
                         </Link>
                       </DropdownMenuItem>
                     )}
 
-                    <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-zinc-900 focus:text-white">
+                     <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-white/10 focus:text-white">
                       <Link
                         href="/profile"
-                        className="flex items-center gap-3 px-3 py-2.5 w-full"
+                        className="flex items-center gap-3 px-3 py-2.5 w-full group"
                       >
-                        <User className="w-4 h-4 text-zinc-400" />
-                        <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest">
+                        <User className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors" />
+                        <span className="text-xs font-bold text-white uppercase tracking-widest">
                           Tài Khoản
                         </span>
                       </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-zinc-900 focus:text-white">
+                    <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-white/10 focus:text-white">
                       <Link
                         href="/profile/settings"
-                        className="flex items-center gap-3 px-3 py-2.5 w-full"
+                        className="flex items-center gap-3 px-3 py-2.5 w-full group"
                       >
-                        <Settings className="w-4 h-4 text-zinc-400" />
-                        <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest">
+                        <Settings className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors" />
+                        <span className="text-xs font-bold text-white uppercase tracking-widest">
                           Cài Đặt
                         </span>
                       </Link>
@@ -304,7 +304,7 @@ export function Navbar() {
               ) : isAuthenticated && user ? (
                 <Link
                   href="/profile"
-                  className="w-9 h-9 rounded-xl hover:bg-zinc-900 transition-all flex items-center justify-center group"
+                  className="w-9 h-9 rounded-xl hover:bg-white/10 transition-all flex items-center justify-center group"
                 >
                   <User className="h-4 w-4 text-zinc-500 group-hover:text-white" />
                 </Link>
@@ -322,7 +322,7 @@ export function Navbar() {
             <Button
               variant="ghost"
               size="icon"
-              className="relative w-9 h-9 lg:w-10 lg:h-10 rounded-xl hover:bg-zinc-900 transition-all group"
+              className="relative w-9 h-9 lg:w-10 lg:h-10 rounded-xl hover:bg-white/10 transition-all group"
             >
               <ShoppingBag className="h-4 w-4 text-zinc-500 group-hover:text-white" />
               <span className="absolute top-1 right-1 lg:top-1.5 lg:right-1.5 flex h-3.5 w-3.5 lg:h-4 lg:w-4 items-center justify-center rounded-full bg-[#ff8c5a] text-[7px] lg:text-[8px] font-black text-black">

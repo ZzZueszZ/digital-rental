@@ -26,14 +26,14 @@ export default function VerifyPage() {
   }, [canResend]);
 
   return (
-    <main className='min-h-screen flex flex-col items-center justify-center bg-[#0c0c0c] px-6 overflow-hidden relative'>
+    <main className='min-h-screen flex flex-col items-center justify-center bg-zinc-50 px-6 overflow-hidden relative'>
       {/* Background Glow */}
       <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#ff8c5a]/5 rounded-full blur-[120px] pointer-events-none' />
 
-      <div className='w-full max-w-xl bg-zinc-900 border border-white/5 rounded-[2.5rem] p-16 flex flex-col items-center text-center space-y-12 shadow-2xl animate-in fade-in zoom-in-95 duration-1000 relative z-10'>
+      <div className='w-full max-w-xl bg-white border border-zinc-200 rounded-[2.5rem] p-16 flex flex-col items-center text-center space-y-12 shadow-sm animate-in fade-in zoom-in-95 duration-1000 relative z-10'>
         {/* Icon */}
         <div className='relative'>
-          <div className='w-28 h-28 bg-[#1a1a1a] border border-white/10 rounded-[2rem] flex items-center justify-center shadow-sm'>
+          <div className='w-28 h-28 bg-zinc-100 border border-zinc-200 rounded-[2rem] flex items-center justify-center shadow-sm'>
             <ShieldCheck className='w-14 h-14 text-[#ff8c5a]' />
           </div>
           <div className='absolute -bottom-2 -right-2 w-10 h-10 bg-[#ff8c5a] rounded-2xl flex items-center justify-center shadow-2xl'>
@@ -43,7 +43,7 @@ export default function VerifyPage() {
 
         {/* Text */}
         <div className='space-y-4'>
-          <h1 className='text-4xl font-black text-white tracking-tighter uppercase font-heading'>Xác Thực</h1>
+          <h1 className='text-4xl font-black text-zinc-900 tracking-tighter uppercase font-heading'>Xác Thực</h1>
           <p className='text-zinc-500 font-bold text-[10px] uppercase tracking-[0.3em] max-w-xs mx-auto leading-loose'>
             Kiểm tra hộp thư Studio để hoàn tất quy trình kích hoạt tài khoản của bạn.
           </p>
@@ -61,7 +61,7 @@ export default function VerifyPage() {
           <div className='flex justify-center'>
             <Link 
               href={Routers.LOGIN} 
-              className='group flex items-center gap-3 text-zinc-500 hover:text-white transition-all font-black text-[10px] uppercase tracking-[0.3em] underline underline-offset-8 decoration-2'
+              className='group flex items-center gap-3 text-zinc-500 hover:text-zinc-900 transition-all font-black text-[10px] uppercase tracking-[0.3em] underline underline-offset-8 decoration-2'
             >
               <ChevronLeft className='w-4 h-4 group-hover:-translate-x-1 transition-transform' />
               Quay lại Đăng Nhập
@@ -71,8 +71,8 @@ export default function VerifyPage() {
       </div>
 
       {/* Footer Decoration */}
-      <div className='absolute bottom-12 w-full text-center opacity-20'>
-        <p className='text-[10px] font-black uppercase tracking-[0.6em] text-white'>Studio Visuals Security Protocol</p>
+      <div className='absolute bottom-12 w-full text-center opacity-40'>
+        <p className='text-[10px] font-black uppercase tracking-[0.6em] text-zinc-500'>Studio Visuals Security Protocol</p>
       </div>
     </main>
   );

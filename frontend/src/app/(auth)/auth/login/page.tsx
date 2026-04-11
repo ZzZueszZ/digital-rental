@@ -1,43 +1,41 @@
-'use client'
+"use client";
 
-import { LoginForm } from '@/components/auth/LoginForm'
-import { LoginHero } from '@/components/auth/AuthHero'
-import Link from 'next/link'
-import Routers from '@/constants/routers'
-import { ChevronLeft, Share2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { useImageColor } from '@/hooks/useImageColor'
+import { LoginForm } from "@/components/auth/LoginForm";
+import { LoginHero } from "@/components/auth/AuthHero";
+import Link from "next/link";
+import Routers from "@/constants/routers";
+import { ChevronLeft, Share2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
-  const bgColor = useImageColor('/images/auth-login-hero.png')
-
   return (
-    <div 
-      className='min-h-screen flex flex-col transition-colors duration-1000'
-      style={{ backgroundColor: bgColor || '#0c0c0c' }}
-    >
+    <div className="min-h-screen flex flex-col transition-colors duration-1000 bg-zinc-50">
       {/* Top Navigation */}
-      <div className='p-6 flex justify-between items-center relative z-10'>
+      <div className="p-6 flex justify-between items-center relative z-10">
         <Link href={Routers.HOME}>
           <Button
-            variant='outline'
-            size='icon'
-            className='rounded-full h-12 w-12 border-white/10 hover:bg-white/5 bg-transparent text-white focus-visible:ring-[#ff8c5a]'
+            variant="outline"
+            size="icon"
+            className="rounded-full h-12 w-12 border-zinc-200 bg-white text-zinc-900 focus-visible:ring-[#ff8c5a] shadow-sm"
           >
-            <ChevronLeft className='h-6 w-6' />
+            <ChevronLeft className="h-6 w-6" />
           </Button>
         </Link>
-        <Button variant='ghost' size='icon' className='rounded-full h-12 w-12 text-white hover:bg-white/5'>
-          <Share2 className='h-6 w-6' />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full h-12 w-12 text-zinc-900"
+        >
+          <Share2 className="h-6 w-6" />
         </Button>
       </div>
 
-      <main className='flex-1 flex items-center px-4 pb-12'>
-        <div className='max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center'>
+      <main className="flex-1 flex items-center px-4 pb-12">
+        <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center">
           <LoginHero />
           <LoginForm />
         </div>
       </main>
     </div>
-  )
+  );
 }

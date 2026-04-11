@@ -13,21 +13,15 @@ export function AuthHero({ title, subtitle, imageSrc, imageAlt }: AuthHeroProps)
   return (
     <div className='hidden lg:flex flex-col items-start justify-center relative pl-8'>
       <div className='space-y-4 mb-8'>
-        <h1 className='text-[3.5rem] font-bold tracking-tight text-white leading-[1.1]'>
+        <h1 className='text-[3.5rem] font-bold tracking-tight text-zinc-900 leading-[1.1]'>
           {title}
         </h1>
-        <p className='text-2xl text-on-surface-variant font-medium'>
+        <p className='text-2xl text-zinc-500 font-medium'>
           {subtitle}
         </p>
       </div>
       <div 
-        className='relative w-full max-w-lg overflow-hidden'
-        style={{
-          WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%)',
-          WebkitMaskComposite: 'source-in',
-          maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%)',
-          maskComposite: 'intersect',
-        }}
+        className='relative w-full max-w-lg overflow-hidden flex items-center justify-center'
       >
         <Image
           src={imageSrc}

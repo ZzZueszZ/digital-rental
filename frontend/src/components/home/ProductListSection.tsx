@@ -97,19 +97,19 @@ export function ProductListSection() {
   return (
     <section
       id="product-section"
-      className="py-24 bg-[#0c0c0c] border-t border-white/5 relative"
+      className="py-24 bg-white relative"
     >
       <div className="container mx-auto px-6 md:px-12 max-w-[1600px]">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
           <div>
-            <h2 className="text-4xl md:text-[3.5rem] font-bold text-white tracking-tight leading-tight">
+            <h2 className="text-4xl md:text-[3.5rem] font-bold text-zinc-950 tracking-tight leading-tight">
               Cửa hàng{""}
-              <span className="bg-linear-to-br from-[#ffd9c7] to-[#ff8c5a] bg-clip-text text-transparent italic pr-2">
+              <span className="text-red-600 italic pr-2">
                 Thiết bị.
               </span>
             </h2>
-            <p className="text-on-surface-variant text-base font-medium max-w-lg mt-4 leading-relaxed">
+            <p className="text-zinc-500 text-base font-medium max-w-lg mt-4 leading-relaxed">
               Các sản phẩm và phụ kiện máy ảnh chính hãng đang được mở bán. Nâng
               cấp bộ gear chuyên nghiệp của bạn ngay hôm nay.
             </p>
@@ -122,7 +122,7 @@ export function ProductListSection() {
             {[...Array(pageSize)].map((_, i) => (
               <div
                 key={i}
-                className="h-[420px] rounded-[2rem] bg-white/5 animate-pulse"
+                className="h-[420px] rounded-[2rem] bg-zinc-100 animate-pulse"
               />
             ))}
           </div>
@@ -132,15 +132,15 @@ export function ProductListSection() {
               <Link
                 key={product.id}
                 href={`/products/${product.id}`}
-                className="group relative h-[420px] rounded-[2rem] bg-[#111111] border border-white/5 overflow-hidden transition-all duration-500 hover:border-[#ff8c5a]/30 hover:shadow-[0_20px_60px_rgba(255,140,90,0.08)] flex flex-col cursor-pointer"
+                className="group relative h-[420px] rounded-[2rem] bg-white border border-zinc-200 overflow-hidden transition-all duration-500 hover:border-red-600/30 hover:shadow-xl flex flex-col cursor-pointer"
               >
                 {/* Image Wrapper */}
-                <div className="relative h-[220px] w-full bg-[#161616] p-4 flex items-center justify-center overflow-hidden">
-                  <div className="absolute top-4 left-4 z-10 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[9px] font-bold tracking-widest uppercase text-white">
+                <div className="relative h-[220px] w-full bg-zinc-50 p-4 flex items-center justify-center overflow-hidden">
+                  <div className="absolute top-4 left-4 z-10 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-zinc-200 text-[9px] font-bold tracking-widest uppercase text-zinc-900 shadow-xs">
                     {product.brand}
                   </div>
                   {product.forRent && product.rentPricePerDay && (
-                    <div className="absolute bottom-4 right-4 z-10 px-3 py-1.5 rounded-full bg-[#ff8c5a] text-[10px] font-bold tracking-widest uppercase text-[#131313] shadow-lg">
+                    <div className="absolute bottom-4 right-4 z-10 px-3 py-1.5 rounded-full bg-red-600 text-[10px] font-bold tracking-widest uppercase text-white shadow-lg">
                       {formatVND(product.rentPricePerDay)} / NGÀY
                     </div>
                   )}
@@ -154,32 +154,32 @@ export function ProductListSection() {
                       className="object-contain p-8 opacity-80 group-hover:scale-110 group-hover:opacity-100 transition-all duration-700"
                     />
                   ) : (
-                    <Camera className="w-16 h-16 text-white/10" />
+                    <Camera className="w-16 h-16 text-zinc-200" />
                   )}
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 p-6 flex flex-col justify-between">
                   <div>
-                    <p className="text-[#ff8c5a] text-[10px] font-bold tracking-widest uppercase mb-2">
+                    <p className="text-red-600 text-[10px] font-bold tracking-widest uppercase mb-2">
                       {product.categoryName}
                     </p>
-                    <h3 className="text-xl font-bold text-white tracking-tight line-clamp-2 leading-snug group-hover:text-[#ff8c5a] transition-colors">
+                    <h3 className="text-xl font-bold text-zinc-950 tracking-tight line-clamp-2 leading-snug group-hover:text-red-600 transition-colors">
                       {product.name}
                     </h3>
                   </div>
 
-                  <div className="pt-4 mt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="pt-4 mt-4 border-t border-zinc-100 flex items-center justify-between">
                     <div>
                       {product.forSale && product.salePrice ? (
-                        <p className="text-on-surface-variant text-xs font-medium">
+                        <p className="text-zinc-500 text-xs font-medium">
                           Giá mua:{" "}
-                          <span className="text-white font-bold">
+                          <span className="text-zinc-900 font-bold">
                             {formatVND(product.salePrice)}
                           </span>
                         </p>
                       ) : (
-                        <p className="text-on-surface-variant text-xs font-medium">
+                        <p className="text-zinc-500 text-xs font-medium">
                           Chỉ cho thuê
                         </p>
                       )}
@@ -188,7 +188,7 @@ export function ProductListSection() {
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="w-10 h-10 rounded-full bg-white/5 group-hover:bg-[#ff8c5a] text-white group-hover:text-black transition-all"
+                      className="w-10 h-10 rounded-full bg-zinc-100 group-hover:bg-red-600 text-zinc-500 group-hover:text-white transition-all"
                     >
                       <ArrowRight className="w-4 h-4" />
                     </Button>
@@ -198,7 +198,7 @@ export function ProductListSection() {
             ))}
           </div>
         ) : (
-          <div className="h-[400px] flex flex-col items-center justify-center text-on-surface-variant border border-dashed border-white/10 rounded-[2rem]">
+          <div className="h-[400px] flex flex-col items-center justify-center text-zinc-500 border border-dashed border-zinc-200 rounded-[2rem] bg-white">
             <Camera className="w-12 h-12 mb-4 opacity-50" />
             <p className="font-medium text-sm">Không tìm thấy sản phẩm nào.</p>
           </div>
@@ -212,7 +212,7 @@ export function ProductListSection() {
               size="icon"
               disabled={!hasPrevPage || isLoading}
               onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
-              className="h-12 w-12 rounded-full border-white/10 bg-[#111111] text-white hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-[#111111]"
+              className="h-12 w-12 rounded-full border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 disabled:opacity-30 disabled:hover:bg-white"
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
@@ -236,10 +236,10 @@ export function ProductListSection() {
                         behavior: "smooth",
                       });
                     }}
-                    className={`h-12 w-12 rounded-full border-white/10 font-bold transition-all ${
+                    className={`h-12 w-12 rounded-full border-zinc-200 font-bold transition-all ${
                       currentPage === i
-                        ? "bg-[#ff8c5a] text-black border-[#ff8c5a]"
-                        : "bg-[#111111] text-white hover:bg-white/10"
+                        ? "bg-red-600 text-white border-red-600"
+                        : "bg-white text-zinc-600 hover:bg-zinc-100"
                     }`}
                   >
                     {i + 1}
@@ -249,7 +249,7 @@ export function ProductListSection() {
                 return (
                   <span
                     key={i}
-                    className="text-white/30 px-2 font-bold select-none"
+                    className="text-zinc-300 px-2 font-bold select-none"
                   >
                     ...
                   </span>
@@ -263,7 +263,7 @@ export function ProductListSection() {
               size="icon"
               disabled={!hasNextPage || isLoading}
               onClick={() => setCurrentPage((p) => p + 1)}
-              className="h-12 w-12 rounded-full border-white/10 bg-[#111111] text-white hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-[#111111]"
+              className="h-12 w-12 rounded-full border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 disabled:opacity-30 disabled:hover:bg-white"
             >
               <ChevronRight className="h-5 w-5" />
             </Button>

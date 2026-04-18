@@ -33,41 +33,35 @@ export default function UsersAdminPage() {
   ];
 
   return (
-    <div className="flex-1 space-y-10 pb-10">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200 pb-8">
-        <div>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-950">
-            Quản lý <span className="text-red-600 italic">người dùng.</span>
-          </h2>
-          <p className="text-zinc-500 font-medium mt-2">Phân quyền, kiểm soát và theo dõi hoạt động thành viên.</p>
-        </div>
-        <Button className="h-14 px-8 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold flex items-center gap-2 group shadow-xl shadow-zinc-950/20">
+    <div className="flex-1 space-y-6 lg:space-y-10">
+      {/* Search and Action Bar */}
+      <div className="flex flex-col sm:flex-row justify-end gap-4">
+        <Button className="h-12 w-full sm:w-auto px-8 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold flex items-center justify-center gap-2 group shadow-xl shadow-zinc-950/20">
           <UserPlus className="w-5 h-5 transition-transform group-hover:scale-110" />
           Thêm người dùng mới
         </Button>
       </div>
 
       {/* Stats Summary */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {[
           { label: 'Tổng người dùng', value: '1,280', icon: UsersIcon, color: 'zinc' },
           { label: 'Đang hoạt động', value: '1,245', icon: UserCheck, color: 'green' },
           { label: 'Yêu cầu chờ duyệt', value: '12', icon: ShieldCheck, color: 'amber' },
         ].map((stat, i) => (
           <Card key={i} className="rounded-2xl border-zinc-200 bg-white shadow-sm overflow-hidden group hover:shadow-md transition-all">
-            <CardContent className="p-6 flex items-center gap-4">
+            <CardContent className="p-4 sm:p-6 flex items-center gap-4">
               <div className={cn(
-                "p-3 rounded-xl",
+                "p-2.5 sm:p-3 rounded-xl",
                 stat.color === 'zinc' ? "bg-zinc-100 text-zinc-900" :
                 stat.color === 'green' ? "bg-green-50 text-green-600" :
                 "bg-amber-50 text-amber-600"
               )}>
-                <stat.icon className="w-6 h-6" />
+                <stat.icon className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{stat.label}</p>
-                <p className="text-2xl font-bold text-zinc-950">{stat.value}</p>
+                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{stat.label}</p>
+                <p className="text-xl sm:text-2xl font-bold text-zinc-950">{stat.value}</p>
               </div>
             </CardContent>
           </Card>
@@ -76,23 +70,23 @@ export default function UsersAdminPage() {
 
       {/* Main Content Card */}
       <Card className="rounded-2xl border-zinc-200 bg-white shadow-sm overflow-hidden">
-        <CardHeader className="border-b border-zinc-50 p-8 pt-10">
+        <CardHeader className="border-b border-zinc-50 p-4 sm:p-8 pt-6 sm:pt-10">
           <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-6">
             <div>
-              <CardTitle className="text-2xl font-bold text-zinc-950">Danh sách thành viên</CardTitle>
-              <CardDescription className="text-zinc-500 font-medium mt-1">Lọc và tìm kiếm người dùng trong hệ thống.</CardDescription>
+              <CardTitle className="text-xl sm:text-2xl font-bold text-zinc-950">Danh sách thành viên</CardTitle>
+              <CardDescription className="text-xs sm:text-sm text-zinc-500 font-medium mt-1">Lọc và tìm kiếm người dùng trong hệ thống.</CardDescription>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="relative w-full lg:w-72">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <div className="relative flex-1 lg:w-72">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
                 <Input 
                   placeholder="Tìm theo tên, email..." 
-                  className="pl-11 h-12 rounded-xl border-zinc-200 focus:border-red-600/50 focus:ring-red-600/5 bg-zinc-50/30"
+                  className="pl-11 h-12 rounded-xl border-zinc-200 bg-zinc-50/30"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
-              <Button variant="outline" className="h-12 px-5 rounded-xl border-zinc-200 hover:bg-zinc-50 font-bold gap-2">
+              <Button variant="outline" className="h-12 px-5 rounded-xl border-zinc-200 font-bold gap-2">
                 <Filter className="w-4 h-4" />
                 Bộ lọc
               </Button>
@@ -120,14 +114,14 @@ export default function UsersAdminPage() {
                           {u.name.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-bold text-zinc-950 tracking-tight group-hover:text-red-600 transition-colors uppercase-none">{u.name}</p>
-                          <p className="text-xs text-zinc-400 font-medium flex items-center gap-1 mt-0.5"><Mail className="w-3 h-3" /> {u.email}</p>
+                          <p className="font-bold text-zinc-950 tracking-tight group-hover:text-red-600 transition-colors uppercase">{u.name}</p>
+                          <p className="text-[10px] sm:text-xs text-zinc-400 font-medium flex items-center gap-1 mt-0.5"><Mail className="w-3 h-3" /> {u.email}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-6">
+                    <td className="px-4 sm:px-8 py-4 sm:py-6">
                       <Badge variant="outline" className={cn(
-                        "rounded-lg px-2.5 py-1 text-[10px] font-bold border-none",
+                        "rounded-lg px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-[10px] font-bold border-none",
                         u.role === 'ADMIN' ? "bg-red-50 text-red-600" :
                         u.role === 'STAFF' ? "bg-amber-50 text-amber-600" :
                         "bg-zinc-100 text-zinc-600"
@@ -135,7 +129,7 @@ export default function UsersAdminPage() {
                         {u.role}
                       </Badge>
                     </td>
-                    <td className="px-8 py-6">
+                    <td className="px-4 sm:px-8 py-4 sm:py-6">
                       <div className="flex items-center gap-2">
                         <div className={cn(
                           "w-1.5 h-1.5 rounded-full",
@@ -143,7 +137,7 @@ export default function UsersAdminPage() {
                           u.status === 'PENDING' ? "bg-amber-400" :
                           "bg-red-500"
                         )} />
-                        <span className="text-xs font-bold text-zinc-900">{u.status === 'ACTIVE' ? 'Hoạt động' : u.status === 'PENDING' ? 'Chờ duyệt' : 'Đã khóa'}</span>
+                        <span className="text-[10px] sm:text-xs font-bold text-zinc-900">{u.status === 'ACTIVE' ? 'Hoạt động' : u.status === 'PENDING' ? 'Chờ duyệt' : 'Đã khóa'}</span>
                       </div>
                     </td>
                     <td className="px-8 py-6">

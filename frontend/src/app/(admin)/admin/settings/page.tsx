@@ -26,18 +26,10 @@ import { Label } from "@/components/ui/label";
 
 export default function SettingsAdminPage() {
   return (
-    <div className="flex-1 space-y-10 pb-10">
+    <div className="flex-1 space-y-10">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200 pb-8">
-        <div>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-950">
-            Cấu hình <span className="text-red-600 italic">Hệ thống.</span>
-          </h2>
-          <p className="text-zinc-500 font-medium mt-2">
-            Thiết lập tham số vận hành, bảo mật và thông báo.
-          </p>
-        </div>
-        <Button className="h-14 px-8 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold flex items-center gap-2 group shadow-xl shadow-zinc-950/20">
+      <div className="flex justify-end">
+        <Button className="h-12 px-8 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold flex items-center gap-2 group shadow-xl shadow-zinc-950/20">
           <Save className="w-5 h-5" />
           Lưu tất cả thay đổi
         </Button>

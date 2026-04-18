@@ -34,16 +34,10 @@ export default function VouchersAdminPage() {
   ];
 
   return (
-    <div className="flex-1 space-y-10 pb-10">
+    <div className="flex-1 space-y-10">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200 pb-8">
-        <div>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-950">
-            Ưu đãi & <span className="text-red-600 italic">Vouchers.</span>
-          </h2>
-          <p className="text-zinc-500 font-medium mt-2">Chiến dịch marketing, mã giảm giá và tri ân khách hàng.</p>
-        </div>
-        <Button className="h-14 px-8 rounded-xl bg-red-600 text-white hover:bg-zinc-950 transition-all duration-300 font-bold flex items-center gap-2 group shadow-xl shadow-red-600/20">
+      <div className="flex justify-end">
+        <Button className="h-12 px-8 rounded-xl bg-red-600 text-white hover:bg-zinc-950 transition-all duration-300 font-bold flex items-center gap-2 group shadow-xl shadow-red-600/20">
           <Plus className="w-5 h-5 transition-transform group-hover:scale-110" />
           Tạo mã giảm giá mới
         </Button>

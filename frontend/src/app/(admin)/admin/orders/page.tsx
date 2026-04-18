@@ -35,29 +35,21 @@ export default function OrdersAdminPage() {
   ];
 
   return (
-    <div className="flex-1 space-y-10 pb-10">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200 pb-8">
-        <div>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-950">
-            Hệ thống <span className="text-red-600 italic">Đơn hàng.</span>
-          </h2>
-          <p className="text-zinc-500 font-medium mt-2">Theo dõi, xử lý và quản lý dòng thời gian giao dịch.</p>
-        </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="h-14 px-8 rounded-xl border-zinc-200 hover:bg-zinc-50 font-bold transition-all duration-300 gap-2">
-            <Download className="w-5 h-5" />
-            Báo cáo tháng
-          </Button>
-          <Button className="h-14 px-8 rounded-xl bg-red-600 text-white hover:bg-zinc-950 transition-all duration-300 font-bold flex items-center gap-2 group shadow-xl shadow-red-600/20">
-            Trình quản lý thuê máy
-            <ExternalLink className="w-5 h-5" />
-          </Button>
-        </div>
+    <div className="flex-1 space-y-6 lg:space-y-10">
+      {/* Action Bar */}
+      <div className="flex flex-col sm:flex-row justify-end gap-3">
+        <Button variant="outline" className="h-12 w-full sm:w-auto px-8 rounded-xl border-zinc-200 hover:bg-zinc-50 font-bold transition-all duration-300 gap-2 flex items-center justify-center">
+          <Download className="w-5 h-5" />
+          Báo cáo tháng
+        </Button>
+        <Button className="h-12 w-full sm:w-auto px-8 rounded-xl bg-red-600 text-white hover:bg-zinc-950 transition-all duration-300 font-bold flex items-center justify-center gap-2 group shadow-xl shadow-red-600/20">
+          Trình quản lý thuê máy
+          <ExternalLink className="w-5 h-5" />
+        </Button>
       </div>
 
       {/* Stats Summary */}
-      <div className="grid gap-6 md:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { label: 'Tổng đơn hàng', value: '8,245', icon: ShoppingCart, color: 'zinc' },
           { label: 'Chờ xử lý', value: '18', icon: Clock, color: 'amber' },
@@ -65,9 +57,9 @@ export default function OrdersAdminPage() {
           { label: 'Quá hạn thuê', value: '05', icon: AlertCircle, color: 'red' },
         ].map((stat, i) => (
           <Card key={i} className="rounded-2xl border-zinc-200 bg-white shadow-sm overflow-hidden group hover:shadow-md transition-all">
-            <CardContent className="p-6 flex items-center gap-4">
+            <CardContent className="p-4 sm:p-6 flex items-center gap-4">
               <div className={cn(
-                "p-3 rounded-xl",
+                "p-2.5 sm:p-3 rounded-xl",
                 stat.color === 'red' ? "bg-red-50 text-red-600" :
                 stat.color === 'amber' ? "bg-amber-50 text-amber-600" :
                 stat.color === 'blue' ? "bg-blue-50 text-blue-600" :
@@ -86,17 +78,17 @@ export default function OrdersAdminPage() {
 
       {/* Main Content Card */}
       <Card className="rounded-2xl border-zinc-200 bg-white shadow-sm overflow-hidden">
-        <CardHeader className="border-b border-zinc-50 p-8 pt-10">
+        <CardHeader className="border-b border-zinc-50 p-4 sm:p-8 pt-6 sm:pt-10">
           <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-6">
-            <div className="flex items-center gap-6">
-              <CardTitle className="text-2xl font-bold text-zinc-950">Giao dịch gần đây</CardTitle>
-              <div className="flex items-center gap-2 bg-zinc-100/50 p-1 rounded-lg">
-                <Button variant="ghost" size="sm" className="h-8 rounded-md bg-white shadow-xs text-xs font-bold px-3">Tất cả</Button>
-                <Button variant="ghost" size="sm" className="h-8 rounded-md text-xs font-bold px-3 text-zinc-500">Thuê máy</Button>
-                <Button variant="ghost" size="sm" className="h-8 rounded-md text-xs font-bold px-3 text-zinc-500">Mua đứt</Button>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <CardTitle className="text-xl sm:text-2xl font-bold text-zinc-950">Giao dịch gần đây</CardTitle>
+              <div className="flex items-center gap-1 sm:gap-2 bg-zinc-100/50 p-1 rounded-lg w-full sm:w-auto overflow-x-auto no-scrollbar">
+                <Button variant="ghost" size="sm" className="h-8 rounded-md bg-white shadow-xs text-[10px] sm:text-xs font-bold px-3 min-w-fit">Tất cả</Button>
+                <Button variant="ghost" size="sm" className="h-8 rounded-md text-[10px] sm:text-xs font-bold px-3 text-zinc-500 min-w-fit">Thuê máy</Button>
+                <Button variant="ghost" size="sm" className="h-8 rounded-md text-[10px] sm:text-xs font-bold px-3 text-zinc-500 min-w-fit">Mua đứt</Button>
               </div>
             </div>
-            <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <div className="relative flex-1 lg:w-72">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                 <Input 

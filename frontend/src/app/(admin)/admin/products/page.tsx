@@ -36,28 +36,20 @@ export default function ProductsAdminPage() {
   ];
 
   return (
-    <div className="flex-1 space-y-10 pb-10">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200 pb-8">
-        <div>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-950">
-            Kho hàng <span className="text-red-600 italic">Thiết bị.</span>
-          </h2>
-          <p className="text-zinc-500 font-medium mt-2">Quản lý kho máy ảnh, ống kính và phụ kiện cao cấp.</p>
-        </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="h-14 px-8 rounded-xl border-zinc-200 hover:bg-zinc-50 font-bold transition-all duration-300">
-            Nhập kho excel
-          </Button>
-          <Button className="h-14 px-8 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold flex items-center gap-2 group shadow-xl shadow-zinc-950/20">
-            <Plus className="w-5 h-5 transition-transform group-hover:rotate-90 duration-500" />
-            Đăng sản phẩm mới
-          </Button>
-        </div>
+    <div className="flex-1 space-y-6 lg:space-y-10">
+      {/* Action Bar */}
+      <div className="flex flex-col sm:flex-row justify-end gap-3">
+        <Button variant="outline" className="h-12 w-full sm:w-auto px-8 rounded-xl border-zinc-200 hover:bg-zinc-50 font-bold transition-all duration-300">
+          Nhập kho excel
+        </Button>
+        <Button className="h-12 w-full sm:w-auto px-8 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold flex items-center justify-center gap-2 group shadow-xl shadow-zinc-950/20">
+          <Plus className="w-5 h-5 transition-transform group-hover:rotate-90 duration-500" />
+          Đăng sản phẩm mới
+        </Button>
       </div>
 
       {/* Stats Summary */}
-      <div className="grid gap-6 md:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { label: 'Tổng sản phẩm', value: '458', icon: Package, color: 'zinc' },
           { label: 'Thiết bị cho thuê', value: '185', icon: Camera, color: 'red' },
@@ -65,9 +57,9 @@ export default function ProductsAdminPage() {
           { label: 'Danh mục', value: '18', icon: Layers, color: 'zinc' },
         ].map((stat, i) => (
           <Card key={i} className="rounded-2xl border-zinc-200 bg-white shadow-sm overflow-hidden group hover:shadow-md transition-all">
-            <CardContent className="p-6 flex items-center gap-4">
+            <CardContent className="p-4 sm:p-6 flex items-center gap-4">
               <div className={cn(
-                "p-3 rounded-xl",
+                "p-2.5 sm:p-3 rounded-xl",
                 stat.color === 'red' ? "bg-red-50 text-red-600" :
                 stat.color === 'amber' ? "bg-amber-50 text-amber-600" :
                 "bg-zinc-100 text-zinc-900"
@@ -85,20 +77,20 @@ export default function ProductsAdminPage() {
 
       {/* Main Content Card */}
       <Card className="rounded-2xl border-zinc-200 bg-white shadow-sm overflow-hidden">
-        <CardHeader className="border-b border-zinc-50 p-8 pt-10">
+        <CardHeader className="border-b border-zinc-50 p-4 sm:p-8 pt-6 sm:pt-10">
           <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-lg shadow-red-600/20">
+              <div className="hidden sm:flex w-12 h-12 rounded-xl bg-red-600 text-white items-center justify-center shadow-lg shadow-red-600/20">
                 <Tag className="w-6 h-6" />
               </div>
               <div>
-                <CardTitle className="text-2xl font-bold text-zinc-950">Danh sách thiết bị</CardTitle>
-                <CardDescription className="text-zinc-500 font-medium mt-1">Quản lý tình trạng, giá bán và tồn kho.</CardDescription>
+                <CardTitle className="text-xl sm:text-2xl font-bold text-zinc-950">Danh sách thiết bị</CardTitle>
+                <CardDescription className="text-xs sm:text-sm text-zinc-500 font-medium mt-1">Quản lý tình trạng, giá bán và tồn kho.</CardDescription>
               </div>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="relative w-full lg:w-72">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <div className="relative flex-1 lg:w-72">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
                 <Input 
                   placeholder="Tìm thiết bị..." 
                   className="pl-11 h-12 rounded-xl border-zinc-200 bg-zinc-50/30"

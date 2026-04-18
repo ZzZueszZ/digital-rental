@@ -21,6 +21,9 @@ public class PermissionSeeder implements CommandLineRunner {
         create("AUTH_LOGOUT", "Can logout from session (Requires valid token)");
         create("AUTH_REFRESH", "Can refresh access token (Requires valid token)");
 
+        // ================= DASHBOARD =================
+        create("DASHBOARD_READ", "Can view dashboard statistics (Revenue, Users, etc.)");
+
         // ================= USER =================
         create("USER_CREATE", "Can create new users (Admin/Staff only)");
         create("USER_READ", "Can view user list and details");

@@ -8,6 +8,7 @@ import org.web.common.enums.Gender;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @Builder
@@ -23,6 +24,8 @@ public class UserProfileResponse {
     private String avatarUrl;
     private String occupation;
     private String companyName;
+    private String email;
+    private Set<String> roles;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

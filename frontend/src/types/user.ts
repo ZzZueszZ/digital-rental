@@ -21,5 +21,5 @@ export interface UserResponse {
   accountNonLocked?: boolean
   createdAt: string
   updatedAt: string
-  roles?: Role[]
+  roles?: string[]
 }

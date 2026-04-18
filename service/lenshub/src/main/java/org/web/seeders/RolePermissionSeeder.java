@@ -34,6 +34,7 @@ public class RolePermissionSeeder implements CommandLineRunner {
         // ADMIN gets STAFF permissions + CREATE, UPDATE, DELETE for users
         addPerm(admin, "AUTH_LOGOUT");
         addPerm(admin, "AUTH_REFRESH");
+        addPerm(admin, "DASHBOARD_READ");
         addPerm(admin, "USER_PROFILE_READ");
         addPerm(admin, "USER_PROFILE_UPDATE");
         addPerm(admin, "USER_READ");
@@ -89,6 +90,7 @@ public class RolePermissionSeeder implements CommandLineRunner {
         // STAFF gets CUSTOMER permissions + USER_READ
         addPerm(staff, "AUTH_LOGOUT");
         addPerm(staff, "AUTH_REFRESH");
+        addPerm(staff, "DASHBOARD_READ");
         addPerm(staff, "USER_PROFILE_READ");
         addPerm(staff, "USER_PROFILE_UPDATE");
         addPerm(staff, "USER_READ");

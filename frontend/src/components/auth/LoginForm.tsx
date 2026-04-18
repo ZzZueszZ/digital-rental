@@ -69,24 +69,37 @@ export function LoginForm() {
       const { data } = await authService.login(values);
       const payload = data.data as LoginResponse;
 
-      await persistRefreshTokenCookie(payload.refreshToken);
-      setAccessToken(payload.accessToken);
-      queryClient.setQueryData(AUTH_ME_QUERY_KEY, payload.user);
-
       toast.success(data.message || "Đăng nhập thành công");
 
+      // Set state and sync with persistence
+      await persistRefreshTokenCookie(payload.refreshToken);
+      setAccessToken(payload.accessToken);
+      
+      // Update query cache with fresh user data
+      queryClient.setQueryData(AUTH_ME_QUERY_KEY, payload.user);
+
+      // Check for forced redirect URL from search params
       const redirectUrl = getValidRedirectUrl(searchParams);
       if (redirectUrl) {
         window.location.href = redirectUrl;
         return;
       }
 
-      const roles = payload.user.roles ?? [];
-      if (roles.includes(Role.SUPER_ADMIN)) {
+      // Priority-based redirection based on roles
+      const userRoles = (payload.user.roles || []).map((r: string | { code: string }) => {
+        if (typeof r === 'string') return r.toUpperCase();
+        if (r && typeof r === 'object' && r.code) return r.code.toUpperCase();
+        return '';
+      });
+      
+      // Helper to check for a role with optional ROLE_ prefix
+      const hasRole = (role: Role) => userRoles.some(r => r === role || r === `ROLE_${role}`);
+
+      if (hasRole(Role.SUPER_ADMIN)) {
         window.location.href = Routers.SUPER_ADMIN;
-      } else if (roles.includes(Role.ADMIN)) {
+      } else if (hasRole(Role.ADMIN)) {
         window.location.href = Routers.ADMIN;
-      } else if (roles.includes(Role.STAFF)) {
+      } else if (hasRole(Role.STAFF)) {
         window.location.href = Routers.STAFF;
       } else {
         window.location.href = Routers.HOME;

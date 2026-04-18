@@ -13,4 +13,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     Optional<Product> findByIdAndIsActiveTrue(Long id);
     
     boolean existsByName(String name);
+
+    java.util.List<Product> findByQuantityLessThan(int threshold);
 }

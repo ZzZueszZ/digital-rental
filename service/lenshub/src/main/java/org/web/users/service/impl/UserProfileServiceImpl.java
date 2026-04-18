@@ -31,7 +31,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         User user = getCurrentUser();
         UserProfile profile = userProfileRepository.findById(user.getId())
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User profile not found"));
-        return mapToResponse(profile);
+        return mapToResponse(user, profile);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (request.getOccupation() != null) profile.setOccupation(request.getOccupation());
         if (request.getCompanyName() != null) profile.setCompanyName(request.getCompanyName());
 
-        return mapToResponse(userProfileRepository.save(profile));
+        return mapToResponse(user, userProfileRepository.save(profile));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 "User uploaded avatar",
                 oldAvatarUrl != null ? "{\"avatarUrl\":\"" + oldAvatarUrl + "\"}" : null,
                 "{\"avatarUrl\":\"" + savedImageUrl + "\"}");
-        return mapToResponse(saved);
+        return mapToResponse(user, saved);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Người dùng không tồn tại"));
     }
 
-    private UserProfileResponse mapToResponse(UserProfile profile) {
+    private UserProfileResponse mapToResponse(User user, UserProfile profile) {
         return UserProfileResponse.builder()
                 .id(profile.getId())
                 .fullName(profile.getFullName())
@@ -114,6 +114,9 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .avatarUrl(profile.getAvatarUrl())
                 .occupation(profile.getOccupation())
                 .companyName(profile.getCompanyName())
+                .email(user.getEmail())
+                .roles(user.getRoles() != null ? 
+                    user.getRoles().stream().map(r -> r.getCode()).collect(java.util.stream.Collectors.toSet()) : null)
                 .createdAt(profile.getCreatedAt())
                 .updatedAt(profile.getUpdatedAt())
                 .build();
@@ -122,9 +125,11 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional(readOnly = true)
     public UserProfileResponse getProfileById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found"));
         UserProfile profile = userProfileRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Hồ sơ không tồn tại cho user id: " + userId));
-        return mapToResponse(profile);
+        return mapToResponse(user, profile);
     }
 
     @Override
@@ -141,7 +146,9 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (request.getOccupation() != null) profile.setOccupation(request.getOccupation());
         if (request.getCompanyName() != null) profile.setCompanyName(request.getCompanyName());
 
-        return mapToResponse(userProfileRepository.save(profile));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found"));
+        return mapToResponse(user, userProfileRepository.save(profile));
     }
 
     @Override
@@ -156,7 +163,9 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         profile.setAvatarUrl(savedImageUrl);
 
-        return mapToResponse(userProfileRepository.save(profile));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "User not found"));
+        return mapToResponse(user, userProfileRepository.save(profile));
     }
 
     @Override

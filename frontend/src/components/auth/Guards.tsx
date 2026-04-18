@@ -141,6 +141,25 @@ export function RoleGuard({ children, allowedRoles }: { children: React.ReactNod
   const { user, isAuthenticated, isLoading } = useAuthSession({ redirectToLogin: true });
   const router = useRouter();
 
+  // Memoize the hasPermission check
+  const hasPermission = useMemo(() => {
+    if (!user || !user.roles) return false;
+    
+    // Normalize user roles (handle both strings and objects if necessary)
+    const userRoleCodes = user.roles.map((r: string | { code: string }) => {
+      if (typeof r === 'string') return r.toUpperCase();
+      if (r && typeof r === 'object' && r.code) return r.code.toUpperCase();
+      return '';
+    });
+
+    return userRoleCodes.some(roleCode => 
+      allowedRoles.some(allowed => {
+        const normalizedAllowed = allowed.toUpperCase();
+        return roleCode === normalizedAllowed || roleCode === `ROLE_${normalizedAllowed}`;
+      })
+    );
+  }, [user, allowedRoles]);
+
   useEffect(() => {
     if (isLoading) return;
 
@@ -149,16 +168,55 @@ export function RoleGuard({ children, allowedRoles }: { children: React.ReactNod
       return;
     }
 
-    if (user && user.roles) {
-      const hasPermission = user.roles.some((role: Role) => allowedRoles.includes(role));
-      if (!hasPermission) {
-        router.replace(Routers.FORBIDDEN);
-      }
+    if (user && !hasPermission) {
+      router.replace(Routers.FORBIDDEN);
     }
-  }, [isAuthenticated, isLoading, user, allowedRoles, router]);
+  }, [isAuthenticated, isLoading, user, hasPermission, router]);
 
-  if (isLoading || !isAuthenticated || !user || !user.roles?.some((role: Role) => allowedRoles.includes(role))) {
-    return <FullPageLoading message="Đang kiểm tra quyền" />;
+  if (isLoading) {
+    return <FullPageLoading message="Đang kiểm tra quyền..." />;
+  }
+
+  if (!isAuthenticated || !hasPermission) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 p-8 bg-zinc-50/50 rounded-3xl border border-zinc-200 mt-10 mx-auto max-w-2xl text-center">
+        <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center">
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m10-7V7a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H10a2 2 0 00-2 2v4a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-zinc-900">Quyền truy cập bị từ chối</h2>
+          <p className="text-zinc-500 max-w-md mx-auto">
+            Tài khoản <span className="font-semibold text-zinc-900">{user?.email}</span> không có quyền admin để truy cập trang này.
+          </p>
+        </div>
+
+        {/* Debug info */}
+        <div className="w-full bg-white p-4 rounded-xl border border-zinc-100 text-left space-y-2">
+          <p className="text-xs font-bold uppercase text-zinc-400 tracking-wider">Thông tin gỡ lỗi:</p>
+          <div className="text-sm">
+            <p className="text-zinc-600">Roles hiện có: <span className="font-mono text-red-600">{user?.roles?.join(', ') || 'Không thấy role nào'}</span></p>
+            <p className="text-zinc-600">Roles yêu cầu: <span className="font-mono text-zinc-900">{allowedRoles.join(', ')}</span></p>
+          </div>
+        </div>
+
+        <div className="flex gap-4 pt-2">
+          <button 
+            onClick={() => router.replace(Routers.HOME)}
+            className="px-6 h-11 bg-white border border-zinc-200 text-zinc-900 font-bold rounded-full hover:bg-zinc-50 transition-colors shadow-sm"
+          >
+            Về Trang Chủ
+          </button>
+          <button 
+            onClick={() => router.replace(Routers.LOGIN)}
+            className="px-6 h-11 bg-zinc-900 text-white font-bold rounded-full hover:bg-black transition-colors shadow-sm"
+          >
+            Đăng nhập lại
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;

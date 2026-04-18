@@ -329,7 +329,7 @@ export default function ProductDetailPage() {
                       ? formatVND(product.salePrice)
                       : "Liên hệ"}
                   </p>
-                  <Button className="w-full rounded-full h-14 bg-zinc-900 text-white hover:bg-black text-sm font-bold shadow-md transition-all active:scale-[0.98] border-none flex items-center justify-center gap-2 group-hover:bg-[#ff8c5a] group-hover:text-black">
+                  <Button className="w-full rounded-full h-14 bg-zinc-900 text-white text-sm font-bold shadow-md transition-all active:scale-[0.98] border-none flex items-center justify-center gap-2 group-hover:bg-[#ff8c5a] group-hover:text-black">
                     <ShoppingCart className="w-5 h-5" /> Thêm vào giỏ hàng
                   </Button>
                 </div>

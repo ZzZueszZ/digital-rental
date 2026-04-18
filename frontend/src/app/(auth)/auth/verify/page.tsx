@@ -28,16 +28,16 @@ export default function VerifyPage() {
   return (
     <main className='min-h-screen flex flex-col items-center justify-center bg-zinc-50 px-6 overflow-hidden relative'>
       {/* Background Glow */}
-      <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#ff8c5a]/5 rounded-full blur-[120px] pointer-events-none' />
+      <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-600/5 rounded-full blur-[120px] pointer-events-none' />
 
       <div className='w-full max-w-xl bg-white border border-zinc-200 rounded-[2.5rem] p-16 flex flex-col items-center text-center space-y-12 shadow-sm animate-in fade-in zoom-in-95 duration-1000 relative z-10'>
         {/* Icon */}
         <div className='relative'>
           <div className='w-28 h-28 bg-zinc-100 border border-zinc-200 rounded-[2rem] flex items-center justify-center shadow-sm'>
-            <ShieldCheck className='w-14 h-14 text-[#ff8c5a]' />
+            <ShieldCheck className='w-14 h-14 text-red-600' />
           </div>
-          <div className='absolute -bottom-2 -right-2 w-10 h-10 bg-[#ff8c5a] rounded-2xl flex items-center justify-center shadow-2xl'>
-            <Mail className='w-5 h-5 text-black' />
+          <div className='absolute -bottom-2 -right-2 w-10 h-10 bg-red-600 rounded-2xl flex items-center justify-center shadow-2xl'>
+            <Mail className='w-5 h-5 text-white' />
           </div>
         </div>
 
@@ -53,7 +53,7 @@ export default function VerifyPage() {
         <div className='w-full space-y-6 pt-4'>
           <Button 
             disabled={!canResend} 
-            className='w-full h-16 bg-[#ff8c5a] text-black hover:bg-[#ffae8f] font-black text-xs uppercase tracking-[0.4em] rounded-full shadow-2xl active:scale-[0.98] transition-all disabled:opacity-20'
+            className='w-full h-16 bg-red-600 text-white hover:bg-red-700 font-black text-xs uppercase tracking-[0.4em] rounded-full shadow-2xl active:scale-[0.98] transition-all disabled:opacity-20'
           >
             {canResend ? 'Gửi Lại Mã' : `Chờ đợi ${countdown}s`}
           </Button>

@@ -89,7 +89,7 @@ function OtpInput({
           onChange={(e) => handleChange(i, e.target.value)}
           onKeyDown={(e) => handleKeyDown(i, e)}
           onPaste={handlePaste}
-          className="w-12 h-14 rounded-xl border border-zinc-200 bg-white text-center text-xl font-bold text-zinc-900 outline-none transition-all shadow-sm focus:border-[#ff8c5a] focus:ring-2 focus:ring-[#ff8c5a]/20"
+          className="w-12 h-14 rounded-xl border border-zinc-200 bg-white text-center text-xl font-bold text-zinc-900 outline-none transition-all shadow-sm focus:border-red-600 focus:ring-2 focus:ring-red-600/20"
         />
       ))}
     </div>
@@ -197,7 +197,7 @@ export default function ForgotPasswordPage() {
           <Button
             variant="outline"
             size="icon"
-            className="rounded-full h-12 w-12 border-zinc-200  bg-white text-zinc-900 focus-visible:ring-[#ff8c5a] shadow-sm"
+            className="rounded-full h-12 w-12 border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-red-600 shadow-sm transition-colors"
           >
             <ChevronLeft className="h-6 w-6" />
           </Button>
@@ -257,7 +257,7 @@ export default function ForgotPasswordPage() {
                       placeholder="Nhập địa chỉ email của bạn"
                       type="email"
                       {...emailForm.register("email")}
-                      className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-[#ff8c5a] focus-visible:border-[#ff8c5a] caret-[#ff8c5a] text-zinc-900 text-[1.125rem] px-5 shadow-sm ${emailForm.formState.errors.email ? "border-red-500 ring-red-500" : ""}`}
+                      className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-red-600 focus-visible:border-red-600 caret-red-600 text-zinc-900 text-[1.125rem] px-5 shadow-sm ${emailForm.formState.errors.email ? "border-red-500 ring-red-500" : ""}`}
                     />
                     {emailForm.formState.errors.email && (
                       <p className="text-sm text-error font-medium">
@@ -286,7 +286,7 @@ export default function ForgotPasswordPage() {
                   Nhớ mật khẩu?{" "}
                   <Link
                     href={Routers.LOGIN}
-                    className="text-[#ff8c5a] underline decoration-2 underline-offset-4 hover:text-[#e85d04] transition-all ml-1 font-bold"
+                    className="text-red-600 underline decoration-2 underline-offset-4 hover:text-red-700 transition-all ml-1 font-bold"
                   >
                     Đăng nhập
                   </Link>
@@ -315,7 +315,7 @@ export default function ForgotPasswordPage() {
                         setStep(1);
                         setOtp("");
                       }}
-                      className="text-[#ff8c5a] font-bold ml-2 underline underline-offset-4 decoration-2 hover:text-[#e85d04] transition-colors"
+                      className="text-red-600 font-bold ml-2 underline underline-offset-4 decoration-2 hover:text-red-700 transition-colors"
                     >
                       Sửa
                     </button>
@@ -341,7 +341,7 @@ export default function ForgotPasswordPage() {
                           className={`font-bold underline underline-offset-4 decoration-2 transition-colors ${
                             countdown > 0
                               ? "text-zinc-400 cursor-not-allowed"
-                              : "text-[#ff8c5a] hover:text-[#e85d04]"
+                              : "text-red-600 hover:text-red-700"
                           }`}
                         >
                           Gửi lại
@@ -349,7 +349,7 @@ export default function ForgotPasswordPage() {
                       </span>
                       {countdown > 0 && (
                         <span className="flex items-center gap-1.5 text-zinc-500 tabular-nums">
-                          <span className="w-2 h-2 rounded-full bg-[#ff8c5a] animate-pulse" />
+                          <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
                           {countdown}s
                         </span>
                       )}
@@ -366,7 +366,7 @@ export default function ForgotPasswordPage() {
                         type={showNewPassword ? "text" : "password"}
                         placeholder="Tối thiểu 6 ký tự"
                         {...resetForm.register("newPassword")}
-                        className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-[#ff8c5a] focus-visible:border-[#ff8c5a] caret-[#ff8c5a] text-zinc-900 text-[1.125rem] px-5 pr-12 shadow-sm ${resetForm.formState.errors.newPassword ? "border-red-500 ring-red-500" : ""}`}
+                        className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-red-600 focus-visible:border-red-600 caret-red-600 text-zinc-900 text-[1.125rem] px-5 pr-12 shadow-sm ${resetForm.formState.errors.newPassword ? "border-red-500 ring-red-500" : ""}`}
                       />
                       <button
                         type="button"
@@ -397,7 +397,7 @@ export default function ForgotPasswordPage() {
                         type={showConfirmPassword ? "text" : "password"}
                         placeholder="Nhập lại mật khẩu mới"
                         {...resetForm.register("confirmPassword")}
-                        className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-[#ff8c5a] focus-visible:border-[#ff8c5a] caret-[#ff8c5a] text-zinc-900 text-[1.125rem] px-5 pr-12 shadow-sm ${resetForm.formState.errors.confirmPassword ? "border-red-500 ring-red-500" : ""}`}
+                        className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-red-600 focus-visible:border-red-600 caret-red-600 text-zinc-900 text-[1.125rem] px-5 pr-12 shadow-sm ${resetForm.formState.errors.confirmPassword ? "border-red-500 ring-red-500" : ""}`}
                       />
                       <button
                         type="button"
@@ -441,7 +441,7 @@ export default function ForgotPasswordPage() {
                   Nhớ mật khẩu?{" "}
                   <Link
                     href={Routers.LOGIN}
-                    className="text-[#ff8c5a] underline decoration-2 underline-offset-4 hover:text-[#e85d04] transition-all ml-1 font-bold"
+                    className="text-red-600 underline decoration-2 underline-offset-4 hover:text-red-700 transition-all ml-1 font-bold"
                   >
                     Đăng nhập
                   </Link>

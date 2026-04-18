@@ -77,7 +77,7 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-zinc-200 select-none">
+      <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-zinc-200 select-none">
         <div className="container flex h-16 lg:h-20 items-center justify-between px-4 sm:px-6 md:px-12 max-w-[1600px] mx-auto">
           {/* Logo */}
           <div className="flex items-center gap-6 lg:gap-12">
@@ -103,10 +103,10 @@ export function Navbar() {
               <NavigationMenu>
                 <NavigationMenuList className="gap-1">
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="bg-transparent text-zinc-600 hover:text-zinc-900 font-bold text-sm uppercase tracking-widest transition-colors data-[state=open]:text-zinc-900">
+                    <NavigationMenuTrigger className="bg-transparent text-zinc-600 hover:text-zinc-900 font-bold text-sm uppercase tracking-widest transition-colors data-[state=open]:text-zinc-900 focus:bg-zinc-100 hover:bg-zinc-100 data-[state=open]:bg-zinc-100 data-popup-open:bg-zinc-100 data-open:bg-zinc-100">
                       Thiết Bị
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent>
+                    <NavigationMenuContent className="p-0 border-none bg-transparent shadow-none">
                       <div className="p-6 w-[700px] bg-white border border-zinc-200 rounded-[2rem] shadow-2xl flex gap-6">
                         <div className="flex-1 bg-zinc-50 p-6 rounded-2xl border border-zinc-200">
                           <Zap className="w-8 h-8 text-red-600 mb-4" />
@@ -119,7 +119,7 @@ export function Navbar() {
                           </p>
                           <Button
                             variant="outline"
-                            className="rounded-full border-zinc-200 text-zinc-900 font-black uppercase text-[9px] tracking-widest px-6 h-10 hover:bg-red-600 hover:text-white hover:border-transparent transition-all"
+                            className="rounded-full border-zinc-200 text-zinc-900 font-black uppercase text-xs tracking-widest px-6 h-10 hover:bg-red-600 hover:text-white hover:border-transparent transition-all"
                           >
                             Xem Tất Cả
                           </Button>
@@ -331,7 +331,7 @@ export function Navbar() {
             </Button>
 
             {/* Desktop CTA */}
-            <Button className="hidden xl:flex ml-2 h-10 rounded-full px-6 bg-white text-zinc-950 border border-zinc-200 hover:border-red-600 hover:bg-red-600 hover:text-white font-black uppercase text-[9px] tracking-widest shadow-sm active:scale-95 transition-all">
+            <Button className="hidden xl:flex ml-2 h-10 rounded-full px-6 bg-white text-zinc-950 border border-zinc-200 hover:border-red-600 hover:bg-red-600 hover:text-white font-black uppercase text-xs tracking-widest shadow-sm active:scale-95 transition-all">
               Đặt Thuê Ngay
             </Button>
 
@@ -518,7 +518,7 @@ export function Navbar() {
                 </Button>
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl border border-red-500/20 text-red-500 hover:bg-red-50 font-bold uppercase text-[10px] tracking-widest transition-all"
+                  className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl border border-red-500/20 text-red-500 hover:bg-red-50 font-bold uppercase text-xs tracking-widest transition-all"
                 >
                   <LogOut className="w-4 h-4" />
                   Đăng Xuất
@@ -530,12 +530,12 @@ export function Navbar() {
                   href={Routers.LOGIN}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <Button className="w-full h-12 rounded-xl bg-zinc-900 text-white hover:bg-black font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-[0.98] transition-all">
+                  <Button className="w-full h-12 rounded-xl bg-zinc-900 text-white hover:bg-black font-black uppercase text-xs tracking-widest shadow-lg active:scale-[0.98] transition-all">
                     Đăng Nhập
                   </Button>
                 </Link>
                 <Button
-                  className="w-full h-12 rounded-xl bg-red-600 text-white hover:bg-red-700 font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-[0.98] transition-all mt-2"
+                  className="w-full h-12 rounded-xl bg-red-600 text-white hover:bg-red-700 font-black uppercase text-xs tracking-widest shadow-lg active:scale-[0.98] transition-all mt-2"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Đặt Thuê Ngay

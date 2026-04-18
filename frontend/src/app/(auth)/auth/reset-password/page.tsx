@@ -48,7 +48,7 @@ export default function ResetPasswordPage() {
         <div className='space-y-6 text-center'>
           <div className='inline-flex items-center justify-center w-24 h-24 rounded-[30%] bg-zinc-100 border border-zinc-200 mb-2 relative overflow-hidden shadow-sm'>
             <div className='absolute inset-0 bg-indigo-500/5 animate-pulse' />
-            <KeyRound className='w-12 h-12 text-[#ff8c5a] relative z-10' />
+            <KeyRound className='w-12 h-12 text-red-600 relative z-10' />
           </div>
           <div className='space-y-4'>
             <h1 className='text-5xl font-black text-zinc-900 tracking-tighter uppercase font-heading leading-tight'>Cập Nhật</h1>
@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
                 placeholder='Nhập email'
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className='h-16 bg-white border-zinc-200 rounded-[1.5rem] px-6 text-zinc-900 placeholder:text-zinc-500 transition-all focus:ring-2 focus:ring-[#ff8c5a] shadow-sm'
+                className='h-16 bg-white border-zinc-200 rounded-[1.5rem] px-6 text-zinc-900 placeholder:text-zinc-500 transition-all focus:ring-2 focus:ring-red-600 shadow-sm'
                 required
               />
             </div>
@@ -78,7 +78,7 @@ export default function ResetPasswordPage() {
                 placeholder='6-Chữ số'
                 value={form.otpCode}
                 onChange={(e) => setForm({ ...form, otpCode: e.target.value })}
-                className='h-16 bg-white border-zinc-200 rounded-[1.5rem] px-6 text-zinc-900 text-center font-black tracking-[0.5em] focus:ring-2 focus:ring-[#ff8c5a] shadow-sm placeholder:text-zinc-500'
+                className='h-16 bg-white border-zinc-200 rounded-[1.5rem] px-6 text-zinc-900 text-center font-black tracking-[0.5em] focus:ring-2 focus:ring-red-600 shadow-sm placeholder:text-zinc-500'
                 required
               />
             </div>
@@ -93,7 +93,7 @@ export default function ResetPasswordPage() {
                 placeholder='Nhập mật mã mới'
                 value={form.newPassword}
                 onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
-                className='h-16 bg-white border-zinc-200 rounded-[1.5rem] px-6 pr-14 text-zinc-900 placeholder:text-zinc-500 transition-all focus:ring-2 focus:ring-[#ff8c5a] shadow-sm'
+                className='h-16 bg-white border-zinc-200 rounded-[1.5rem] px-6 pr-14 text-zinc-900 placeholder:text-zinc-500 transition-all focus:ring-2 focus:ring-red-600 shadow-sm'
                 required
               />
               <button
@@ -110,7 +110,7 @@ export default function ResetPasswordPage() {
             <Button
               type='submit'
               disabled={isSubmitting || !form.email || !form.otpCode || !form.newPassword}
-              className='w-full h-20 bg-[#ff8c5a] text-zinc-900 hover:bg-[#ff6b3a] font-black text-xs uppercase tracking-[0.4em] rounded-full shadow-[0_0_15px_rgba(255,140,90,0.3)] active:scale-[0.98] transition-all disabled:opacity-30'
+              className='w-full h-14 text-lg font-bold bg-zinc-900 text-white rounded-full hover:bg-black shadow-md transition-all active:scale-[0.98] disabled:opacity-30'
             >
               {isSubmitting ? 'ĐANG CẬP NHẬT...' : 'HOÀN TẤT THIẾT LẬP'}
             </Button>

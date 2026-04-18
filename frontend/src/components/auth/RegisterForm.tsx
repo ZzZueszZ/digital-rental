@@ -65,7 +65,7 @@ export function RegisterForm() {
           <Input
             placeholder='Nhập họ và tên'
             {...register('fullName')}
-            className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-[#ff8c5a] focus-visible:border-[#ff8c5a] caret-[#ff8c5a] text-zinc-900 text-[1.125rem] px-5 shadow-sm placeholder:text-zinc-500 ${errors.fullName ? 'border-red-500 ring-red-500' : ''}`}
+            className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-red-600 focus-visible:border-red-600 caret-red-600 text-zinc-900 text-[1.125rem] px-5 shadow-sm placeholder:text-zinc-500 ${errors.fullName ? 'border-red-500 ring-red-500' : ''}`}
           />
           {errors.fullName && (
             <p className='text-sm text-error font-medium'>{errors.fullName.message}</p>
@@ -78,7 +78,7 @@ export function RegisterForm() {
             placeholder='Nhập địa chỉ email của bạn'
             type='email'
             {...register('email')}
-            className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-[#ff8c5a] focus-visible:border-[#ff8c5a] caret-[#ff8c5a] text-zinc-900 text-[1.125rem] px-5 shadow-sm placeholder:text-zinc-500 ${errors.email ? 'border-red-500 ring-red-500' : ''}`}
+            className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-red-600 focus-visible:border-red-600 caret-red-600 text-zinc-900 text-[1.125rem] px-5 shadow-sm placeholder:text-zinc-500 ${errors.email ? 'border-red-500 ring-red-500' : ''}`}
           />
           {errors.email && (
             <p className='text-sm text-error font-medium'>{errors.email.message}</p>
@@ -92,7 +92,7 @@ export function RegisterForm() {
               placeholder='Nhập mật khẩu'
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
-              className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-[#ff8c5a] focus-visible:border-[#ff8c5a] caret-[#ff8c5a] text-zinc-900 text-[1.125rem] px-5 pr-12 shadow-sm placeholder:text-zinc-500 ${errors.password ? 'border-red-500 ring-red-500' : ''}`}
+              className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-red-600 focus-visible:border-red-600 caret-red-600 text-zinc-900 text-[1.125rem] px-5 pr-12 shadow-sm placeholder:text-zinc-500 ${errors.password ? 'border-red-500 ring-red-500' : ''}`}
             />
             <button
               type='button'
@@ -113,7 +113,7 @@ export function RegisterForm() {
             placeholder='Nhập lại mật khẩu'
             type='password'
             {...register('confirmPassword')}
-            className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-[#ff8c5a] focus-visible:border-[#ff8c5a] caret-[#ff8c5a] text-zinc-900 text-[1.125rem] px-5 shadow-sm placeholder:text-zinc-500 ${errors.confirmPassword ? 'border-red-500 ring-red-500' : ''}`}
+            className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-red-600 focus-visible:border-red-600 caret-red-600 text-zinc-900 text-[1.125rem] px-5 shadow-sm placeholder:text-zinc-500 ${errors.confirmPassword ? 'border-red-500 ring-red-500' : ''}`}
           />
           {errors.confirmPassword && (
             <p className='text-sm text-error font-medium'>{errors.confirmPassword.message}</p>
@@ -165,7 +165,7 @@ export function RegisterForm() {
         Đã có tài khoản?{' '}
         <Link
           href={Routers.LOGIN}
-          className='text-[#ff8c5a] underline decoration-2 underline-offset-4 hover:text-[#e85d04] transition-all ml-1 font-bold'
+          className='text-red-600 underline decoration-2 underline-offset-4 hover:text-red-700 transition-all ml-1 font-bold'
         >
           Đăng nhập ngay
         </Link>

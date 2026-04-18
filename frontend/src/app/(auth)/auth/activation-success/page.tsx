@@ -8,7 +8,7 @@ import Routers from '@/constants/routers';
 export default function ActivationSuccessPage() {
   return (
     <main className='min-h-screen flex flex-col items-center justify-center bg-zinc-50 px-6 overflow-hidden relative'>
-      <div className='absolute inset-0 bg-linear-to-b from-[#ff8c5a]/5 via-transparent to-transparent pointer-events-none' />
+      <div className='absolute inset-0 bg-linear-to-b from-red-600/5 via-transparent to-transparent pointer-events-none' />
 
       <div className='w-full max-w-xl bg-white border border-zinc-200 rounded-[4rem] p-16 flex flex-col items-center text-center space-y-12 shadow-sm animate-in fade-in zoom-in-95 duration-1000 relative z-10'>
         {/* Success Icon */}

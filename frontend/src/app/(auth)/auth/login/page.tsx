@@ -16,7 +16,7 @@ export default function LoginPage() {
           <Button
             variant="outline"
             size="icon"
-            className="rounded-full h-12 w-12 border-zinc-200 bg-white text-zinc-900 focus-visible:ring-[#ff8c5a] shadow-sm"
+            className="rounded-full h-12 w-12 border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-red-600 shadow-sm transition-colors"
           >
             <ChevronLeft className="h-6 w-6" />
           </Button>
@@ -24,7 +24,7 @@ export default function LoginPage() {
         <Button
           variant="ghost"
           size="icon"
-          className="rounded-full h-12 w-12 text-zinc-900"
+          className="rounded-full h-12 w-12 text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
         >
           <Share2 className="h-6 w-6" />
         </Button>

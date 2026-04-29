@@ -18,6 +18,7 @@ import {
   Users,
   PackageOpen,
   TrendingUp,
+  TrendingDown,
   AlertTriangle,
   ArrowRight,
 } from "lucide-react";
@@ -80,79 +81,94 @@ export default function AdminDashboardPage() {
                   currency: "VND",
                 }).format(revenueData.totalRevenue)
               : "0 ₫",
-            trend: revenueData?.growthRate,
-            icon: <DollarSign className="h-5 w-5" />,
-            color: "red",
+            trend: revenueData?.growthRate ?? 0,
+            icon: DollarSign,
+            accent: "bg-red-500",
           },
           {
             title: "Người dùng mới",
             value: `+${userSummary?.newUsersToday || 0}`,
             trend: 12,
-            icon: <Users className="h-5 w-5" />,
-            color: "zinc",
+            icon: Users,
+            accent: "bg-zinc-950",
           },
           {
             title: "Tổng đơn hàng",
             value: orderData?.totalOrders || 0,
             trend: -5,
-            icon: <ShoppingCart className="h-5 w-5" />,
-            color: "zinc",
+            icon: ShoppingCart,
+            accent: "bg-zinc-950",
           },
           {
             title: "Tài khoản chờ duyệt",
             value: userSummary?.pendingUsers || 0,
             trend: 0,
-            icon: <AlertTriangle className="h-5 w-5" />,
-            color: "amber",
+            icon: AlertTriangle,
+            accent: "bg-amber-500",
           },
-        ].map((stat, i) => (
-          <Card
-            key={i}
-            className="rounded-2xl border-zinc-200 bg-white overflow-hidden group hover:shadow-2xl shadow-sm transition-all duration-500 hover:-translate-y-1 relative"
-          >
-            <div className={cn("absolute top-0 left-0 w-full h-1 transition-all duration-500", stat.color === "red" ? "bg-red-600 opacity-0 group-hover:opacity-100" : stat.color === "amber" ? "bg-amber-500 opacity-0 group-hover:opacity-100" : "bg-zinc-950 opacity-0 group-hover:opacity-100")} />
-            <CardHeader className="flex flex-row items-center justify-between pb-1 space-y-0 p-4 sm:p-5">
-              <CardTitle className="text-[10px] sm:text-xs font-bold text-zinc-400 tracking-widest">
-                {stat.title}
-              </CardTitle>
+        ].map((stat, i) => {
+          const isPositive = stat.trend >= 0;
+          return (
+            <div
+              key={i}
+              className={cn(
+                "relative bg-white rounded-2xl border border-zinc-200 p-5 overflow-hidden",
+                "shadow-sm hover:shadow-2xl",
+                "transition-all duration-500 hover:-translate-y-1 group"
+              )}
+            >
+              <div className={cn("absolute top-0 left-0 w-full h-1 transition-all duration-500", stat.accent, "opacity-0 group-hover:opacity-100")} />
+              {/* Decorative BG Blob */}
               <div
                 className={cn(
-                  "p-2 sm:p-2.5 rounded-xl transition-all duration-500",
-                  stat.color === "red"
-                    ? "bg-red-50 text-red-600 group-hover:bg-red-600 group-hover:text-white"
-                    : stat.color === "amber"
-                      ? "bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white"
-                      : "bg-zinc-100 text-zinc-900 group-hover:bg-zinc-900 group-hover:text-white",
+                  "absolute -top-4 -right-4 w-24 h-24 rounded-full opacity-[0.06] blur-2xl transition-all duration-500 group-hover:opacity-[0.12] group-hover:scale-125",
+                  stat.accent
                 )}
-              >
-                {stat.icon}
+              />
+
+              <div className="flex items-start justify-between mb-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-zinc-400">
+                  {stat.title}
+                </p>
+                <div
+                  className={cn(
+                    "w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300",
+                    "bg-zinc-50 group-hover:scale-110",
+                    stat.accent.replace("bg-", "text-")
+                  )}
+                >
+                  <stat.icon className="w-4 h-4" strokeWidth={2.5} />
+                </div>
               </div>
-            </CardHeader>
-            <CardContent className="p-4 sm:p-5 pt-0">
-              <div className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 mb-1 truncate">
+
+              <p className="text-3xl font-black tracking-tight text-zinc-950 mb-2 truncate">
                 {stat.value}
-              </div>
+              </p>
+
               <div className="flex items-center gap-1.5">
-                {stat.trend !== undefined && (
-                  <span
-                    className={cn(
-                      "text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded-md flex items-center",
-                      stat.trend >= 0
-                        ? "bg-green-50 text-green-600"
-                        : "bg-red-50 text-red-600",
-                    )}
-                  >
-                    {stat.trend >= 0 ? "+" : ""}
-                    {stat.trend}%
-                  </span>
-                )}
-                <span className="text-[9px] sm:text-[10px] text-zinc-400 font-bold uppercase tracking-tight truncate">
+                <span
+                  className={cn(
+                    "flex items-center gap-0.5 text-[10px] font-black px-1.5 py-0.5 rounded-md",
+                    isPositive
+                      ? "bg-emerald-50 text-emerald-600"
+                      : "bg-red-50 text-red-600"
+                  )}
+                >
+                  {isPositive ? (
+                    <TrendingUp className="w-3 h-3" />
+                  ) : (
+                    <TrendingDown className="w-3 h-3" />
+                  )}
+                  {isPositive ? "+" : ""}
+                  {stat.trend}%
+                </span>
+                <span className="text-[10px] text-zinc-400 font-medium">
                   so với tháng trước
                 </span>
               </div>
-            </CardContent>
-          </Card>
-        ))}
+            </div>
+          );
+        })}
       </div>
 
       {/* Charts Grid */}

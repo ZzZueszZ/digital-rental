@@ -114,7 +114,7 @@ function StatCard({
   title: string;
   value: string | number;
   trend: number;
-  icon: any;
+  icon: React.ElementType;
   accent: string;
 }) {
   const isPositive = trend >= 0;
@@ -205,14 +205,15 @@ export default function UsersAdminPage() {
   const restoreMutation = useRestoreUser();
 
   const handleAction = async (
-    action: () => Promise<any>,
+    action: () => Promise<unknown>,
     successMsg: string
   ) => {
     try {
       await action();
       toast.success(successMsg);
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Có lỗi xảy ra");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || "Có lỗi xảy ra");
     }
   };
 
@@ -475,7 +476,7 @@ export default function UsersAdminPage() {
                     {/* Roles */}
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
-                        {u.roles.map((role: any) => {
+                        {u.roles.map((role: string) => {
                           const isSpecial = role === "SUPER_ADMIN" || role === "ADMIN";
                           return (
                             <span
@@ -507,13 +508,8 @@ export default function UsersAdminPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end">
                         <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              className="h-8 w-8 rounded-lg p-0 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 transition-all duration-200"
-                            >
-                              <MoreHorizontal className="w-4 h-4 text-zinc-500" />
-                            </Button>
+                          <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-lg p-0 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 transition-all duration-200 outline-none">
+                            <MoreHorizontal className="w-4 h-4 text-zinc-500" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent
                             align="end"

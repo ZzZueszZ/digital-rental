@@ -303,7 +303,7 @@ export default function UsersAdminPage() {
   return (
     <div className="flex-1 space-y-6">
       {/* ── KPI STATS GRID ─────────────────────────────────────── */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 xl:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Tổng thành viên"
           value={stats?.totalUsers || 0}
@@ -338,9 +338,9 @@ export default function UsersAdminPage() {
       <div className="bg-white rounded-2xl border border-zinc-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden">
         {/* Header */}
         <div className="px-6 sm:px-8 py-6 border-b border-zinc-50">
-          <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-5">
+          <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-4">
             {/* Left: Title + Tab Toggle */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex flex-row items-center gap-4">
               <div>
                 <div className="flex items-center gap-2.5 mb-1">
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-sm shadow-red-200">
@@ -381,7 +381,7 @@ export default function UsersAdminPage() {
 
             {/* Right: Search + Add */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="relative flex-1 lg:w-72 group focus-within:w-80 transition-all duration-300">
+              <div className="relative flex-1 xl:w-72 group">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors duration-200" />
                 <Input
                   placeholder="Tìm theo email, ID..."
@@ -401,8 +401,122 @@ export default function UsersAdminPage() {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
+        {/* ── MOBILE CARD LIST (< md) ───────────────────────────── */}
+        <div className="md:hidden divide-y divide-zinc-50">
+          {query.isLoading &&
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="p-4 space-y-2 animate-pulse">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-100" />
+                  <div className="flex-1 space-y-1">
+                    <div className="h-3 bg-zinc-100 rounded w-3/4" />
+                    <div className="h-2 bg-zinc-100 rounded w-1/4" />
+                  </div>
+                </div>
+              </div>
+            ))}
+
+          {users.length === 0 && !query.isLoading && (
+            <div className="flex flex-col items-center gap-3 py-16">
+              <div className="w-16 h-16 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
+                <Aperture className="w-7 h-7 text-zinc-300" />
+              </div>
+              <p className="text-sm font-bold text-zinc-400">Không tìm thấy thành viên</p>
+              <p className="text-xs text-zinc-300">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+            </div>
+          )}
+
+          {users.map((u) => {
+            const avatarColor = getAvatarColor(u.email);
+            const statusCfg = STATUS_CONFIG[u.accountStatus] ?? STATUS_CONFIG["DISABLED"];
+            return (
+              <div
+                key={u.id}
+                className="p-4 hover:bg-zinc-50 transition-colors border-l-[3px] border-transparent hover:border-red-600"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={cn("w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0 shadow-sm", avatarColor.bg)}>
+                    <span className={cn("font-black text-sm", avatarColor.text)}>{u.email.charAt(0).toUpperCase()}</span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold text-zinc-900 truncate">{u.email}</p>
+                    <p className="text-[10px] text-zinc-400 font-mono">#{u.id.toString().padStart(5, "0")}</p>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-lg hover:bg-zinc-100 outline-none">
+                      <MoreHorizontal className="w-4 h-4 text-zinc-500" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-52 p-1.5 rounded-xl border-zinc-100 shadow-lg bg-white">
+                      <DropdownMenuGroup>
+                        <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">Tác vụ quản trị</DropdownMenuLabel>
+                        {viewMode === "ACTIVE" ? (
+                          <>
+                            <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700" onClick={() => router.push(`/admin/users/${u.id}`)}>
+                              <Eye className="w-3.5 h-3.5 text-zinc-400" /> Xem chi tiết
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700" onClick={() => router.push(`/admin/users/${u.id}/edit`)}>
+                              <Edit2 className="w-3.5 h-3.5 text-zinc-400" /> Chỉnh sửa
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="my-1 bg-zinc-50" />
+                            <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700" onClick={() => requestAction("Cấp lại mật khẩu", `Cấp lại mật khẩu cho ${u.email}?`, "warning", () => resetPasswordMutation.mutateAsync(u.id), "Đã cấp mật khẩu mới")}>
+                              <RefreshCw className="w-3.5 h-3.5 text-zinc-400" /> Reset mật khẩu
+                            </DropdownMenuItem>
+                            {u.accountNonLocked ? (
+                              <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-amber-50 text-zinc-700" onClick={() => requestAction("Khóa tài khoản", `Khóa tài khoản ${u.email}?`, "danger", () => lockMutation.mutateAsync(u.id), "Tài khoản đã bị khóa")}>
+                                <Lock className="w-3.5 h-3.5 text-amber-500" /> Khóa tài khoản
+                              </DropdownMenuItem>
+                            ) : (
+                              <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-emerald-50 text-zinc-700" onClick={() => requestAction("Mở khóa tài khoản", `Mở khóa tài khoản ${u.email}?`, "info", () => unlockMutation.mutateAsync(u.id), "Tài khoản đã được mở khóa")}>
+                                <Unlock className="w-3.5 h-3.5 text-emerald-500" /> Mở khóa
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuSeparator className="my-1 bg-zinc-50" />
+                            <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50" onClick={() => requestAction("Vô hiệu hóa", `Vô hiệu hóa tài khoản ${u.email}?`, "danger", () => deleteMutation.mutateAsync(u.id), "Đã vô hiệu hóa")}>
+                              <Trash2 className="w-3.5 h-3.5" /> Vô hiệu hóa
+                            </DropdownMenuItem>
+                          </>
+                        ) : (
+                          <>
+                            <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700" onClick={() => router.push(`/admin/users/${u.id}`)}>
+                              <Eye className="w-3.5 h-3.5 text-zinc-400" /> Xem chi tiết
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="my-1 bg-zinc-50" />
+                            <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50" onClick={() => requestAction("Khôi phục", `Khôi phục tài khoản ${u.email}?`, "info", () => restoreMutation.mutateAsync(u.id), "Đã khôi phục tài khoản")}>
+                              <RotateCcw className="w-3.5 h-3.5" /> Khôi phục tài khoản
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center gap-2 pl-13">
+                  <span className={cn("inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full", statusCfg.badge)}>
+                    <span className={cn("w-1.5 h-1.5 rounded-full", statusCfg.dot)} />
+                    {statusCfg.label}
+                  </span>
+                  {u.kycStatus === KycStatus.VERIFIED ? (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                      <ShieldCheck className="w-3 h-3" /> KYC
+                    </span>
+                  ) : null}
+                  {u.roles.map((role: string) => (
+                    <span key={role} className={cn("inline-block text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-[0.15em] border",
+                      role === "SUPER_ADMIN" || role === "ADMIN" ? "bg-red-50 text-red-700 border-red-200" : "bg-zinc-50 text-zinc-600 border-zinc-200"
+                    )}>{role}</span>
+                  ))}
+                  <span className="text-[10px] text-zinc-400 font-medium ml-auto">
+                    {new Date(u.createdAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ── DESKTOP TABLE (≥ md) ─────────────────────────────────── */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left min-w-[700px]">
             <thead>
               <tr className="bg-zinc-50/80 border-b border-zinc-100">

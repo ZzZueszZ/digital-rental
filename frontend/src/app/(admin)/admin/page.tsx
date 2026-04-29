@@ -69,9 +69,9 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="flex-1 space-y-6 lg:space-y-10">
+    <div className="flex-1 space-y-5 sm:space-y-6 lg:space-y-10">
       {/* KPI Stats Grid */}
-      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 xl:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         {[
           {
             title: "Doanh thu (30 ngày)",
@@ -112,7 +112,7 @@ export default function AdminDashboardPage() {
             <div
               key={i}
               className={cn(
-                "relative bg-white rounded-2xl border border-zinc-200 p-5 overflow-hidden",
+                "relative bg-white rounded-2xl border border-zinc-200 p-3.5 sm:p-5 overflow-hidden",
                 "shadow-sm hover:shadow-2xl",
                 "transition-all duration-500 hover:-translate-y-1 group"
               )}
@@ -126,22 +126,22 @@ export default function AdminDashboardPage() {
                 )}
               />
 
-              <div className="flex items-start justify-between mb-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-zinc-400">
+              <div className="flex items-start justify-between mb-3">
+                <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.18em] text-zinc-400">
                   {stat.title}
                 </p>
                 <div
                   className={cn(
-                    "w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300",
+                    "w-7 h-7 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center transition-all duration-300",
                     "bg-zinc-50 group-hover:scale-110",
                     stat.accent.replace("bg-", "text-")
                   )}
                 >
-                  <stat.icon className="w-4 h-4" strokeWidth={2.5} />
+                  <stat.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} />
                 </div>
               </div>
 
-              <p className="text-3xl font-black tracking-tight text-zinc-950 mb-2 truncate">
+              <p className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-zinc-950 mb-2 truncate">
                 {stat.value}
               </p>
 
@@ -172,9 +172,9 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Charts Grid */}
-      <div className="grid gap-6 grid-cols-1 lg:grid-cols-7">
+      <div className="grid gap-5 sm:gap-6 grid-cols-1 xl:grid-cols-7">
         {/* Revenue Area Chart */}
-        <Card className="lg:col-span-4 rounded-2xl border-zinc-200 overflow-hidden bg-white shadow-sm">
+        <Card className="xl:col-span-4 rounded-2xl border-zinc-200 overflow-hidden bg-white shadow-sm">
           <CardHeader className="border-b border-zinc-50 pb-6 px-4 sm:px-8 pt-6 sm:pt-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
@@ -260,7 +260,7 @@ export default function AdminDashboardPage() {
         </Card>
 
         {/* Daily Orders Bar Chart */}
-        <Card className="lg:col-span-3 rounded-2xl border-zinc-200 overflow-hidden bg-white shadow-sm">
+        <Card className="xl:col-span-3 rounded-2xl border-zinc-200 overflow-hidden bg-white shadow-sm">
           <CardHeader className="border-b border-zinc-50 pb-6 px-4 sm:px-8 pt-6 sm:pt-8">
             <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950">
               Đơn hàng mới
@@ -318,7 +318,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Bottom Sections Grid */}
-      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+      <div className="grid gap-5 sm:gap-6 grid-cols-1 xl:grid-cols-2">
         {/* Top Products */}
         <Card className="rounded-2xl border-zinc-200 overflow-hidden bg-white shadow-sm">
           <CardHeader className="px-5 sm:px-8 pt-6 sm:pt-8 flex flex-row items-center justify-between">

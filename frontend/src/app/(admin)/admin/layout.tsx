@@ -36,7 +36,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
           
           <div className="flex-1 flex flex-col min-w-0">
-            <header className="sticky top-0 z-30 flex h-24 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-10 backdrop-blur-xl lg:pl-80 transition-all duration-300">
+            <header className="sticky top-0 z-30 flex h-16 sm:h-20 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 backdrop-blur-xl lg:pl-[296px] transition-all duration-300">
               <div className="flex items-center gap-6">
                 <Button 
                   variant="ghost" 
@@ -49,11 +49,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 
                 {/* Dynamic Page Title in Header */}
                 <div className="flex flex-col">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl font-black tracking-tight text-zinc-950">{pageTitle.title}</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1" />
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-lg sm:text-2xl font-black tracking-tight text-zinc-950 truncate max-w-[140px] sm:max-w-none">{pageTitle.title}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-0.5 shrink-0" />
                   </div>
-                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mt-1">{pageTitle.subtitle}</span>
+                  <span className="text-[9px] sm:text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mt-0.5">{pageTitle.subtitle}</span>
                 </div>
               </div>
 
@@ -127,7 +127,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </header>
 
             {/* Main Content Area */}
-            <main className="flex-1 lg:ml-72 flex flex-col p-4 sm:p-6 md:p-10 lg:p-12 overflow-y-auto custom-scrollbar">
+            <main className="flex-1 lg:ml-72 flex flex-col p-4 sm:p-6 md:p-8 lg:p-10 overflow-y-auto custom-scrollbar">
               <div className="max-w-[1600px] mx-auto w-full">
                 {children}
               </div>

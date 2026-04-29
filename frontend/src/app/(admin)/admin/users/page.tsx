@@ -121,11 +121,12 @@ function StatCard({
   return (
     <div
       className={cn(
-        "relative bg-white rounded-2xl border border-zinc-100 p-5 overflow-hidden",
-        "shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]",
-        "transition-all duration-300 hover:-translate-y-0.5 group"
+        "relative bg-white rounded-2xl border border-zinc-200 p-5 overflow-hidden",
+        "shadow-sm hover:shadow-2xl",
+        "transition-all duration-500 hover:-translate-y-1 group"
       )}
     >
+      <div className={cn("absolute top-0 left-0 w-full h-1 transition-all duration-500", accent, "opacity-0 group-hover:opacity-100")} />
       {/* Decorative BG Blob */}
       <div
         className={cn(
@@ -322,10 +323,10 @@ export default function UsersAdminPage() {
                       setPage(0);
                     }}
                     className={cn(
-                      "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-200",
+                      "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300",
                       viewMode === mode
-                        ? "bg-white text-zinc-950 shadow-sm border border-zinc-100"
-                        : "text-zinc-400 hover:text-zinc-700"
+                        ? "bg-zinc-950 text-white shadow-md"
+                        : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50"
                     )}
                   >
                     {mode === "ACTIVE" ? "Hoạt động" : "Thùng rác"}
@@ -336,11 +337,11 @@ export default function UsersAdminPage() {
 
             {/* Right: Search + Add */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="relative flex-1 lg:w-72 group">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400 group-focus-within:text-red-500 transition-colors duration-200" />
+              <div className="relative flex-1 lg:w-72 group focus-within:w-80 transition-all duration-300">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors duration-200" />
                 <Input
                   placeholder="Tìm theo email, ID..."
-                  className="pl-10 h-10 rounded-xl border-zinc-100 bg-zinc-50 focus:bg-white focus:border-red-200 focus:ring-red-100 transition-all text-sm text-zinc-700 placeholder:text-zinc-400"
+                  className="pl-10 h-10 rounded-xl border-zinc-200 bg-zinc-50 focus:bg-white focus:border-red-500/30 focus:ring-2 focus:ring-red-500/20 transition-all text-xs font-medium text-zinc-900 placeholder:text-zinc-400"
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
@@ -419,7 +420,7 @@ export default function UsersAdminPage() {
                 return (
                   <tr
                     key={u.id}
-                    className="group hover:bg-zinc-50/60 transition-colors duration-150"
+                    className="group hover:bg-zinc-50/80 transition-all duration-200 border-l-[3px] border-transparent hover:border-red-600"
                   >
                     {/* Member */}
                     <td className="px-6 py-4">
@@ -474,14 +475,20 @@ export default function UsersAdminPage() {
                     {/* Roles */}
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
-                        {u.roles.map((role: any) => (
-                          <span
-                            key={role}
-                            className="inline-block text-[9px] font-black px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-500 uppercase tracking-wider border border-zinc-150"
-                          >
-                            {role}
-                          </span>
-                        ))}
+                        {u.roles.map((role: any) => {
+                          const isSpecial = role === "SUPER_ADMIN" || role === "ADMIN";
+                          return (
+                            <span
+                              key={role}
+                              className={cn(
+                                "inline-block text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-[0.15em] border",
+                                isSpecial ? "bg-red-50 text-red-700 border-red-200" : "bg-zinc-50 text-zinc-600 border-zinc-200"
+                              )}
+                            >
+                              {role}
+                            </span>
+                          )
+                        })}
                       </div>
                     </td>
 

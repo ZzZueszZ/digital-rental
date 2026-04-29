@@ -110,7 +110,7 @@ export function Navbar() {
                       <div className="p-6 w-[700px] bg-white border border-zinc-200 rounded-[2rem] shadow-2xl flex gap-6">
                         <div className="flex-1 bg-zinc-50 p-6 rounded-2xl border border-zinc-200">
                           <Zap className="w-8 h-8 text-red-600 mb-4" />
-                          <h4 className="text-xl font-black text-zinc-900 uppercase font-heading mb-3">
+                          <h4 className="text-xl font-bold text-zinc-900 uppercase font-heading mb-3">
                             Kho Thiết Bị
                           </h4>
                           <p className="text-zinc-500 text-xs leading-relaxed mb-4 font-medium">
@@ -119,7 +119,7 @@ export function Navbar() {
                           </p>
                           <Button
                             variant="outline"
-                            className="rounded-full border-zinc-200 text-zinc-900 font-black uppercase text-xs tracking-widest px-6 h-10 hover:bg-red-600 hover:text-white hover:border-transparent transition-all"
+                            className="rounded-full border-zinc-200 text-zinc-200 font-bold uppercase text-xs tracking-widest px-6 h-10 hover:bg-red-600 hover:text-white hover:border-transparent transition-all"
                           >
                             Xem Tất Cả
                           </Button>

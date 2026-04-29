@@ -74,6 +74,11 @@ export const restoreUser = async (id: number) => {
   return data;
 };
 
+export const createUser = async (payload: import('@/types/user').UserCreateRequest) => {
+  const { data } = await http.post<IBackendRes<import('@/types/user').UserResponse>>('/users', payload);
+  return data;
+};
+
 // Custom Hooks
 export const useUsers = (criteria: UserCriteria, page = 0, size = 20) => {
   return useQuery({
@@ -158,6 +163,16 @@ export const useRestoreUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => restoreUser(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: USER_KEYS.all });
+    },
+  });
+};
+
+export const useCreateUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: import('@/types/user').UserCreateRequest) => createUser(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: USER_KEYS.all });
     },

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { CreateUserDialog } from "./components/CreateUserDialog";
 import {
   Users,
   Search,
@@ -210,6 +211,8 @@ export default function UsersAdminPage() {
   const deleteMutation = useDeleteUser();
   const restoreMutation = useRestoreUser();
 
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
     title: string;
@@ -393,7 +396,10 @@ export default function UsersAdminPage() {
                   }}
                 />
               </div>
-              <Button className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold text-xs flex items-center gap-2 shadow-sm whitespace-nowrap">
+              <Button
+                onClick={() => setCreateDialogOpen(true)}
+                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold text-xs flex items-center gap-2 shadow-sm whitespace-nowrap"
+              >
                 <Plus className="w-3.5 h-3.5" />
                 Thêm thành viên
               </Button>
@@ -879,6 +885,10 @@ export default function UsersAdminPage() {
           </div>
         </div>
       </div>
+      <CreateUserDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
       <ConfirmDialog
         open={confirmDialog.open}
         onOpenChange={(open) => setConfirmDialog((prev) => ({ ...prev, open }))}

@@ -79,6 +79,16 @@ export const createUser = async (payload: import('@/types/user').UserCreateReque
   return data;
 };
 
+export const bulkDeleteUsers = async (ids: number[]) => {
+  const { data } = await http.delete<IBackendRes<void>>('/users', { data: ids });
+  return data;
+};
+
+export const bulkRestoreUsers = async (ids: number[]) => {
+  const { data } = await http.put<IBackendRes<void>>('/users/restore', ids);
+  return data;
+};
+
 // Custom Hooks
 export const useUsers = (criteria: UserCriteria, page = 0, size = 20) => {
   return useQuery({
@@ -173,6 +183,26 @@ export const useCreateUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: import('@/types/user').UserCreateRequest) => createUser(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: USER_KEYS.all });
+    },
+  });
+};
+
+export const useDeleteManyUsers = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: number[]) => bulkDeleteUsers(ids),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: USER_KEYS.all });
+    },
+  });
+};
+
+export const useRestoreManyUsers = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: number[]) => bulkRestoreUsers(ids),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: USER_KEYS.all });
     },

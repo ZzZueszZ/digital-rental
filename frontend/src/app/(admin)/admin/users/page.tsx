@@ -27,6 +27,9 @@ import {
   Aperture,
   Eye,
   Edit2,
+  CheckSquare,
+  Square,
+  Trash2 as Trash2Icon,
 } from "lucide-react";
 import {
   Card,
@@ -56,6 +59,8 @@ import {
   useResetPassword,
   useDeleteUser,
   useRestoreUser,
+  useDeleteManyUsers,
+  useRestoreManyUsers,
 } from "@/services/user";
 import { useUserSummaryStats } from "@/services/dashboard";
 import { AccountStatus, KycStatus, TrustLevel } from "@/types/user";
@@ -210,6 +215,30 @@ export default function UsersAdminPage() {
   const resetPasswordMutation = useResetPassword();
   const deleteMutation = useDeleteUser();
   const restoreMutation = useRestoreUser();
+  const deleteManyMutation = useDeleteManyUsers();
+  const restoreManyMutation = useRestoreManyUsers();
+
+  // Selection state
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const allSelected = users.length > 0 && users.every(u => selectedIds.has(u.id));
+  const someSelected = selectedIds.size > 0;
+
+  const toggleSelect = (id: number) =>
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+
+  const toggleAll = () =>
+    setSelectedIds(allSelected ? new Set() : new Set(users.map(u => u.id)));
+
+  // Clear selection when view mode or page changes
+  const handleViewModeChange = (mode: "ACTIVE" | "DELETED") => {
+    setViewMode(mode);
+    setPage(0);
+    setSelectedIds(new Set());
+  };
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
@@ -365,10 +394,7 @@ export default function UsersAdminPage() {
                 {(["ACTIVE", "DELETED"] as const).map((mode) => (
                   <button
                     key={mode}
-                    onClick={() => {
-                      setViewMode(mode);
-                      setPage(0);
-                    }}
+                    onClick={() => handleViewModeChange(mode)}
                     className={cn(
                       "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300",
                       viewMode === mode
@@ -407,6 +433,52 @@ export default function UsersAdminPage() {
           </div>
         </div>
 
+        {/* ── BULK ACTION TOOLBAR ─────────────────────────────────── */}
+        {someSelected && (
+          <div className="px-6 py-3 bg-zinc-950 flex items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-200">
+            <div className="flex items-center gap-3">
+              <button onClick={() => setSelectedIds(new Set())} className="text-zinc-400 hover:text-white transition-colors">
+                <CheckSquare className="w-4 h-4" />
+              </button>
+              <span className="text-xs font-bold text-white">
+                Đã chọn <span className="text-red-400">{selectedIds.size}</span> tài khoản
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              {viewMode === "ACTIVE" ? (
+                <button
+                  onClick={() => requestAction(
+                    "Vô hiệu hóa nhiều tài khoản",
+                    `Bạn có chắc muốn vô hiệu hóa ${selectedIds.size} tài khoản đã chọn?`,
+                    "danger",
+                    async () => { await deleteManyMutation.mutateAsync(Array.from(selectedIds)); setSelectedIds(new Set()); },
+                    `Đã vô hiệu hóa ${selectedIds.size} tài khoản`
+                  )}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors"
+                >
+                  <Trash2Icon className="w-3.5 h-3.5" /> Vô hiệu hóa ({selectedIds.size})
+                </button>
+              ) : (
+                <button
+                  onClick={() => requestAction(
+                    "Khôi phục nhiều tài khoản",
+                    `Bạn có chắc muốn khôi phục ${selectedIds.size} tài khoản đã chọn?`,
+                    "info",
+                    async () => { await restoreManyMutation.mutateAsync(Array.from(selectedIds)); setSelectedIds(new Set()); },
+                    `Đã khôi phục ${selectedIds.size} tài khoản`
+                  )}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" /> Khôi phục ({selectedIds.size})
+                </button>
+              )}
+              <button onClick={() => setSelectedIds(new Set())} className="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white text-xs font-bold transition-colors">
+                Bỏ chọn
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* ── MOBILE CARD LIST (< md) ───────────────────────────── */}
         <div className="md:hidden divide-y divide-zinc-50">
           {query.isLoading &&
@@ -438,9 +510,17 @@ export default function UsersAdminPage() {
             return (
               <div
                 key={u.id}
-                className="p-4 hover:bg-zinc-50 transition-colors border-l-[3px] border-transparent hover:border-red-600"
+                className={cn(
+                  "p-4 transition-colors border-l-[3px] hover:border-red-600",
+                  selectedIds.has(u.id) ? "bg-red-50/50 border-red-300" : "border-transparent hover:bg-zinc-50"
+                )}
               >
                 <div className="flex items-center gap-3">
+                  <button onClick={() => toggleSelect(u.id)} className="shrink-0 text-zinc-400 hover:text-red-600 transition-colors">
+                    {selectedIds.has(u.id)
+                      ? <CheckSquare className="w-4 h-4 text-red-600" />
+                      : <Square className="w-4 h-4" />}
+                  </button>
                   <div className={cn("w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0 shadow-sm", avatarColor.bg)}>
                     <span className={cn("font-black text-sm", avatarColor.text)}>{u.email.charAt(0).toUpperCase()}</span>
                   </div>
@@ -526,6 +606,15 @@ export default function UsersAdminPage() {
           <table className="w-full text-left min-w-[700px]">
             <thead>
               <tr className="bg-zinc-50/80 border-b border-zinc-100">
+                <th className="px-4 py-4 w-10">
+                  <button onClick={toggleAll} className="text-zinc-400 hover:text-zinc-700 transition-colors">
+                    {allSelected
+                      ? <CheckSquare className="w-4 h-4 text-red-600" />
+                      : someSelected
+                        ? <CheckSquare className="w-4 h-4 text-zinc-400" />
+                        : <Square className="w-4 h-4" />}
+                  </button>
+                </th>
                 {[
                   "Thành viên",
                   "Trạng thái",
@@ -584,9 +673,21 @@ export default function UsersAdminPage() {
                 return (
                   <tr
                     key={u.id}
-                    className="group hover:bg-zinc-50/80 transition-all duration-200 border-l-[3px] border-transparent hover:border-red-600"
+                    className={cn(
+                      "group transition-all duration-200 border-l-[3px]",
+                      selectedIds.has(u.id)
+                        ? "bg-red-50/40 border-red-300"
+                        : "hover:bg-zinc-50/80 border-transparent hover:border-red-600"
+                    )}
                   >
-                    {/* Member */}
+                    {/* Checkbox */}
+                    <td className="px-4 py-4 w-10">
+                      <button onClick={() => toggleSelect(u.id)} className="text-zinc-300 hover:text-red-600 transition-colors">
+                        {selectedIds.has(u.id)
+                          ? <CheckSquare className="w-4 h-4 text-red-600" />
+                          : <Square className="w-4 h-4" />}
+                      </button>
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3.5">
                         <div

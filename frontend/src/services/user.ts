@@ -38,6 +38,12 @@ export const getUserById = async (id: number) => {
   return data;
 };
 
+export const updateUser = async (id: number, payload: UserUpdateRequest) => {
+  const { data } = await http.put<IBackendRes<UserResponse>>(`/users/${id}`, payload);
+  return data;
+};
+
+
 export const updateStatus = async (id: number, status: string) => {
   const { data } = await http.patch<IBackendRes<UserResponse>>(`/users/${id}/status`, { status });
   return data;
@@ -88,6 +94,17 @@ export const useUserDetail = (id: number) => {
     queryKey: USER_KEYS.detail(id),
     queryFn: () => getUserById(id),
     enabled: !!id,
+  });
+};
+
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: UserUpdateRequest }) => updateUser(id, payload),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: USER_KEYS.detail(variables.id) });
+      queryClient.invalidateQueries({ queryKey: USER_KEYS.all });
+    },
   });
 };
 

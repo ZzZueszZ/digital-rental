@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { useUserDetail } from "@/services/user";
 import { Button } from "@/components/ui/button";
 import { XCircle } from "lucide-react";
-import { UserForm } from "../components/UserForm";
+import { UserForm } from "../../components/UserForm";
 
-export default function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function UserEditPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const resolvedParams = use(params);
   const userId = parseInt(resolvedParams.id, 10);
@@ -36,5 +36,5 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
     );
   }
 
-  return <UserForm user={user} userId={userId} mode="view" />;
+  return <UserForm user={user} userId={userId} mode="edit" />;
 }

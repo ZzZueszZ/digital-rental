@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import {
   Users,
   Search,
@@ -22,6 +24,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Aperture,
+  Eye,
+  Edit2,
 } from "lucide-react";
 import {
   Card,
@@ -41,6 +45,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import {
   useUsers,
@@ -181,6 +186,7 @@ function StatCard({
 
 // ─── MAIN PAGE ────────────────────────────────────────────────────────────────
 export default function UsersAdminPage() {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<"ACTIVE" | "DELETED">("ACTIVE");
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -204,17 +210,54 @@ export default function UsersAdminPage() {
   const deleteMutation = useDeleteUser();
   const restoreMutation = useRestoreUser();
 
-  const handleAction = async (
-    action: () => Promise<unknown>,
-    successMsg: string
-  ) => {
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    variant: "danger" | "warning" | "info";
+    action: (() => Promise<unknown>) | null;
+    successMsg: string;
+    isLoading: boolean;
+  }>({
+    open: false,
+    title: "",
+    description: "",
+    variant: "danger",
+    action: null,
+    successMsg: "",
+    isLoading: false,
+  });
+
+  const confirmAndExecute = async () => {
+    if (!confirmDialog.action) return;
+    setConfirmDialog((prev) => ({ ...prev, isLoading: true }));
     try {
-      await action();
-      toast.success(successMsg);
+      await confirmDialog.action();
+      toast.success(confirmDialog.successMsg);
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
       toast.error(err?.response?.data?.message || "Có lỗi xảy ra");
+    } finally {
+      setConfirmDialog((prev) => ({ ...prev, open: false, isLoading: false }));
     }
+  };
+
+  const requestAction = (
+    title: string,
+    description: string,
+    variant: "danger" | "warning" | "info",
+    action: () => Promise<unknown>,
+    successMsg: string
+  ) => {
+    setConfirmDialog({
+      open: true,
+      title,
+      description,
+      variant,
+      action,
+      successMsg,
+      isLoading: false,
+    });
   };
 
   const getStatusBadge = (status: AccountStatus) => {
@@ -515,17 +558,35 @@ export default function UsersAdminPage() {
                             align="end"
                             className="w-52 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
                           >
-                            <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">
-                              Tác vụ quản trị
-                            </DropdownMenuLabel>
-                            {viewMode === "ACTIVE" ? (
-                              <>
+                            <DropdownMenuGroup>
+                              <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">
+                                Tác vụ quản trị
+                              </DropdownMenuLabel>
+                              {viewMode === "ACTIVE" ? (
+                                <>
+                                <DropdownMenuItem
+                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                  onClick={() => router.push(`/admin/users/${u.id}`)}
+                                >
+                                  <Eye className="w-3.5 h-3.5 text-zinc-400" />
+                                  Xem chi tiết
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                  onClick={() => router.push(`/admin/users/${u.id}/edit`)}
+                                >
+                                  <Edit2 className="w-3.5 h-3.5 text-zinc-400" />
+                                  Chỉnh sửa
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                                 <DropdownMenuItem
                                   className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
                                   onClick={() =>
-                                    handleAction(
-                                      () =>
-                                        resetPasswordMutation.mutateAsync(u.id),
+                                    requestAction(
+                                      "Cấp lại mật khẩu",
+                                      `Bạn có chắc chắn muốn cấp lại mật khẩu cho tài khoản ${u.email}? Mật khẩu mới sẽ được gửi về email của người dùng.`,
+                                      "warning",
+                                      () => resetPasswordMutation.mutateAsync(u.id),
                                       "Đã cấp mật khẩu mới"
                                     )
                                   }
@@ -543,7 +604,10 @@ export default function UsersAdminPage() {
                                   <DropdownMenuItem
                                     className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-amber-50 focus:text-amber-700 text-zinc-700"
                                     onClick={() =>
-                                      handleAction(
+                                      requestAction(
+                                        "Khóa tài khoản",
+                                        `Bạn có chắc chắn muốn khóa tài khoản ${u.email}? Người dùng sẽ không thể đăng nhập hoặc thực hiện giao dịch.`,
+                                        "danger",
                                         () => lockMutation.mutateAsync(u.id),
                                         "Tài khoản đã bị khóa"
                                       )
@@ -556,7 +620,10 @@ export default function UsersAdminPage() {
                                   <DropdownMenuItem
                                     className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-emerald-50 focus:text-emerald-700 text-zinc-700"
                                     onClick={() =>
-                                      handleAction(
+                                      requestAction(
+                                        "Mở khóa tài khoản",
+                                        `Bạn có chắc chắn muốn mở khóa tài khoản ${u.email}? Người dùng sẽ có thể truy cập hệ thống bình thường.`,
+                                        "info",
                                         () => unlockMutation.mutateAsync(u.id),
                                         "Tài khoản đã được mở khóa"
                                       )
@@ -570,7 +637,10 @@ export default function UsersAdminPage() {
                                 <DropdownMenuItem
                                   className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-700"
                                   onClick={() =>
-                                    handleAction(
+                                    requestAction(
+                                      "Vô hiệu hóa tài khoản",
+                                      `Bạn có chắc chắn muốn vô hiệu hóa tài khoản ${u.email}? Tài khoản sẽ được chuyển vào thùng rác.`,
+                                      "danger",
                                       () => deleteMutation.mutateAsync(u.id),
                                       "Đã vô hiệu hóa"
                                     )
@@ -581,10 +651,22 @@ export default function UsersAdminPage() {
                                 </DropdownMenuItem>
                               </>
                             ) : (
-                              <DropdownMenuItem
-                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
+                              <>
+                                <DropdownMenuItem
+                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                  onClick={() => router.push(`/admin/users/${u.id}`)}
+                                >
+                                  <Eye className="w-3.5 h-3.5 text-zinc-400" />
+                                  Xem chi tiết
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator className="my-1 bg-zinc-50" />
+                                <DropdownMenuItem
+                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
                                 onClick={() =>
-                                  handleAction(
+                                  requestAction(
+                                    "Khôi phục tài khoản",
+                                    `Bạn có chắc chắn muốn khôi phục tài khoản ${u.email}? Tài khoản sẽ hoạt động lại bình thường.`,
+                                    "info",
                                     () => restoreMutation.mutateAsync(u.id),
                                     "Đã khôi phục tài khoản"
                                   )
@@ -593,7 +675,9 @@ export default function UsersAdminPage() {
                                 <RotateCcw className="w-3.5 h-3.5" />
                                 Khôi phục tài khoản
                               </DropdownMenuItem>
+                              </>
                             )}
+                            </DropdownMenuGroup>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
@@ -681,6 +765,15 @@ export default function UsersAdminPage() {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        open={confirmDialog.open}
+        onOpenChange={(open) => setConfirmDialog((prev) => ({ ...prev, open }))}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        variant={confirmDialog.variant}
+        onConfirm={confirmAndExecute}
+        isLoading={confirmDialog.isLoading}
+      />
     </div>
   );
 }

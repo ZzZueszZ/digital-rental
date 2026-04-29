@@ -1,0 +1,118 @@
+import * as React from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, Info, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export interface ConfirmDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  description: React.ReactNode;
+  confirmText?: string;
+  cancelText?: string;
+  onConfirm: () => void | Promise<void>;
+  isLoading?: boolean;
+  variant?: "danger" | "warning" | "info";
+}
+
+export function ConfirmDialog({
+  open,
+  onOpenChange,
+  title,
+  description,
+  confirmText = "Xác nhận",
+  cancelText = "Hủy",
+  onConfirm,
+  isLoading = false,
+  variant = "danger",
+}: ConfirmDialogProps) {
+  const handleConfirm = async () => {
+    await onConfirm();
+  };
+
+  const getIcon = () => {
+    switch (variant) {
+      case "danger":
+        return <Trash2 className="w-6 h-6 text-red-600" />;
+      case "warning":
+        return <AlertTriangle className="w-6 h-6 text-amber-600" />;
+      case "info":
+        return <Info className="w-6 h-6 text-zinc-950" />;
+      default:
+        return <AlertTriangle className="w-6 h-6 text-red-600" />;
+    }
+  };
+
+  const getIconBg = () => {
+    switch (variant) {
+      case "danger":
+        return "bg-red-50";
+      case "warning":
+        return "bg-amber-50";
+      case "info":
+        return "bg-zinc-100";
+      default:
+        return "bg-red-50";
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent showCloseButton={false} className="sm:max-w-md !p-0 !gap-0 overflow-hidden border-zinc-200 shadow-2xl rounded-2xl bg-white">
+        <div className="p-6">
+          <DialogHeader className="flex flex-col sm:flex-row sm:items-start gap-4 space-y-0 text-left">
+            <div className={cn("w-12 h-12 rounded-full flex items-center justify-center shrink-0 self-start shadow-sm border border-zinc-100", getIconBg())}>
+              {getIcon()}
+            </div>
+            <div className="space-y-1.5 pt-0.5">
+              <DialogTitle className="text-lg font-black tracking-tight text-zinc-950">
+                {title}
+              </DialogTitle>
+              <DialogDescription className="text-sm font-medium text-zinc-500 leading-relaxed">
+                {description}
+              </DialogDescription>
+            </div>
+          </DialogHeader>
+        </div>
+        <DialogFooter className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex flex-row justify-end gap-3 m-0 rounded-b-2xl">
+          <DialogClose 
+            render={
+              <Button
+                variant="outline"
+                disabled={isLoading}
+                className="rounded-xl font-bold border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-100 hover:text-zinc-950 h-10 px-5 shadow-sm transition-all"
+              />
+            }
+          >
+            {cancelText}
+          </DialogClose>
+          <Button
+            onClick={handleConfirm}
+            disabled={isLoading}
+            className={cn(
+              "rounded-xl font-bold h-10 px-5 shadow-sm text-white transition-all",
+              variant === "danger" ? "bg-red-600 hover:bg-red-700 hover:shadow-md hover:shadow-red-500/20" :
+              variant === "warning" ? "bg-amber-500 hover:bg-amber-600 hover:shadow-md hover:shadow-amber-500/20" : "bg-zinc-950 hover:bg-zinc-800 hover:shadow-md hover:shadow-zinc-950/20"
+            )}
+          >
+            {isLoading ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ...
+              </span>
+            ) : confirmText}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

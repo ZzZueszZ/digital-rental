@@ -33,6 +33,11 @@ export const getDeletedUsers = async (criteria: UserCriteria, page = 0, size = 2
   return data;
 };
 
+export const getUserById = async (id: number) => {
+  const { data } = await http.get<IBackendRes<UserResponse>>(`/users/${id}`);
+  return data;
+};
+
 export const updateStatus = async (id: number, status: string) => {
   const { data } = await http.patch<IBackendRes<UserResponse>>(`/users/${id}/status`, { status });
   return data;
@@ -75,6 +80,14 @@ export const useDeletedUsers = (criteria: UserCriteria, page = 0, size = 20) => 
   return useQuery({
     queryKey: USER_KEYS.deleted(criteria, page, size),
     queryFn: () => getDeletedUsers(criteria, page, size),
+  });
+};
+
+export const useUserDetail = (id: number) => {
+  return useQuery({
+    queryKey: USER_KEYS.detail(id),
+    queryFn: () => getUserById(id),
+    enabled: !!id,
   });
 };
 

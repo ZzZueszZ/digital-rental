@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import {
   useAdminUserProfile,
   useUpdateAdminUserProfile,
@@ -81,6 +82,7 @@ export function UserProfileCard({
 
   const [isProfileEditing, setIsProfileEditing] = useState(false);
   const [form, setForm] = useState<UserProfileUpdateRequest>({});
+  const [showDeleteAvatarConfirm, setShowDeleteAvatarConfirm] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const avatarGradient = AVATAR_COLORS[(userId || 0) % AVATAR_COLORS.length];
@@ -140,6 +142,7 @@ export function UserProfileCard({
     try {
       await deleteAvatarMutation.mutateAsync();
       toast.success("Đã xóa ảnh đại diện");
+      setShowDeleteAvatarConfirm(false);
     } catch { toast.error("Không thể xóa ảnh"); }
   };
 
@@ -185,7 +188,7 @@ export function UserProfileCard({
             </button>
             {profile?.avatarUrl && (
               <button
-                onClick={handleDeleteAvatar}
+                onClick={() => setShowDeleteAvatarConfirm(true)}
                 disabled={deleteAvatarMutation.isPending}
                 className="w-8 h-8 rounded-lg bg-red-500/60 hover:bg-red-500/80 flex items-center justify-center"
                 title="Xóa ảnh"
@@ -365,6 +368,16 @@ export function UserProfileCard({
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showDeleteAvatarConfirm}
+        onOpenChange={setShowDeleteAvatarConfirm}
+        title="Xóa ảnh đại diện"
+        description="Bạn có chắc chắn muốn xóa ảnh đại diện hiện tại không? Hành động này không thể hoàn tác."
+        variant="danger"
+        onConfirm={handleDeleteAvatar}
+        isLoading={deleteAvatarMutation.isPending}
+      />
     </div>
   );
 }

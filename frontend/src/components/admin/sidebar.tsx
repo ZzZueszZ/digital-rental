@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Users,
   Package,
+  Layers,
   ShoppingCart,
   Settings,
   LogOut,
@@ -19,7 +20,13 @@ import { useAuthSession } from "@/components/auth/Guards";
 import { Role } from "@/constants/enum/role";
 import { Button } from "@/components/ui/button";
 
-export function AdminSidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (val: boolean) => void }) {
+export function AdminSidebar({
+  isOpen,
+  setIsOpen,
+}: {
+  isOpen: boolean;
+  setIsOpen: (val: boolean) => void;
+}) {
   const pathname = usePathname();
   const { user, logout } = useAuthSession();
 
@@ -34,6 +41,12 @@ export function AdminSidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen
       href: "/admin/users",
       icon: Users,
       label: "Người dùng",
+      roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
+    },
+    {
+      href: "/admin/categories",
+      icon: Layers,
+      label: "Danh mục sản phẩm",
       roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
     },
     {
@@ -66,7 +79,7 @@ export function AdminSidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen
     <>
       {/* Overlay for mobile */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-zinc-950/20 backdrop-blur-sm lg:hidden transition-all duration-300"
           onClick={() => setIsOpen(false)}
         />
@@ -75,7 +88,7 @@ export function AdminSidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen
       <aside
         className={cn(
           "fixed left-0 top-0 z-50 h-screen w-72 bg-white text-zinc-950 transition-all duration-500 overflow-hidden flex flex-col border-r border-zinc-100 shadow-[20px_0_60px_rgba(0,0,0,0.03)]",
-          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         )}
       >
         <div className="flex h-20 items-center px-8 mb-2">
@@ -91,7 +104,9 @@ export function AdminSidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen
 
         <nav className="flex-1 space-y-1.5 p-6 overflow-y-auto custom-scrollbar">
           <div className="px-3 mb-6">
-            <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Hệ thống</p>
+            <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">
+              Hệ thống
+            </p>
           </div>
           {navItems.map((item) => {
             const canAccess = user?.roles?.some((r) =>
@@ -112,13 +127,15 @@ export function AdminSidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen
                   "group flex items-center gap-3 rounded-xl px-4 py-3.5 text-sm font-bold transition-all duration-300 relative overflow-hidden",
                   isActive
                     ? "bg-zinc-950 text-white shadow-xl shadow-zinc-950/10"
-                    : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50"
+                    : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50",
                 )}
               >
                 <item.icon
                   className={cn(
                     "h-5 w-5 transition-all duration-300",
-                    isActive ? "scale-110 text-red-500" : "group-hover:scale-110 group-hover:text-red-600"
+                    isActive
+                      ? "scale-110 text-red-500"
+                      : "group-hover:scale-110 group-hover:text-red-600",
                   )}
                 />
                 {item.label}

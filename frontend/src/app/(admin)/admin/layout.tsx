@@ -22,6 +22,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pageTitle = useMemo(() => {
     if (pathname === '/admin') return { title: 'Tổng quan', subtitle: 'Hệ thống quản trị' };
     if (pathname.includes('/users')) return { title: 'Người dùng', subtitle: 'Quản lý thành viên' };
+    if (pathname.includes('/categories')) return { title: 'Danh mục', subtitle: 'Phân loại sản phẩm' };
     if (pathname.includes('/products')) return { title: 'Kho hàng', subtitle: 'Quản lý thiết bị' };
     if (pathname.includes('/orders')) return { title: 'Đơn hàng', subtitle: 'Quản lý giao dịch' };
     if (pathname.includes('/vouchers')) return { title: 'Vouchers', subtitle: 'Ưu đãi & Khuyến mãi' };

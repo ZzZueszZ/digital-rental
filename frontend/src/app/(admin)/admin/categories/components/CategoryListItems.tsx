@@ -1,0 +1,131 @@
+"use client";
+
+import { format } from "date-fns";
+import { vi } from "date-fns/locale";
+import { Tag, Calendar, ChevronRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { CategoryResponse } from "@/types/category";
+import { CategoryActionMenu } from "./CategoryActionMenu";
+
+interface ItemProps {
+  category: CategoryResponse;
+  onEdit: (category: CategoryResponse) => void;
+  onDelete: (id: number) => void;
+  onRestore: (id: number) => void;
+}
+
+export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: ItemProps) {
+  return (
+    <tr className="group hover:bg-zinc-50/50 transition-all duration-200">
+      <td className="px-6 py-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-400 group-hover:scale-110 group-hover:bg-zinc-950 group-hover:text-white transition-all duration-300">
+            <Tag className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="text-xs font-black text-zinc-900 tracking-tight uppercase mb-0.5">
+              {category.code}
+            </p>
+            <p className="text-[11px] font-bold text-zinc-400">ID: #{category.id}</p>
+          </div>
+        </div>
+      </td>
+      <td className="px-6 py-4">
+        <p className="text-xs font-bold text-zinc-900">{category.name}</p>
+        <p className="text-[11px] text-zinc-500 line-clamp-1 max-w-xs" title={category.description}>
+          {category.description || "Chưa có mô tả"}
+        </p>
+      </td>
+      <td className="px-6 py-4">
+        <Badge
+          className={cn(
+            "rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-wider border-0 ring-0",
+            category.isActive
+              ? "bg-emerald-50 text-emerald-600"
+              : "bg-zinc-900 text-white"
+          )}
+        >
+          {category.isActive ? "Hoạt động" : "Vô hiệu"}
+        </Badge>
+      </td>
+      <td className="px-6 py-4">
+        <div className="flex flex-col">
+          <span className="text-[11px] font-bold text-zinc-900">
+            {format(new Date(category.createdAt), "dd/MM/yyyy", { locale: vi })}
+          </span>
+          <span className="text-[10px] text-zinc-400 font-medium">
+            {format(new Date(category.createdAt), "HH:mm", { locale: vi })}
+          </span>
+        </div>
+      </td>
+      <td className="px-6 py-4 text-right">
+        <CategoryActionMenu
+          isActive={category.isActive}
+          onEdit={() => onEdit(category)}
+          onDelete={() => onDelete(category.id)}
+          onRestore={() => onRestore(category.id)}
+        />
+      </td>
+    </tr>
+  );
+}
+
+export function CategoryMobileCard({ category, onEdit, onDelete, onRestore }: ItemProps) {
+  return (
+    <div className="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm space-y-4 group active:scale-[0.98] transition-all">
+      <div className="flex justify-between items-start">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-950">
+            <Tag className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-0.5">
+              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                {category.code}
+              </span>
+              <Badge
+                className={cn(
+                  "rounded-md px-1.5 py-0 text-[8px] font-black uppercase border-0 ring-0",
+                  category.isActive
+                    ? "bg-emerald-50 text-emerald-600"
+                    : "bg-zinc-900 text-white"
+                )}
+              >
+                {category.isActive ? "HĐ" : "Vô hiệu"}
+              </Badge>
+            </div>
+            <h3 className="text-sm font-black text-zinc-950 tracking-tight">
+              {category.name}
+            </h3>
+          </div>
+        </div>
+        <CategoryActionMenu
+          isActive={category.isActive}
+          onEdit={() => onEdit(category)}
+          onDelete={() => onDelete(category.id)}
+          onRestore={() => onRestore(category.id)}
+        />
+      </div>
+
+      <p className="text-[11px] text-zinc-500 line-clamp-2">
+        {category.description || "Chưa có mô tả"}
+      </p>
+
+      <div className="pt-3 border-t border-zinc-50 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-zinc-400">
+          <Calendar className="w-3 h-3" />
+          <span className="text-[10px] font-bold">
+            {format(new Date(category.createdAt), "dd/MM/yyyy", { locale: vi })}
+          </span>
+        </div>
+        <button 
+          onClick={() => onEdit(category)}
+          className="p-1.5 rounded-lg bg-zinc-50 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-all"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+}

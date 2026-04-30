@@ -510,13 +510,14 @@ export default function UsersAdminPage() {
             return (
               <div
                 key={u.id}
+                onClick={() => router.push(`/admin/users/${u.id}`)}
                 className={cn(
-                  "p-4 transition-colors border-l-[3px] hover:border-red-600",
+                  "p-4 transition-colors border-l-[3px] hover:border-red-600 cursor-pointer",
                   selectedIds.has(u.id) ? "bg-red-50/50 border-red-300" : "border-transparent hover:bg-zinc-50"
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <button onClick={() => toggleSelect(u.id)} className="shrink-0 text-zinc-400 hover:text-red-600 transition-colors">
+                  <button onClick={(e) => { e.stopPropagation(); toggleSelect(u.id); }} className="shrink-0 text-zinc-400 hover:text-red-600 transition-colors">
                     {selectedIds.has(u.id)
                       ? <CheckSquare className="w-4 h-4 text-red-600" />
                       : <Square className="w-4 h-4" />}
@@ -528,6 +529,7 @@ export default function UsersAdminPage() {
                     <p className="text-sm font-bold text-zinc-900 truncate">{u.email}</p>
                     <p className="text-[10px] text-zinc-400 font-mono">#{u.id.toString().padStart(5, "0")}</p>
                   </div>
+                  <div onClick={(e) => e.stopPropagation()}>
                   <DropdownMenu>
                     <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-lg hover:bg-zinc-100 outline-none">
                       <MoreHorizontal className="w-4 h-4 text-zinc-500" />
@@ -575,6 +577,7 @@ export default function UsersAdminPage() {
                       </DropdownMenuGroup>
                     </DropdownMenuContent>
                   </DropdownMenu>
+                  </div>
                 </div>
 
                 <div className="mt-3 flex flex-wrap items-center gap-2 pl-13">
@@ -673,8 +676,9 @@ export default function UsersAdminPage() {
                 return (
                   <tr
                     key={u.id}
+                    onClick={() => router.push(`/admin/users/${u.id}`)}
                     className={cn(
-                      "group transition-all duration-200 border-l-[3px]",
+                      "group transition-all duration-200 border-l-[3px] cursor-pointer",
                       selectedIds.has(u.id)
                         ? "bg-red-50/40 border-red-300"
                         : "hover:bg-zinc-50/80 border-transparent hover:border-red-600"
@@ -682,7 +686,7 @@ export default function UsersAdminPage() {
                   >
                     {/* Checkbox */}
                     <td className="px-4 py-4 w-10">
-                      <button onClick={() => toggleSelect(u.id)} className="text-zinc-300 hover:text-red-600 transition-colors">
+                      <button onClick={(e) => { e.stopPropagation(); toggleSelect(u.id); }} className="text-zinc-300 hover:text-red-600 transition-colors">
                         {selectedIds.has(u.id)
                           ? <CheckSquare className="w-4 h-4 text-red-600" />
                           : <Square className="w-4 h-4" />}
@@ -771,7 +775,8 @@ export default function UsersAdminPage() {
                     {/* Actions */}
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end">
-                        <DropdownMenu>
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <DropdownMenu>
                           <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-lg p-0 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 transition-all duration-200 outline-none">
                             <MoreHorizontal className="w-4 h-4 text-zinc-500" />
                           </DropdownMenuTrigger>
@@ -901,6 +906,7 @@ export default function UsersAdminPage() {
                             </DropdownMenuGroup>
                           </DropdownMenuContent>
                         </DropdownMenu>
+                        </div>
                       </div>
                     </td>
                   </tr>

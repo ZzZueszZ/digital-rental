@@ -64,3 +64,29 @@ export interface UserCreateRequest {
 export interface UserStatusUpdateRequest {
   status: AccountStatus
 }
+
+export interface UserProfileResponse {
+  id: number
+  fullName: string | null
+  firstName: string | null
+  lastName: string | null
+  gender: 'MALE' | 'FEMALE' | 'OTHER' | null
+  dateOfBirth: string | null
+  avatarUrl: string | null
+  occupation: string | null
+  companyName: string | null
+  email: string
+  roles: string[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface UserProfileUpdateRequest {
+  fullName?: string
+  firstName?: string
+  lastName?: string
+  gender?: 'MALE' | 'FEMALE' | 'OTHER'
+  dateOfBirth?: string
+  occupation?: string
+  companyName?: string
+}

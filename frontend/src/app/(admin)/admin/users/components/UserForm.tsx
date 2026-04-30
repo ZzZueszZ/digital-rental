@@ -3,22 +3,19 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUpdateUser } from "@/services/user";
+import { UserProfileCard } from "./UserProfileCard";
 import {
   ArrowLeft,
-  Mail,
-  Phone,
   ShieldCheck,
   Calendar,
   Clock,
-  User as UserIcon,
   CheckCircle2,
-  AlertTriangle,
   Lock,
   Unlock,
   Edit2,
   Save,
   Loader2,
-  X,
+  User as UserIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -109,7 +106,6 @@ export function UserForm({
     roles: user.roles as string[],
   });
 
-  const avatarColor = getAvatarColor(user.email);
   const statusConfig =
     STATUS_CONFIG[isEditing ? formData.accountStatus : user.accountStatus] ??
     STATUS_CONFIG["DISABLED"];
@@ -203,141 +199,17 @@ export function UserForm({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left Col: Profile Identity */}
+        {/* Left Col: Unified Profile Card */}
         <div className="md:col-span-1">
-          <Card
-            className={cn(
-              "rounded-2xl border bg-white shadow-sm overflow-hidden relative group transition-all duration-500",
-              isEditing
-                ? "border-red-200 ring-1 ring-red-100"
-                : "border-zinc-200 hover:shadow-2xl",
-            )}
-          >
-            <div
-              className={cn(
-                "absolute top-0 left-0 w-full h-1 transition-all duration-500",
-                isEditing
-                  ? "bg-red-600 opacity-100"
-                  : "bg-red-600 opacity-0 group-hover:opacity-100",
-              )}
-            />
-            <CardContent className="pt-8 pb-6 px-6 flex flex-col items-center text-center">
-              <div
-                className={cn(
-                  "w-24 h-24 rounded-3xl flex items-center justify-center shadow-sm bg-gradient-to-br mb-4",
-                  avatarColor.bg,
-                )}
-              >
-                <span className={cn("text-4xl font-black", avatarColor.text)}>
-                  {user.email.charAt(0).toUpperCase()}
-                </span>
-              </div>
-              <h2
-                className="text-xl font-black tracking-tight text-zinc-950 truncate w-full mb-1"
-                title={user.email}
-              >
-                {user.email}
-              </h2>
-              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">
-                Người dùng nền tảng
-              </p>
-
-              <div className="flex flex-wrap justify-center gap-1.5 mb-6">
-                {isEditing
-                  ? Object.values(Role).map((role) => (
-                      <button
-                        key={role}
-                        type="button"
-                        onClick={() => toggleRole(role)}
-                        className={cn(
-                          "inline-block text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-[0.15em] border transition-all hover:scale-105 active:scale-95",
-                          formData.roles.includes(role)
-                            ? "bg-red-50 text-red-600 border-red-200 shadow-sm"
-                            : "bg-zinc-50 text-zinc-400 border-zinc-200 hover:border-zinc-300",
-                        )}
-                      >
-                        {role}{" "}
-                        {formData.roles.includes(role) && (
-                          <CheckCircle2 className="w-2.5 h-2.5 inline-block ml-0.5" />
-                        )}
-                      </button>
-                    ))
-                  : user.roles.map((role: string) => {
-                      const isSpecial =
-                        role === "SUPER_ADMIN" || role === "ADMIN";
-                      return (
-                        <span
-                          key={role}
-                          className={cn(
-                            "inline-block text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-[0.15em] border",
-                            isSpecial
-                              ? "bg-red-50 text-red-600 border-red-200"
-                              : "bg-zinc-50 text-zinc-600 border-zinc-200",
-                          )}
-                        >
-                          {role}
-                        </span>
-                      );
-                    })}
-              </div>
-
-              <div className="w-full space-y-4 pt-5 border-t border-zinc-100 text-left">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-400 shrink-0">
-                    <Mail className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-0.5">
-                      Email
-                    </p>
-                    <p className="text-sm font-bold text-zinc-900 truncate">
-                      {user.email}
-                    </p>
-                  </div>
-                  {user.emailVerified ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  ) : (
-                    <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
-                  )}
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-400 shrink-0">
-                    <Phone className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-0.5">
-                      SĐT
-                    </p>
-                    {isEditing ? (
-                      <Input
-                        value={formData.phone}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            phone: e.target.value,
-                          }))
-                        }
-                        placeholder="Nhập số điện thoại"
-                        className="h-8 mt-1 text-sm text-zinc-900 bg-white border-zinc-200 focus-visible:ring-1 focus-visible:ring-red-600 focus-visible:border-red-600 px-2"
-                      />
-                    ) : (
-                      <p className="text-sm font-bold text-zinc-900 truncate">
-                        {user.phone || "Trống"}
-                      </p>
-                    )}
-                  </div>
-                  {!isEditing &&
-                    user.phone &&
-                    (user.phoneVerified ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    ) : (
-                      <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
-                    ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <UserProfileCard
+            userId={userId}
+            user={user}
+            isEditing={isEditing}
+            phone={formData.phone}
+            onPhoneChange={(v) => setFormData((prev) => ({ ...prev, phone: v }))}
+            roles={formData.roles}
+            onRolesChange={(roles) => setFormData((prev) => ({ ...prev, roles }))}
+          />
         </div>
 
         {/* Right Col: Account Info */}

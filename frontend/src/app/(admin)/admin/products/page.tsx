@@ -1,186 +1,391 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
+import { useState } from "react";
 import { 
-  Package, 
-  Search, 
-  Filter, 
   Plus, 
-  MoreHorizontal, 
-  CheckCircle2, 
-  XCircle,
-  Camera,
-  Layers,
+  Search, 
+  Package, 
+  ChevronLeft, 
+  ChevronRight, 
+  EyeOff, 
   TrendingUp,
-  Tag,
-  Eye,
-  Edit2
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+  Tag
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { 
+  useProducts, 
+  useTrashedProducts, 
+  useCreateProduct, 
+  useUpdateProductInfo, 
+  useUpdateProductPrice,
+  useDeleteProduct, 
+  useRestoreProduct,
+  useHardDeleteProduct
+} from "@/services/product";
+import { useCategories } from "@/services/category";
+import { ProductResponse, ProductRequest, ProductInfoUpdateRequest, ProductPriceUpdateRequest } from "@/types/product";
+import { ProductDialog } from "./components/ProductDialog";
+import { ProductPriceDialog } from "./components/ProductPriceDialog";
+import { ProductTableRow, ProductMobileCard } from "./components/ProductListItems";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { EmptyState } from "../users/components/EmptyState";
+import { StatCard } from "../components/StatCard";
+import { cn } from "@/lib/utils";
 
 export default function ProductsAdminPage() {
-  const [search, setSearch] = useState('');
+  const [viewMode, setViewMode] = useState<"ACTIVE" | "DELETED">("ACTIVE");
+  const [page, setPage] = useState(0);
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
 
-  // Mock data for initial design
-  const products = [
-    { id: 1, name: 'Sony Alpha A7 IV', category: 'Mirrorless', price: '45.000.000 ₫', rent: '800.000 ₫', stock: 12, status: 'ACTIVE', image: '/api/uploads/sony-a7.jpg' },
-    { id: 2, name: 'Canon EOS R6 Mark II', category: 'Mirrorless', price: '52.000.000 ₫', rent: '950.000 ₫', stock: 5, status: 'ACTIVE', image: '/api/uploads/canon-r6.jpg' },
-    { id: 3, name: 'Fujifilm X-T5', category: 'Mirrorless', price: '38.000.000 ₫', rent: '650.000 ₫', stock: 0, status: 'OUT_OF_STOCK', image: '/api/uploads/fuji-xt5.jpg' },
-    { id: 4, name: 'Nikkor Z 24-70mm f/2.8 S', category: 'Lenses', price: '42.000.000 ₫', rent: '700.000 ₫', stock: 8, status: 'ACTIVE', image: '/api/uploads/nikon-2470.jpg' },
-    { id: 5, name: 'DJI RS 3 Pro Combo', category: 'Accessories', price: '21.000.000 ₫', rent: '400.000 ₫', stock: 15, status: 'ACTIVE', image: '/api/uploads/dji-rs3.jpg' },
-  ];
+  const [dialogState, setDialogState] = useState<{
+    type: "NONE" | "INFO" | "PRICE" | "GALLERY";
+    product: ProductResponse | null;
+  }>({ type: "NONE", product: null });
+
+  const [confirmConfig, setConfirmConfig] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+    variant?: "danger" | "warning" | "info";
+  }>({
+    open: false,
+    title: "",
+    description: "",
+    onConfirm: () => {},
+  });
+
+  const categoriesQuery = useCategories({ activeOnly: true }, 0, 100);
+  const categories = categoriesQuery.data?.data || [];
+
+  const activeQuery = useProducts({ 
+    name: search || undefined,
+    categories: selectedCategory ? [selectedCategory] : undefined
+  }, page, 10);
+  
+  const trashedQuery = useTrashedProducts(page, 10);
+  
+  const query = viewMode === "ACTIVE" ? activeQuery : trashedQuery;
+  const products: ProductResponse[] = query.data?.data || [];
+  const pagination = query.data?.pagination;
+  const totalPages = pagination?.totalPages || 1;
+
+  // Mutations
+  const createMutation = useCreateProduct();
+  const updateInfoMutation = useUpdateProductInfo(dialogState.product?.id || 0);
+  const updatePriceMutation = useUpdateProductPrice(dialogState.product?.id || 0);
+  const deleteMutation = useDeleteProduct();
+  const restoreMutation = useRestoreProduct();
+  const hardDeleteMutation = useHardDeleteProduct();
+
+  const handleCreateOrUpdateInfo = async (data: { request: ProductRequest | ProductInfoUpdateRequest; image: File | null }) => {
+    try {
+      if (dialogState.product) {
+        await updateInfoMutation.mutateAsync(data as { request: ProductInfoUpdateRequest; image: File | null });
+        toast.success("Cập nhật thông tin sản phẩm thành công");
+      } else {
+        await createMutation.mutateAsync(data as { request: ProductRequest; image: File | null });
+        toast.success("Thêm sản phẩm mới thành công");
+      }
+      setDialogState({ type: "NONE", product: null });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Đã xảy ra lỗi";
+      toast.error(message);
+    }
+  };
+
+  const handleUpdatePrice = async (data: ProductPriceUpdateRequest) => {
+    try {
+      await updatePriceMutation.mutateAsync(data);
+      toast.success("Cập nhật bảng giá thành công");
+      setDialogState({ type: "NONE", product: null });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Đã xảy ra lỗi";
+      toast.error(message);
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    setConfirmConfig({
+      open: true,
+      title: "Vô hiệu hóa sản phẩm?",
+      description: "Sản phẩm này sẽ bị ẩn khỏi cửa hàng nhưng không bị xóa vĩnh viễn.",
+      variant: "warning",
+      onConfirm: async () => {
+        try {
+          await deleteMutation.mutateAsync(id);
+          toast.success("Vô hiệu hóa thành công");
+          setConfirmConfig(prev => ({ ...prev, open: false }));
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : "Không thể vô hiệu hóa";
+          toast.error(message);
+        }
+      }
+    });
+  };
+
+  const handleRestore = (id: number) => {
+    setConfirmConfig({
+      open: true,
+      title: "Khôi phục sản phẩm?",
+      description: "Sản phẩm sẽ hiển thị lại trên cửa hàng.",
+      variant: "info",
+      onConfirm: async () => {
+        try {
+          await restoreMutation.mutateAsync(id);
+          toast.success("Khôi phục thành công");
+          setConfirmConfig(prev => ({ ...prev, open: false }));
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : "Không thể khôi phục";
+          toast.error(message);
+        }
+      }
+    });
+  };
+
+  const handleHardDelete = (id: number) => {
+    setConfirmConfig({
+      open: true,
+      title: "Xóa vĩnh viễn sản phẩm?",
+      description: "Hành động này không thể hoàn tác. Tất cả dữ liệu ảnh và lịch sử giá sẽ bị xóa sạch.",
+      variant: "danger",
+      onConfirm: async () => {
+        try {
+          await hardDeleteMutation.mutateAsync(id);
+          toast.success("Xóa vĩnh viễn thành công");
+          setConfirmConfig(prev => ({ ...prev, open: false }));
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : "Không thể xóa";
+          toast.error(message);
+        }
+      }
+    });
+  };
 
   return (
-    <div className="flex-1 space-y-6 lg:space-y-10">
-      {/* Action Bar */}
-      <div className="flex flex-col sm:flex-row justify-end gap-3">
-        <Button variant="outline" className="h-12 w-full sm:w-auto px-8 rounded-xl border-zinc-200 hover:bg-zinc-50 font-bold transition-all duration-300">
-          Nhập kho excel
-        </Button>
-        <Button className="h-12 w-full sm:w-auto px-8 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold flex items-center justify-center gap-2 group shadow-xl shadow-zinc-950/20">
-          <Plus className="w-5 h-5 transition-transform group-hover:rotate-90 duration-500" />
-          Đăng sản phẩm mới
-        </Button>
-      </div>
-
-      {/* Stats Summary */}
+    <div className="flex-1 space-y-6 lg:space-y-8 animate-in fade-in duration-500">
+      {/* KPI Stats */}
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          { label: 'Tổng sản phẩm', value: '458', icon: Package, color: 'zinc' },
-          { label: 'Thiết bị cho thuê', value: '185', icon: Camera, color: 'red' },
-          { label: 'Sắp hết hàng', value: '24', icon: TrendingUp, color: 'amber' },
-          { label: 'Danh mục', value: '18', icon: Layers, color: 'zinc' },
-        ].map((stat, i) => (
-          <Card key={i} className="rounded-2xl border-zinc-200 bg-white shadow-sm overflow-hidden group hover:shadow-md transition-all">
-            <CardContent className="p-4 sm:p-6 flex items-center gap-4">
-              <div className={cn(
-                "p-2.5 sm:p-3 rounded-xl",
-                stat.color === 'red' ? "bg-red-50 text-red-600" :
-                stat.color === 'amber' ? "bg-amber-50 text-amber-600" :
-                "bg-zinc-100 text-zinc-900"
-              )}>
-                <stat.icon className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{stat.label}</p>
-                <p className="text-xl font-bold text-zinc-950">{stat.value}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        <StatCard
+          title="Tổng sản phẩm"
+          value={pagination?.totalElements || 0}
+          trend={12}
+          icon={Package}
+          accent="bg-zinc-950"
+        />
+        <StatCard
+          title="Đang kinh doanh"
+          value={viewMode === "ACTIVE" ? products.filter(p => p.isActive).length : "-"}
+          trend={5}
+          icon={Tag}
+          accent="bg-emerald-500"
+        />
+        <StatCard
+          title="Đã lưu trữ"
+          value={viewMode === "DELETED" ? products.length : "-"}
+          trend={0}
+          icon={EyeOff}
+          accent="bg-red-500"
+        />
+        <StatCard
+          title="Tăng trưởng"
+          value="+15.4%"
+          trend={15.4}
+          icon={TrendingUp}
+          accent="bg-zinc-950"
+        />
       </div>
 
-      {/* Main Content Card */}
-      <Card className="rounded-2xl border-zinc-200 bg-white shadow-sm overflow-hidden">
-        <CardHeader className="border-b border-zinc-50 p-4 sm:p-8 pt-6 sm:pt-10">
-          <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-6">
-            <div className="flex items-center gap-4">
-              <div className="hidden sm:flex w-12 h-12 rounded-xl bg-red-600 text-white items-center justify-center shadow-lg shadow-red-600/20">
-                <Tag className="w-6 h-6" />
-              </div>
-              <div>
-                <CardTitle className="text-xl sm:text-2xl font-bold text-zinc-950">Danh sách thiết bị</CardTitle>
-                <CardDescription className="text-xs sm:text-sm text-zinc-500 font-medium mt-1">Quản lý tình trạng, giá bán và tồn kho.</CardDescription>
-              </div>
-            </div>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="relative flex-1 lg:w-72">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-                <Input 
-                  placeholder="Tìm thiết bị..." 
-                  className="pl-11 h-12 rounded-xl border-zinc-200 bg-zinc-50/30"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-              <Button variant="outline" className="h-12 px-5 rounded-xl border-zinc-200 font-bold gap-2">
-                <Filter className="w-4 h-4" />
-                Lọc nhanh
+      {/* Header & Actions */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm">
+        <div className="flex items-center gap-4">
+          <div className="flex bg-zinc-50 p-1 rounded-xl border border-zinc-100">
+            <button
+              onClick={() => { setViewMode("ACTIVE"); setPage(0); }}
+              className={cn(
+                "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                viewMode === "ACTIVE" ? "bg-white text-zinc-950 shadow-sm" : "text-zinc-400 hover:text-zinc-600"
+              )}
+            >
+              Hoạt động
+            </button>
+            <button
+              onClick={() => { setViewMode("DELETED"); setPage(0); }}
+              className={cn(
+                "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                viewMode === "DELETED" ? "bg-white text-zinc-950 shadow-sm" : "text-zinc-400 hover:text-zinc-600"
+              )}
+            >
+              Lưu trữ
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+          {viewMode === "ACTIVE" && (
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="h-11 rounded-xl bg-zinc-50 border-zinc-100 text-xs font-bold focus:bg-white transition-all px-3 outline-none"
+            >
+              <option value="">Tất cả danh mục</option>
+              {categories.map(c => (
+                <option key={c.id} value={c.id.toString()}>{c.name}</option>
+              ))}
+            </select>
+          )}
+
+          <div className="relative flex-1 sm:w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+            <Input
+              placeholder="Tìm thiết bị..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 h-11 rounded-xl bg-zinc-50 border-zinc-100 text-xs font-bold focus:bg-white transition-all"
+            />
+          </div>
+          
+          <Button
+            onClick={() => setDialogState({ type: "INFO", product: null })}
+            className="h-11 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-bold px-6 transition-all gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="hidden sm:inline">Thêm thiết bị</span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Products List */}
+      <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
+        {/* Desktop View */}
+        <div className="hidden lg:block">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-zinc-50/50 border-b border-zinc-100">
+                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] w-[35%]">Thông tin thiết bị</th>
+                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Bảng giá</th>
+                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Trạng thái</th>
+                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Ngày tạo</th>
+                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-50">
+              {query.isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td colSpan={5} className="px-6 py-4"><div className="h-16 bg-zinc-50 rounded-xl w-full" /></td>
+                  </tr>
+                ))
+              ) : products.length === 0 ? (
+                <tr>
+                  <td colSpan={5}>
+                    <EmptyState 
+                      title="Không tìm thấy thiết bị" 
+                      description="Hãy thử thay đổi từ khóa tìm kiếm hoặc thêm sản phẩm mới."
+                    />
+                  </td>
+                </tr>
+              ) : (
+                products.map((p) => (
+                  <ProductTableRow
+                    key={p.id}
+                    product={p}
+                    onEdit={(prod) => setDialogState({ type: "INFO", product: prod })}
+                    onUpdatePrice={(prod) => setDialogState({ type: "PRICE", product: prod })}
+                    onGallery={(prod) => { toast.info("Tính năng Quản lý Gallery đang được phát triển."); }}
+                    onDelete={handleDelete}
+                    onRestore={handleRestore}
+                    onHardDelete={handleHardDelete}
+                  />
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile View */}
+        <div className="lg:hidden p-4 space-y-4">
+          {query.isLoading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-40 bg-zinc-50 rounded-2xl animate-pulse" />
+            ))
+          ) : products.length === 0 ? (
+            <EmptyState title="Trống" description="Không có sản phẩm nào." />
+          ) : (
+            products.map((p) => (
+              <ProductMobileCard
+                key={p.id}
+                product={p}
+                onEdit={(prod) => setDialogState({ type: "INFO", product: prod })}
+                onUpdatePrice={(prod) => setDialogState({ type: "PRICE", product: prod })}
+                onGallery={(prod) => { toast.info("Tính năng Quản lý Gallery đang được phát triển."); }}
+                onDelete={handleDelete}
+                onRestore={handleRestore}
+                onHardDelete={handleHardDelete}
+              />
+            ))
+          )}
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-between">
+            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+              Trang {page + 1} / {totalPages}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={page === 0}
+                onClick={() => setPage(p => p - 1)}
+                className="w-8 h-8 rounded-lg border-zinc-200"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={page >= totalPages - 1}
+                onClick={() => setPage(p => p + 1)}
+                className="w-8 h-8 rounded-lg border-zinc-200"
+              >
+                <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                  <th className="px-8 py-5 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]">Thông tin sản phẩm</th>
-                  <th className="px-8 py-5 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]">Danh mục</th>
-                  <th className="px-8 py-5 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]">Bán / Thuê</th>
-                  <th className="px-8 py-5 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]">Tồn kho</th>
-                  <th className="px-8 py-5 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]">Hành động</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-50">
-                {products.map((p) => (
-                  <tr key={p.id} className="group hover:bg-zinc-50/80 transition-all duration-300">
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-5">
-                        <div className="w-16 h-16 rounded-2xl bg-white border border-zinc-100 flex items-center justify-center overflow-hidden p-2 group-hover:scale-105 transition-transform">
-                          <div className="w-full h-full bg-zinc-50 rounded-lg flex items-center justify-center">
-                            <Camera className="w-6 h-6 text-zinc-300" />
-                          </div>
-                        </div>
-                        <div>
-                          <p className="font-bold text-zinc-950 tracking-tight group-hover:text-red-600 transition-colors">{p.name}</p>
-                          <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1">ID: #{p.id.toString().padStart(4, '0')}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-8 py-6 text-xs font-bold text-zinc-600 font-mono tracking-tight">{p.category}</td>
-                    <td className="px-8 py-6">
-                      <div className="space-y-1">
-                        <p className="text-xs font-bold text-zinc-950">{p.price}</p>
-                        <p className="text-[10px] text-red-600 font-bold">{p.rent} <span className="text-zinc-400 font-medium">/ ngày</span></p>
-                      </div>
-                    </td>
-                    <td className="px-8 py-6">
-                      <div className="flex flex-col gap-2">
-                        <div className="inline-flex items-center gap-2">
-                          <div className={cn(
-                            "w-1.5 h-1.5 rounded-full",
-                            p.stock > 10 ? "bg-green-500" : p.stock > 0 ? "bg-amber-400" : "bg-red-500"
-                          )} />
-                          <span className="text-xs font-bold text-zinc-900">{p.stock} sản phẩm</span>
-                        </div>
-                        <div className="w-24 h-1 bg-zinc-100 rounded-full overflow-hidden">
-                          <div className={cn(
-                            "h-full rounded-full transition-all duration-1000",
-                            p.stock > 10 ? "bg-green-500 w-[80%]" : p.stock > 0 ? "bg-amber-400 w-[30%]" : "bg-red-500 w-[0%]"
-                          )} />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-white hover:shadow-sm border-transparent hover:border-zinc-100 border transition-all hover:text-red-600">
-                          <Edit2 className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-white hover:shadow-sm border-transparent hover:border-zinc-100 border transition-all text-zinc-400 hover:text-zinc-900">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="p-8 border-t border-zinc-50 flex items-center justify-between">
-            <span className="text-xs font-bold text-zinc-400 tracking-widest uppercase">Hiển thị 5 của 458 sản phẩm</span>
-            <div className="flex gap-2">
-              <Button disabled variant="outline" className="h-10 px-5 rounded-xl border-zinc-200">Trang trước</Button>
-              <Button variant="outline" className="h-10 px-5 rounded-xl border-zinc-200 hover:bg-zinc-950 hover:text-white transition-all">Trang sau</Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        )}
+      </div>
+
+      {/* Dialogs */}
+      <ProductDialog
+        open={dialogState.type === "INFO"}
+        onOpenChange={(o) => !o && setDialogState({ type: "NONE", product: null })}
+        product={dialogState.product}
+        categories={categories}
+        onSubmit={handleCreateOrUpdateInfo}
+        isPending={createMutation.isPending || updateInfoMutation.isPending}
+      />
+
+      <ProductPriceDialog
+        open={dialogState.type === "PRICE"}
+        onOpenChange={(o) => !o && setDialogState({ type: "NONE", product: null })}
+        product={dialogState.product}
+        onSubmit={handleUpdatePrice}
+        isPending={updatePriceMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={confirmConfig.open}
+        onOpenChange={(o) => setConfirmConfig(prev => ({ ...prev, open: o }))}
+        title={confirmConfig.title}
+        description={confirmConfig.description}
+        onConfirm={confirmConfig.onConfirm}
+        variant={confirmConfig.variant}
+      />
     </div>
   );
 }

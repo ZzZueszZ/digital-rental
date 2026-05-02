@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useState } from "react";
 import { 
   Plus, 
@@ -120,7 +121,10 @@ export default function ProductsAdminPage() {
           toast.success("Vô hiệu hóa thành công");
           setConfirmConfig(prev => ({ ...prev, open: false }));
         } catch (error: unknown) {
-          const message = error instanceof Error ? error.message : "Không thể vô hiệu hóa";
+          let message = "Không thể vô hiệu hóa";
+          if (axios.isAxiosError(error)) {
+            message = error.response?.data?.message || message;
+          }
           toast.error(message);
         }
       }
@@ -131,15 +135,18 @@ export default function ProductsAdminPage() {
     setConfirmConfig({
       open: true,
       title: "Khôi phục sản phẩm?",
-      description: "Sản phẩm sẽ hiển thị lại trên cửa hàng.",
+      description: "Sản phẩm này sẽ hiển thị lại trong danh sách hoạt động và khách hàng có thể tìm thấy.",
       variant: "info",
       onConfirm: async () => {
         try {
           await restoreMutation.mutateAsync(id);
-          toast.success("Khôi phục thành công");
+          toast.success("Đã khôi phục sản phẩm thành công");
           setConfirmConfig(prev => ({ ...prev, open: false }));
         } catch (error: unknown) {
-          const message = error instanceof Error ? error.message : "Không thể khôi phục";
+          let message = "Không thể khôi phục sản phẩm";
+          if (axios.isAxiosError(error)) {
+            message = error.response?.data?.message || message;
+          }
           toast.error(message);
         }
       }
@@ -149,16 +156,19 @@ export default function ProductsAdminPage() {
   const handleHardDelete = (id: number) => {
     setConfirmConfig({
       open: true,
-      title: "Xóa vĩnh viễn sản phẩm?",
-      description: "Hành động này không thể hoàn tác. Tất cả dữ liệu ảnh và lịch sử giá sẽ bị xóa sạch.",
+      title: "Xác nhận xóa vĩnh viễn?",
+      description: "Hành động này sẽ xóa sạch dữ liệu sản phẩm, hình ảnh và lịch sử giá. Không thể hoàn tác!",
       variant: "danger",
       onConfirm: async () => {
         try {
           await hardDeleteMutation.mutateAsync(id);
-          toast.success("Xóa vĩnh viễn thành công");
+          toast.success("Đã xóa vĩnh viễn sản phẩm khỏi hệ thống");
           setConfirmConfig(prev => ({ ...prev, open: false }));
         } catch (error: unknown) {
-          const message = error instanceof Error ? error.message : "Không thể xóa";
+          let message = "Lỗi khi xóa vĩnh viễn";
+          if (axios.isAxiosError(error)) {
+            message = error.response?.data?.message || message;
+          }
           toast.error(message);
         }
       }
@@ -299,6 +309,7 @@ export default function ProductsAdminPage() {
                     onDelete={handleDelete}
                     onRestore={handleRestore}
                     onHardDelete={handleHardDelete}
+                    isDeleted={viewMode === "DELETED"}
                   />
                 ))
               )}
@@ -325,6 +336,7 @@ export default function ProductsAdminPage() {
                 onDelete={handleDelete}
                 onRestore={handleRestore}
                 onHardDelete={handleHardDelete}
+                isDeleted={viewMode === "DELETED"}
               />
             ))
           )}
@@ -385,6 +397,7 @@ export default function ProductsAdminPage() {
         description={confirmConfig.description}
         onConfirm={confirmConfig.onConfirm}
         variant={confirmConfig.variant}
+        isLoading={deleteMutation.isPending || restoreMutation.isPending || hardDeleteMutation.isPending}
       />
     </div>
   );

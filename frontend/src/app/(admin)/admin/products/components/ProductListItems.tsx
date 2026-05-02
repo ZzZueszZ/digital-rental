@@ -17,10 +17,10 @@ interface ItemProps {
   onDelete: (id: number) => void;
   onRestore: (id: number) => void;
   onHardDelete: (id: number) => void;
+  isDeleted: boolean;
 }
 
-export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onDelete, onRestore, onHardDelete }: ItemProps) {
-  const isDeleted = !!product.deletedAt;
+export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onDelete, onRestore, onHardDelete, isDeleted }: ItemProps) {
 
   return (
     <tr className="group hover:bg-zinc-50/50 transition-all duration-200">
@@ -105,8 +105,7 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
   );
 }
 
-export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, onDelete, onRestore, onHardDelete }: ItemProps) {
-  const isDeleted = !!product.deletedAt;
+export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, onDelete, onRestore, onHardDelete, isDeleted }: ItemProps) {
 
   return (
     <div className="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm space-y-4 group active:scale-[0.98] transition-all">

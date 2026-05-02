@@ -29,6 +29,7 @@ import { useCategories } from "@/services/category";
 import { ProductResponse, ProductRequest, ProductInfoUpdateRequest, ProductPriceUpdateRequest } from "@/types/product";
 import { ProductDialog } from "./components/ProductDialog";
 import { ProductPriceDialog } from "./components/ProductPriceDialog";
+import { ProductGalleryDialog } from "./components/ProductGalleryDialog";
 import { ProductTableRow, ProductMobileCard } from "./components/ProductListItems";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EmptyState } from "../users/components/EmptyState";
@@ -305,7 +306,7 @@ export default function ProductsAdminPage() {
                     product={p}
                     onEdit={(prod) => setDialogState({ type: "INFO", product: prod })}
                     onUpdatePrice={(prod) => setDialogState({ type: "PRICE", product: prod })}
-                    onGallery={(prod) => { toast.info("Tính năng Quản lý Gallery đang được phát triển."); }}
+                    onGallery={(prod) => setDialogState({ type: "GALLERY", product: prod })}
                     onDelete={handleDelete}
                     onRestore={handleRestore}
                     onHardDelete={handleHardDelete}
@@ -332,7 +333,7 @@ export default function ProductsAdminPage() {
                 product={p}
                 onEdit={(prod) => setDialogState({ type: "INFO", product: prod })}
                 onUpdatePrice={(prod) => setDialogState({ type: "PRICE", product: prod })}
-                onGallery={(prod) => { toast.info("Tính năng Quản lý Gallery đang được phát triển."); }}
+                onGallery={(prod) => setDialogState({ type: "GALLERY", product: prod })}
                 onDelete={handleDelete}
                 onRestore={handleRestore}
                 onHardDelete={handleHardDelete}
@@ -388,6 +389,12 @@ export default function ProductsAdminPage() {
         product={dialogState.product}
         onSubmit={handleUpdatePrice}
         isPending={updatePriceMutation.isPending}
+      />
+
+      <ProductGalleryDialog
+        open={dialogState.type === "GALLERY"}
+        onOpenChange={(o) => !o && setDialogState({ type: "NONE", product: null })}
+        product={dialogState.product}
       />
 
       <ConfirmDialog

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { http } from "@/lib/http";
-import type { IBackendRes, IPaginate } from "@/types/global";
+import type { IBackendRes } from "@/types/global.d";
 import type {
   ProductResponse,
   ProductCriteria,
@@ -30,7 +30,7 @@ export const useProducts = (
   return useQuery({
     queryKey: PRODUCT_KEYS.list(criteria, page, size),
     queryFn: async () => {
-      const { data } = await http.get<IBackendRes<IPaginate<ProductResponse>>>("/products", {
+      const { data } = await http.get<IBackendRes<ProductResponse[]>>("/products", {
         params: { ...criteria, page, size },
       });
       return data;
@@ -125,7 +125,7 @@ export const useUpdateProductInfo = (id: number) => {
       );
       return data;
     },
-    onSuccess: (_, { id }) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
     },
   });
@@ -172,7 +172,7 @@ export const useTrashedProducts = (page: number = 0, size: number = 10) => {
   return useQuery({
     queryKey: PRODUCT_KEYS.trashed(page, size),
     queryFn: async () => {
-      const { data } = await http.get<IBackendRes<IPaginate<ProductResponse>>>("/products/trashed", {
+      const { data } = await http.get<IBackendRes<ProductResponse[]>>("/products/trashed", {
         params: { page, size },
       });
       return data;
@@ -214,5 +214,40 @@ export const usePriceHistory = (id: number) => {
       return data;
     },
     enabled: !!id,
+  });
+};
+
+export const useAddGallery = (productId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (images: File[]) => {
+      const formData = new FormData();
+      images.forEach((file) => {
+        formData.append("images", file);
+      });
+
+      const { data } = await http.post<IBackendRes<GalleryImageResponse[]>>(
+        `/products/${productId}/gallery`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
+    },
+  });
+};
+
+export const useDeleteGalleryImage = (productId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (imageId: number) => {
+      const { data } = await http.delete<IBackendRes<void>>(`/products/${productId}/gallery/${imageId}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
+    },
   });
 };

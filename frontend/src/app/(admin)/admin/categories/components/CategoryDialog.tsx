@@ -1,19 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Loader2, Save, Tag } from "lucide-react";
+import { Save, Tag } from "lucide-react";
 import { CategoryResponse, CategoryCreateRequest } from "@/types/category";
 import { cn } from "@/lib/utils";
+import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 
 interface CategoryDialogProps {
   open: boolean;
@@ -71,89 +64,66 @@ export function CategoryDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] rounded-2xl">
-        <DialogHeader>
-          <div className="flex items-center gap-2.5 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-zinc-950 flex items-center justify-center shadow-sm">
-              <Tag className="w-4 h-4 text-white" />
-            </div>
-            <DialogTitle className="text-xl font-bold tracking-tight">
-              {category ? "Cập nhật danh mục" : "Tạo danh mục mới"}
-            </DialogTitle>
-          </div>
-        </DialogHeader>
+    <AdminFormDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      icon={Tag}
+      iconClassName="bg-zinc-950 text-white"
+      title={category ? "Cập nhật danh mục" : "Tạo danh mục mới"}
+      description={category ? "Chỉnh sửa thông tin danh mục sản phẩm" : "Thêm một danh mục sản phẩm mới vào hệ thống"}
+      onSubmit={handleSubmit}
+      isPending={isPending}
+      submitText={category ? "Cập nhật" : "Tạo danh mục"}
+      submitIcon={Save}
+    >
+      <div className="space-y-2">
+        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+          Mã danh mục
+        </Label>
+        <Input
+          value={formData.code}
+          onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+          disabled={!!category}
+          placeholder="LAPTOP, CAMERA..."
+          className={cn(
+            "h-10 rounded-xl bg-zinc-50 text-sm font-medium text-zinc-900 uppercase transition-all",
+            errors.code
+              ? "border-red-400 focus:ring-red-400/20"
+              : "border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+          )}
+        />
+        {errors.code && <p className="text-[11px] font-medium text-red-500 mt-1">{errors.code}</p>}
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
-              Mã danh mục
-            </Label>
-            <Input
-              value={formData.code}
-              onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-              disabled={!!category}
-              placeholder="LAPTOP, CAMERA..."
-              className={cn(
-                "h-11 rounded-xl border-zinc-200 bg-zinc-50 focus:bg-white transition-all uppercase",
-                errors.code && "border-red-500 focus-visible:ring-red-500"
-              )}
-            />
-            {errors.code && <p className="text-[10px] font-bold text-red-500">{errors.code}</p>}
-          </div>
+      <div className="space-y-2">
+        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+          Tên danh mục
+        </Label>
+        <Input
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          placeholder="Máy tính xách tay, Máy ảnh..."
+          className={cn(
+            "h-10 rounded-xl bg-zinc-50 text-sm font-medium text-zinc-900 transition-all",
+            errors.name
+              ? "border-red-400 focus:ring-red-400/20"
+              : "border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+          )}
+        />
+        {errors.name && <p className="text-[11px] font-medium text-red-500 mt-1">{errors.name}</p>}
+      </div>
 
-          <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
-              Tên danh mục
-            </Label>
-            <Input
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Máy tính xách tay, Máy ảnh..."
-              className={cn(
-                "h-11 rounded-xl border-zinc-200 bg-zinc-50 focus:bg-white transition-all",
-                errors.name && "border-red-500 focus-visible:ring-red-500"
-              )}
-            />
-            {errors.name && <p className="text-[10px] font-bold text-red-500">{errors.name}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
-              Mô tả
-            </Label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Thông tin thêm về danh mục này..."
-              className="flex min-h-[100px] w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm ring-offset-white placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all resize-none focus:bg-white"
-            />
-          </div>
-
-          <DialogFooter className="pt-4">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => onOpenChange(false)}
-              className="rounded-xl font-bold text-xs"
-            >
-              Hủy
-            </Button>
-            <Button
-              type="submit"
-              disabled={isPending}
-              className="bg-zinc-950 hover:bg-red-600 text-white rounded-xl font-bold px-6 h-11 transition-all gap-2"
-            >
-              {isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Save className="w-4 h-4" />
-              )}
-              {category ? "Cập nhật" : "Tạo danh mục"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+      <div className="space-y-2">
+        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+          Mô tả
+        </Label>
+        <textarea
+          value={formData.description}
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          placeholder="Thông tin thêm về danh mục này..."
+          className="flex min-h-[100px] w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm font-medium text-zinc-900 ring-offset-white placeholder:text-zinc-400 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 transition-all resize-none"
+        />
+      </div>
+    </AdminFormDialog>
   );
 }

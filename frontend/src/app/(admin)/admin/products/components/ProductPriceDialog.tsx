@@ -68,8 +68,19 @@ export function ProductPriceDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validate()) {
-      onSubmit(formData);
+    if (validate() && product) {
+      const req: Partial<ProductPriceUpdateRequest> = {};
+      
+      if (formData.rentPricePerDay !== product.rentPricePerDay) req.rentPricePerDay = formData.rentPricePerDay;
+      if (formData.salePrice !== product.salePrice) req.salePrice = formData.salePrice;
+      if (formData.isForRent !== product.isForRent) req.isForRent = formData.isForRent;
+      if (formData.isForSale !== product.isForSale) req.isForSale = formData.isForSale;
+
+      if (Object.keys(req).length > 0) {
+        onSubmit(req as ProductPriceUpdateRequest);
+      } else {
+        onOpenChange(false);
+      }
     }
   };
 

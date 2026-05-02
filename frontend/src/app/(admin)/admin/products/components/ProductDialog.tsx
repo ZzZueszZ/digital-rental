@@ -142,16 +142,27 @@ export function ProductDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      if (isUpdate) {
-        // Prepare info update request
-        const req: ProductInfoUpdateRequest = {
-          name: formData.name,
-          description: formData.description,
-          brand: formData.brand,
-          categoryId: formData.categoryId,
-          specifications: formData.specifications,
-        };
-        onSubmit({ request: req, image: imageFile });
+      if (isUpdate && product) {
+        // Only send changed fields
+        const req: Partial<ProductInfoUpdateRequest> = {};
+        
+        if (formData.name !== product.name) req.name = formData.name;
+        if (formData.description !== (product.description || "")) req.description = formData.description;
+        if (formData.brand !== (product.brand || "")) req.brand = formData.brand;
+        if (formData.categoryId !== product.categoryId) req.categoryId = formData.categoryId;
+        
+        // Deep compare specifications
+        const originalSpecs = product.specifications?.map(s => ({ specKey: s.specKey, specValue: s.specValue })) || [];
+        const currentSpecs = formData.specifications || [];
+        const specsChanged = JSON.stringify(originalSpecs) !== JSON.stringify(currentSpecs);
+        if (specsChanged) req.specifications = currentSpecs;
+
+        // Only submit if something changed or a new image is selected
+        if (Object.keys(req).length > 0 || imageFile) {
+          onSubmit({ request: req as ProductInfoUpdateRequest, image: imageFile });
+        } else {
+          onOpenChange(false);
+        }
       } else {
         onSubmit({ request: formData, image: imageFile });
       }

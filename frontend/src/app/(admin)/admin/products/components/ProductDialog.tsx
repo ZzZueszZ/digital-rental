@@ -86,8 +86,8 @@ export function ProductDialog({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setErrors(prev => ({ ...prev, image: "Kích thước ảnh không được vượt quá 5MB" }));
+      if (file.size > 10 * 1024 * 1024) {
+        setErrors(prev => ({ ...prev, image: "Kích thước ảnh không được vượt quá 10MB" }));
         return;
       }
       setImageFile(file);

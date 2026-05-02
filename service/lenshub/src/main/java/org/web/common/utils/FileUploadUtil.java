@@ -12,7 +12,7 @@ import java.util.*;
 public class FileUploadUtil {
 
     private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads";
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
     private static final List<String> ALLOWED_EXTENSIONS = List.of("jpg", "jpeg", "png", "webp", "avif");
 
     /** Lưu 1 ảnh, trả về URL /uploads/xxx */
@@ -85,7 +85,7 @@ public class FileUploadUtil {
 
     private static void validateImage(MultipartFile file) {
         if (file.getSize() > MAX_FILE_SIZE) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "File size exceeds 5MB limit!");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Kích thước file vượt quá 10MB!");
         }
 
         String originalName = file.getOriginalFilename();

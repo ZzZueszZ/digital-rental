@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Save, Tag } from "lucide-react";
@@ -23,29 +23,28 @@ export function CategoryDialog({
   onSubmit,
   isPending,
 }: CategoryDialogProps) {
-  const [formData, setFormData] = useState<CategoryCreateRequest>({
-    code: "",
-    name: "",
-    description: "",
-  });
+  // Track previous props to detect changes during render
+  const [prevCategory, setPrevCategory] = useState(category);
+  const [prevOpen, setPrevOpen] = useState(open);
+
+  const [formData, setFormData] = useState<CategoryCreateRequest>(() => ({
+    code: category?.code || "",
+    name: category?.name || "",
+    description: category?.description || "",
+  }));
   const [errors, setErrors] = useState<Partial<Record<keyof CategoryCreateRequest, string>>>({});
 
-  useEffect(() => {
-    if (category) {
-      setFormData({
-        code: category.code,
-        name: category.name,
-        description: category.description || "",
-      });
-    } else {
-      setFormData({
-        code: "",
-        name: "",
-        description: "",
-      });
-    }
+  // If category or open state changes, adjust the form data during render
+  if (category !== prevCategory || (open !== prevOpen && open)) {
+    setPrevCategory(category);
+    setPrevOpen(open);
+    setFormData({
+      code: category?.code || "",
+      name: category?.name || "",
+      description: category?.description || "",
+    });
     setErrors({});
-  }, [category, open]);
+  }
 
   const validate = () => {
     const newErrors: Partial<Record<keyof CategoryCreateRequest, string>> = {};

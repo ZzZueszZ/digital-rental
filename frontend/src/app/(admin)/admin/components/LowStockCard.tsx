@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { AlertTriangle, ArrowRight, PackageOpen } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface LowStockProduct {
   productId: number;
@@ -26,62 +26,64 @@ export function LowStockCard({ products }: LowStockCardProps) {
   };
 
   return (
-    <Card className="rounded-xl border-zinc-200 overflow-hidden bg-white shadow-sm relative group">
-      <CardHeader className="px-5 py-4 flex flex-row items-center justify-between">
-        <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950 flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
-          Cảnh báo kho
-        </CardTitle>
-        <AlertTriangle className="w-6 h-6 text-red-600" />
-      </CardHeader>
-      <CardContent className="p-4">
-        <div className="space-y-4">
-          {products.map((p) => (
-            <div
-              key={p.productId}
-              className="flex items-center justify-between p-3 sm:p-4 rounded-2xl bg-white border border-red-100 shadow-sm hover:shadow-md hover:border-red-200 hover:-translate-y-0.5 transition-all duration-300 group/item relative overflow-hidden"
-            >
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity" />
-              <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 pl-1">
-                <div className="w-12 h-12 rounded-xl border border-zinc-200 bg-white overflow-hidden flex-shrink-0 relative">
-                  {p.imageUrl ? (
-                    <Image
-                      src={getImageUrl(p.imageUrl)}
-                      alt={p.productName}
-                      fill
-                      className="object-contain p-1"
-                      unoptimized
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-zinc-50 flex items-center justify-center">
-                      <PackageOpen className="w-5 h-5 text-zinc-300" />
+    <div className="admin-card flex flex-col h-full !p-0 border-red-100 shadow-red-50/50">
+      <div className="p-4 border-b border-red-50 flex items-center justify-between bg-red-50/10">
+        <div className="flex items-center gap-2">
+           <AlertTriangle className="w-4 h-4 text-red-500" />
+           <span className="text-xs font-bold text-zinc-950 uppercase tracking-tight">Cảnh báo kho</span>
+        </div>
+        <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+      </div>
+
+      <div className="p-2 overflow-y-auto">
+        <div className="space-y-1">
+          {products.length === 0 ? (
+            <div className="py-12 text-center text-xs text-zinc-400 italic">Kho hàng ổn định</div>
+          ) : (
+            products.map((p) => (
+              <div
+                key={p.productId}
+                className="flex items-center justify-between group p-2 rounded-xl transition-all border border-transparent hover:border-red-100 hover:bg-red-50/30"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-lg border border-zinc-100 overflow-hidden relative flex-shrink-0 bg-white">
+                    {p.imageUrl ? (
+                      <Image
+                        src={getImageUrl(p.imageUrl)}
+                        alt={p.productName}
+                        fill
+                        className="object-contain p-1"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-zinc-50 flex items-center justify-center">
+                        <PackageOpen className="w-4 h-4 text-zinc-300" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex flex-col">
+                    <p className="text-[13px] font-bold text-zinc-950 truncate leading-tight mb-0.5">
+                      {p.productName}
+                    </p>
+                    <div className="flex items-center gap-1.5">
+                       <span className="text-[10px] font-black text-red-600 bg-red-50 px-1.5 py-0.5 rounded uppercase">
+                          Kho: {p.stock}
+                       </span>
                     </div>
-                  )}
-                </div>
-                <div className="min-w-0 flex flex-col justify-center">
-                  <p className="text-[15px] font-semibold text-zinc-950 truncate">
-                    {p.productName}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <div className="inline-flex px-2 py-0.5 rounded-md bg-red-50 text-red-600 border border-red-100 text-xs font-bold uppercase tracking-wider">
-                      Còn {p.stock}
-                    </div>
-                    <span className="text-xs font-medium text-zinc-400">
-                      Cần nhập thêm
-                    </span>
                   </div>
                 </div>
+                <ArrowRight className="w-4 h-4 text-zinc-200 group-hover:text-red-500 transition-colors" />
               </div>
-              <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full opacity-0 group-hover/item:opacity-100 transition-all text-red-600 hover:bg-red-50 hover:text-red-700">
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-          ))}
+            ))
+          )}
         </div>
-        <Button className="w-full mt-5 h-11 bg-zinc-950 text-white hover:bg-red-600 rounded-xl font-semibold text-sm transition-all">
-          Quản lý kho hàng
+      </div>
+
+      <div className="p-3 border-t border-zinc-50">
+        <Button className="w-full h-9 bg-zinc-950 text-white hover:bg-red-600 rounded-lg font-bold text-[11px] uppercase tracking-widest transition-all">
+          Kiểm kê ngay
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -53,13 +53,13 @@ export function AdminSidebar({
     {
       href: "/admin/address",
       icon: MapPin,
-      label: "Địa chỉ nhận hàng",
+      label: "Địa chỉ",
       roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
     },
     {
       href: "/admin/products",
       icon: Package,
-      label: "Sản phẩm",
+      label: "Kho hàng",
       roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
     },
     {
@@ -71,13 +71,13 @@ export function AdminSidebar({
     {
       href: "/admin/vouchers",
       icon: CreditCard,
-      label: "Mã giảm giá (Vouchers)",
+      label: "Vouchers",
       roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
     },
     {
       href: "/admin/settings",
       icon: Settings,
-      label: "Cài đặt hệ thống",
+      label: "Cài đặt",
       roles: [Role.ADMIN, Role.SUPER_ADMIN],
     },
   ];
@@ -87,32 +87,32 @@ export function AdminSidebar({
       {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-zinc-950/20 backdrop-blur-sm lg:hidden transition-all duration-300"
+          className="fixed inset-0 z-40 bg-zinc-950/10 backdrop-blur-sm lg:hidden transition-all duration-300"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       <aside
         className={cn(
-          "fixed left-0 top-0 z-50 h-screen w-64 bg-white text-zinc-950 transition-all duration-500 overflow-hidden flex flex-col border-r border-zinc-100 shadow-[20px_0_60px_rgba(0,0,0,0.03)]",
+          "fixed left-0 top-0 z-50 h-screen bg-white text-zinc-950 transition-all duration-300 overflow-hidden flex flex-col border-r border-zinc-100 shadow-[20px_0_60px_rgba(0,0,0,0.01)]",
+          "w-[var(--dash-sidebar-w)]",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         )}
       >
-        <div className="flex h-16 items-center px-6 mb-2">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-600/20 group-hover:rotate-12 transition-transform duration-500">
+        <div className="flex h-[var(--dash-navbar-h)] items-center px-6 border-b border-zinc-50 mb-2">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-600/10 transition-transform duration-300 group-hover:scale-105">
               <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
             </div>
-            <span className="text-lg font-black tracking-tighter text-zinc-950">
-              LENSHUB{" "}
-              <span className="text-red-600 italic font-medium">PRO</span>
+            <span className="text-lg font-bold tracking-tight text-zinc-950 uppercase">
+              Lenshub <span className="text-red-600">Pro</span>
             </span>
           </Link>
         </div>
 
-        <nav className="flex-1 space-y-1.5 p-6 overflow-y-auto custom-scrollbar">
-          <div className="px-3 mb-6">
-            <p className="text-xs font-semibold text-zinc-400">Hệ thống</p>
+        <nav className="flex-1 space-y-1 p-4 overflow-y-auto custom-scrollbar">
+          <div className="px-3 mb-4">
+            <p className="text-[11px] font-bold text-zinc-300 uppercase tracking-widest">Main Menu</p>
           </div>
           {navItems.map((item) => {
             const canAccess = user?.roles?.some((r) =>
@@ -130,28 +130,38 @@ export function AdminSidebar({
                 href={item.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-150 relative overflow-hidden",
+                  "group flex items-center gap-3 rounded-xl px-4 h-11 text-[13px] font-semibold transition-all duration-150 relative overflow-hidden",
                   isActive
-                    ? "bg-zinc-950 text-white shadow-md"
+                    ? "bg-zinc-950 text-white shadow-md shadow-zinc-200"
                     : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50",
                 )}
               >
                 <item.icon
                   className={cn(
-                    "h-5 w-5 transition-all duration-300",
+                    "h-4 w-4 transition-all duration-300",
                     isActive
-                      ? "scale-110 text-red-500"
-                      : "group-hover:scale-110 group-hover:text-red-600",
+                      ? "text-red-500"
+                      : "group-hover:text-red-600",
                   )}
                 />
-                {item.label}
+                <span className="truncate">{item.label}</span>
                 {isActive && (
-                  <div className="absolute right-4 w-1.5 h-1.5 bg-red-600 rounded-full" />
+                  <div className="absolute right-4 w-1 h-4 bg-red-600 rounded-full" />
                 )}
               </Link>
             );
           })}
         </nav>
+
+        <div className="p-4 border-t border-zinc-50">
+           <button 
+             onClick={() => logout()}
+             className="w-full flex items-center gap-3 h-11 px-4 rounded-xl text-[13px] font-bold text-red-600 hover:bg-red-50 transition-all group"
+           >
+              <LogOut className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <span>Đăng xuất</span>
+           </button>
+        </div>
       </aside>
     </>
   );

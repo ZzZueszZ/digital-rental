@@ -61,6 +61,7 @@ import {
   X,
   ArrowRight,
   Minus,
+  Info,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -76,6 +77,8 @@ import { cn } from "@/lib/utils";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { isAxiosError } from "axios";
+import { useMyOrders, useOrderDetail, useConfirmReceived } from "@/services/order";
+import { OrderStatus, PaymentStatus, PaymentMethod } from "@/types/order";
 
 type Section = "overview" | "info" | "address" | "orders" | "cart";
 
@@ -163,21 +166,21 @@ export default function ProfileDashboard() {
           isSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full",
         )}
       >
-        <div className="h-16 sm:h-20 flex items-center justify-between px-6 border-b border-zinc-50">
+        <div className="h-16 flex items-center justify-between px-6 border-b border-zinc-50">
           <Link
             href="/"
-            className="flex items-center gap-3 group transition-all duration-300"
+            className="flex items-center gap-2.5 group transition-all duration-300"
           >
-            <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100 group-hover:rotate-12 transition-transform">
-              <Camera className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-100 group-hover:rotate-12 transition-transform">
+              <Camera className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xl font-black tracking-tighter text-zinc-950 group-hover:text-red-600 transition-colors">
+            <span className="text-lg font-black tracking-tighter text-zinc-950 group-hover:text-red-600 transition-colors">
               LENSHUB<span className="text-red-600">.</span>
             </span>
           </Link>
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden w-8 h-8 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400 hover:text-zinc-950 transition-all"
+            className="lg:hidden w-8 h-8 rounded-lg bg-zinc-50 flex items-center justify-center text-zinc-400 hover:text-zinc-950 transition-all"
           >
             <X className="w-4 h-4" />
           </button>
@@ -257,28 +260,24 @@ export default function ProfileDashboard() {
 
       {/* Content Wrapper */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Header - Replicated from Admin Style */}
-        <header className="sticky top-0 z-30 flex h-20 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 lg:px-8 lg:pl-72 backdrop-blur-xl transition-all duration-300">
+        <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 lg:px-8 lg:pl-72 backdrop-blur-xl transition-all duration-300">
           <div className="flex items-center gap-4 lg:gap-6">
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden h-12 w-12 rounded-xl hover:bg-zinc-100 border border-transparent hover:border-zinc-200 transition-all"
+              className="lg:hidden h-10 w-10 rounded-xl hover:bg-zinc-100 border border-transparent hover:border-zinc-200 transition-all"
               onClick={() => setIsSidebarOpen(true)}
             >
-              <Menu className="h-6 w-6 text-zinc-600" />
+              <Menu className="h-5 w-5 text-zinc-600" />
             </Button>
-
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5">
-                <h1 className="text-xl sm:text-[28px] font-bold tracking-tight text-zinc-950 truncate max-w-[140px] sm:max-w-none leading-tight">
+            <div className="flex items-center gap-3">
+               <h1 className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950 leading-tight">
                   {pageInfo.title}
                 </h1>
-                <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1 shrink-0" />
-              </div>
-              <span className="text-sm font-medium text-zinc-500 mt-0.5 tracking-tight">
-                {pageInfo.subtitle}
-              </span>
+                <div className="w-px h-4 bg-zinc-200" />
+                <span className="text-xs font-semibold text-zinc-400 tracking-tight">
+                  {pageInfo.subtitle}
+                </span>
             </div>
           </div>
 
@@ -683,7 +682,8 @@ function CartSection() {
 
               <Button 
                 disabled={selectedIds.length === 0}
-                className="w-full h-11 rounded-lg bg-red-600 hover:bg-zinc-900 text-white font-bold text-sm transition-all shadow-md shadow-red-100 flex items-center justify-center gap-2 border-none group/btn disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
+                onClick={() => router.push(`/checkout?cartItemIds=${selectedIds.join(",")}`)}
+                className="w-full h-12 rounded-xl bg-red-600 hover:bg-zinc-950 text-white font-black text-sm transition-all shadow-lg shadow-red-100 flex items-center justify-center gap-2 border-none group/btn disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
               >
                 Tiếp tục thanh toán ({selectedIds.length})
                 <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
@@ -718,9 +718,9 @@ function SidebarItem({
     <button
       onClick={onClick}
       className={cn(
-        "w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all font-medium text-[14px] group",
+        "w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg transition-all font-semibold text-sm group h-11",
         active
-          ? "bg-red-600 text-white shadow-lg shadow-red-100"
+          ? "bg-red-600 text-white shadow-md shadow-red-100"
           : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900",
       )}
     >
@@ -738,7 +738,7 @@ function SidebarItem({
       {badge !== undefined && (
         <span
           className={cn(
-            "w-5 h-5 rounded-lg flex items-center justify-center font-bold text-[10px]",
+            "w-4.5 h-4.5 rounded-md flex items-center justify-center font-bold text-[10px]",
             active ? "bg-white text-red-600" : "bg-red-50 text-red-600",
           )}
         >
@@ -764,11 +764,11 @@ function OverviewSection({
       <div className="bg-white border border-zinc-100 rounded-xl p-6 md:p-8 shadow-sm relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div>
-            <h1 className="text-3xl md:text-4xl font-black text-zinc-950 tracking-tight mb-3 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-zinc-950 tracking-tight mb-4 leading-tight">
               Chào buổi chiều, <br className="hidden md:block" />{" "}
               {profile?.fullName || "Người dùng"}!
             </h1>
-            <p className="text-sm text-zinc-500 font-medium max-w-md leading-relaxed">
+            <p className="text-base text-zinc-500 font-medium max-w-md leading-relaxed">
               Chào mừng bạn quay trở lại. Hãy quản lý các thiết bị nhiếp ảnh và
               đơn hàng của bạn ngay tại đây.
             </p>
@@ -1451,31 +1451,195 @@ function AddressDialog({
 }
 
 function OrdersSection() {
+  const [activeTab, setActiveTab] = useState<OrderStatus | "ALL">("ALL");
+  const [page, setPage] = useState(0);
+  const { data: ordersRes, isLoading } = useMyOrders({ 
+    page, 
+    size: 10,
+    status: activeTab === "ALL" ? undefined : activeTab as OrderStatus
+  });
+
+  const orders = ordersRes?.data || [];
+  const router = useRouter();
+
+  const formatVND = (amount: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(amount);
+  };
+
+  const getStatusColor = (status: OrderStatus) => {
+    switch (status) {
+      case OrderStatus.PENDING: return "bg-amber-50 text-amber-600 border-amber-100";
+      case OrderStatus.CONFIRMED: return "bg-blue-50 text-blue-600 border-blue-100";
+      case OrderStatus.SHIPPING: return "bg-indigo-50 text-indigo-600 border-indigo-100";
+      case OrderStatus.DELIVERED: return "bg-emerald-50 text-emerald-600 border-emerald-100";
+      case OrderStatus.COMPLETED: return "bg-emerald-600 text-white border-emerald-600";
+      case OrderStatus.CANCELED: return "bg-red-50 text-red-600 border-red-100";
+      default: return "bg-zinc-50 text-zinc-500 border-zinc-100";
+    }
+  };
+
+  const getStatusLabel = (status: OrderStatus) => {
+    switch (status) {
+      case OrderStatus.PENDING: return "Chờ xác nhận";
+      case OrderStatus.CONFIRMED: return "Đã xác nhận";
+      case OrderStatus.SHIPPING: return "Đang giao hàng";
+      case OrderStatus.DELIVERED: return "Đã giao";
+      case OrderStatus.COMPLETED: return "Hoàn thành";
+      case OrderStatus.CANCELED: return "Đã hủy";
+      default: return status;
+    }
+  };
+
+  const tabs: { label: string; value: OrderStatus | "ALL" }[] = [
+    { label: "Tất cả", value: "ALL" },
+    { label: "Chờ xác nhận", value: OrderStatus.PENDING },
+    { label: "Đang giao", value: OrderStatus.SHIPPING },
+    { label: "Hoàn thành", value: OrderStatus.COMPLETED },
+    { label: "Đã hủy", value: OrderStatus.CANCELED },
+  ];
+
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-right-4 duration-500">
-      <div>
-        <h1 className="text-4xl font-black text-zinc-950 tracking-tight mb-2">
-          Đơn hàng của bạn
-        </h1>
-        <p className="text-sm text-zinc-500 font-medium">
-          Theo dõi lịch trình vận chuyển và trạng thái thuê thiết bị
-        </p>
+    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500 pb-20">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-1">
+        <div>
+          <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight mb-1">Đơn hàng của bạn</h2>
+          <p className="text-sm font-medium text-zinc-500">Lịch sử giao dịch & Thiết bị thuê.</p>
+        </div>
+        <div className="flex items-center gap-2 text-[11px] font-bold text-zinc-400 uppercase tracking-widest">
+          <Info className="w-3.5 h-3.5" />
+          <span>Mặc định: 24h/ngày</span>
+        </div>
       </div>
 
-      <div className="bg-white border border-zinc-100 rounded-xl p-16 flex flex-col items-center justify-center text-center shadow-sm">
-        <div className="w-24 h-24 rounded-full bg-zinc-50 flex items-center justify-center mb-10 shadow-inner">
-          <ShoppingBag className="w-12 h-12 text-zinc-200" />
-        </div>
-        <h3 className="text-2xl font-black text-zinc-950 tracking-tight mb-3">
-          Danh sách đơn hàng rỗng
-        </h3>
-        <p className="text-sm text-zinc-400 font-medium max-w-sm leading-relaxed mb-12">
-          Hiện chưa có dữ liệu giao dịch nào được đồng bộ với tài khoản của bạn.
-        </p>
-        <Button className="h-10 px-6 rounded-lg bg-zinc-950 text-white font-semibold text-sm hover:bg-red-600 border-none shadow-lg shadow-zinc-200 transition-all">
-          Bắt đầu mua sắm ngay
-        </Button>
+      {/* Status Tabs */}
+      <div className="flex items-center gap-1.5 bg-zinc-100/50 p-1.5 rounded-xl border border-zinc-100 overflow-x-auto no-scrollbar">
+        {tabs.map((tab) => (
+          <button
+            key={tab.value}
+            onClick={() => {
+              setActiveTab(tab.value);
+              setPage(0);
+            }}
+            className={cn(
+              "whitespace-nowrap px-5 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider",
+              activeTab === tab.value 
+                ? "bg-white text-red-600 shadow-sm" 
+                : "text-zinc-400 hover:text-zinc-900 hover:bg-white/30"
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
+
+      {isLoading ? (
+        <div className="py-20 flex flex-col items-center">
+          <Loader2 className="w-10 h-10 text-red-600 animate-spin mb-4" />
+          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Đang truy xuất đơn hàng...</p>
+        </div>
+      ) : orders.length === 0 ? (
+        <div className="bg-white border-2 border-dashed border-zinc-100 rounded-[2.5rem] p-20 flex flex-col items-center text-center">
+          <div className="w-20 h-20 rounded-3xl bg-zinc-50 flex items-center justify-center mb-6 text-zinc-200">
+            <ShoppingBag className="w-10 h-10" />
+          </div>
+          <h3 className="text-xl font-black text-zinc-950 tracking-tight mb-2">Danh sách trống</h3>
+          <p className="text-sm text-zinc-400 font-medium max-w-xs mb-10">Hiện chưa có đơn hàng nào trong mục này. Hãy bắt đầu trải nghiệm ngay.</p>
+          <Button 
+            onClick={() => router.push("/")}
+            className="h-12 px-10 rounded-xl bg-red-600 hover:bg-zinc-950 text-white font-black text-xs uppercase transition-all shadow-xl shadow-red-100 border-none"
+          >
+            Khám phá thiết bị ngay
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {orders.map((order) => (
+            <div 
+              key={order.id}
+              className="bg-white border border-zinc-100 rounded-3xl overflow-hidden hover:shadow-xl hover:shadow-zinc-200/40 transition-all group"
+            >
+              {/* Card Header - High Density */}
+              <div className="px-5 py-3 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/20">
+                <div className="flex items-center gap-5">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest leading-none mb-1">Mã đơn</span>
+                    <span className="text-sm font-bold text-zinc-950 tracking-tight">#{order.code}</span>
+                  </div>
+                  <div className="w-px h-6 bg-zinc-100 hidden sm:block" />
+                  <div className="hidden sm:flex flex-col">
+                    <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest leading-none mb-1">Ngày đặt</span>
+                    <span className="text-xs font-bold text-zinc-500">{new Date(order.createdAt).toLocaleDateString('vi-VN')}</span>
+                  </div>
+                </div>
+                <div className={cn(
+                  "px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest border",
+                  getStatusColor(order.status)
+                )}>
+                  {getStatusLabel(order.status)}
+                </div>
+              </div>
+
+              {/* Card Body - Compact 48px rows */}
+              <div className="px-5 py-4 space-y-3">
+                {order.items.slice(0, 2).map((item) => (
+                  <div key={item.id} className="flex gap-4 items-center h-12">
+                    <div className="w-12 h-12 rounded-lg border border-zinc-50 bg-white p-1.5 flex items-center justify-center shrink-0">
+                      <img 
+                        src={item.productMainImage ? `http://localhost:8080${item.productMainImage}` : "/placeholder-camera.jpg"} 
+                        alt={item.productName}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-[13px] font-bold text-zinc-950 truncate leading-tight">{item.productName}</h4>
+                      <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">SL: {item.quantity} | {formatVND(item.unitPrice)}</p>
+                    </div>
+                  </div>
+                ))}
+                {order.items.length > 2 && (
+                  <p className="text-[10px] font-bold text-zinc-300 uppercase tracking-[0.2em] pl-1">
+                    + {order.items.length - 2} sản phẩm khác
+                  </p>
+                )}
+              </div>
+
+              {/* Card Footer - Compact */}
+              <div className="px-5 py-3 bg-zinc-50/10 border-t border-zinc-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">Tổng:</span>
+                  <span className="text-xl font-bold text-red-600 tracking-tight">{formatVND(order.totalPrice)}</span>
+                </div>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="ghost" 
+                    className="h-9 px-4 rounded-lg border border-zinc-100 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-950 hover:bg-zinc-50 transition-all"
+                    onClick={() => toast.info("Tính năng xem chi tiết đang phát triển")}
+                  >
+                    Chi tiết
+                  </Button>
+                  {order.status === OrderStatus.DELIVERED && (
+                    <Button 
+                      className="h-9 px-4 rounded-lg bg-zinc-950 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-red-600 border-none shadow-sm transition-all"
+                    >
+                      Đã nhận hàng
+                    </Button>
+                  )}
+                  {(order.status === OrderStatus.COMPLETED || order.status === OrderStatus.DELIVERED) && (
+                    <Button 
+                      className="h-9 px-4 rounded-lg bg-zinc-950 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-red-600 border-none shadow-sm transition-all"
+                    >
+                      Đánh giá
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

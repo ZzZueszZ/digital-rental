@@ -82,3 +82,12 @@ export const useActivateVoucher = () => {
     },
   });
 };
+export const useActiveVouchers = (page = 0, size = 10) => {
+  return useQuery({
+    queryKey: ["vouchers", "active", page, size],
+    queryFn: async () => {
+      const { data } = await http.get<IBackendRes<VoucherResponse[]>>(`${VOUCHER_URL}/active?page=${page}&size=${size}`);
+      return data;
+    },
+  });
+};

@@ -23,39 +23,43 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (pathname === '/admin') return { title: 'Tổng quan', subtitle: 'Hệ thống quản trị' };
     if (pathname.includes('/users')) return { title: 'Người dùng', subtitle: 'Quản lý thành viên' };
     if (pathname.includes('/categories')) return { title: 'Danh mục', subtitle: 'Phân loại sản phẩm' };
-    if (pathname.includes('/address')) return { title: 'Địa chỉ', subtitle: 'Quản lý điểm giao nhận' };
+    if (pathname.includes('/address')) return { title: 'Địa chỉ', subtitle: 'Giao nhận hàng' };
     if (pathname.includes('/products')) return { title: 'Kho hàng', subtitle: 'Quản lý thiết bị' };
     if (pathname.includes('/orders')) return { title: 'Đơn hàng', subtitle: 'Quản lý giao dịch' };
-    if (pathname.includes('/vouchers')) return { title: 'Vouchers', subtitle: 'Ưu đãi & Khuyến mãi' };
-    if (pathname.includes('/settings')) return { title: 'Cài đặt', subtitle: 'Cấu hình hệ thống' };
-    return { title: 'LensHub', subtitle: 'Admin PRO' };
+    if (pathname.includes('/vouchers')) return { title: 'Vouchers', subtitle: 'Mã giảm giá' };
+    if (pathname.includes('/settings')) return { title: 'Cài đặt', subtitle: 'Hệ thống' };
+    return { title: 'LensHub', subtitle: 'Admin Pro' };
   }, [pathname]);
 
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
       <RoleGuard allowedRoles={allowedRoles}>
-        <div className="flex min-h-screen w-full bg-zinc-50/50">
+        <div className="flex min-h-screen w-full bg-zinc-50/30">
           <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
           
           <div className="flex-1 flex flex-col min-w-0">
-            <header className="sticky top-0 z-30 flex h-20 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 lg:px-8 lg:pl-72 transition-all duration-300 backdrop-blur-xl">
+            {/* Optimized Navbar */}
+            <header className={cn(
+              "sticky top-0 z-30 flex w-full items-center justify-between border-b border-zinc-100 bg-white/80 backdrop-blur-md transition-all duration-300",
+              "h-[var(--dash-navbar-h)] px-4 sm:px-6 lg:px-8 lg:pl-10",
+              "lg:ml-[var(--dash-sidebar-w)]"
+            )}>
               <div className="flex items-center gap-6">
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="lg:hidden h-12 w-12 rounded-xl hover:bg-zinc-100 border border-transparent hover:border-zinc-200"
+                  className="lg:hidden h-10 w-10 rounded-lg hover:bg-zinc-100 border border-zinc-100 shadow-sm"
                   onClick={() => setIsSidebarOpen(true)}
                 >
-                  <Menu className="h-6 w-6 text-zinc-600" />
+                  <Menu className="h-5 w-5 text-zinc-600" />
                 </Button>
                 
-                {/* Dynamic Page Title in Header */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[28px] font-bold tracking-tight text-zinc-950 truncate max-w-[140px] sm:max-w-none leading-tight">{pageTitle.title}</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1 shrink-0" />
+                    <span className="text-xl font-bold tracking-tight text-zinc-950 truncate max-w-[140px] sm:max-w-none leading-none">{pageTitle.title}</span>
+                    <span className="w-1 h-1 rounded-full bg-red-600 shrink-0" />
                   </div>
-                  <span className="text-sm font-medium text-zinc-500 mt-0.5 tracking-tight">{pageTitle.subtitle}</span>
+                  <span className="text-[11px] font-bold text-zinc-400 mt-1 uppercase tracking-widest">{pageTitle.subtitle}</span>
                 </div>
               </div>
 
@@ -64,60 +68,58 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400" />
                   <Input 
                     placeholder="Tìm kiếm nhanh..." 
-                    className="pl-9 h-10 text-xs rounded-xl border-zinc-100 bg-zinc-50/50"
+                    className="pl-9 h-9 text-xs rounded-lg border-zinc-100 bg-zinc-50/50"
                   />
                 </div>
 
-                <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl hover:bg-zinc-100 relative group hidden md:flex">
-                  <Bell className="h-5 w-5 text-zinc-500 group-hover:text-amber-500 transition-colors" />
-                  <span className="absolute top-3 right-3 w-2 h-2 bg-red-600 rounded-full border-2 border-white" />
+                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-lg hover:bg-zinc-100 relative group hidden md:flex border border-transparent hover:border-zinc-200 transition-all">
+                  <Bell className="h-4 w-4 text-zinc-500 group-hover:text-amber-500 transition-colors" />
+                  <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-600 rounded-full border-2 border-white" />
                 </Button>
                 
-                <div className="h-8 w-px bg-zinc-100 mx-2 hidden sm:block" />
+                <div className="h-6 w-px bg-zinc-100 mx-2 hidden sm:block" />
 
-                {/* User Dropdown Profile */}
                 <div className="relative">
                   <button 
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className={cn(
-                      "flex items-center gap-3 p-1.5 pr-3 rounded-2xl transition-all duration-300 border border-transparent",
-                      isUserMenuOpen ? "bg-zinc-100 border-zinc-200 shadow-inner" : "hover:bg-zinc-100 hover:border-zinc-200"
+                      "flex items-center gap-3 p-1 rounded-xl transition-all duration-300 border border-transparent",
+                      isUserMenuOpen ? "bg-zinc-50 border-zinc-200" : "hover:bg-zinc-50 hover:border-zinc-100"
                     )}
                   >
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-red-700 text-white flex items-center justify-center font-black shadow-lg shadow-red-600/10">
+                    <div className="w-8 h-8 rounded-lg bg-zinc-950 text-white flex items-center justify-center font-bold text-xs shadow-sm">
                       {user?.email?.charAt(0).toUpperCase()}
                     </div>
                     <div className="hidden sm:flex flex-col items-start text-left">
-                      <span className="text-sm font-semibold text-zinc-950 tracking-tight leading-none mb-1">
+                      <span className="text-xs font-bold text-zinc-950 leading-none mb-1">
                         {user?.email?.split('@')[0]}
                       </span>
-                      <span className="text-xs text-zinc-400 font-medium leading-none">
-                        {user?.roles?.[0] || 'Member'}
+                      <span className="text-[10px] text-zinc-400 font-bold uppercase leading-none">
+                        {user?.roles?.[0] || 'Staff'}
                       </span>
                     </div>
-                    <ChevronDown className={cn("w-4 h-4 text-zinc-400 transition-transform duration-300", isUserMenuOpen && "rotate-180")} />
+                    <ChevronDown className={cn("w-3 h-3 text-zinc-400 transition-transform duration-300", isUserMenuOpen && "rotate-180")} />
                   </button>
 
-                  {/* Dropdown Menu */}
                   {isUserMenuOpen && (
                     <>
                       <div className="fixed inset-0 z-10" onClick={() => setIsUserMenuOpen(false)} />
-                      <div className="absolute right-0 mt-3 w-64 bg-white border border-zinc-100 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.1)] z-20 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
-                        <div className="p-5 border-b border-zinc-50 flex items-center gap-4 bg-zinc-50/50">
-                          <div className="w-12 h-12 rounded-xl bg-white border border-zinc-200 flex items-center justify-center font-black text-lg shadow-sm">
+                      <div className="absolute right-0 mt-2 w-56 bg-white border border-zinc-100 rounded-xl shadow-xl z-20 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="p-4 border-b border-zinc-50 flex items-center gap-3 bg-zinc-50/30">
+                          <div className="w-10 h-10 rounded-lg bg-white border border-zinc-200 flex items-center justify-center font-bold text-sm">
                             {user?.email?.charAt(0).toUpperCase()}
                           </div>
                           <div className="flex flex-col overflow-hidden">
-                            <span className="truncate font-semibold text-zinc-950 text-sm">{user?.email?.split('@')[0]}</span>
-                            <span className="text-xs text-zinc-400 font-medium">{user?.roles?.[0]}</span>
+                            <span className="truncate font-bold text-zinc-950 text-xs">{user?.email?.split('@')[0]}</span>
+                            <span className="text-[10px] text-zinc-400 font-bold uppercase">{user?.roles?.[0]}</span>
                           </div>
                         </div>
-                        <div className="p-2">
+                        <div className="p-1">
                           <button 
                             onClick={() => logout()}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all group"
+                            className="w-full flex items-center gap-3 px-3 py-2.5 text-[11px] font-bold text-red-600 hover:bg-red-50 rounded-lg transition-all group"
                           >
-                            <LogOut className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                            <LogOut className="w-3.5 h-3.5" />
                             Đăng xuất
                           </button>
                         </div>
@@ -128,9 +130,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </div>
             </header>
 
-            {/* Main Content Area */}
-            <main className="flex-1 lg:ml-64 flex flex-col p-4 sm:p-6 lg:p-8 overflow-y-auto custom-scrollbar">
-              <div className="w-full mx-auto">
+            {/* Main Content Area - Fluid & Data-dense */}
+            <main className={cn(
+              "flex-1 flex flex-col transition-all duration-300",
+              "lg:ml-[var(--dash-sidebar-w)]",
+              "p-4 sm:p-5 lg:p-6 xl:p-8"
+            )}>
+              <div className="w-full h-full">
                 {children}
               </div>
             </main>

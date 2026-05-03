@@ -14,30 +14,35 @@ interface StatCardProps {
 export function StatCard({ title, value, trend, icon: Icon, accent }: StatCardProps) {
   const isPositive = trend >= 0;
   return (
-    <div
-      className={cn(
-        "relative bg-white rounded-xl border border-zinc-200 p-4 overflow-hidden",
-        "shadow-sm hover:shadow-md transition-all duration-300 group"
-      )}
-    >
-      <div className={cn("absolute top-0 left-0 w-full h-1 transition-all duration-500", accent, "opacity-0 group-hover:opacity-100")} />
-      <div className={cn("absolute -top-4 -right-4 w-24 h-24 rounded-full opacity-[0.06] blur-2xl transition-all duration-500 group-hover:opacity-[0.12] group-hover:scale-125", accent)} />
-
-      <div className="flex items-start justify-between mb-3">
-        <p className="text-xs font-semibold text-zinc-400">{title}</p>
-        <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 bg-zinc-50 group-hover:scale-105", accent.replace("bg-", "text-"))}>
-          <Icon className="w-4.5 h-4.5" strokeWidth={2} />
+    <div className="admin-card group relative overflow-hidden flex flex-col justify-between">
+      {/* Subtle accent highlight on top */}
+      <div className={cn("absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300", accent)} />
+      
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+           <div className={cn(
+             "w-8 h-8 rounded-lg flex items-center justify-center transition-all bg-zinc-50 border border-zinc-100 group-hover:bg-zinc-950 group-hover:text-white group-hover:border-zinc-950",
+             accent.replace("bg-", "text-")
+           )}>
+             <Icon className="w-4 h-4" />
+           </div>
+           <p className="text-[12px] font-bold text-zinc-400 tracking-wide uppercase">{title}</p>
         </div>
+
+        <p className="text-2xl font-bold tracking-tight text-zinc-950 mb-2 leading-none">
+          {value}
+        </p>
       </div>
 
-      <p className="text-2xl font-bold tracking-tight text-zinc-950 mb-2">{value}</p>
-
-      <div className="flex items-center gap-2">
-        <span className={cn("flex items-center gap-0.5 text-xs font-bold px-2 py-0.5 rounded-md", isPositive ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600")}>
+      <div className="flex items-center gap-2 pt-1">
+        <span className={cn(
+          "flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-lg", 
+          isPositive ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
+        )}>
           {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
           {isPositive ? "+" : ""}{trend}%
         </span>
-        <span className="text-xs text-zinc-400 font-medium">so với tháng trước</span>
+        <span className="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">Tháng này</span>
       </div>
     </div>
   );

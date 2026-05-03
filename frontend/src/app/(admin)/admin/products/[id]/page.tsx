@@ -22,11 +22,14 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { useProduct, useDeleteProduct, useRestoreProduct } from "@/services/product";
 import { getImageUrl, cn } from "@/lib/utils";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { ProductDialog } from "../components/ProductDialog";
+import { useUpdateProductInfo, useProduct, useDeleteProduct, useRestoreProduct } from "@/services/product";
+import { useCategories } from "@/services/category";
+import { ProductInfoUpdateRequest } from "@/types/product";
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -52,6 +55,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   const deleteMutation = useDeleteProduct();
   const restoreMutation = useRestoreProduct();
+  const updateInfoMutation = useUpdateProductInfo(productId);
+  const { data: catRes } = useCategories({ activeOnly: true }, 0, 100);
+  const categories = useMemo(() => catRes?.data || [], [catRes]);
+
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const handleBack = () => router.push("/admin/products");
 
@@ -89,6 +97,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         }
       }
     });
+  };
+
+  const handleUpdateInfo = async ({ request, image }: { request: ProductInfoUpdateRequest; image: File | null }) => {
+    try {
+      await updateInfoMutation.mutateAsync({ request, image });
+      toast.success("Cập nhật thông tin thành công");
+      setIsEditDialogOpen(false);
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Lỗi khi cập nhật");
+    }
   };
 
   if (isLoading) return (
@@ -147,7 +166,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         <div className="flex items-center gap-3 w-full sm:w-auto">
           {!isDeleted ? (
             <>
-              <Button className="flex-1 sm:flex-none h-12 rounded-2xl bg-white border border-zinc-200 hover:border-red-600 hover:bg-red-50 text-zinc-950 hover:text-red-600 font-bold px-8 transition-all gap-2 shadow-sm">
+              <Button 
+                onClick={() => setIsEditDialogOpen(true)}
+                className="flex-1 sm:flex-none h-12 rounded-2xl bg-white border border-zinc-200 hover:border-red-600 hover:bg-red-50 text-zinc-950 hover:text-red-600 font-bold px-8 transition-all gap-2 shadow-sm"
+              >
                 <Edit2 className="w-4 h-4" /> Chỉnh sửa
               </Button>
               <Button onClick={handleDelete} variant="ghost" className="flex-1 sm:flex-none h-12 rounded-2xl bg-white border border-red-100 text-red-600 hover:bg-red-600 hover:text-white font-bold px-6 transition-all gap-2 shadow-sm">
@@ -330,6 +352,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         onConfirm={confirmConfig.onConfirm}
         variant={confirmConfig.variant}
         isLoading={deleteMutation.isPending || restoreMutation.isPending}
+      />
+      <ProductDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        product={product || null}
+        categories={categories}
+        onSubmit={handleUpdateInfo}
+        isPending={updateInfoMutation.isPending}
       />
     </div>
   );

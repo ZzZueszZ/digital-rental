@@ -206,11 +206,13 @@ export const useHardDeleteProduct = () => {
   });
 };
 
-export const usePriceHistory = (id: number) => {
+export const usePriceHistory = (id: number, page: number = 0, size: number = 10) => {
   return useQuery({
-    queryKey: PRODUCT_KEYS.priceHistory(id),
+    queryKey: [...PRODUCT_KEYS.priceHistory(id), { page, size }],
     queryFn: async () => {
-      const { data } = await http.get<IBackendRes<PriceHistoryResponse[]>>(`/products/${id}/price-history`);
+      const { data } = await http.get<IBackendRes<PriceHistoryResponse[]>>(`/products/${id}/price-history`, {
+        params: { page, size }
+      });
       return data;
     },
     enabled: !!id,

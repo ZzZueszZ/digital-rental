@@ -15,7 +15,9 @@ import {
   ShieldCheck,
   Zap,
   Info,
-  TrendingUp
+  TrendingUp,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -46,11 +48,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const { data: response, isLoading, error } = useProduct(productId);
   const product = response?.data;
 
-  const { data: historyRes } = usePriceHistory(productId);
-  const priceHistory = historyRes?.data || [];
+  const [priceHistoryPage, setPriceHistoryPage] = useState(0);
+  const [inventoryPage, setInventoryPage] = useState(0);
+  const PAGE_SIZE = 5;
 
-  const { data: inventoryRes } = useInventoryLogs(productId);
+  const { data: historyRes } = usePriceHistory(productId, priceHistoryPage, PAGE_SIZE);
+  const priceHistory = historyRes?.data || [];
+  const pricePagination = historyRes?.pagination;
+
+  const { data: inventoryRes } = useInventoryLogs(productId, inventoryPage, PAGE_SIZE);
   const inventoryLogs = inventoryRes?.data || [];
+  const inventoryPagination = inventoryRes?.pagination;
 
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [confirmConfig, setConfirmConfig] = useState<{
@@ -438,7 +446,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
             <Badge className="bg-zinc-950 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full">
-              {priceHistory.length}
+              {pricePagination?.totalElements || 0}
             </Badge>
           </div>
 
@@ -452,7 +460,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-50">
-                {priceHistory.slice(0, 5).map((history: PriceHistoryResponse) => (
+                {priceHistory.map((history: PriceHistoryResponse) => (
                   <tr key={history.id} className="group hover:bg-zinc-50/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
@@ -490,6 +498,35 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Controls */}
+          {pricePagination && pricePagination.totalPages > 1 && (
+            <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-50 flex items-center justify-between">
+              <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">
+                Trang {priceHistoryPage + 1} / {pricePagination.totalPages}
+              </span>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 rounded-lg hover:bg-white border border-transparent hover:border-zinc-200 disabled:opacity-30"
+                  disabled={priceHistoryPage === 0}
+                  onClick={() => setPriceHistoryPage(p => p - 1)}
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 rounded-lg hover:bg-white border border-transparent hover:border-zinc-200 disabled:opacity-30"
+                  disabled={priceHistoryPage >= pricePagination.totalPages - 1}
+                  onClick={() => setPriceHistoryPage(p => p + 1)}
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Inventory History Section */}
@@ -505,7 +542,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
             <Badge className="bg-emerald-600 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full">
-              {inventoryLogs.length}
+              {inventoryPagination?.totalElements || 0}
             </Badge>
           </div>
 
@@ -519,7 +556,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-50">
-                {inventoryLogs.slice(0, 5).map((log: InventoryAuditResponse) => {
+                {inventoryLogs.map((log: InventoryAuditResponse) => {
                   const diff = log.newStock - log.oldStock;
                   return (
                     <tr key={log.id} className="group hover:bg-zinc-50/50 transition-colors">
@@ -559,6 +596,35 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Controls */}
+          {inventoryPagination && inventoryPagination.totalPages > 1 && (
+            <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-50 flex items-center justify-between">
+              <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">
+                Trang {inventoryPage + 1} / {inventoryPagination.totalPages}
+              </span>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 rounded-lg hover:bg-white border border-zinc-200 disabled:opacity-30"
+                  disabled={inventoryPage === 0}
+                  onClick={() => setInventoryPage(p => p - 1)}
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 rounded-lg hover:bg-white border border-transparent hover:border-zinc-200 disabled:opacity-30"
+                  disabled={inventoryPage >= inventoryPagination.totalPages - 1}
+                  onClick={() => setInventoryPage(p => p + 1)}
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -352,36 +352,40 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PriceHistoryResponse> getPriceHistory(Long productId) {
-        return priceHistoryRepository.findByProductIdOrderByCreatedAtDesc(productId)
-                .stream().map(h -> {
-                    double percent = 0.0;
-                    String type = "NONE";
-                    if (h.getOldPrice() != null && h.getOldPrice().compareTo(BigDecimal.ZERO) > 0) {
-                        BigDecimal diff = h.getNewPrice().subtract(h.getOldPrice());
-                        percent = diff.divide(h.getOldPrice(), 4, RoundingMode.HALF_UP)
-                                .multiply(BigDecimal.valueOf(100)).doubleValue();
-                        
-                        if (diff.compareTo(BigDecimal.ZERO) > 0) type = "INCREASE";
-                        else if (diff.compareTo(BigDecimal.ZERO) < 0) type = "DECREASE";
-                    }
+    public Page<PriceHistoryResponse> getPriceHistory(Long productId, int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        Page<ProductPriceHistory> logsPage = priceHistoryRepository.findByProductIdOrderByCreatedAtDesc(productId, pageable);
 
-                    String actorName = "Unknown";
-                    if (h.getChangedBy() != null) {
-                        actorName = h.getChangedBy().getEmail();
-                    }
+        List<PriceHistoryResponse> content = logsPage.getContent().stream().map(h -> {
+            double percent = 0.0;
+            String type = "NONE";
+            if (h.getOldPrice() != null && h.getOldPrice().compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal diff = h.getNewPrice().subtract(h.getOldPrice());
+                percent = Math.abs(diff.divide(h.getOldPrice(), 4, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(100)).doubleValue());
 
-                    return PriceHistoryResponse.builder()
-                            .id(h.getId())
-                            .priceType(h.getPriceType())
-                            .oldPrice(h.getOldPrice())
-                            .newPrice(h.getNewPrice())
-                            .percentChange(percent)
-                            .changeType(type)
-                            .changedBy(actorName)
-                            .createdAt(h.getCreatedAt())
-                            .build();
-                }).collect(Collectors.toList());
+                if (diff.compareTo(BigDecimal.ZERO) > 0) type = "INCREASE";
+                else if (diff.compareTo(BigDecimal.ZERO) < 0) type = "DECREASE";
+            }
+
+            String actorName = "Unknown";
+            if (h.getChangedBy() != null) {
+                actorName = h.getChangedBy().getEmail();
+            }
+
+            return PriceHistoryResponse.builder()
+                    .id(h.getId())
+                    .priceType(h.getPriceType())
+                    .oldPrice(h.getOldPrice())
+                    .newPrice(h.getNewPrice())
+                    .percentChange(percent)
+                    .changeType(type)
+                    .changedBy(actorName)
+                    .createdAt(h.getCreatedAt())
+                    .build();
+        }).collect(Collectors.toList());
+
+        return new org.springframework.data.domain.PageImpl<>(content, pageable, logsPage.getTotalElements());
     }
 
     private void savePriceHistory(Product product, String type, BigDecimal oldPrice, BigDecimal newPrice, User actor) {

@@ -147,8 +147,12 @@ public class ProductController {
     // ADMIN/STAFF: Lấy lịch sử giá
     @GetMapping("/{id}/price-history")
     @PreAuthorize("hasAnyAuthority('PRODUCT_READ', 'PRODUCT_WRITE')")
-    public ResponseEntity<ApiResponse<List<PriceHistoryResponse>>> getPriceHistory(@PathVariable Long id) {
-        List<PriceHistoryResponse> response = productService.getPriceHistory(id);
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Lấy lịch sử giá thành công", response));
+    public ResponseEntity<ApiResponse<List<PriceHistoryResponse>>> getPriceHistory(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<PriceHistoryResponse> result = productService.getPriceHistory(id, page, size);
+        return ResponseEntity.ok(ApiResponse.successfulPageResponse("Lấy lịch sử giá thành công", result));
     }
 }

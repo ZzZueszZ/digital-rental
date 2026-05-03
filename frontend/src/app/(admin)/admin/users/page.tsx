@@ -65,11 +65,9 @@ import {
 import { useUserSummaryStats } from "@/services/dashboard";
 import { AccountStatus, KycStatus, TrustLevel } from "@/types/user";
 import { toast } from "sonner";
-import { 
-  getAvatarColor, 
-  STATUS_CONFIG 
-} from "./lib/userConfig";
+import { getAvatarColor, STATUS_CONFIG } from "./lib/userConfig";
 import { StatCard } from "../components/StatCard";
+import { Pagination } from "../components/Pagination";
 
 // ─── MAIN PAGE ────────────────────────────────────────────────────────────────
 export default function UsersAdminPage() {
@@ -101,18 +99,19 @@ export default function UsersAdminPage() {
 
   // Selection state
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-  const allSelected = users.length > 0 && users.every(u => selectedIds.has(u.id));
+  const allSelected =
+    users.length > 0 && users.every((u) => selectedIds.has(u.id));
   const someSelected = selectedIds.size > 0;
 
   const toggleSelect = (id: number) =>
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
 
   const toggleAll = () =>
-    setSelectedIds(allSelected ? new Set() : new Set(users.map(u => u.id)));
+    setSelectedIds(allSelected ? new Set() : new Set(users.map((u) => u.id)));
 
   // Clear selection when view mode or page changes
   const handleViewModeChange = (mode: "ACTIVE" | "DELETED") => {
@@ -160,7 +159,7 @@ export default function UsersAdminPage() {
     description: string,
     variant: "danger" | "warning" | "info",
     action: () => Promise<unknown>,
-    successMsg: string
+    successMsg: string,
   ) => {
     setConfirmDialog({
       open: true,
@@ -179,7 +178,7 @@ export default function UsersAdminPage() {
       <span
         className={cn(
           "inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full",
-          config.badge
+          config.badge,
         )}
       >
         <span className={cn("w-1.5 h-1.5 rounded-full", config.dot)} />
@@ -190,28 +189,6 @@ export default function UsersAdminPage() {
 
   const totalPages = pagination?.totalPages || 1;
   const totalElements = pagination?.totalElements || 0;
-  const startIndex = page * size + 1;
-  const endIndex = Math.min((page + 1) * size, totalElements);
-
-  // Page number buttons
-  const getPageNumbers = () => {
-    const pages: (number | "...")[] = [];
-    if (totalPages <= 5) {
-      for (let i = 0; i < totalPages; i++) pages.push(i);
-    } else {
-      pages.push(0);
-      if (page > 2) pages.push("...");
-      for (
-        let i = Math.max(1, page - 1);
-        i <= Math.min(totalPages - 2, page + 1);
-        i++
-      )
-        pages.push(i);
-      if (page < totalPages - 3) pages.push("...");
-      pages.push(totalPages - 1);
-    }
-    return pages;
-  };
 
   return (
     <div className="flex-1 space-y-6">
@@ -248,24 +225,22 @@ export default function UsersAdminPage() {
       </div>
 
       {/* ── MAIN TABLE CARD ─────────────────────────────────────── */}
-      <div className="bg-white rounded-2xl border border-zinc-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden">
+      <div className="bg-white rounded-3xl border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
         {/* Header */}
         <div className="px-6 sm:px-8 py-6 border-b border-zinc-50">
-          <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-4">
+          <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
             {/* Left: Title + Tab Toggle */}
-            <div className="flex flex-row items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-6">
               <div>
-                <div className="flex items-center gap-2.5 mb-1">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-sm shadow-red-200">
-                    <Camera className="w-4 h-4 text-white" strokeWidth={2} />
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-100">
+                    <Camera className="w-5 h-5 text-white" strokeWidth={2.5} />
                   </div>
-                  <h2 className="text-lg font-black text-zinc-950 tracking-tight">
-                    {viewMode === "ACTIVE"
-                      ? "Quản lý thành viên"
-                      : "Thùng rác"}
+                  <h2 className="text-xl font-black text-zinc-950 tracking-tight">
+                    {viewMode === "ACTIVE" ? "Quản lý thành viên" : "Thùng rác"}
                   </h2>
                 </div>
-                <p className="text-xs text-zinc-400 font-medium ml-10.5">
+                <p className="text-xs text-zinc-400 font-medium ml-13">
                   Giám sát &amp; phân quyền tài khoản nhiếp ảnh gia
                 </p>
               </div>
@@ -277,10 +252,10 @@ export default function UsersAdminPage() {
                     key={mode}
                     onClick={() => handleViewModeChange(mode)}
                     className={cn(
-                      "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300",
+                      "px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300",
                       viewMode === mode
                         ? "bg-zinc-950 text-white shadow-md"
-                        : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50"
+                        : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50",
                     )}
                   >
                     {mode === "ACTIVE" ? "Hoạt động" : "Thùng rác"}
@@ -295,7 +270,7 @@ export default function UsersAdminPage() {
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors duration-200" />
                 <Input
                   placeholder="Tìm theo email, ID..."
-                  className="pl-10 h-10 rounded-xl border-zinc-200 bg-zinc-50 focus:bg-white focus:border-red-500/30 focus:ring-2 focus:ring-red-500/20 transition-all text-xs font-medium text-zinc-900 placeholder:text-zinc-400"
+                  className="pl-10 h-11 rounded-xl border-zinc-200 bg-zinc-50 focus:bg-white focus:border-red-500/30 focus:ring-2 focus:ring-red-500/20 transition-all text-xs font-bold text-zinc-900 placeholder:text-zinc-400"
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
@@ -305,9 +280,9 @@ export default function UsersAdminPage() {
               </div>
               <Button
                 onClick={() => setCreateDialogOpen(true)}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold text-xs flex items-center gap-2 shadow-sm whitespace-nowrap"
+                className="h-11 px-6 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold text-xs flex items-center gap-2 shadow-sm whitespace-nowrap"
               >
-                <Plus className="w-3.5 h-3.5" />
+                <Plus className="w-4 h-4" />
                 Thêm thành viên
               </Button>
             </div>
@@ -318,42 +293,65 @@ export default function UsersAdminPage() {
         {someSelected && (
           <div className="px-6 py-3 bg-zinc-950 flex items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-200">
             <div className="flex items-center gap-3">
-              <button onClick={() => setSelectedIds(new Set())} className="text-zinc-400 hover:text-white transition-colors">
+              <button
+                onClick={() => setSelectedIds(new Set())}
+                className="text-zinc-400 hover:text-white transition-colors"
+              >
                 <CheckSquare className="w-4 h-4" />
               </button>
               <span className="text-xs font-bold text-white">
-                Đã chọn <span className="text-red-400">{selectedIds.size}</span> tài khoản
+                Đã chọn <span className="text-red-400">{selectedIds.size}</span>{" "}
+                tài khoản
               </span>
             </div>
             <div className="flex items-center gap-2">
               {viewMode === "ACTIVE" ? (
                 <button
-                  onClick={() => requestAction(
-                    "Vô hiệu hóa nhiều tài khoản",
-                    `Bạn có chắc muốn vô hiệu hóa ${selectedIds.size} tài khoản đã chọn?`,
-                    "danger",
-                    async () => { await deleteManyMutation.mutateAsync(Array.from(selectedIds)); setSelectedIds(new Set()); },
-                    `Đã vô hiệu hóa ${selectedIds.size} tài khoản`
-                  )}
+                  onClick={() =>
+                    requestAction(
+                      "Vô hiệu hóa nhiều tài khoản",
+                      `Bạn có chắc muốn vô hiệu hóa ${selectedIds.size} tài khoản đã chọn?`,
+                      "danger",
+                      async () => {
+                        await deleteManyMutation.mutateAsync(
+                          Array.from(selectedIds),
+                        );
+                        setSelectedIds(new Set());
+                      },
+                      `Đã vô hiệu hóa ${selectedIds.size} tài khoản`,
+                    )
+                  }
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors"
                 >
-                  <Trash2Icon className="w-3.5 h-3.5" /> Vô hiệu hóa ({selectedIds.size})
+                  <Trash2Icon className="w-3.5 h-3.5" /> Vô hiệu hóa (
+                  {selectedIds.size})
                 </button>
               ) : (
                 <button
-                  onClick={() => requestAction(
-                    "Khôi phục nhiều tài khoản",
-                    `Bạn có chắc muốn khôi phục ${selectedIds.size} tài khoản đã chọn?`,
-                    "info",
-                    async () => { await restoreManyMutation.mutateAsync(Array.from(selectedIds)); setSelectedIds(new Set()); },
-                    `Đã khôi phục ${selectedIds.size} tài khoản`
-                  )}
+                  onClick={() =>
+                    requestAction(
+                      "Khôi phục nhiều tài khoản",
+                      `Bạn có chắc muốn khôi phục ${selectedIds.size} tài khoản đã chọn?`,
+                      "info",
+                      async () => {
+                        await restoreManyMutation.mutateAsync(
+                          Array.from(selectedIds),
+                        );
+                        setSelectedIds(new Set());
+                      },
+                      `Đã khôi phục ${selectedIds.size} tài khoản`,
+                    )
+                  }
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" /> Khôi phục ({selectedIds.size})
+                  <RotateCcw className="w-3.5 h-3.5" /> Khôi phục (
+                  {selectedIds.size})
                 </button>
               )}
-              <button onClick={() => setSelectedIds(new Set())} className="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white text-xs font-bold transition-colors">
+              <button
+                onClick={() => setSelectedIds(new Set())}
+                className="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white text-xs font-bold transition-colors"
+              >
                 Bỏ chọn
               </button>
             </div>
@@ -380,90 +378,208 @@ export default function UsersAdminPage() {
               <div className="w-16 h-16 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
                 <Aperture className="w-7 h-7 text-zinc-300" />
               </div>
-              <p className="text-sm font-bold text-zinc-400">Không tìm thấy thành viên</p>
-              <p className="text-xs text-zinc-300">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+              <p className="text-sm font-bold text-zinc-400">
+                Không tìm thấy thành viên
+              </p>
+              <p className="text-xs text-zinc-300">
+                Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm
+              </p>
             </div>
           )}
 
           {users.map((u) => {
             const avatarColor = getAvatarColor(u.email);
-            const statusCfg = STATUS_CONFIG[u.accountStatus] ?? STATUS_CONFIG["DISABLED"];
+            const statusCfg =
+              STATUS_CONFIG[u.accountStatus] ?? STATUS_CONFIG["DISABLED"];
             return (
               <div
                 key={u.id}
                 onClick={() => router.push(`/admin/users/${u.id}`)}
                 className={cn(
                   "p-4 transition-colors border-l-[3px] hover:border-red-600 cursor-pointer",
-                  selectedIds.has(u.id) ? "bg-red-50/50 border-red-300" : "border-transparent hover:bg-zinc-50"
+                  selectedIds.has(u.id)
+                    ? "bg-red-50/50 border-red-300"
+                    : "border-transparent hover:bg-zinc-50",
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <button onClick={(e) => { e.stopPropagation(); toggleSelect(u.id); }} className="shrink-0 text-zinc-400 hover:text-red-600 transition-colors">
-                    {selectedIds.has(u.id)
-                      ? <CheckSquare className="w-4 h-4 text-red-600" />
-                      : <Square className="w-4 h-4" />}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSelect(u.id);
+                    }}
+                    className="shrink-0 text-zinc-400 hover:text-red-600 transition-colors"
+                  >
+                    {selectedIds.has(u.id) ? (
+                      <CheckSquare className="w-4 h-4 text-red-600" />
+                    ) : (
+                      <Square className="w-4 h-4" />
+                    )}
                   </button>
-                  <div className={cn("w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0 shadow-sm", avatarColor.bg)}>
-                    <span className={cn("font-black text-sm", avatarColor.text)}>{u.email.charAt(0).toUpperCase()}</span>
+                  <div
+                    className={cn(
+                      "w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0 shadow-sm",
+                      avatarColor.bg,
+                    )}
+                  >
+                    <span
+                      className={cn("font-black text-sm", avatarColor.text)}
+                    >
+                      {u.email.charAt(0).toUpperCase()}
+                    </span>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-zinc-900 truncate">{u.email}</p>
-                    <p className="text-[10px] text-zinc-400 font-mono">#{u.id.toString().padStart(5, "0")}</p>
+                    <p className="text-sm font-bold text-zinc-900 truncate">
+                      {u.email}
+                    </p>
+                    <p className="text-[10px] text-zinc-400 font-mono">
+                      #{u.id.toString().padStart(5, "0")}
+                    </p>
                   </div>
                   <div onClick={(e) => e.stopPropagation()}>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-lg hover:bg-zinc-100 outline-none">
-                      <MoreHorizontal className="w-4 h-4 text-zinc-500" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-52 p-1.5 rounded-xl border-zinc-100 shadow-lg bg-white">
-                      <DropdownMenuGroup>
-                        <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">Tác vụ quản trị</DropdownMenuLabel>
-                        {viewMode === "ACTIVE" ? (
-                          <>
-                            <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700" onClick={() => router.push(`/admin/users/${u.id}`)}>
-                              <Eye className="w-3.5 h-3.5 text-zinc-400" /> Xem chi tiết
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700" onClick={() => router.push(`/admin/users/${u.id}/edit`)}>
-                              <Edit2 className="w-3.5 h-3.5 text-zinc-400" /> Chỉnh sửa
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                            <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700" onClick={() => requestAction("Cấp lại mật khẩu", `Cấp lại mật khẩu cho ${u.email}?`, "warning", () => resetPasswordMutation.mutateAsync(u.id), "Đã cấp mật khẩu mới")}>
-                              <RefreshCw className="w-3.5 h-3.5 text-zinc-400" /> Reset mật khẩu
-                            </DropdownMenuItem>
-                            {u.accountNonLocked ? (
-                              <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-amber-50 text-zinc-700" onClick={() => requestAction("Khóa tài khoản", `Khóa tài khoản ${u.email}?`, "danger", () => lockMutation.mutateAsync(u.id), "Tài khoản đã bị khóa")}>
-                                <Lock className="w-3.5 h-3.5 text-amber-500" /> Khóa tài khoản
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-lg hover:bg-zinc-100 outline-none">
+                        <MoreHorizontal className="w-4 h-4 text-zinc-500" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-52 p-1.5 rounded-xl border-zinc-100 shadow-lg bg-white"
+                      >
+                        <DropdownMenuGroup>
+                          <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">
+                            Tác vụ quản trị
+                          </DropdownMenuLabel>
+                          {viewMode === "ACTIVE" ? (
+                            <>
+                              <DropdownMenuItem
+                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                onClick={() =>
+                                  router.push(`/admin/users/${u.id}`)
+                                }
+                              >
+                                <Eye className="w-3.5 h-3.5 text-zinc-400" />{" "}
+                                Xem chi tiết
                               </DropdownMenuItem>
-                            ) : (
-                              <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-emerald-50 text-zinc-700" onClick={() => requestAction("Mở khóa tài khoản", `Mở khóa tài khoản ${u.email}?`, "info", () => unlockMutation.mutateAsync(u.id), "Tài khoản đã được mở khóa")}>
-                                <Unlock className="w-3.5 h-3.5 text-emerald-500" /> Mở khóa
+                              <DropdownMenuItem
+                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                onClick={() =>
+                                  router.push(`/admin/users/${u.id}/edit`)
+                                }
+                              >
+                                <Edit2 className="w-3.5 h-3.5 text-zinc-400" />{" "}
+                                Chỉnh sửa
                               </DropdownMenuItem>
-                            )}
-                            <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                            <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50" onClick={() => requestAction("Vô hiệu hóa", `Vô hiệu hóa tài khoản ${u.email}?`, "danger", () => deleteMutation.mutateAsync(u.id), "Đã vô hiệu hóa")}>
-                              <Trash2 className="w-3.5 h-3.5" /> Vô hiệu hóa
-                            </DropdownMenuItem>
-                          </>
-                        ) : (
-                          <>
-                            <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700" onClick={() => router.push(`/admin/users/${u.id}`)}>
-                              <Eye className="w-3.5 h-3.5 text-zinc-400" /> Xem chi tiết
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                            <DropdownMenuItem className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50" onClick={() => requestAction("Khôi phục", `Khôi phục tài khoản ${u.email}?`, "info", () => restoreMutation.mutateAsync(u.id), "Đã khôi phục tài khoản")}>
-                              <RotateCcw className="w-3.5 h-3.5" /> Khôi phục tài khoản
-                            </DropdownMenuItem>
-                          </>
-                        )}
-                      </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                              <DropdownMenuSeparator className="my-1 bg-zinc-50" />
+                              <DropdownMenuItem
+                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                onClick={() =>
+                                  requestAction(
+                                    "Cấp lại mật khẩu",
+                                    `Cấp lại mật khẩu cho ${u.email}?`,
+                                    "warning",
+                                    () =>
+                                      resetPasswordMutation.mutateAsync(u.id),
+                                    "Đã cấp mật khẩu mới",
+                                  )
+                                }
+                              >
+                                <RefreshCw className="w-3.5 h-3.5 text-zinc-400" />{" "}
+                                Reset mật khẩu
+                              </DropdownMenuItem>
+                              {u.accountNonLocked ? (
+                                <DropdownMenuItem
+                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-amber-50 text-zinc-700"
+                                  onClick={() =>
+                                    requestAction(
+                                      "Khóa tài khoản",
+                                      `Khóa tài khoản ${u.email}?`,
+                                      "danger",
+                                      () => lockMutation.mutateAsync(u.id),
+                                      "Tài khoản đã bị khóa",
+                                    )
+                                  }
+                                >
+                                  <Lock className="w-3.5 h-3.5 text-amber-500" />{" "}
+                                  Khóa tài khoản
+                                </DropdownMenuItem>
+                              ) : (
+                                <DropdownMenuItem
+                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-emerald-50 text-zinc-700"
+                                  onClick={() =>
+                                    requestAction(
+                                      "Mở khóa tài khoản",
+                                      `Mở khóa tài khoản ${u.email}?`,
+                                      "info",
+                                      () => unlockMutation.mutateAsync(u.id),
+                                      "Tài khoản đã được mở khóa",
+                                    )
+                                  }
+                                >
+                                  <Unlock className="w-3.5 h-3.5 text-emerald-500" />{" "}
+                                  Mở khóa
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuSeparator className="my-1 bg-zinc-50" />
+                              <DropdownMenuItem
+                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50"
+                                onClick={() =>
+                                  requestAction(
+                                    "Vô hiệu hóa",
+                                    `Vô hiệu hóa tài khoản ${u.email}?`,
+                                    "danger",
+                                    () => deleteMutation.mutateAsync(u.id),
+                                    "Đã vô hiệu hóa",
+                                  )
+                                }
+                              >
+                                <Trash2 className="w-3.5 h-3.5" /> Vô hiệu hóa
+                              </DropdownMenuItem>
+                            </>
+                          ) : (
+                            <>
+                              <DropdownMenuItem
+                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                onClick={() =>
+                                  router.push(`/admin/users/${u.id}`)
+                                }
+                              >
+                                <Eye className="w-3.5 h-3.5 text-zinc-400" />{" "}
+                                Xem chi tiết
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator className="my-1 bg-zinc-50" />
+                              <DropdownMenuItem
+                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
+                                onClick={() =>
+                                  requestAction(
+                                    "Khôi phục",
+                                    `Khôi phục tài khoản ${u.email}?`,
+                                    "info",
+                                    () => restoreMutation.mutateAsync(u.id),
+                                    "Đã khôi phục tài khoản",
+                                  )
+                                }
+                              >
+                                <RotateCcw className="w-3.5 h-3.5" /> Khôi phục
+                                tài khoản
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
 
                 <div className="mt-3 flex flex-wrap items-center gap-2 pl-13">
-                  <span className={cn("inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full", statusCfg.badge)}>
-                    <span className={cn("w-1.5 h-1.5 rounded-full", statusCfg.dot)} />
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full",
+                      statusCfg.badge,
+                    )}
+                  >
+                    <span
+                      className={cn("w-1.5 h-1.5 rounded-full", statusCfg.dot)}
+                    />
                     {statusCfg.label}
                   </span>
                   {u.kycStatus === KycStatus.VERIFIED ? (
@@ -472,12 +588,24 @@ export default function UsersAdminPage() {
                     </span>
                   ) : null}
                   {u.roles.map((role: string) => (
-                    <span key={role} className={cn("inline-block text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-[0.15em] border",
-                      role === "SUPER_ADMIN" || role === "ADMIN" ? "bg-red-50 text-red-700 border-red-200" : "bg-zinc-50 text-zinc-600 border-zinc-200"
-                    )}>{role}</span>
+                    <span
+                      key={role}
+                      className={cn(
+                        "inline-block text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-[0.15em] border",
+                        role === "SUPER_ADMIN" || role === "ADMIN"
+                          ? "bg-red-50 text-red-700 border-red-200"
+                          : "bg-zinc-50 text-zinc-600 border-zinc-200",
+                      )}
+                    >
+                      {role}
+                    </span>
                   ))}
                   <span className="text-[10px] text-zinc-400 font-medium ml-auto">
-                    {new Date(u.createdAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                    {new Date(u.createdAt).toLocaleDateString("vi-VN", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}
                   </span>
                 </div>
               </div>
@@ -487,16 +615,21 @@ export default function UsersAdminPage() {
 
         {/* ── DESKTOP TABLE (≥ md) ─────────────────────────────────── */}
         <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-left min-w-[700px]">
+          <table className="w-full text-left">
             <thead>
               <tr className="bg-zinc-50/80 border-b border-zinc-100">
-                <th className="px-4 py-4 w-10">
-                  <button onClick={toggleAll} className="text-zinc-400 hover:text-zinc-700 transition-colors">
-                    {allSelected
-                      ? <CheckSquare className="w-4 h-4 text-red-600" />
-                      : someSelected
-                        ? <CheckSquare className="w-4 h-4 text-zinc-400" />
-                        : <Square className="w-4 h-4" />}
+                <th className="px-8 py-4 w-10">
+                  <button
+                    onClick={toggleAll}
+                    className="text-zinc-400 hover:text-zinc-700 transition-colors"
+                  >
+                    {allSelected ? (
+                      <CheckSquare className="w-4 h-4 text-red-600" />
+                    ) : someSelected ? (
+                      <CheckSquare className="w-4 h-4 text-zinc-400" />
+                    ) : (
+                      <Square className="w-4 h-4" />
+                    )}
                   </button>
                 </th>
                 {[
@@ -505,13 +638,13 @@ export default function UsersAdminPage() {
                   "Xác minh KYC",
                   "Quyền hạn",
                   "Gia nhập",
-                  "",
+                  "Thao tác",
                 ].map((col, i) => (
                   <th
                     key={i}
                     className={cn(
-                      "px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] whitespace-nowrap",
-                      i === 5 && "text-right"
+                      "px-8 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] whitespace-nowrap",
+                      i === 5 && "text-right",
                     )}
                   >
                     {col}
@@ -524,9 +657,12 @@ export default function UsersAdminPage() {
               {query.isLoading &&
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i}>
-                    {Array.from({ length: 6 }).map((_, j) => (
-                      <td key={j} className="px-6 py-4">
-                        <div className="h-4 bg-zinc-100 rounded-lg animate-pulse" />
+                    <td className="px-8 py-4">
+                      <div className="h-4 bg-zinc-50 rounded w-4" />
+                    </td>
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <td key={j} className="px-8 py-4">
+                        <div className="h-4 bg-zinc-50 rounded-lg animate-pulse" />
                       </td>
                     ))}
                   </tr>
@@ -535,7 +671,7 @@ export default function UsersAdminPage() {
               {/* Empty State */}
               {users.length === 0 && !query.isLoading && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-20 text-center">
+                  <td colSpan={6} className="px-8 py-20 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-16 h-16 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
                         <Aperture className="w-7 h-7 text-zinc-300" />
@@ -562,30 +698,38 @@ export default function UsersAdminPage() {
                       "group transition-all duration-200 border-l-[3px] cursor-pointer",
                       selectedIds.has(u.id)
                         ? "bg-red-50/40 border-red-300"
-                        : "hover:bg-zinc-50/80 border-transparent hover:border-red-600"
+                        : "hover:bg-zinc-50/80 border-transparent hover:border-red-600",
                     )}
                   >
                     {/* Checkbox */}
-                    <td className="px-4 py-4 w-10">
-                      <button onClick={(e) => { e.stopPropagation(); toggleSelect(u.id); }} className="text-zinc-300 hover:text-red-600 transition-colors">
-                        {selectedIds.has(u.id)
-                          ? <CheckSquare className="w-4 h-4 text-red-600" />
-                          : <Square className="w-4 h-4" />}
+                    <td className="px-8 py-4 w-10">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleSelect(u.id);
+                        }}
+                        className="text-zinc-300 hover:text-red-600 transition-colors"
+                      >
+                        {selectedIds.has(u.id) ? (
+                          <CheckSquare className="w-4 h-4 text-red-600" />
+                        ) : (
+                          <Square className="w-4 h-4" />
+                        )}
                       </button>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-8 py-4">
                       <div className="flex items-center gap-3.5">
                         <div
                           className={cn(
                             "w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0",
                             "shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md",
-                            avatarColor.bg
+                            avatarColor.bg,
                           )}
                         >
                           <span
                             className={cn(
                               "font-black text-sm",
-                              avatarColor.text
+                              avatarColor.text,
                             )}
                           >
                             {u.email.charAt(0).toUpperCase()}
@@ -603,12 +747,12 @@ export default function UsersAdminPage() {
                     </td>
 
                     {/* Status */}
-                    <td className="px-6 py-4">
+                    <td className="px-8 py-4">
                       {getStatusBadge(u.accountStatus)}
                     </td>
 
                     {/* KYC */}
-                    <td className="px-6 py-4">
+                    <td className="px-8 py-4">
                       {u.kycStatus === KycStatus.VERIFIED ? (
                         <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                           <ShieldCheck className="w-3 h-3" />
@@ -623,27 +767,30 @@ export default function UsersAdminPage() {
                     </td>
 
                     {/* Roles */}
-                    <td className="px-6 py-4">
+                    <td className="px-8 py-4">
                       <div className="flex flex-wrap gap-1">
                         {u.roles.map((role: string) => {
-                          const isSpecial = role === "SUPER_ADMIN" || role === "ADMIN";
+                          const isSpecial =
+                            role === "SUPER_ADMIN" || role === "ADMIN";
                           return (
                             <span
                               key={role}
                               className={cn(
                                 "inline-block text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-[0.15em] border",
-                                isSpecial ? "bg-red-50 text-red-700 border-red-200" : "bg-zinc-50 text-zinc-600 border-zinc-200"
+                                isSpecial
+                                  ? "bg-red-50 text-red-700 border-red-200"
+                                  : "bg-zinc-50 text-zinc-600 border-zinc-200",
                               )}
                             >
                               {role}
                             </span>
-                          )
+                          );
                         })}
                       </div>
                     </td>
 
                     {/* Joined At */}
-                    <td className="px-6 py-4">
+                    <td className="px-8 py-4">
                       <span className="text-xs font-medium text-zinc-500 tabular-nums">
                         {new Date(u.createdAt).toLocaleDateString("vi-VN", {
                           day: "2-digit",
@@ -654,139 +801,152 @@ export default function UsersAdminPage() {
                     </td>
 
                     {/* Actions */}
-                    <td className="px-6 py-4">
+                    <td className="px-8 py-4">
                       <div className="flex items-center justify-end">
                         <div onClick={(e) => e.stopPropagation()}>
                           <DropdownMenu>
-                          <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-lg p-0 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 transition-all duration-200 outline-none">
-                            <MoreHorizontal className="w-4 h-4 text-zinc-500" />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent
-                            align="end"
-                            className="w-52 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
-                          >
-                            <DropdownMenuGroup>
-                              <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">
-                                Tác vụ quản trị
-                              </DropdownMenuLabel>
-                              {viewMode === "ACTIVE" ? (
-                                <>
-                                <DropdownMenuItem
-                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
-                                  onClick={() => router.push(`/admin/users/${u.id}`)}
-                                >
-                                  <Eye className="w-3.5 h-3.5 text-zinc-400" />
-                                  Xem chi tiết
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
-                                  onClick={() => router.push(`/admin/users/${u.id}/edit`)}
-                                >
-                                  <Edit2 className="w-3.5 h-3.5 text-zinc-400" />
-                                  Chỉnh sửa
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                                <DropdownMenuItem
-                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
-                                  onClick={() =>
-                                    requestAction(
-                                      "Cấp lại mật khẩu",
-                                      `Bạn có chắc chắn muốn cấp lại mật khẩu cho tài khoản ${u.email}? Mật khẩu mới sẽ được gửi về email của người dùng.`,
-                                      "warning",
-                                      () => resetPasswordMutation.mutateAsync(u.id),
-                                      "Đã cấp mật khẩu mới"
-                                    )
-                                  }
-                                >
-                                  <RefreshCw
-                                    className={cn(
-                                      "w-3.5 h-3.5 text-zinc-400",
-                                      resetPasswordMutation.isPending &&
-                                        "animate-spin"
+                            <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-lg p-0 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 transition-all duration-200 outline-none">
+                              <MoreHorizontal className="w-4 h-4 text-zinc-500" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="end"
+                              className="w-52 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
+                            >
+                              <DropdownMenuGroup>
+                                <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">
+                                  Tác vụ quản trị
+                                </DropdownMenuLabel>
+                                {viewMode === "ACTIVE" ? (
+                                  <>
+                                    <DropdownMenuItem
+                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                      onClick={() =>
+                                        router.push(`/admin/users/${u.id}`)
+                                      }
+                                    >
+                                      <Eye className="w-3.5 h-3.5 text-zinc-400" />
+                                      Xem chi tiết
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                      onClick={() =>
+                                        router.push(`/admin/users/${u.id}/edit`)
+                                      }
+                                    >
+                                      <Edit2 className="w-3.5 h-3.5 text-zinc-400" />
+                                      Chỉnh sửa
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator className="my-1 bg-zinc-50" />
+                                    <DropdownMenuItem
+                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                      onClick={() =>
+                                        requestAction(
+                                          "Cấp lại mật khẩu",
+                                          `Bạn có chắc chắn muốn cấp lại mật khẩu cho tài khoản ${u.email}? Mật khẩu mới sẽ được gửi về email của người dùng.`,
+                                          "warning",
+                                          () =>
+                                            resetPasswordMutation.mutateAsync(
+                                              u.id,
+                                            ),
+                                          "Đã cấp mật khẩu mới",
+                                        )
+                                      }
+                                    >
+                                      <RefreshCw
+                                        className={cn(
+                                          "w-3.5 h-3.5 text-zinc-400",
+                                          resetPasswordMutation.isPending &&
+                                            "animate-spin",
+                                        )}
+                                      />
+                                      Reset mật khẩu
+                                    </DropdownMenuItem>
+                                    {u.accountNonLocked ? (
+                                      <DropdownMenuItem
+                                        className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-amber-50 focus:text-amber-700 text-zinc-700"
+                                        onClick={() =>
+                                          requestAction(
+                                            "Khóa tài khoản",
+                                            `Bạn có chắc chắn muốn khóa tài khoản ${u.email}? Người dùng sẽ không thể đăng nhập hoặc thực hiện giao dịch.`,
+                                            "danger",
+                                            () =>
+                                              lockMutation.mutateAsync(u.id),
+                                            "Tài khoản đã bị khóa",
+                                          )
+                                        }
+                                      >
+                                        <Lock className="w-3.5 h-3.5 text-amber-500" />
+                                        Khóa tài khoản
+                                      </DropdownMenuItem>
+                                    ) : (
+                                      <DropdownMenuItem
+                                        className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-emerald-50 focus:text-emerald-700 text-zinc-700"
+                                        onClick={() =>
+                                          requestAction(
+                                            "Mở khóa tài khoản",
+                                            `Bạn có chắc chắn muốn mở khóa tài khoản ${u.email}? Người dùng sẽ có thể truy cập hệ thống bình thường.`,
+                                            "info",
+                                            () =>
+                                              unlockMutation.mutateAsync(u.id),
+                                            "Tài khoản đã được mở khóa",
+                                          )
+                                        }
+                                      >
+                                        <Unlock className="w-3.5 h-3.5 text-emerald-500" />
+                                        Mở khóa
+                                      </DropdownMenuItem>
                                     )}
-                                  />
-                                  Reset mật khẩu
-                                </DropdownMenuItem>
-                                {u.accountNonLocked ? (
-                                  <DropdownMenuItem
-                                    className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-amber-50 focus:text-amber-700 text-zinc-700"
-                                    onClick={() =>
-                                      requestAction(
-                                        "Khóa tài khoản",
-                                        `Bạn có chắc chắn muốn khóa tài khoản ${u.email}? Người dùng sẽ không thể đăng nhập hoặc thực hiện giao dịch.`,
-                                        "danger",
-                                        () => lockMutation.mutateAsync(u.id),
-                                        "Tài khoản đã bị khóa"
-                                      )
-                                    }
-                                  >
-                                    <Lock className="w-3.5 h-3.5 text-amber-500" />
-                                    Khóa tài khoản
-                                  </DropdownMenuItem>
+                                    <DropdownMenuSeparator className="my-1 bg-zinc-50" />
+                                    <DropdownMenuItem
+                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-700"
+                                      onClick={() =>
+                                        requestAction(
+                                          "Vô hiệu hóa tài khoản",
+                                          `Bạn có chắc chắn muốn vô hiệu hóa tài khoản ${u.email}? Tài khoản sẽ được chuyển vào thùng rác.`,
+                                          "danger",
+                                          () =>
+                                            deleteMutation.mutateAsync(u.id),
+                                          "Đã vô hiệu hóa",
+                                        )
+                                      }
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                      Vô hiệu hóa
+                                    </DropdownMenuItem>
+                                  </>
                                 ) : (
-                                  <DropdownMenuItem
-                                    className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-emerald-50 focus:text-emerald-700 text-zinc-700"
-                                    onClick={() =>
-                                      requestAction(
-                                        "Mở khóa tài khoản",
-                                        `Bạn có chắc chắn muốn mở khóa tài khoản ${u.email}? Người dùng sẽ có thể truy cập hệ thống bình thường.`,
-                                        "info",
-                                        () => unlockMutation.mutateAsync(u.id),
-                                        "Tài khoản đã được mở khóa"
-                                      )
-                                    }
-                                  >
-                                    <Unlock className="w-3.5 h-3.5 text-emerald-500" />
-                                    Mở khóa
-                                  </DropdownMenuItem>
+                                  <>
+                                    <DropdownMenuItem
+                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                      onClick={() =>
+                                        router.push(`/admin/users/${u.id}`)
+                                      }
+                                    >
+                                      <Eye className="w-3.5 h-3.5 text-zinc-400" />
+                                      Xem chi tiết
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator className="my-1 bg-zinc-50" />
+                                    <DropdownMenuItem
+                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
+                                      onClick={() =>
+                                        requestAction(
+                                          "Khôi phục tài khoản",
+                                          `Bạn có chắc chắn muốn khôi phục tài khoản ${u.email}? Tài khoản sẽ hoạt động lại bình thường.`,
+                                          "info",
+                                          () =>
+                                            restoreMutation.mutateAsync(u.id),
+                                          "Đã khôi phục tài khoản",
+                                        )
+                                      }
+                                    >
+                                      <RotateCcw className="w-3.5 h-3.5" />
+                                      Khôi phục tài khoản
+                                    </DropdownMenuItem>
+                                  </>
                                 )}
-                                <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                                <DropdownMenuItem
-                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-700"
-                                  onClick={() =>
-                                    requestAction(
-                                      "Vô hiệu hóa tài khoản",
-                                      `Bạn có chắc chắn muốn vô hiệu hóa tài khoản ${u.email}? Tài khoản sẽ được chuyển vào thùng rác.`,
-                                      "danger",
-                                      () => deleteMutation.mutateAsync(u.id),
-                                      "Đã vô hiệu hóa"
-                                    )
-                                  }
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                  Vô hiệu hóa
-                                </DropdownMenuItem>
-                              </>
-                            ) : (
-                              <>
-                                <DropdownMenuItem
-                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
-                                  onClick={() => router.push(`/admin/users/${u.id}`)}
-                                >
-                                  <Eye className="w-3.5 h-3.5 text-zinc-400" />
-                                  Xem chi tiết
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                                <DropdownMenuItem
-                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
-                                onClick={() =>
-                                  requestAction(
-                                    "Khôi phục tài khoản",
-                                    `Bạn có chắc chắn muốn khôi phục tài khoản ${u.email}? Tài khoản sẽ hoạt động lại bình thường.`,
-                                    "info",
-                                    () => restoreMutation.mutateAsync(u.id),
-                                    "Đã khôi phục tài khoản"
-                                  )
-                                }
-                              >
-                                <RotateCcw className="w-3.5 h-3.5" />
-                                Khôi phục tài khoản
-                              </DropdownMenuItem>
-                              </>
-                            )}
-                            </DropdownMenuGroup>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                              </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </div>
                     </td>
@@ -798,80 +958,13 @@ export default function UsersAdminPage() {
         </div>
 
         {/* ── PAGINATION ──────────────────────────────────────────── */}
-        <div className="px-6 sm:px-8 py-5 border-t border-zinc-50 flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* Result Info */}
-          <p className="text-xs text-zinc-400 font-medium order-2 sm:order-1">
-            {totalElements > 0 ? (
-              <>
-                Hiển thị{" "}
-                <span className="font-bold text-zinc-600">
-                  {startIndex}–{endIndex}
-                </span>{" "}
-                trong{" "}
-                <span className="font-bold text-zinc-600">{totalElements}</span>{" "}
-                thành viên
-              </>
-            ) : (
-              "Không có kết quả"
-            )}
-          </p>
-
-          {/* Page Controls */}
-          <div className="flex items-center gap-1.5 order-1 sm:order-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              disabled={page === 0 || query.isLoading}
-              onClick={() => {
-                setPage((p) => p - 1);
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              className="h-8 w-8 rounded-lg border border-zinc-100 hover:bg-zinc-50 hover:border-zinc-200 disabled:opacity-40 transition-all"
-            >
-              <ChevronLeft className="w-4 h-4 text-zinc-500" />
-            </Button>
-
-            {getPageNumbers().map((p, i) =>
-              p === "..." ? (
-                <span
-                  key={`ellipsis-${i}`}
-                  className="w-8 h-8 flex items-center justify-center text-zinc-400 text-xs font-bold"
-                >
-                  …
-                </span>
-              ) : (
-                <button
-                  key={p}
-                  onClick={() => {
-                    setPage(p as number);
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                  className={cn(
-                    "h-8 min-w-[2rem] px-2.5 rounded-lg text-xs font-bold transition-all duration-200 border",
-                    page === p
-                      ? "bg-zinc-950 text-white border-zinc-950 shadow-sm"
-                      : "border-zinc-100 text-zinc-500 hover:bg-zinc-50 hover:border-zinc-200"
-                  )}
-                >
-                  {(p as number) + 1}
-                </button>
-              )
-            )}
-
-            <Button
-              variant="ghost"
-              size="icon"
-              disabled={page >= totalPages - 1 || query.isLoading}
-              onClick={() => {
-                setPage((p) => p + 1);
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              className="h-8 w-8 rounded-lg border border-zinc-100 hover:bg-zinc-50 hover:border-zinc-200 disabled:opacity-40 transition-all"
-            >
-              <ChevronRight className="w-4 h-4 text-zinc-500" />
-            </Button>
-          </div>
-        </div>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          totalElements={totalElements}
+          size={size}
+          onPageChange={setPage}
+        />
       </div>
       <CreateUserDialog
         open={createDialogOpen}

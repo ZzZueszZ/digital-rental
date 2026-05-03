@@ -25,6 +25,7 @@ import {
   useRestoreCategory 
 } from "@/services/category";
 import { CategoryResponse, CategoryCreateRequest } from "@/types/category";
+import { Pagination } from "../components/Pagination";
 import { CategoryDialog } from "./components/CategoryDialog";
 import { CategoryTableRow, CategoryMobileCard } from "./components/CategoryListItems";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
@@ -57,6 +58,7 @@ export default function CategoriesAdminPage() {
   const categories = query.data?.data || [];
   const pagination = query.data?.pagination;
   const totalPages = pagination?.totalPages || 1;
+  const totalElements = pagination?.totalElements || 0;
 
   // Mutations
   const createMutation = useCreateCategory();
@@ -119,12 +121,12 @@ export default function CategoriesAdminPage() {
   };
 
   return (
-    <div className="flex-1 space-y-6 lg:space-y-8">
+    <div className="flex-1 space-y-6">
       {/* KPI Stats */}
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Tổng danh mục"
-          value={pagination?.totalElements || 0}
+          value={totalElements}
           trend={12}
           icon={Layers}
           accent="bg-zinc-950"
@@ -137,7 +139,7 @@ export default function CategoriesAdminPage() {
           accent="bg-emerald-500"
         />
         <StatCard
-          title="Đã vô hiệu"
+          title="Đã lưu trữ"
           value={viewMode === "DELETED" ? categories.length : "-"}
           trend={0}
           icon={EyeOff}
@@ -152,145 +154,143 @@ export default function CategoriesAdminPage() {
         />
       </div>
 
-      {/* Header & Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="flex bg-zinc-50 p-1 rounded-xl border border-zinc-100">
-            <button
-              onClick={() => { setViewMode("ACTIVE"); setPage(0); }}
-              className={cn(
-                "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
-                viewMode === "ACTIVE" ? "bg-white text-zinc-950 shadow-sm" : "text-zinc-400 hover:text-zinc-600"
-              )}
-            >
-              Hoạt động
-            </button>
-            <button
-              onClick={() => { setViewMode("DELETED"); setPage(0); }}
-              className={cn(
-                "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
-                viewMode === "DELETED" ? "bg-white text-zinc-950 shadow-sm" : "text-zinc-400 hover:text-zinc-600"
-              )}
-            >
-              Lưu trữ
-            </button>
-          </div>
-        </div>
+      {/* Main Table Card */}
+      <div className="bg-white rounded-3xl border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+        {/* Header */}
+        <div className="px-6 sm:px-8 py-6 border-b border-zinc-50">
+          <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
+            {/* Left: Title + Tab Toggle */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+              <div>
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 flex items-center justify-center shadow-lg shadow-zinc-200">
+                    <Layers className="w-5 h-5 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h2 className="text-xl font-black text-zinc-950 tracking-tight">
+                    {viewMode === "ACTIVE" ? "Quản lý danh mục" : "Danh mục lưu trữ"}
+                  </h2>
+                </div>
+                <p className="text-xs text-zinc-400 font-medium ml-13">
+                  Cơ cấu và phân loại thiết bị nhiếp ảnh
+                </p>
+              </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-          <div className="relative flex-1 sm:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-            <Input
-              placeholder="Tìm danh mục..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 h-11 rounded-xl bg-zinc-50 border-zinc-100 text-xs font-bold focus:bg-white transition-all"
-            />
-          </div>
-          <Button
-            onClick={() => { setSelectedCategory(null); setIsDialogOpen(true); }}
-            className="h-11 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-bold px-6 transition-all gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">Thêm danh mục</span>
-          </Button>
-        </div>
-      </div>
+              {/* Tab Toggle */}
+              <div className="flex items-center gap-1 bg-zinc-50 border border-zinc-100 p-1 rounded-xl w-fit">
+                {(["ACTIVE", "DELETED"] as const).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => { setViewMode(mode); setPage(0); }}
+                    className={cn(
+                      "px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300",
+                      viewMode === mode
+                        ? "bg-zinc-950 text-white shadow-md"
+                        : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50"
+                    )}
+                  >
+                    {mode === "ACTIVE" ? "Hoạt động" : "Lưu trữ"}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-      {/* Categories List */}
-      <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
-        {/* Desktop View */}
-        <div className="hidden lg:block">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Mã & ID</th>
-                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Tên & Mô tả</th>
-                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Trạng thái</th>
-                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Ngày tạo</th>
-                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] text-right">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-50">
-              {query.isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i} className="animate-pulse">
-                    <td colSpan={5} className="px-6 py-4"><div className="h-12 bg-zinc-50 rounded-xl w-full" /></td>
-                  </tr>
-                ))
-              ) : categories.length === 0 ? (
-                <tr>
-                  <td colSpan={5}>
-                    <EmptyState 
-                      title="Không tìm thấy danh mục" 
-                      description="Hãy thử thay đổi từ khóa tìm kiếm hoặc tạo danh mục mới."
-                    />
-                  </td>
-                </tr>
-              ) : (
-                categories.map((cat) => (
-                  <CategoryTableRow
-                    key={cat.id}
-                    category={cat}
-                    onEdit={(c) => { setSelectedCategory(c); setIsDialogOpen(true); }}
-                    onDelete={handleDelete}
-                    onRestore={handleRestore}
-                  />
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile View */}
-        <div className="lg:hidden p-4 space-y-4">
-          {query.isLoading ? (
-            Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-32 bg-zinc-50 rounded-2xl animate-pulse" />
-            ))
-          ) : categories.length === 0 ? (
-            <EmptyState title="Trống" description="Không có danh mục nào." />
-          ) : (
-            categories.map((cat) => (
-              <CategoryMobileCard
-                key={cat.id}
-                category={cat}
-                onEdit={(c) => { setSelectedCategory(c); setIsDialogOpen(true); }}
-                onDelete={handleDelete}
-                onRestore={handleRestore}
-              />
-            ))
-          )}
-        </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-between">
-            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-              Trang {page + 1} / {totalPages}
-            </p>
-            <div className="flex items-center gap-2">
+            {/* Right: Search + Add */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <div className="relative flex-1 xl:w-72 group">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors duration-200" />
+                <Input
+                  placeholder="Tìm tên danh mục..."
+                  className="pl-10 h-11 rounded-xl border-zinc-200 bg-zinc-50 focus:bg-white focus:border-red-500/30 focus:ring-2 focus:ring-red-500/20 transition-all text-xs font-bold text-zinc-900 placeholder:text-zinc-400"
+                  value={search}
+                  onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+                />
+              </div>
               <Button
-                variant="outline"
-                size="icon"
-                disabled={page === 0}
-                onClick={() => setPage(p => p - 1)}
-                className="w-8 h-8 rounded-lg border-zinc-200"
+                onClick={() => { setSelectedCategory(null); setIsDialogOpen(true); }}
+                className="h-11 px-6 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold text-xs flex items-center gap-2 shadow-sm whitespace-nowrap"
               >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                disabled={page >= totalPages - 1}
-                onClick={() => setPage(p => p + 1)}
-                className="w-8 h-8 rounded-lg border-zinc-200"
-              >
-                <ChevronRight className="w-4 h-4" />
+                <Plus className="w-4 h-4" />
+                Thêm danh mục
               </Button>
             </div>
           </div>
-        )}
+        </div>
+
+        {/* Categories List */}
+        <div className="overflow-x-auto">
+          {/* Desktop View */}
+          <div className="hidden lg:block">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-zinc-50/80 border-b border-zinc-100">
+                  <th className="px-8 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Mã & ID</th>
+                  <th className="px-8 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Tên & Mô tả</th>
+                  <th className="px-8 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Trạng thái</th>
+                  <th className="px-8 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Ngày tạo</th>
+                  <th className="px-8 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] text-right">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-50">
+                {query.isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td colSpan={5} className="px-8 py-6"><div className="h-10 bg-zinc-50 rounded-xl w-full" /></td>
+                    </tr>
+                  ))
+                ) : categories.length === 0 ? (
+                  <tr>
+                    <td colSpan={5}>
+                      <EmptyState 
+                        title="Không tìm thấy danh mục" 
+                        description="Hãy thử thay đổi từ khóa tìm kiếm hoặc tạo danh mục mới."
+                      />
+                    </td>
+                  </tr>
+                ) : (
+                  categories.map((cat) => (
+                    <CategoryTableRow
+                      key={cat.id}
+                      category={cat}
+                      onEdit={(c) => { setSelectedCategory(c); setIsDialogOpen(true); }}
+                      onDelete={handleDelete}
+                      onRestore={handleRestore}
+                    />
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile View */}
+          <div className="lg:hidden p-4 space-y-4">
+            {query.isLoading ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="h-32 bg-zinc-50 rounded-2xl animate-pulse" />
+              ))
+            ) : categories.length === 0 ? (
+              <EmptyState title="Trống" description="Không có danh mục nào." />
+            ) : (
+              categories.map((cat) => (
+                <CategoryMobileCard
+                  key={cat.id}
+                  category={cat}
+                  onEdit={(c) => { setSelectedCategory(c); setIsDialogOpen(true); }}
+                  onDelete={handleDelete}
+                  onRestore={handleRestore}
+                />
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Pagination */}
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          totalElements={totalElements}
+          size={10}
+          onPageChange={setPage}
+        />
       </div>
 
       {/* Dialogs */}

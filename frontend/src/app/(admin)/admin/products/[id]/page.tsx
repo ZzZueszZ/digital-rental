@@ -182,14 +182,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
 
-          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex gap-4 overflow-x-auto p-2 scrollbar-hide">
             {images.map((img, idx) => (
               <button
                 key={idx}
                 onClick={() => setActiveImage(img)}
                 className={cn(
-                  "relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 transition-all border-2",
-                  currentImage === img ? "border-zinc-950 scale-105 shadow-lg" : "border-transparent opacity-60 hover:opacity-100"
+                  "relative w-24 h-24 rounded-2xl flex-shrink-0 transition-all duration-300 overflow-hidden",
+                  currentImage === img 
+                    ? "ring-2 ring-red-600 ring-offset-2 scale-105 shadow-md z-10" 
+                    : "opacity-50 grayscale hover:opacity-100 hover:grayscale-0"
                 )}
               >
                 <Image

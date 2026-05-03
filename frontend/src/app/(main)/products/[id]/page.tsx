@@ -259,6 +259,7 @@ export default function ProductDetailPage() {
                 <div className="flex flex-wrap gap-3 md:gap-4 mt-4">
                   {/* Insert main image as first thumbnail if not explicitly in gallery */}
                   <div
+                    onClick={() => setMainImageUrl(product.mainImageUrl)}
                     className={`w-20 md:w-28 shrink-0 aspect-4/3 relative rounded-xl overflow-hidden cursor-pointer transition-all duration-500 ${
                       mainImageUrl === product.mainImageUrl
                         ? "ring-2 ring-zinc-900 ring-offset-2 ring-offset-zinc-50 scale-105"

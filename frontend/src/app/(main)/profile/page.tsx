@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useAuthStore } from "@/store/auth";
+import Link from "next/link";
 import {
   useMyProfile,
   useUpdateMyProfile,
@@ -16,7 +17,7 @@ import {
   useDeleteAddress,
   useSetDefaultAddress,
 } from "@/services/address";
-import { ShippingAddressResponse } from "@/types/address";
+import { City, ShippingAddressResponse, ShippingAddressRequest } from "@/types/address";
 import { useMyCart } from "@/services/cart";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,6 +60,8 @@ import {
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/auth";
 import { cn } from "@/lib/utils";
+import { AdminFormDialog } from "@/components/common/AdminFormDialog";
+import { isAxiosError } from "axios";
 
 type Section = "overview" | "info" | "address" | "orders" | "cart";
 
@@ -122,14 +125,14 @@ export default function ProfileDashboard() {
       {/* Sidebar - Replicated from Admin Style */}
       <aside className="w-72 shrink-0 border-r border-zinc-100 bg-white flex flex-col fixed h-full z-40 transition-all duration-300">
         <div className="h-20 flex items-center px-8 border-b border-zinc-50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100">
+          <Link href="/" className="flex items-center gap-3 group transition-all duration-300">
+            <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100 group-hover:rotate-12 transition-transform">
               <Camera className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-black tracking-tighter text-zinc-950">
+            <span className="text-xl font-black tracking-tighter text-zinc-950 group-hover:text-red-600 transition-colors">
               LENSHUB<span className="text-red-600">.</span>
             </span>
-          </div>
+          </Link>
         </div>
 
         <div className="p-6 flex-1 space-y-8 overflow-y-auto custom-scrollbar">
@@ -755,12 +758,56 @@ function InfoSection({
   );
 }
 
+const CITY_LABELS: Record<City, string> = {
+  [City.TUYEN_QUANG]: "Tỉnh Tuyên Quang",
+  [City.LAO_CAI]: "Tỉnh Lào Cai",
+  [City.THAI_NGUYEN]: "Tỉnh Thái Nguyên",
+  [City.PHU_THO]: "Tỉnh Phú Thọ",
+  [City.BAC_NINH]: "Tỉnh Bắc Ninh",
+  [City.HUNG_YEN]: "Tỉnh Hưng Yên",
+  [City.HAI_PHONG]: "Thành phố Hải Phòng",
+  [City.NINH_BINH]: "Tỉnh Ninh Bình",
+  [City.QUANG_TRI]: "Tỉnh Quảng Trị",
+  [City.DA_NANG]: "Thành phố Đà Nẵng",
+  [City.QUANG_NGAI]: "Tỉnh Quảng Ngãi",
+  [City.GIA_LAI]: "Tỉnh Gia Lai",
+  [City.KHANH_HOA]: "Tỉnh Khánh Hoà",
+  [City.LAM_DONG]: "Tỉnh Lâm Đồng",
+  [City.DAK_LAK]: "Tỉnh Đắk Lắk",
+  [City.HO_CHI_MINH]: "Thành phố Hồ Chí Minh",
+  [City.DONG_NAI]: "Tỉnh Đồng Nai",
+  [City.TAY_NINH]: "Tỉnh Tây Ninh",
+  [City.CAN_THO]: "Thành phố Cần Thơ",
+  [City.VINH_LONG]: "Tỉnh Vĩnh Long",
+  [City.DONG_THAP]: "Tỉnh Đồng Tháp",
+  [City.CA_MAU]: "Tỉnh Cà Mau",
+  [City.AN_GIANG]: "Tỉnh An Giang",
+  [City.HA_NOI]: "Thành phố Hà Nội",
+  [City.HUE]: "Thành phố Huế",
+  [City.LAI_CHAU]: "Tỉnh Lai Châu",
+  [City.DIEN_BIEN]: "Tỉnh Điện Biên",
+  [City.SON_LA]: "Tỉnh Sơn La",
+  [City.LANG_SON]: "Tỉnh Lạng Sơn",
+  [City.QUANG_NINH]: "Tỉnh Quảng Ninh",
+  [City.THANH_HOA]: "Tỉnh Thanh Hoá",
+  [City.NGHE_AN]: "Tỉnh Nghệ An",
+  [City.HA_TINH]: "Tỉnh Hà Tĩnh",
+  [City.CAO_BANG]: "Tỉnh Cao Bằng",
+};
+
 function AddressSection() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState<ShippingAddressResponse | null>(null);
   const { data: addressesRes } = useMyAddresses();
   const { mutateAsync: deleteAddress } = useDeleteAddress();
   const { mutateAsync: setDefault } = useSetDefaultAddress();
 
   const addresses = addressesRes?.data || [];
+
+  const handleOpenDialog = (address?: ShippingAddressResponse) => {
+    setSelectedAddress(address || null);
+    setIsDialogOpen(true);
+  };
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -773,10 +820,20 @@ function AddressSection() {
             Lưu trữ các điểm giao nhận để thanh toán nhanh hơn
           </p>
         </div>
-        <Button className="h-14 px-8 rounded-2xl bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-red-600 border-none transition-all shadow-xl shadow-zinc-100">
+        <Button 
+          onClick={() => handleOpenDialog()}
+          className="h-14 px-8 rounded-2xl bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-red-600 border-none transition-all shadow-xl shadow-zinc-100"
+        >
           <Plus className="w-5 h-5" /> Thêm địa chỉ mới
         </Button>
       </div>
+
+      <AddressDialog 
+        key={selectedAddress?.id || "new"}
+        isOpen={isDialogOpen} 
+        onClose={() => setIsDialogOpen(false)} 
+        address={selectedAddress}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {addresses.map((addr) => (
@@ -812,7 +869,10 @@ function AddressSection() {
                   </div>
                 )}
               </div>
-              <button className="h-10 w-10 rounded-xl hover:bg-zinc-100 flex items-center justify-center text-zinc-300 hover:text-zinc-900 transition-colors">
+              <button 
+                onClick={() => handleOpenDialog(addr)}
+                className="h-10 w-10 rounded-xl hover:bg-zinc-100 flex items-center justify-center text-zinc-300 hover:text-zinc-900 transition-colors"
+              >
                 <MoreVertical className="w-5 h-5" />
               </button>
             </div>
@@ -859,7 +919,10 @@ function AddressSection() {
           </div>
         ))}
 
-        <button className="border-4 border-dashed border-zinc-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-6 text-zinc-300 hover:border-red-600/30 hover:text-red-600 hover:bg-red-50/30 transition-all group">
+        <button 
+          onClick={() => handleOpenDialog()}
+          className="border-4 border-dashed border-zinc-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-6 text-zinc-300 hover:border-red-600/30 hover:text-red-600 hover:bg-red-50/30 transition-all group"
+        >
           <div className="w-16 h-16 rounded-full bg-zinc-50 flex items-center justify-center group-hover:bg-white group-hover:shadow-xl transition-all">
             <Plus className="w-8 h-8" />
           </div>
@@ -869,6 +932,175 @@ function AddressSection() {
         </button>
       </div>
     </div>
+  );
+}
+
+function AddressDialog({ 
+  isOpen, 
+  onClose, 
+  address 
+}: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  address: ShippingAddressResponse | null;
+}) {
+  const { mutateAsync: createAddress, isPending: isCreating } = useCreateAddress();
+  const { mutateAsync: updateAddress, isPending: isUpdating } = useUpdateAddress();
+  
+  const [formData, setFormData] = useState<ShippingAddressRequest>(() => {
+    if (address) {
+      return {
+        receiverName: address.receiverName,
+        receiverPhone: address.receiverPhone,
+        fullAddress: address.fullAddress,
+        province: address.province as City,
+        district: address.district,
+        ward: address.ward,
+        detailAddress: address.detailAddress,
+        setAsDefault: address.isDefault,
+      };
+    }
+    return {
+      receiverName: "",
+      receiverPhone: "",
+      fullAddress: "",
+      province: "",
+      district: "",
+      ward: "",
+      detailAddress: "",
+      setAsDefault: false,
+    };
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (address) {
+        await updateAddress({ id: address.id, data: formData });
+        toast.success("Cập nhật địa chỉ thành công");
+      } else {
+        await createAddress(formData);
+        toast.success("Thêm địa chỉ mới thành công");
+      }
+      onClose();
+    } catch (error) {
+      const message = isAxiosError(error) 
+        ? error.response?.data?.message 
+        : "Đã xảy ra lỗi không xác định";
+      toast.error(message);
+    }
+  };
+
+  return (
+    <AdminFormDialog
+      open={isOpen}
+      onOpenChange={onClose}
+      title={address ? "Cập nhật địa chỉ" : "Địa chỉ mới"}
+      description="Vui lòng điền chính xác thông tin để quá trình giao hàng diễn ra thuận lợi"
+      icon={MapPin}
+      onSubmit={handleSubmit}
+      isPending={isCreating || isUpdating}
+      submitText={address ? "Cập nhật ngay" : "Lưu địa chỉ"}
+      submitIcon={address ? Check : Plus}
+      maxWidth="max-w-2xl"
+    >
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Người nhận</Label>
+            <Input 
+              value={formData.receiverName}
+              onChange={e => setFormData({...formData, receiverName: e.target.value})}
+              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl px-6 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              placeholder="Họ và tên"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Số điện thoại</Label>
+            <Input 
+              value={formData.receiverPhone}
+              onChange={e => setFormData({...formData, receiverPhone: e.target.value})}
+              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl px-6 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              placeholder="09xx xxx xxx"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Tỉnh / Thành phố</Label>
+            <Select
+              value={formData.province as string}
+              onValueChange={(v) => setFormData({ ...formData, province: v as City })}
+            >
+              <SelectTrigger className="w-full! h-14! bg-zinc-50/30 border-zinc-100 rounded-2xl px-8 font-bold focus:border-red-600/30 transition-all text-left">
+                <SelectValue placeholder="Chọn Tỉnh/Thành phố" />
+              </SelectTrigger>
+              <SelectContent className="rounded-2xl shadow-2xl border-zinc-100 max-h-72">
+                {Object.entries(CITY_LABELS).map(([value, label]) => (
+                  <SelectItem key={value} value={value} className="font-bold py-3">
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Quận / Huyện</Label>
+            <Input 
+              value={formData.district}
+              onChange={e => setFormData({...formData, district: e.target.value})}
+              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl px-6 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              placeholder="Nhập Quận/Huyện"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Phường / Xã</Label>
+            <Input 
+              value={formData.ward}
+              onChange={e => setFormData({...formData, ward: e.target.value})}
+              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl px-6 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              placeholder="Nhập Phường/Xã"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Địa chỉ chi tiết</Label>
+            <Input 
+              value={formData.detailAddress}
+              onChange={e => setFormData({...formData, detailAddress: e.target.value})}
+              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl px-6 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              placeholder="Số nhà, ngõ, tên đường..."
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Địa chỉ đầy đủ (Tự động cập nhật)</Label>
+          <Input 
+            value={formData.fullAddress}
+            onChange={e => setFormData({...formData, fullAddress: e.target.value})}
+            className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl px-6 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+            placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
+          />
+        </div>
+
+        <div className="flex items-center gap-3 p-6 bg-zinc-50/30 rounded-2xl border border-zinc-100">
+          <input 
+            type="checkbox" 
+            id="isDefault"
+            checked={formData.setAsDefault}
+            onChange={e => setFormData({...formData, setAsDefault: e.target.checked})}
+            className="w-5 h-5 rounded-md border-zinc-200 text-zinc-950 focus:ring-zinc-950 cursor-pointer"
+          />
+          <label htmlFor="isDefault" className="text-xs font-bold text-zinc-500 cursor-pointer uppercase tracking-widest">
+            Đặt làm địa chỉ giao hàng mặc định
+          </label>
+        </div>
+      </div>
+    </AdminFormDialog>
   );
 }
 

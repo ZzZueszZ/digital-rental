@@ -92,7 +92,7 @@ export default function Home() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="rounded-full px-8 h-12 text-[14px] md:text-[16px] font-semibold border border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-50 transition-all active:scale-95"
+                  className="rounded-full px-8 h-12 text-[14px] md:text-[16px] font-semibold border border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-900 hover:text-white transition-all active:scale-95"
                 >
                   Bắt đầu thuê
                 </Button>

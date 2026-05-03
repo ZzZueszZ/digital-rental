@@ -463,7 +463,7 @@ export default function ProductDetailPage() {
                       onClick={handleBuyNow}
                       disabled={isAddingToCart}
                       variant="outline"
-                      className="w-full rounded-xl h-12 border-zinc-200 bg-zinc-50/50 text-zinc-900 text-[14px] md:text-[16px] font-semibold hover:bg-white hover:border-zinc-900 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                      className="w-full rounded-xl h-12 border-zinc-200 bg-zinc-50/50 text-zinc-900 text-[14px] md:text-[16px] font-semibold hover:bg-zinc-900 hover:text-white transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                     >
                       Mua ngay
                     </Button>

@@ -28,9 +28,9 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
       onClick={() => onView(product.id)}
       className="group transition-all duration-300 hover:bg-zinc-50/50 cursor-pointer"
     >
-      <td className="px-6 py-4">
+      <td className="px-6 py-3.5">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200/50">
+          <div className="w-11 h-11 rounded-lg bg-zinc-100 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200/50">
             {product.mainImageUrl ? (
               <Image 
                 src={getImageUrl(product.mainImageUrl)} 
@@ -62,7 +62,7 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
           </div>
         </div>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-6 py-3.5">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <Badge variant="outline" className={cn("text-[10px] font-bold px-1.5 py-0 border-0 shadow-none", product.isForRent ? "bg-amber-100/50 text-amber-700" : "bg-zinc-100 text-zinc-400")}>Thuê</Badge>
@@ -74,7 +74,7 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
           </div>
         </div>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-6 py-3.5">
         <Badge
           className={cn(
             "rounded-md px-2.5 py-1 text-xs font-semibold border-0 ring-0 shadow-none",
@@ -86,7 +86,7 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
           {!isDeleted ? (product.active ? "Hoạt động" : "Ẩn") : "Đã xóa"}
         </Badge>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-6 py-3.5">
         <div className="flex flex-col">
           <span className="text-xs font-semibold text-zinc-900">
             {format(new Date(product.createdAt), "dd/MM/yyyy", { locale: vi })}
@@ -96,7 +96,7 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
           </span>
         </div>
       </td>
-      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+      <td className="px-6 py-3.5 text-right" onClick={(e) => e.stopPropagation()}>
         <ProductActionMenu
           isActive={product.active}
           isDeleted={isDeleted}
@@ -116,7 +116,7 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
 export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, onDelete, onRestore, onHardDelete, onView, isDeleted }: ItemProps) {
 
   return (
-    <div className="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm space-y-4 group active:scale-[0.98] transition-all">
+    <div className="bg-white p-4 rounded-xl border border-zinc-100 shadow-sm space-y-4 group active:scale-[0.98] transition-all duration-150">
       <div className="flex justify-between items-start gap-4">
         <div className="flex gap-3 overflow-hidden">
           <div className="w-14 h-14 rounded-xl bg-zinc-50 flex items-center justify-center shrink-0 overflow-hidden border border-zinc-200/50">

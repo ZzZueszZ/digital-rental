@@ -26,14 +26,14 @@ export function TopProductsCard({ products }: TopProductsCardProps) {
   };
 
   return (
-    <Card className="rounded-2xl border-zinc-200 overflow-hidden bg-white shadow-sm">
-      <CardHeader className="px-5 sm:px-8 pt-6 sm:pt-8 flex flex-row items-center justify-between">
+    <Card className="rounded-xl border-zinc-200 overflow-hidden bg-white shadow-sm">
+      <CardHeader className="px-5 py-4 flex flex-row items-center justify-between">
         <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950">
           Sản phẩm tiêu biểu
         </CardTitle>
         <PackageOpen className="w-6 h-6 text-zinc-200" />
       </CardHeader>
-      <CardContent className="p-4 sm:p-8">
+      <CardContent className="p-4">
         <div className="space-y-4 sm:space-y-5">
           {products.map((p, i) => (
             <div

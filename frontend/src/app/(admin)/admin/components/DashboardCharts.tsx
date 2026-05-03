@@ -28,8 +28,8 @@ export function DashboardCharts({ revenueData, dailyOrders }: DashboardChartsPro
   return (
     <div className="grid gap-5 sm:gap-6 grid-cols-1 xl:grid-cols-7">
       {/* Revenue Area Chart */}
-      <Card className="xl:col-span-4 rounded-2xl border-zinc-200 overflow-hidden bg-white shadow-sm">
-        <CardHeader className="border-b border-zinc-50 pb-6 px-4 sm:px-8 pt-6 sm:pt-8">
+      <Card className="xl:col-span-4 rounded-xl border-zinc-200 overflow-hidden bg-white shadow-sm">
+        <CardHeader className="border-b border-zinc-50 py-4 px-5">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950">
@@ -42,13 +42,13 @@ export function DashboardCharts({ revenueData, dailyOrders }: DashboardChartsPro
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full h-9 px-5 text-[10px] font-bold uppercase tracking-widest border-zinc-200 hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all duration-300"
+              className="rounded-xl h-10 px-5 text-xs font-semibold border-zinc-200 hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all duration-150"
             >
               Xuất báo cáo
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="p-2 sm:p-6">
+        <CardContent className="p-4 sm:p-5">
           <div className="h-[280px] sm:h-[350px] w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
@@ -100,8 +100,8 @@ export function DashboardCharts({ revenueData, dailyOrders }: DashboardChartsPro
       </Card>
 
       {/* Daily Orders Bar Chart */}
-      <Card className="xl:col-span-3 rounded-2xl border-zinc-200 overflow-hidden bg-white shadow-sm">
-        <CardHeader className="border-b border-zinc-50 pb-6 px-4 sm:px-8 pt-6 sm:pt-8">
+      <Card className="xl:col-span-3 rounded-xl border-zinc-200 overflow-hidden bg-white shadow-sm">
+        <CardHeader className="border-b border-zinc-50 py-4 px-5">
           <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950">
             Đơn hàng mới
           </CardTitle>
@@ -109,7 +109,7 @@ export function DashboardCharts({ revenueData, dailyOrders }: DashboardChartsPro
             Tần suất giao dịch mỗi ngày
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-2 sm:p-6">
+        <CardContent className="p-4 sm:p-5">
           <div className="h-[280px] sm:h-[350px] w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={dailyOrders} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

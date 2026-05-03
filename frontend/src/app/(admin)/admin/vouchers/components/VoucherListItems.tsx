@@ -58,10 +58,10 @@ export function VoucherTableRow({
 
   return (
     <tr className="group hover:bg-zinc-50/50 transition-all duration-300">
-      <td className="px-8 py-5">
+      <td className="px-6 py-3.5">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-            <Ticket className="w-5 h-5 text-zinc-400 group-hover:text-red-600 transition-colors" />
+          <div className="w-9 h-9 rounded-lg bg-zinc-50 border border-zinc-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-150">
+            <Ticket className="w-4 h-4 text-zinc-400 group-hover:text-red-600 transition-colors" />
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold text-zinc-950 tracking-tight">{voucher.code}</span>
@@ -69,13 +69,13 @@ export function VoucherTableRow({
           </div>
         </div>
       </td>
-      <td className="px-8 py-5">
+      <td className="px-6 py-3.5">
         <div className="flex flex-col max-w-[200px]">
           <span className="text-sm font-semibold text-zinc-900 line-clamp-1">{voucher.name}</span>
           <span className="text-xs font-medium text-zinc-400 line-clamp-1 italic">{voucher.description || "Không có mô tả"}</span>
         </div>
       </td>
-      <td className="px-8 py-5">
+      <td className="px-6 py-3.5">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <Badge variant="outline" className={cn("text-xs font-semibold px-2 py-0.5 border-0 shadow-none", status.className)}>
@@ -92,7 +92,7 @@ export function VoucherTableRow({
           </div>
         </div>
       </td>
-      <td className="px-8 py-5">
+      <td className="px-6 py-3.5">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <Users className="w-3.5 h-3.5 text-zinc-300" />
@@ -107,7 +107,7 @@ export function VoucherTableRow({
           <span className="text-[11px] font-medium text-zinc-400 pl-5">Lượt sử dụng</span>
         </div>
       </td>
-      <td className="px-8 py-5">
+      <td className="px-6 py-3.5">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <Calendar className="w-3.5 h-3.5 text-zinc-300" />
@@ -118,7 +118,7 @@ export function VoucherTableRow({
           <span className="text-[11px] font-medium text-zinc-400 pl-5">Ngày hết hạn</span>
         </div>
       </td>
-      <td className="px-8 py-5 text-right">
+      <td className="px-6 py-3.5 text-right">
         <DropdownMenu>
           <DropdownMenuTrigger className={cn(
             "h-8 w-8 rounded-xl flex items-center justify-center transition-all duration-300 outline-none",
@@ -127,7 +127,7 @@ export function VoucherTableRow({
           )}>
             <MoreHorizontal className="w-4 h-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 p-2 rounded-2xl border-zinc-100 shadow-xl">
+          <DropdownMenuContent align="end" className="w-48 p-2 rounded-xl border-zinc-100 shadow-xl">
             <DropdownMenuItem 
               onClick={() => onEdit(voucher)}
               className="flex items-center gap-2.5 p-2.5 rounded-xl cursor-pointer text-xs font-bold text-zinc-600 hover:text-zinc-950 hover:bg-zinc-50"
@@ -178,11 +178,11 @@ export function VoucherMobileCard({
   const status = getStatusConfig(voucher.status);
 
   return (
-    <div className="p-5 bg-white rounded-3xl border border-zinc-100 shadow-sm space-y-4">
+    <div className="p-4 bg-white rounded-xl border border-zinc-100 shadow-sm space-y-4">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-zinc-50 flex items-center justify-center">
-            <Ticket className="w-5 h-5 text-zinc-400" />
+          <div className="w-9 h-9 rounded-lg bg-zinc-50 flex items-center justify-center">
+            <Ticket className="w-4 h-4 text-zinc-400" />
           </div>
           <div className="flex flex-col">
             <span className="text-xs font-black text-zinc-950 uppercase tracking-wider">{voucher.code}</span>
@@ -194,7 +194,7 @@ export function VoucherMobileCard({
         </Badge>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 p-3 bg-zinc-50 rounded-2xl">
+      <div className="grid grid-cols-2 gap-3 p-3 bg-zinc-50 rounded-xl">
         <div className="flex flex-col">
           <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest mb-1 flex items-center gap-1">
             <Tag className="w-3 h-3" /> Ưu đãi

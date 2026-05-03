@@ -26,28 +26,28 @@ import { Label } from "@/components/ui/label";
 
 export default function SettingsAdminPage() {
   return (
-    <div className="flex-1 space-y-10">
+    <div className="flex-1 space-y-4 lg:space-y-6">
       {/* Header Section */}
       <div className="flex justify-end">
-        <Button className="h-12 px-8 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-semibold flex items-center gap-2 group shadow-xl shadow-zinc-950/20 text-sm">
-          <Save className="w-5 h-5" />
+        <Button className="h-10 px-6 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-150 font-semibold flex items-center gap-2 group shadow-sm text-xs">
+          <Save className="w-4 h-4" />
           Lưu tất cả thay đổi
         </Button>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-8">
+      <div className="grid gap-5 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-4 lg:space-y-6">
           {/* General Settings */}
-          <Card className="rounded-2xl border-zinc-200 bg-white shadow-sm overflow-hidden">
-            <CardHeader className="p-8 border-b border-zinc-50">
+          <Card className="rounded-xl border-zinc-200 bg-white shadow-sm overflow-hidden">
+            <CardHeader className="px-5 py-4 border-b border-zinc-50">
               <div className="flex items-center gap-3">
-                <Globe className="w-5 h-5 text-red-600" />
-                <CardTitle className="text-xl font-bold">
+                <Globe className="w-4 h-4 text-red-600" />
+                <CardTitle className="text-lg font-bold">
                   Thông tin chung
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="p-8 space-y-6">
+            <CardContent className="p-5 space-y-5">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-zinc-400">
@@ -55,7 +55,7 @@ export default function SettingsAdminPage() {
                   </Label>
                   <Input
                     placeholder="LensHub Ecosystem"
-                    className="h-12 rounded-xl bg-zinc-50/50"
+                    className="h-10 rounded-xl bg-zinc-50/50 text-xs font-medium"
                   />
                 </div>
                 <div className="space-y-2">
@@ -64,7 +64,7 @@ export default function SettingsAdminPage() {
                   </Label>
                   <Input
                     placeholder="admin@lenshub.pro"
-                    className="h-12 rounded-xl bg-zinc-50/50"
+                    className="h-10 rounded-xl bg-zinc-50/50 text-xs font-medium"
                   />
                 </div>
               </div>
@@ -74,18 +74,18 @@ export default function SettingsAdminPage() {
                 </Label>
                 <Input
                   placeholder="Nền tảng thuê và bán thiết bị nhiếp ảnh hàng đầu."
-                  className="h-12 rounded-xl bg-zinc-50/50"
+                  className="h-10 rounded-xl bg-zinc-50/50 text-xs font-medium"
                 />
               </div>
             </CardContent>
           </Card>
 
           {/* Maintenance Mode */}
-          <Card className="rounded-2xl border-zinc-200 bg-white shadow-sm overflow-hidden border-l-4 border-l-amber-400">
-            <CardContent className="p-8 flex items-center justify-between">
+          <Card className="rounded-xl border-zinc-200 bg-white shadow-sm overflow-hidden border-l-4 border-l-amber-400">
+            <CardContent className="p-5 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
-                  <RefreshCw className="w-6 h-6" />
+                <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center">
+                  <RefreshCw className="w-5 h-5" />
                 </div>
                 <div>
                   <p className="font-bold text-zinc-900">Chế độ bảo trì</p>
@@ -99,16 +99,16 @@ export default function SettingsAdminPage() {
           </Card>
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-4 lg:space-y-6">
           {/* Security Summary */}
-          <Card className="rounded-2xl border-zinc-200 bg-white shadow-sm overflow-hidden">
-            <CardHeader className="p-8 border-b border-zinc-50">
+          <Card className="rounded-xl border-zinc-200 bg-white shadow-sm overflow-hidden">
+            <CardHeader className="px-5 py-4 border-b border-zinc-50">
               <div className="flex items-center gap-3">
-                <Shield className="w-5 h-5 text-green-600" />
-                <CardTitle className="text-xl font-bold">Bảo mật</CardTitle>
+                <Shield className="w-4 h-4 text-green-600" />
+                <CardTitle className="text-lg font-bold">Bảo mật</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="p-8 space-y-6">
+            <CardContent className="p-5 space-y-5">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <p className="text-sm font-semibold text-zinc-900 italic">
@@ -133,7 +133,7 @@ export default function SettingsAdminPage() {
               </div>
               <Button
                 variant="outline"
-                className="w-full h-12 rounded-xl border-zinc-200 font-semibold gap-2 text-sm"
+                className="w-full h-10 rounded-xl border-zinc-200 font-semibold gap-2 text-xs"
               >
                 <Lock className="w-4 h-4" />
                 Nhật ký đăng nhập
@@ -142,12 +142,12 @@ export default function SettingsAdminPage() {
           </Card>
 
           {/* System Info */}
-          <Card className="rounded-2xl border-zinc-950 bg-zinc-950 shadow-xl overflow-hidden text-white">
-            <CardContent className="p-8 flex flex-col items-center text-center">
-              <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-6 border border-white/10">
-                <Database className="w-8 h-8 text-red-600" />
+          <Card className="rounded-xl border-zinc-950 bg-zinc-950 shadow-xl overflow-hidden text-white">
+            <CardContent className="p-6 flex flex-col items-center text-center">
+              <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center mb-5 border border-white/10">
+                <Database className="w-7 h-7 text-red-600" />
               </div>
-              <h4 className="text-xl font-bold mb-2">Trạng thái Database</h4>
+              <h4 className="text-lg font-bold mb-1.5">Trạng thái Database</h4>
               <p className="text-zinc-500 text-xs font-medium mb-6">
                 Mọi thứ đang vận hành ổn định trên Cloud Engine.
               </p>

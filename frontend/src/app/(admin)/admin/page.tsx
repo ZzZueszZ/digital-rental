@@ -32,9 +32,9 @@ export default function AdminDashboardPage() {
   const dailyOrders = dailyOrdersRes?.data || [];
 
   return (
-    <div className="flex-1 space-y-6 lg:space-y-8">
+    <div className="flex-1 space-y-4 lg:space-y-6">
       {/* KPI Stats Grid */}
-      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Doanh thu (30 ngày)"
           value={revenueData?.totalRevenue
@@ -74,14 +74,14 @@ export default function AdminDashboardPage() {
       <DashboardCharts revenueData={revenueData} dailyOrders={dailyOrders} />
 
       {/* Bottom Grid */}
-      <div className="grid gap-6 grid-cols-1 xl:grid-cols-3">
+      <div className="grid gap-5 grid-cols-1 xl:grid-cols-3">
         {/* Recent Activity - 2/3 width for better detail visibility */}
         <div className="xl:col-span-2">
           <RecentActivityCard />
         </div>
         
         {/* Sidebar Cards - Stacked 1/3 width */}
-        <div className="xl:col-span-1 space-y-6">
+        <div className="xl:col-span-1 space-y-4 lg:space-y-5">
           <TopProductsCard products={topProducts} />
           <LowStockCard products={lowStock} />
         </div>

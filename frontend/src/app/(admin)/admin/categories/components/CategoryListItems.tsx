@@ -21,10 +21,10 @@ export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: Item
       onClick={() => onEdit(category)}
       className="group transition-all duration-300 hover:bg-zinc-50/50 cursor-pointer"
     >
-      <td className="px-6 py-4">
+      <td className="px-6 py-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-400 group-hover:scale-110 group-hover:bg-zinc-950 group-hover:text-white transition-all duration-300">
-            <Tag className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-400 group-hover:scale-105 group-hover:bg-zinc-950 group-hover:text-white transition-all duration-150">
+            <Tag className="w-4 h-4" />
           </div>
           <div>
             <p className="text-sm font-semibold text-zinc-900 tracking-tight mb-0.5">
@@ -34,13 +34,13 @@ export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: Item
           </div>
         </div>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-6 py-3">
         <p className="text-sm font-semibold text-zinc-900 group-hover:text-red-600 transition-colors duration-300">{category.name}</p>
         <p className="text-xs text-zinc-500 line-clamp-1 max-w-xs" title={category.description}>
           {category.description || "Chưa có mô tả"}
         </p>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-6 py-3">
         <Badge
           className={cn(
             "rounded-md px-2.5 py-1 text-xs font-semibold border-0 ring-0 shadow-none",
@@ -52,7 +52,7 @@ export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: Item
           {category.isActive ? "Hoạt động" : "Vô hiệu"}
         </Badge>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-6 py-3">
         <div className="flex flex-col">
           <span className="text-xs font-semibold text-zinc-900">
             {format(new Date(category.createdAt), "dd/MM/yyyy", { locale: vi })}
@@ -62,7 +62,7 @@ export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: Item
           </span>
         </div>
       </td>
-      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+      <td className="px-6 py-3 text-right" onClick={(e) => e.stopPropagation()}>
         <CategoryActionMenu
           isActive={category.isActive}
           onEdit={() => onEdit(category)}
@@ -76,11 +76,11 @@ export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: Item
 
 export function CategoryMobileCard({ category, onEdit, onDelete, onRestore }: ItemProps) {
   return (
-    <div className="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm space-y-4 group active:scale-[0.98] transition-all">
+    <div className="bg-white p-4 rounded-xl border border-zinc-100 shadow-sm space-y-4 group active:scale-[0.98] transition-all duration-150">
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-950">
-            <Tag className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-lg bg-zinc-50 flex items-center justify-center text-zinc-950">
+            <Tag className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center gap-2 mb-0.5">

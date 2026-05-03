@@ -191,9 +191,9 @@ export default function UsersAdminPage() {
   const totalElements = pagination?.totalElements || 0;
 
   return (
-    <div className="flex-1 space-y-6">
+    <div className="flex-1 space-y-4 lg:space-y-6">
       {/* ── KPI STATS GRID ─────────────────────────────────────── */}
-      <div className="grid gap-3 sm:gap-4 xl:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Tổng thành viên"
           value={stats?.totalUsers || 0}
@@ -225,36 +225,36 @@ export default function UsersAdminPage() {
       </div>
 
       {/* ── MAIN TABLE CARD ─────────────────────────────────────── */}
-      <div className="bg-white rounded-3xl border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+      <div className="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden">
         {/* Header */}
-        <div className="px-6 sm:px-8 py-6 border-b border-zinc-50">
+        <div className="px-5 py-4 sm:py-5 border-b border-zinc-50">
           <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
             {/* Left: Title + Tab Toggle */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-6">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-100">
-                    <Camera className="w-5 h-5 text-white" strokeWidth={2} />
+                  <div className="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
+                    <Camera className="w-4.5 h-4.5 text-white" strokeWidth={2} />
                   </div>
                   <h2 className="text-xl font-bold text-zinc-950 tracking-tight">
                     {viewMode === "ACTIVE" ? "Quản lý thành viên" : "Thùng rác"}
                   </h2>
                 </div>
-                <p className="text-sm text-zinc-500 font-medium ml-13">
+                <p className="text-xs text-zinc-500 font-medium ml-12">
                   Giám sát & phân quyền tài khoản nhiếp ảnh gia
                 </p>
               </div>
 
               {/* Tab Toggle */}
-              <div className="flex items-center gap-1 bg-zinc-50 border border-zinc-100 p-1 rounded-xl w-fit">
+              <div className="flex items-center gap-1 bg-zinc-50/50 border border-zinc-100 p-1 rounded-lg w-fit">
                 {(["ACTIVE", "DELETED"] as const).map((mode) => (
                     <button
                       key={mode}
                       onClick={() => handleViewModeChange(mode)}
                       className={cn(
-                        "px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300",
+                        "px-4 py-1.5 rounded-md text-xs font-semibold transition-all duration-150",
                         viewMode === mode
-                          ? "bg-zinc-950 text-white shadow-md"
+                          ? "bg-zinc-950 text-white shadow-sm"
                           : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50",
                       )}
                     >
@@ -270,7 +270,7 @@ export default function UsersAdminPage() {
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors duration-200" />
                 <Input
                   placeholder="Tìm theo email, ID..."
-                  className="pl-10 h-11 rounded-xl border-zinc-200 bg-zinc-50 focus:bg-white focus:border-red-500/30 focus:ring-2 focus:ring-red-500/20 transition-all text-sm font-medium text-zinc-900 placeholder:text-zinc-400"
+                  className="pl-10 h-10 rounded-xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:border-red-500/30 transition-all text-xs font-medium text-zinc-900 placeholder:text-zinc-400"
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
@@ -280,7 +280,7 @@ export default function UsersAdminPage() {
               </div>
               <Button
                 onClick={() => setCreateDialogOpen(true)}
-                className="h-11 px-6 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-semibold text-sm flex items-center gap-2 shadow-sm whitespace-nowrap"
+                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-150 font-semibold text-xs flex items-center gap-2 shadow-sm whitespace-nowrap"
               >
                 <Plus className="w-4 h-4" />
                 Thêm thành viên
@@ -617,8 +617,8 @@ export default function UsersAdminPage() {
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-zinc-50/80 border-b border-zinc-100">
-                <th className="px-8 py-4 w-10">
+              <tr className="bg-zinc-50/50 border-b border-zinc-100">
+                <th className="px-6 py-3.5 w-10">
                   <button
                     onClick={toggleAll}
                     className="text-zinc-400 hover:text-zinc-700 transition-colors"
@@ -643,7 +643,7 @@ export default function UsersAdminPage() {
                   <th
                     key={i}
                     className={cn(
-                      "px-8 py-4 text-xs font-semibold text-zinc-400 whitespace-nowrap",
+                      "px-6 py-3.5 text-xs font-semibold text-zinc-400 whitespace-nowrap",
                       i === 5 && "text-right",
                     )}
                   >
@@ -702,7 +702,7 @@ export default function UsersAdminPage() {
                     )}
                   >
                     {/* Checkbox */}
-                    <td className="px-8 py-4 w-10">
+                    <td className="px-6 py-3 w-10">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -717,11 +717,11 @@ export default function UsersAdminPage() {
                         )}
                       </button>
                     </td>
-                    <td className="px-8 py-4">
+                    <td className="px-6 py-3">
                       <div className="flex items-center gap-3.5">
                         <div
                           className={cn(
-                            "w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0",
+                            "w-9 h-9 rounded-lg bg-gradient-to-br flex items-center justify-center flex-shrink-0",
                             "shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md",
                             avatarColor.bg,
                           )}
@@ -736,7 +736,7 @@ export default function UsersAdminPage() {
                           </span>
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-zinc-900 truncate max-w-[180px] group-hover:text-red-600 transition-colors duration-300">
+                          <p className="text-sm font-semibold text-zinc-900 truncate max-w-[180px] group-hover:text-red-600 transition-colors duration-150">
                             {u.email}
                           </p>
                           <p className="text-xs text-zinc-400 font-mono mt-0.5">
@@ -747,12 +747,12 @@ export default function UsersAdminPage() {
                     </td>
 
                     {/* Status */}
-                    <td className="px-8 py-4">
+                    <td className="px-6 py-3">
                       {getStatusBadge(u.accountStatus)}
                     </td>
 
                     {/* KYC */}
-                    <td className="px-8 py-4">
+                    <td className="px-6 py-3">
                       {u.kycStatus === KycStatus.VERIFIED ? (
                         <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                           <ShieldCheck className="w-3 h-3" />
@@ -767,7 +767,7 @@ export default function UsersAdminPage() {
                     </td>
 
                     {/* Roles */}
-                    <td className="px-8 py-4">
+                    <td className="px-6 py-3">
                       <div className="flex flex-wrap gap-1">
                         {u.roles.map((role: string) => {
                           const isSpecial =
@@ -790,7 +790,7 @@ export default function UsersAdminPage() {
                     </td>
 
                     {/* Joined At */}
-                    <td className="px-8 py-4">
+                    <td className="px-6 py-3">
                       <span className="text-xs font-medium text-zinc-500 tabular-nums">
                         {new Date(u.createdAt).toLocaleDateString("vi-VN", {
                           day: "2-digit",

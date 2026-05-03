@@ -51,8 +51,8 @@ export function RecentActivityCard() {
   const logs = data?.data || [];
 
   return (
-    <Card className="rounded-2xl border-zinc-200 overflow-hidden bg-white shadow-sm flex flex-col h-full">
-      <CardHeader className="px-5 sm:px-8 pt-6 sm:pt-8 flex flex-row items-center justify-between border-b border-zinc-50 shrink-0">
+    <Card className="rounded-xl border-zinc-200 overflow-hidden bg-white shadow-sm flex flex-col h-full">
+      <CardHeader className="px-5 py-4 flex flex-row items-center justify-between border-b border-zinc-50 shrink-0">
         <div>
           <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950">
             Hoạt động hệ thống
@@ -117,7 +117,7 @@ export function RecentActivityCard() {
           <Button 
             onClick={() => router.push("/admin/audit-logs")}
             variant="ghost" 
-            className="w-full h-11 rounded-xl text-sm font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-white border border-transparent hover:border-zinc-200 transition-all gap-2"
+            className="w-full h-10 rounded-xl text-xs font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-white border border-transparent hover:border-zinc-200 transition-all gap-2"
           >
             Xem tất cả nhật ký <ArrowRight className="w-4 h-4" />
           </Button>

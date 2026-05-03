@@ -37,7 +37,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
           
           <div className="flex-1 flex flex-col min-w-0">
-            <header className="sticky top-0 z-30 flex h-16 sm:h-20 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 backdrop-blur-xl lg:pl-[296px] transition-all duration-300">
+            <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 backdrop-blur-xl lg:pl-64 transition-all duration-300">
               <div className="flex items-center gap-6">
                 <Button 
                   variant="ghost" 
@@ -128,8 +128,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </header>
 
             {/* Main Content Area */}
-            <main className="flex-1 lg:ml-72 flex flex-col p-4 sm:p-6 md:p-8 lg:p-10 overflow-y-auto custom-scrollbar">
-              <div className="max-w-[1600px] mx-auto w-full">
+            <main className="flex-1 lg:ml-64 flex flex-col p-4 sm:p-6 lg:p-8 overflow-y-auto custom-scrollbar">
+              <div className="w-full mx-auto">
                 {children}
               </div>
             </main>

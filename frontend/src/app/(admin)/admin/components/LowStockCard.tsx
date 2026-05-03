@@ -26,15 +26,15 @@ export function LowStockCard({ products }: LowStockCardProps) {
   };
 
   return (
-    <Card className="rounded-2xl border-zinc-200 overflow-hidden bg-white shadow-sm relative group">
-      <CardHeader className="px-5 sm:px-8 pt-6 sm:pt-8 flex flex-row items-center justify-between">
+    <Card className="rounded-xl border-zinc-200 overflow-hidden bg-white shadow-sm relative group">
+      <CardHeader className="px-5 py-4 flex flex-row items-center justify-between">
         <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950 flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
           Cảnh báo kho
         </CardTitle>
         <AlertTriangle className="w-6 h-6 text-red-600" />
       </CardHeader>
-      <CardContent className="p-4 sm:p-8">
+      <CardContent className="p-4">
         <div className="space-y-4">
           {products.map((p) => (
             <div
@@ -78,7 +78,7 @@ export function LowStockCard({ products }: LowStockCardProps) {
             </div>
           ))}
         </div>
-        <Button className="w-full mt-6 h-12 bg-zinc-950 text-white hover:bg-red-600 rounded-xl font-semibold text-[15px] transition-all">
+        <Button className="w-full mt-5 h-11 bg-zinc-950 text-white hover:bg-red-600 rounded-xl font-semibold text-sm transition-all">
           Quản lý kho hàng
         </Button>
       </CardContent>

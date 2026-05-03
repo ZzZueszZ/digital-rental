@@ -258,7 +258,7 @@ export default function ProfileDashboard() {
       {/* Content Wrapper */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header - Replicated from Admin Style */}
-        <header className="sticky top-0 z-30 flex h-16 sm:h-20 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 backdrop-blur-xl lg:pl-[272px] transition-all duration-300">
+        <header className="sticky top-0 z-30 flex h-20 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 lg:px-8 lg:pl-72 backdrop-blur-xl transition-all duration-300">
           <div className="flex items-center gap-4 lg:gap-6">
             <Button
               variant="ghost"
@@ -276,7 +276,7 @@ export default function ProfileDashboard() {
                 </h1>
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1 shrink-0" />
               </div>
-              <span className="text-xs font-medium text-zinc-400 mt-0.5 tracking-tight">
+              <span className="text-sm font-medium text-zinc-500 mt-0.5 tracking-tight">
                 {pageInfo.subtitle}
               </span>
             </div>

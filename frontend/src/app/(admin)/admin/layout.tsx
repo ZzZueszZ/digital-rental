@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
           
           <div className="flex-1 flex flex-col min-w-0">
-            <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 lg:px-8 lg:pl-72 transition-all duration-300 backdrop-blur-xl">
+            <header className="sticky top-0 z-30 flex h-20 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 lg:px-8 lg:pl-72 transition-all duration-300 backdrop-blur-xl">
               <div className="flex items-center gap-6">
                 <Button 
                   variant="ghost" 
@@ -52,10 +52,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {/* Dynamic Page Title in Header */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-2xl font-bold tracking-tight text-zinc-950 truncate max-w-[140px] sm:max-w-none">{pageTitle.title}</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-0.5 shrink-0" />
+                    <span className="text-[28px] font-bold tracking-tight text-zinc-950 truncate max-w-[140px] sm:max-w-none leading-tight">{pageTitle.title}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1 shrink-0" />
                   </div>
-                  <span className="text-sm font-medium text-zinc-500 mt-0.5">{pageTitle.subtitle}</span>
+                  <span className="text-sm font-medium text-zinc-500 mt-0.5 tracking-tight">{pageTitle.subtitle}</span>
                 </div>
               </div>
 

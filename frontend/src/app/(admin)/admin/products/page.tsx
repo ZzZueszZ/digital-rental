@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { 
   Plus, 
   Search, 
@@ -37,6 +38,7 @@ import { StatCard } from "../components/StatCard";
 import { cn } from "@/lib/utils";
 
 export default function ProductsAdminPage() {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<"ACTIVE" | "DELETED">("ACTIVE");
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -176,6 +178,10 @@ export default function ProductsAdminPage() {
     });
   };
 
+  const handleView = (id: number) => {
+    router.push(`/admin/products/${id}`);
+  };
+
   return (
     <div className="flex-1 space-y-6 lg:space-y-8 animate-in fade-in duration-500">
       {/* KPI Stats */}
@@ -310,6 +316,7 @@ export default function ProductsAdminPage() {
                     onDelete={handleDelete}
                     onRestore={handleRestore}
                     onHardDelete={handleHardDelete}
+                    onView={handleView}
                     isDeleted={viewMode === "DELETED"}
                   />
                 ))
@@ -337,6 +344,7 @@ export default function ProductsAdminPage() {
                 onDelete={handleDelete}
                 onRestore={handleRestore}
                 onHardDelete={handleHardDelete}
+                onView={handleView}
                 isDeleted={viewMode === "DELETED"}
               />
             ))

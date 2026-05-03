@@ -1,6 +1,6 @@
 "use client";
 
-import { Edit2, Trash2, RotateCcw, MoreHorizontal, Image as ImageIcon, DollarSign } from "lucide-react";
+import { Edit2, Trash2, RotateCcw, MoreHorizontal, Image as ImageIcon, DollarSign, Eye } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +18,7 @@ interface ProductActionMenuProps {
   onDelete: () => void;
   onRestore: () => void;
   onHardDelete: () => void;
+  onView: () => void;
   isActive: boolean;
   isDeleted: boolean;
 }
@@ -29,6 +30,7 @@ export function ProductActionMenu({
   onDelete,
   onRestore,
   onHardDelete,
+  onView,
   isActive,
   isDeleted,
 }: ProductActionMenuProps) {
@@ -52,6 +54,12 @@ export function ProductActionMenu({
 
             {!isDeleted ? (
               <>
+                <DropdownMenuItem
+                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  onClick={onView}
+                >
+                  <Eye className="w-3.5 h-3.5 text-zinc-400" /> Xem chi tiết sản phẩm
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
                   onClick={onEdit}

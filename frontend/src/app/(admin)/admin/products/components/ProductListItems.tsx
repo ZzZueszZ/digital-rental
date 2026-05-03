@@ -17,10 +17,11 @@ interface ItemProps {
   onDelete: (id: number) => void;
   onRestore: (id: number) => void;
   onHardDelete: (id: number) => void;
+  onView: (id: number) => void;
   isDeleted: boolean;
 }
 
-export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onDelete, onRestore, onHardDelete, isDeleted }: ItemProps) {
+export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onDelete, onRestore, onHardDelete, onView, isDeleted }: ItemProps) {
 
   return (
     <tr className="group hover:bg-zinc-50/50 transition-all duration-200">
@@ -41,7 +42,11 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
             )}
           </div>
           <div>
-            <p className="text-sm font-black text-zinc-950 tracking-tight mb-0.5 max-w-[200px] truncate" title={product.name}>
+            <p 
+              onClick={() => onView(product.id)}
+              className="text-sm font-black text-zinc-950 tracking-tight mb-0.5 max-w-[200px] truncate cursor-pointer hover:text-indigo-600 transition-colors" 
+              title={product.name}
+            >
               {product.name}
             </p>
             <div className="flex items-center gap-2">
@@ -99,13 +104,14 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
           onDelete={() => onDelete(product.id)}
           onRestore={() => onRestore(product.id)}
           onHardDelete={() => onHardDelete(product.id)}
+          onView={() => onView(product.id)}
         />
       </td>
     </tr>
   );
 }
 
-export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, onDelete, onRestore, onHardDelete, isDeleted }: ItemProps) {
+export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, onDelete, onRestore, onHardDelete, onView, isDeleted }: ItemProps) {
 
   return (
     <div className="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm space-y-4 group active:scale-[0.98] transition-all">
@@ -141,7 +147,10 @@ export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, o
                 {!isDeleted ? (product.isActive ? "Hoạt động" : "Ẩn") : "Đã xóa"}
               </Badge>
             </div>
-            <h3 className="text-sm font-black text-zinc-950 tracking-tight truncate max-w-full">
+            <h3 
+              onClick={() => onView(product.id)}
+              className="text-sm font-black text-zinc-950 tracking-tight truncate max-w-full cursor-pointer hover:text-indigo-600"
+            >
               {product.name}
             </h3>
             <p className="text-[11px] font-medium text-zinc-500 truncate mt-0.5">
@@ -159,6 +168,7 @@ export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, o
             onDelete={() => onDelete(product.id)}
             onRestore={() => onRestore(product.id)}
             onHardDelete={() => onHardDelete(product.id)}
+            onView={() => onView(product.id)}
           />
         </div>
       </div>
@@ -187,7 +197,7 @@ export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, o
         </div>
         {!isDeleted && (
           <button 
-            onClick={() => onEdit(product)}
+            onClick={() => onView(product.id)}
             className="p-1.5 rounded-lg bg-zinc-50 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-all flex items-center gap-1 px-3"
           >
             <span className="text-[10px] font-bold text-zinc-600">Chi tiết</span>

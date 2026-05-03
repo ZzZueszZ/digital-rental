@@ -1,30 +1,34 @@
-"use client";
+import { Aperture } from 'lucide-react'
 
-import { useEffect, useState } from "react";
-
-export function FullPageLoading({ message = "Đang khởi tạo" }: { message?: string }) {
-  const [dots, setDots] = useState("");
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDots((prev) => (prev.length >= 3 ? "" : prev + "."));
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
-
+export function FullPageLoading({ message = "Đang xử lý" }: { message?: string }) {
   return (
-    <div className='fixed inset-0 z-9999 flex items-center justify-center bg-black/50 backdrop-blur-sm select-none'>
-      <div className='flex flex-col items-center gap-5 p-8 rounded-3xl bg-zinc-900/90 border border-white/5 shadow-2xl'>
-        {/* Spinner */}
-        <div className='relative'>
-          <div className='w-10 h-10 rounded-full border-[3px] border-white/10' />
-          <div className='w-10 h-10 absolute inset-0 rounded-full border-[3px] border-transparent border-t-[#ff8c5a] animate-spin' />
+    <div className='fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-[2px] select-none'>
+      <div className='flex flex-col items-center gap-4'>
+        {/* Minimalist Lens Aperture */}
+        <div className='relative flex items-center justify-center'>
+          {/* Outer Lens Body */}
+          <div className='w-16 h-16 rounded-full bg-zinc-950 border-[3px] border-zinc-900 flex items-center justify-center shadow-2xl'>
+            {/* Signature Red Ring */}
+            <div className='absolute inset-[3px] rounded-full border border-red-600/40' />
+            
+            {/* Rotating Aperture */}
+            <Aperture className='w-7 h-7 text-red-600 animate-[spin_4s_linear_infinite]' />
+          </div>
+          
+          {/* Subtle Glow */}
+          <div className='absolute w-16 h-16 rounded-full bg-red-600/5 blur-xl animate-pulse' />
         </div>
-        
-        {/* Status */}
-        <p className='text-xs font-bold text-zinc-300 tracking-widest uppercase'>
-          {message}{dots}
-        </p>
+
+        <div className='flex flex-col items-center gap-2'>
+          <p className='text-[9px] font-black text-white tracking-[0.4em] uppercase opacity-80'>
+            {message}
+          </p>
+          <div className='flex gap-1.5'>
+            <div className='w-1 h-1 bg-red-600/60 rounded-full animate-bounce [animation-duration:1s]' />
+            <div className='w-1 h-1 bg-red-600/60 rounded-full animate-bounce [animation-duration:1s] [animation-delay:0.2s]' />
+            <div className='w-1 h-1 bg-red-600/60 rounded-full animate-bounce [animation-duration:1s] [animation-delay:0.4s]' />
+          </div>
+        </div>
       </div>
     </div>
   );

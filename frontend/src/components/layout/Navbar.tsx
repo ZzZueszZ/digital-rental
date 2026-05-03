@@ -78,15 +78,12 @@ export function Navbar() {
   return (
     <>
       <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-zinc-200 select-none">
-        <div className="container flex h-16 lg:h-20 items-center justify-between px-4 sm:px-6 md:px-12 max-w-[1600px] mx-auto">
+        <div className="container flex h-14 lg:h-16 items-center justify-between px-4 md:px-6 lg:px-8 max-w-[1600px] mx-auto">
           {/* Logo */}
           <div className="flex items-center gap-6 lg:gap-12">
-            <Link
-              href="/"
-              className="group flex items-center gap-2.5 transition-all"
-            >
-              <div className="w-9 h-9 lg:w-10 lg:h-10 bg-red-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-500">
-                <Camera className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
+            <Link href="/" className="group flex items-center gap-3 transition-all">
+              <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-500">
+                <Camera className="h-5 w-5 text-white" />
               </div>
               <div className="flex flex-col select-none">
                 <span className="text-lg lg:text-xl font-black tracking-tighter text-zinc-950 uppercase font-heading leading-none">
@@ -103,7 +100,7 @@ export function Navbar() {
               <NavigationMenu>
                 <NavigationMenuList className="gap-1">
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="bg-transparent text-zinc-600 hover:text-zinc-900 font-bold text-sm uppercase tracking-widest transition-colors data-[state=open]:text-zinc-900 focus:bg-zinc-100 hover:bg-zinc-100 data-[state=open]:bg-zinc-100 data-popup-open:bg-zinc-100 data-open:bg-zinc-100">
+                    <NavigationMenuTrigger className="bg-transparent text-zinc-600 hover:text-zinc-900 font-medium text-[14px] md:text-[15px] uppercase tracking-widest transition-colors data-[state=open]:text-zinc-900 focus:bg-zinc-100 hover:bg-zinc-100">
                       Thiết Bị
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="p-0 border-none bg-transparent shadow-none">
@@ -174,7 +171,7 @@ export function Navbar() {
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       href="/inventory"
-                      className="inline-flex h-10 items-center justify-center rounded-full bg-transparent px-5 text-xs font-bold text-zinc-500 uppercase tracking-widest transition-all hover:text-zinc-900 hover:bg-zinc-100"
+                      className="inline-flex h-10 items-center justify-center rounded-full bg-transparent px-5 text-[14px] md:text-[15px] font-medium text-zinc-500 uppercase tracking-widest transition-all hover:text-zinc-900 hover:bg-zinc-100"
                     >
                       Sản Phẩm Mới
                     </NavigationMenuLink>
@@ -182,7 +179,7 @@ export function Navbar() {
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       href="/about"
-                      className="inline-flex h-10 items-center justify-center rounded-full bg-transparent px-5 text-xs font-bold text-zinc-500 uppercase tracking-widest transition-all hover:text-zinc-900 hover:bg-zinc-100"
+                      className="inline-flex h-10 items-center justify-center rounded-full bg-transparent px-5 text-[14px] md:text-[15px] font-medium text-zinc-500 uppercase tracking-widest transition-all hover:text-zinc-900 hover:bg-zinc-100"
                     >
                       Về Chúng Tôi
                     </NavigationMenuLink>

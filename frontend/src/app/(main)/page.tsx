@@ -52,7 +52,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-zinc-50/20" />
           </div>
 
-          <div className="container relative z-10 mx-auto px-6 md:px-12 max-w-[1600px]">
+          <div className="container relative z-10 mx-auto px-4 md:px-6 lg:px-8 max-w-[1600px]">
             <motion.div
               initial="hidden"
               animate="visible"
@@ -63,7 +63,7 @@ export default function Home() {
 
               <motion.h1
                 variants={itemVariants}
-                className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold tracking-tight text-zinc-900 mb-6 leading-[1.1]"
+                className="text-[36px] md:text-[44px] lg:text-[44px] font-bold tracking-tight text-zinc-900 mb-8 leading-[1.2]"
               >
                 Khởi tạo <br className="hidden md:block" />
                 <span className="text-red-600 italic pr-2">
@@ -73,7 +73,7 @@ export default function Home() {
 
               <motion.p
                 variants={itemVariants}
-                className="text-[1.125rem] md:text-xl text-zinc-500 mb-10 leading-relaxed max-w-xl font-medium"
+                className="text-base md:text-lg text-zinc-500 mb-12 leading-[1.6] max-w-xl font-medium"
               >
                 Giải pháp thuê thiết bị nhiếp ảnh và cinema chuyên nghiệp hàng
                 đầu. Nâng tầm sáng tạo với hệ sinh thái trang thiết bị đỉnh cao.
@@ -85,14 +85,14 @@ export default function Home() {
               >
                 <Button
                   size="lg"
-                  className="rounded-full px-8 h-13 text-[0.8rem] font-bold tracking-[0.05em] bg-red-600 text-white hover:bg-red-700 shadow-[0_4px_20px_rgba(220,38,38,0.3)] transition-all active:scale-95"
+                  className="rounded-full px-8 h-12 text-[14px] md:text-[16px] font-semibold tracking-wide bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all active:scale-95"
                 >
                   KHÁM PHÁ THIẾT BỊ
                 </Button>
                 <Button
                   variant="outline"
                   size="lg"
-                  className="rounded-full px-8 h-13 text-[0.8rem] font-bold tracking-[0.05em] border border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-50 transition-all active:scale-95"
+                  className="rounded-full px-8 h-12 text-[14px] md:text-[16px] font-semibold tracking-wide border border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-50 transition-all active:scale-95"
                 >
                   BẮT ĐẦU THUÊ
                 </Button>
@@ -102,16 +102,16 @@ export default function Home() {
         </section>
 
         {/* Category Sector */}
-        <section className="min-h-svh flex items-center py-10 bg-zinc-50">
-          <div className="container mx-auto px-6 md:px-12 max-w-[1600px]">
-            <div className="flex flex-col lg:flex-row justify-between items-end gap-10 mb-12">
+        <section className="flex items-center py-8 bg-zinc-50">
+          <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1600px]">
+            <div className="flex flex-col lg:flex-row justify-between items-end gap-5 mb-10">
               <div className="max-w-xl">
-                <h2 className="text-4xl md:text-[3.5rem] font-bold text-zinc-950 tracking-tight mb-4 leading-tight">
+                <h2 className="text-[28px] md:text-[32px] font-semibold text-zinc-950 tracking-tight mb-4 leading-[1.3]">
                   <span className="text-red-600 italic pr-2">
                     Hệ sinh thái.
                   </span>
                 </h2>
-                <p className="text-zinc-500 text-base md:text-lg font-medium leading-relaxed max-w-lg mt-4">
+                <p className="text-zinc-500 text-base font-medium leading-[1.6] max-w-lg mt-4">
                   Lựa chọn từ các thương hiệu máy ảnh và ống kính hàng đầu thế
                   giới để hoàn thiện bộ công cụ hình ảnh của bạn.
                 </p>
@@ -124,7 +124,7 @@ export default function Home() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {[
                 {
                   title: "Ống Kính Suite",
@@ -156,11 +156,11 @@ export default function Home() {
                       fill
                       className="object-cover opacity-85 transition-all duration-1000 group-hover:scale-105 group-hover:opacity-100"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-zinc-50/90 via-zinc-50/30 to-transparent flex flex-col justify-end p-12">
+                    <div className="absolute inset-0 bg-linear-to-t from-zinc-50/90 via-zinc-50/30 to-transparent flex flex-col justify-end p-8">
                       <p className="text-red-600 text-xs font-bold tracking-widest uppercase mb-3">
                         {cat.desc}
                       </p>
-                      <h3 className="text-3xl font-bold text-zinc-950 tracking-tight mb-4">
+                      <h3 className="text-[22px] md:text-[24px] font-semibold text-zinc-950 tracking-tight mb-4 leading-[1.3]">
                         {cat.title}
                       </h3>
                       <div className="flex items-center gap-4">
@@ -184,22 +184,22 @@ export default function Home() {
         <ProductListSection />
 
         {/* Feature Sectors - Premium Redesign */}
-        <section className="py-32 bg-zinc-50 relative overflow-hidden">
+        <section className="py-12 bg-zinc-50 relative overflow-hidden">
           {/* Subtle background glow */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-red-600 opacity-[0.02] blur-[120px] pointer-events-none rounded-full" />
 
-          <div className="container relative z-10 mx-auto px-6 md:px-12 max-w-[1600px]">
-            <div className="text-center mb-20">
-              <h2 className="text-3xl md:text-5xl font-bold text-zinc-950 tracking-tight mb-4">
+          <div className="container relative z-10 mx-auto px-4 md:px-6 lg:px-8 max-w-[1600px]">
+            <div className="text-center mb-10">
+              <h2 className="text-[28px] md:text-[32px] font-semibold text-zinc-950 tracking-tight mb-4 leading-[1.3]">
                 Dịch vụ <span className="text-red-600 italic">Đỉnh cao.</span>
               </h2>
-              <p className="text-zinc-500 font-medium">
+              <p className="text-zinc-500 text-base font-medium leading-[1.6]">
                 Bảo chứng cho chất lượng và độ tín nhiệm hàng đầu trong ngành
                 thuê mua thiết bị.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
               {[
                 {
                   icon: <ShieldAlert className="w-8 h-8" />,
@@ -224,18 +224,18 @@ export default function Home() {
               ].map((f, i) => (
                 <div
                   key={i}
-                  className="group relative p-8 rounded-[2.5rem] bg-white border border-zinc-200 hover:border-red-600/30 overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-2"
+                  className="group relative p-6 rounded-2xl bg-white border border-zinc-200 hover:border-red-600/30 overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-1"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-red-600 opacity-0 group-hover:opacity-[0.03] blur-[60px] transition-opacity duration-500" />
 
-                  <div className="w-16 h-16 bg-zinc-50 border border-zinc-100 rounded-2xl flex items-center justify-center text-red-600 mb-8 transition-all duration-500 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white shadow-xs group-hover:shadow-lg">
+                  <div className="w-12 h-12 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center justify-center text-red-600 mb-6 transition-all duration-500 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white shadow-xs group-hover:shadow-lg">
                     {f.icon}
                   </div>
 
-                  <h4 className="text-xl font-bold text-zinc-900 mb-4">
+                  <h4 className="text-[18px] md:text-[20px] font-medium text-zinc-900 mb-4 leading-[1.3]">
                     {f.title}
                   </h4>
-                  <p className="text-zinc-500 text-sm leading-relaxed font-medium">
+                  <p className="text-zinc-500 text-[14px] leading-[1.6] font-medium">
                     {f.desc}
                   </p>
                 </div>
@@ -260,22 +260,22 @@ export default function Home() {
           </div>
           
           {/* Content Container (Left Aligned) */}
-          <div className="container relative z-10 mx-auto px-6 md:px-12 max-w-[1600px]">
+          <div className="container relative z-10 mx-auto px-4 md:px-6 lg:px-8 max-w-[1600px]">
             <div className="max-w-2xl px-4 md:px-0">
               {/* Badge */}
-              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-red-600 mb-6">
-                <span className="text-[11px] font-black text-white tracking-[0.08em] uppercase">
+              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-red-600 mb-8">
+                <span className="text-[12px] font-bold text-white tracking-widest uppercase">
                   Ưu Đãi Giới Hạn
                 </span>
               </div>
               
               {/* Heading */}
-              <h2 className="text-4xl md:text-5xl lg:text-[4rem] font-black text-zinc-950 tracking-tight leading-[1.1] uppercase mb-6">
+              <h2 className="text-[28px] md:text-[32px] font-semibold text-zinc-950 tracking-tight leading-[1.2] uppercase mb-8">
                 SẴN SÀNG KIẾN TẠO <br />KHUNG HÌNH XUẤT CHÚNG
               </h2>
               
               {/* Subtitle */}
-              <p className="text-zinc-500 text-base md:text-[1.125rem] font-medium mb-10 leading-relaxed max-w-lg">
+              <p className="text-zinc-500 text-base md:text-[18px] font-medium mb-12 leading-[1.6] max-w-lg">
                 Tham gia cộng đồng chuyên nghiệp trong chuỗi trải nghiệm 3 ngày cùng mạng lưới thiết bị lớn nhất bắt đầu tại Digital Rental.
               </p>
               

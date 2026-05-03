@@ -99,17 +99,17 @@ export function ProductListSection() {
       id="product-section"
       className="py-24 bg-white relative"
     >
-      <div className="container mx-auto px-6 md:px-12 max-w-[1600px]">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1600px]">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
           <div>
-            <h2 className="text-4xl md:text-[3.5rem] font-bold text-zinc-950 tracking-tight leading-tight">
+            <h2 className="text-[28px] md:text-[32px] font-semibold text-zinc-950 tracking-tight leading-[1.3]">
               Cửa hàng{""}
               <span className="text-red-600 italic pr-2">
                 Thiết bị.
               </span>
             </h2>
-            <p className="text-zinc-500 text-base font-medium max-w-lg mt-4 leading-relaxed">
+            <p className="text-zinc-500 text-base font-medium max-w-lg mt-4 leading-[1.6]">
               Các sản phẩm và phụ kiện máy ảnh chính hãng đang được mở bán. Nâng
               cấp bộ gear chuyên nghiệp của bạn ngay hôm nay.
             </p>
@@ -118,7 +118,7 @@ export function ProductListSection() {
 
         {/* Product Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[...Array(pageSize)].map((_, i) => (
               <div
                 key={i}
@@ -127,7 +127,7 @@ export function ProductListSection() {
             ))}
           </div>
         ) : products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {products.map((product) => (
               <Link
                 key={product.id}
@@ -136,11 +136,11 @@ export function ProductListSection() {
               >
                 {/* Image Wrapper */}
                 <div className="relative h-[220px] w-full bg-zinc-50 p-4 flex items-center justify-center overflow-hidden">
-                  <div className="absolute top-4 left-4 z-10 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-zinc-200 text-[9px] font-bold tracking-widest uppercase text-zinc-900 shadow-xs">
+                  <div className="absolute top-4 left-4 z-10 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-zinc-200 text-[10px] font-bold tracking-widest uppercase text-zinc-900 shadow-xs">
                     {product.brand}
                   </div>
                   {product.forRent && product.rentPricePerDay && (
-                    <div className="absolute bottom-4 right-4 z-10 px-3 py-1.5 rounded-full bg-red-600 text-[10px] font-bold tracking-widest uppercase text-white shadow-lg">
+                    <div className="absolute bottom-4 right-4 z-10 px-3 py-1.5 rounded-full bg-red-600 text-[11px] font-bold tracking-widest uppercase text-white shadow-lg">
                       {formatVND(product.rentPricePerDay)} / NGÀY
                     </div>
                   )}
@@ -159,12 +159,12 @@ export function ProductListSection() {
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 p-6 flex flex-col justify-between">
+                <div className="flex-1 p-5 flex flex-col justify-between">
                   <div>
-                    <p className="text-red-600 text-[10px] font-bold tracking-widest uppercase mb-2">
+                    <p className="text-red-600 text-[12px] font-bold tracking-widest uppercase mb-2">
                       {product.categoryName}
                     </p>
-                    <h3 className="text-xl font-bold text-zinc-950 tracking-tight line-clamp-2 leading-snug group-hover:text-red-600 transition-colors">
+                    <h3 className="text-[18px] md:text-[22px] font-semibold text-zinc-950 tracking-tight line-clamp-2 leading-[1.3] group-hover:text-red-600 transition-colors">
                       {product.name}
                     </h3>
                   </div>
@@ -174,7 +174,7 @@ export function ProductListSection() {
                       {product.forSale && product.salePrice ? (
                         <p className="text-zinc-500 text-xs font-medium">
                           Giá mua:{" "}
-                          <span className="text-zinc-900 font-bold">
+                          <span className="text-[20px] md:text-[24px] text-zinc-900 font-bold block mt-1">
                             {formatVND(product.salePrice)}
                           </span>
                         </p>

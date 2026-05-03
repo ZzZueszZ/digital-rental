@@ -17,7 +17,10 @@ interface ItemProps {
 
 export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: ItemProps) {
   return (
-    <tr className="group hover:bg-zinc-50/50 transition-all duration-200">
+    <tr 
+      onClick={() => onEdit(category)}
+      className="group hover:bg-zinc-50/80 border-l-[3px] border-transparent hover:border-red-600 transition-all duration-200 cursor-pointer"
+    >
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-400 group-hover:scale-110 group-hover:bg-zinc-950 group-hover:text-white transition-all duration-300">
@@ -59,7 +62,7 @@ export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: Item
           </span>
         </div>
       </td>
-      <td className="px-6 py-4 text-right">
+      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
         <CategoryActionMenu
           isActive={category.isActive}
           onEdit={() => onEdit(category)}

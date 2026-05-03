@@ -24,7 +24,10 @@ interface ItemProps {
 export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onDelete, onRestore, onHardDelete, onView, isDeleted }: ItemProps) {
 
   return (
-    <tr className="group hover:bg-zinc-50/50 transition-all duration-200">
+    <tr 
+      onClick={() => onView(product.id)}
+      className="group hover:bg-zinc-50/80 border-l-[3px] border-transparent hover:border-red-600 transition-all duration-200 cursor-pointer"
+    >
       <td className="px-6 py-4">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200/50">
@@ -43,8 +46,7 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
           </div>
           <div>
             <p 
-              onClick={() => onView(product.id)}
-              className="text-sm font-black text-zinc-950 tracking-tight mb-0.5 max-w-[200px] truncate cursor-pointer hover:text-indigo-600 transition-colors" 
+              className="text-sm font-black text-zinc-950 tracking-tight mb-0.5 max-w-[200px] truncate" 
               title={product.name}
             >
               {product.name}
@@ -94,7 +96,7 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
           </span>
         </div>
       </td>
-      <td className="px-6 py-4 text-right">
+      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
         <ProductActionMenu
           isActive={product.active}
           isDeleted={isDeleted}
@@ -174,13 +176,13 @@ export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, o
       <div className="grid grid-cols-2 gap-3 p-3 bg-zinc-50 rounded-xl">
         <div className="flex flex-col">
           <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest mb-1 flex items-center gap-1">
-            <div className={cn("w-1.5 h-1.5 rounded-full", product.isForRent ? "bg-amber-500" : "bg-zinc-300")} /> Thuê
+            <div className={cn("w-1.5 h-1.5 rounded-full", product.forRent ? "bg-amber-500" : "bg-zinc-300")} /> Thuê
           </span>
           <span className="text-sm font-bold text-zinc-950">{product.rentPricePerDay?.toLocaleString('vi-VN')} ₫</span>
         </div>
         <div className="flex flex-col pl-3 border-l border-zinc-200">
           <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest mb-1 flex items-center gap-1">
-            <div className={cn("w-1.5 h-1.5 rounded-full", product.isForSale ? "bg-blue-500" : "bg-zinc-300")} /> Bán
+            <div className={cn("w-1.5 h-1.5 rounded-full", product.forSale ? "bg-blue-500" : "bg-zinc-300")} /> Bán
           </span>
           <span className="text-sm font-bold text-zinc-950">{product.salePrice?.toLocaleString('vi-VN')} ₫</span>
         </div>

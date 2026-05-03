@@ -19,7 +19,7 @@ export function Pagination({
   size,
   onPageChange,
 }: PaginationProps) {
-  if (totalPages <= 1) return null;
+  if (totalElements === 0) return null;
 
   const getPageNumbers = () => {
     const pages: (number | "...")[] = [];
@@ -51,48 +51,50 @@ export function Pagination({
         Hiển thị <span className="text-zinc-950">{startIndex}-{endIndex}</span> / <span className="text-zinc-950">{totalElements}</span> mục
       </p>
       
-      <div className="flex items-center gap-1.5">
-        <Button
-          variant="outline"
-          size="icon"
-          disabled={page === 0}
-          onClick={() => onPageChange(page - 1)}
-          className="w-9 h-9 rounded-xl border-zinc-200 bg-white shadow-sm disabled:opacity-30 transition-all active:scale-90"
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </Button>
+      {totalPages > 1 && (
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant="outline"
+            size="icon"
+            disabled={page === 0}
+            onClick={() => onPageChange(page - 1)}
+            className="w-9 h-9 rounded-xl border-zinc-200 bg-white shadow-sm disabled:opacity-30 transition-all active:scale-90"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
 
-        <div className="flex items-center gap-1 mx-1">
-          {getPageNumbers().map((p, i) => (
-            p === "..." ? (
-              <span key={`dots-${i}`} className="w-9 text-center text-zinc-400 font-bold">...</span>
-            ) : (
-              <button
-                key={p}
-                onClick={() => onPageChange(p)}
-                className={cn(
-                  "w-9 h-9 rounded-xl text-xs font-black transition-all active:scale-90",
-                  page === p 
-                    ? "bg-zinc-950 text-white shadow-lg shadow-zinc-200" 
-                    : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950"
-                )}
-              >
-                {p + 1}
-              </button>
-            )
-          ))}
+          <div className="flex items-center gap-1 mx-1">
+            {getPageNumbers().map((p, i) => (
+              p === "..." ? (
+                <span key={`dots-${i}`} className="w-9 text-center text-zinc-400 font-bold">...</span>
+              ) : (
+                <button
+                  key={p}
+                  onClick={() => onPageChange(p)}
+                  className={cn(
+                    "w-9 h-9 rounded-xl text-xs font-black transition-all active:scale-90",
+                    page === p 
+                      ? "bg-zinc-950 text-white shadow-lg shadow-zinc-200" 
+                      : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950"
+                  )}
+                >
+                  {p + 1}
+                </button>
+              )
+            ))}
+          </div>
+
+          <Button
+            variant="outline"
+            size="icon"
+            disabled={page >= totalPages - 1}
+            onClick={() => onPageChange(page + 1)}
+            className="w-9 h-9 rounded-xl border-zinc-200 bg-white shadow-sm disabled:opacity-30 transition-all active:scale-90"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Button>
         </div>
-
-        <Button
-          variant="outline"
-          size="icon"
-          disabled={page >= totalPages - 1}
-          onClick={() => onPageChange(page + 1)}
-          className="w-9 h-9 rounded-xl border-zinc-200 bg-white shadow-sm disabled:opacity-30 transition-all active:scale-90"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </Button>
-      </div>
+      )}
     </div>
   );
 }

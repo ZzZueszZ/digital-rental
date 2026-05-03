@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
           
           <div className="flex-1 flex flex-col min-w-0">
-            <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 backdrop-blur-xl lg:pl-64 transition-all duration-300">
+            <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 lg:px-8 lg:pl-72 transition-all duration-300 backdrop-blur-xl">
               <div className="flex items-center gap-6">
                 <Button 
                   variant="ghost" 

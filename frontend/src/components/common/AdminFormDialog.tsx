@@ -54,8 +54,6 @@ export function AdminFormDialog({
             maxWidth
           )}
         >
-          {/* Top accent */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-rose-500" />
 
           {/* Header */}
           <div className="px-6 pt-7 pb-5 border-b border-zinc-100 bg-white">

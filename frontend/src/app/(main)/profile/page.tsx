@@ -62,7 +62,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authService } from "@/services/auth";
 import { cn } from "@/lib/utils";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
@@ -72,12 +72,13 @@ type Section = "overview" | "info" | "address" | "orders" | "cart";
 
 export default function ProfileDashboard() {
   const router = useRouter();
-  const [activeSection, setActiveSection] = useState<Section>("overview");
+  const searchParams = useSearchParams();
+  const activeSection = (searchParams.get("section") as Section) || "overview";
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const onNavigate = (section: Section) => {
-    setActiveSection(section);
+    router.replace(`/profile?section=${section}`, { scroll: false });
     setIsSidebarOpen(false);
   };
 
@@ -454,7 +455,7 @@ function OverviewSection({
           <div>
             <h1 className="text-4xl md:text-5xl font-black text-zinc-950 tracking-tight mb-4 leading-tight">
               Chào buổi chiều, <br className="hidden md:block" />{" "}
-              {profile?.firstName || "Người dùng"}!
+              {profile?.fullName || "Người dùng"}!
             </h1>
             <p className="text-base text-zinc-500 font-medium max-w-md leading-relaxed">
               Chào mừng bạn quay trở lại. Hãy quản lý các thiết bị nhiếp ảnh và
@@ -584,9 +585,7 @@ function OverviewCard({
         {icon}
       </div>
       <div>
-        <p className="text-sm font-semibold text-zinc-400 mb-1.5">
-          {label}
-        </p>
+        <p className="text-sm font-semibold text-zinc-400 mb-1.5">{label}</p>
         <p className="text-xl font-black text-zinc-950 tracking-tight">
           {value}
         </p>
@@ -960,9 +959,7 @@ function AddressSection() {
           <div className="w-16 h-16 rounded-full bg-zinc-50 flex items-center justify-center group-hover:bg-white group-hover:shadow-xl transition-all">
             <Plus className="w-8 h-8" />
           </div>
-          <span className="text-base font-semibold">
-            Thiết lập địa chỉ mới
-          </span>
+          <span className="text-base font-semibold">Thiết lập địa chỉ mới</span>
         </button>
       </div>
     </div>

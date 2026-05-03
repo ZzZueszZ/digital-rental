@@ -416,7 +416,7 @@ export default function ProductDetailPage() {
                   )}
 
                   <button 
-                    onClick={() => router.push("/profile/addresses")}
+                    onClick={() => router.push("/profile?section=address")}
                     className="mt-6 text-sm font-semibold text-red-600 hover:text-zinc-950 transition-colors flex items-center gap-2"
                   >
                     Cập nhật thông tin nhận hàng <ArrowLeft className="w-3 h-3 rotate-180" />

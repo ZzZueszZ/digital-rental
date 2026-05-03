@@ -328,9 +328,9 @@ export default function ProfileDashboard() {
               />
             )}
             {activeSection === "info" && (
-              <InfoSection 
-                key={profile?.id || "info-loading"} 
-                profile={profile} 
+              <InfoSection
+                key={profile?.id || "info-loading"}
+                profile={profile}
               />
             )}
             {activeSection === "address" && <AddressSection />}
@@ -419,14 +419,14 @@ function OverviewSection({
           <div className="flex gap-4">
             <Button
               onClick={() => onNavigate("info")}
-              className="h-14 px-8 rounded-2xl bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] hover:bg-red-600 transition-all border-none"
+              className="h-14 px-8 rounded-2xl bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
             >
               Xem hồ sơ
             </Button>
             <Button
               variant="outline"
               onClick={() => onNavigate("orders")}
-              className="h-14 px-8 rounded-2xl border-zinc-100 bg-zinc-50/50 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:border-zinc-900 transition-all"
+              className="h-14 px-8 rounded-2xl border-zinc-200 bg-white text-zinc-950 font-black uppercase tracking-widest text-[10px] hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
             >
               Đơn hàng
             </Button>
@@ -490,21 +490,25 @@ function OverviewSection({
           </div>
         </div>
 
-        <div className="bg-linear-to-br from-zinc-900 to-zinc-800 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden group hover:scale-[1.02] transition-all">
+        <div className="bg-white border border-zinc-100 rounded-[2.5rem] p-10 text-zinc-950 shadow-xl shadow-zinc-200/50 relative overflow-hidden group hover:scale-[1.02] transition-all">
           <div className="relative z-10">
-            <Star className="w-10 h-10 mb-8 text-amber-400 fill-amber-400/20" />
-            <h3 className="text-2xl font-black mb-3 leading-tight uppercase tracking-tight">
+            <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mb-8 border border-amber-100 shadow-sm">
+              <Star className="w-8 h-8 text-amber-500 fill-amber-500" />
+            </div>
+            <h3 className="text-2xl font-black mb-3 leading-tight uppercase tracking-tight text-zinc-950">
               Hội viên <br /> LensHub Pro
             </h3>
-            <p className="text-xs text-zinc-400 font-medium leading-relaxed mb-10">
+            <p className="text-[13px] text-zinc-500 font-medium leading-relaxed mb-10">
               Mở khóa tất cả các đặc quyền: Miễn phí vận chuyển, Bảo hiểm thiết
               bị và Ưu tiên đặt lịch thuê máy.
             </p>
-            <Button className="w-full h-14 bg-red-600 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-white hover:text-red-600 border-none transition-all shadow-lg shadow-red-600/20">
+            <Button className="w-full h-14 bg-red-600 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-zinc-950 transition-all shadow-lg shadow-red-200">
               Nâng cấp ngay
             </Button>
           </div>
-          <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-red-600/10 rounded-full blur-3xl group-hover:bg-red-600/20 transition-all" />
+          {/* Subtle decorative background elements */}
+          <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-zinc-50 rounded-full blur-3xl group-hover:bg-red-50 transition-all" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl" />
         </div>
       </div>
     </div>
@@ -546,7 +550,11 @@ function OverviewCard({
   );
 }
 
-function InfoSection({ profile }: { profile: UserProfileResponse | undefined }) {
+function InfoSection({
+  profile,
+}: {
+  profile: UserProfileResponse | undefined;
+}) {
   const { mutateAsync: updateProfile, isPending: isUpdating } =
     useUpdateMyProfile();
   const { mutateAsync: uploadAvatar } = useUploadMyAvatar();
@@ -630,7 +638,7 @@ function InfoSection({ profile }: { profile: UserProfileResponse | undefined }) 
               onChange={(e) =>
                 setFormData({ ...formData, firstName: e.target.value })
               }
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-6"
+              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-8"
             />
           </div>
           <div className="space-y-2">
@@ -642,7 +650,7 @@ function InfoSection({ profile }: { profile: UserProfileResponse | undefined }) 
               onChange={(e) =>
                 setFormData({ ...formData, lastName: e.target.value })
               }
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-6"
+              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-8"
             />
           </div>
           <div className="space-y-2">
@@ -652,20 +660,32 @@ function InfoSection({ profile }: { profile: UserProfileResponse | undefined }) 
             <Select
               value={formData.gender}
               onValueChange={(v) =>
-                setFormData({ ...formData, gender: v as "MALE" | "FEMALE" | "OTHER" })
+                setFormData({
+                  ...formData,
+                  gender: v as "MALE" | "FEMALE" | "OTHER",
+                })
               }
             >
-              <SelectTrigger className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl font-bold px-6">
+              <SelectTrigger className="w-full h-14! bg-zinc-50/30 border-zinc-100 rounded-2xl font-bold px-8 focus:border-red-600/30 transition-all">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="rounded-2xl shadow-2xl border-zinc-100">
-                <SelectItem value="MALE" className="font-bold">
-                  Nam giới
+              <SelectContent className="rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-zinc-100 p-2 bg-white/95 backdrop-blur-xl">
+                <SelectItem
+                  value="MALE"
+                  className="rounded-xl font-bold py-3 focus:bg-zinc-50 focus:text-red-600 transition-colors cursor-pointer"
+                >
+                  Nam
                 </SelectItem>
-                <SelectItem value="FEMALE" className="font-bold">
-                  Nữ giới
+                <SelectItem
+                  value="FEMALE"
+                  className="rounded-xl font-bold py-3 focus:bg-zinc-50 focus:text-red-600 transition-colors cursor-pointer"
+                >
+                  Nữ
                 </SelectItem>
-                <SelectItem value="OTHER" className="font-bold">
+                <SelectItem
+                  value="OTHER"
+                  className="rounded-xl font-bold py-3 focus:bg-zinc-50 focus:text-red-600 transition-colors cursor-pointer"
+                >
                   Khác
                 </SelectItem>
               </SelectContent>
@@ -681,7 +701,7 @@ function InfoSection({ profile }: { profile: UserProfileResponse | undefined }) 
               onChange={(e) =>
                 setFormData({ ...formData, dateOfBirth: e.target.value })
               }
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl font-bold px-6 transition-all"
+              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-8"
             />
           </div>
           <div className="space-y-2">
@@ -693,7 +713,7 @@ function InfoSection({ profile }: { profile: UserProfileResponse | undefined }) 
               onChange={(e) =>
                 setFormData({ ...formData, occupation: e.target.value })
               }
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl font-bold px-6"
+              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-8"
             />
           </div>
           <div className="space-y-2">
@@ -705,7 +725,7 @@ function InfoSection({ profile }: { profile: UserProfileResponse | undefined }) 
               onChange={(e) =>
                 setFormData({ ...formData, companyName: e.target.value })
               }
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl font-bold px-6"
+              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-8"
             />
           </div>
         </div>
@@ -714,7 +734,7 @@ function InfoSection({ profile }: { profile: UserProfileResponse | undefined }) 
           <Button
             type="submit"
             disabled={isUpdating}
-            className="flex-1 h-16 rounded-2xl bg-red-600 text-white font-black uppercase tracking-widest text-xs shadow-2xl shadow-red-100 hover:bg-zinc-950 transition-all disabled:opacity-50"
+            className="flex-1 h-16 rounded-2xl bg-red-600 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-red-200 hover:bg-zinc-950 transition-all disabled:opacity-50"
           >
             {isUpdating ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -725,7 +745,7 @@ function InfoSection({ profile }: { profile: UserProfileResponse | undefined }) 
           <Button
             type="button"
             variant="outline"
-            className="h-16 px-10 rounded-2xl border-zinc-100 text-zinc-400 font-bold uppercase tracking-widest text-[10px] hover:bg-zinc-50 transition-all"
+            className="h-16 px-10 rounded-2xl border-zinc-200 bg-white text-zinc-950 font-black uppercase tracking-widest text-[10px] hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
           >
             Hủy bỏ
           </Button>

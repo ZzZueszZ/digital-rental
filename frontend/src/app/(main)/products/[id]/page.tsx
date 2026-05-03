@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import axios, { isAxiosError } from "axios";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -15,9 +16,15 @@ import {
   ChevronDown,
   ChevronUp,
   Video,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/services/api";
+import { useAddToCart } from "@/services/cart";
+import { useMyAddresses } from "@/services/address";
+import { useAuthStore } from "@/store/auth";
+import { toast } from "sonner";
+import { MapPin, Plus, Minus } from "lucide-react";
 
 interface ProductImage {
   id: number;
@@ -82,6 +89,58 @@ export default function ProductDetailPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("specs"); // 'specs' or 'terms'
+  const [quantity, setQuantity] = useState(1);
+
+  const { accessToken } = useAuthStore();
+  const { mutateAsync: addToCart, isPending: isAddingToCart } = useAddToCart();
+  const { data: addressesRes } = useMyAddresses();
+  const defaultAddress = addressesRes?.data?.find(a => a.isDefault) || addressesRes?.data?.[0];
+
+  const handleAddToCart = async () => {
+    if (!accessToken) {
+      toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng");
+      router.push("/login");
+      return;
+    }
+
+    try {
+      await addToCart({ productId: Number(id), quantity });
+      toast.success("Đã thêm vào giỏ hàng", {
+        description: `${product?.name} x${quantity}`,
+        action: {
+          label: "Xem giỏ hàng",
+          onClick: () => router.push("/cart"),
+        },
+      });
+    } catch (error) {
+      const message = isAxiosError(error)
+        ? error.response?.data?.message
+        : error instanceof Error
+        ? error.message
+        : "Không thể thêm vào giỏ hàng";
+      toast.error(message);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (!accessToken) {
+      toast.error("Vui lòng đăng nhập để mua hàng");
+      router.push("/login");
+      return;
+    }
+
+    try {
+      await addToCart({ productId: Number(id), quantity });
+      router.push("/checkout");
+    } catch (error) {
+      const message = isAxiosError(error)
+        ? error.response?.data?.message
+        : error instanceof Error
+        ? error.message
+        : "Không thể xử lý yêu cầu";
+      toast.error(message);
+    }
+  };
 
   // Fetch product data
   useEffect(() => {
@@ -164,9 +223,9 @@ export default function ProductDetailPage() {
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="group flex items-center gap-2 text-zinc-500 hover:text-zinc-900 transition-colors mb-10"
+          className="group flex items-center gap-2 text-zinc-500 hover:text-red-600 transition-colors mb-10"
         >
-          <div className="w-10 h-10 rounded-full bg-white border border-zinc-200 shadow-sm flex items-center justify-center group-hover:bg-zinc-900 group-hover:text-white group-hover:border-zinc-900 transition-all">
+          <div className="w-10 h-10 rounded-full bg-white border border-zinc-200 shadow-sm flex items-center justify-center group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600 transition-all">
             <ArrowLeft className="w-4 h-4" />
           </div>
           <span className="text-xs font-bold uppercase tracking-widest">
@@ -307,54 +366,130 @@ export default function ProductDetailPage() {
               {product.name}
             </h1>
 
-            <p className="text-zinc-500 text-sm md:text-base leading-relaxed mb-10">
+            <p className="text-zinc-500 text-sm md:text-base leading-relaxed mb-8">
               {product.description ||
                 "Máy ảnh mirrorless full-frame phù hợp chụp sự kiện, chân dung và quay video 4K. Hiệu năng vượt trội trong mọi điều kiện ánh sáng."}
             </p>
 
+            {/* Quantity Selector */}
+            <div className="mb-8 p-6 bg-white border border-zinc-100 rounded-[2rem] flex items-center justify-between shadow-sm">
+              <div>
+                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-1.5">Số lượng</p>
+                <p className="text-xs font-bold text-zinc-900">Thiết lập quy mô đơn hàng</p>
+              </div>
+              <div className="flex items-center gap-4 bg-zinc-50 p-2 rounded-2xl border border-zinc-100">
+                <button 
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-zinc-500 hover:text-red-600 shadow-sm border border-zinc-100 transition-all active:scale-90"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <span className="w-8 text-center font-black text-zinc-950 text-lg tracking-tighter">{quantity}</span>
+                <button 
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-zinc-500 hover:text-red-600 shadow-sm border border-zinc-100 transition-all active:scale-90"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Shipping Address Preview - Premium Light Version */}
+            {accessToken && (
+              <div className="mb-8 p-6 bg-white border border-zinc-100 rounded-[2rem] shadow-sm relative overflow-hidden group transition-all hover:border-red-600/30">
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2.5 mb-5">
+                    <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center">
+                      <MapPin className="w-4 h-4 text-zinc-900" />
+                    </div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900">Địa chỉ giao hàng</p>
+                  </div>
+                  
+                  {defaultAddress ? (
+                    <div className="space-y-1.5">
+                      <p className="font-black text-xs text-zinc-950">{defaultAddress.receiverName} • {defaultAddress.receiverPhone}</p>
+                      <p className="text-[11px] font-medium text-zinc-500 line-clamp-1 uppercase tracking-wider">{defaultAddress.fullAddress}</p>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-zinc-400 font-bold uppercase tracking-widest italic">Chưa cấu hình địa chỉ mặc định</p>
+                  )}
+
+                  <button 
+                    onClick={() => router.push("/profile/addresses")}
+                    className="mt-6 text-[10px] font-black uppercase tracking-[0.15em] text-red-600 hover:text-zinc-950 transition-colors flex items-center gap-2"
+                  >
+                    Cập nhật thông tin nhận hàng <ArrowLeft className="w-3 h-3 rotate-180" />
+                  </button>
+                </div>
+                
+                {/* Subtle light flourish */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-zinc-50 rounded-full blur-[40px] -mr-16 -mt-16 opacity-50" />
+              </div>
+            )}
+
             <div className="space-y-4 mb-10">
-              {/* Purchase Box */}
+              {/* Purchase Box - Standardized Admin Style */}
               {product.forSale && (
-                <div className="bg-white border border-zinc-200 shadow-sm rounded-3xl p-6 md:p-8 hover:border-[#ff8c5a] transition-all group">
-                  <div className="flex justify-between items-start mb-6">
-                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.15em]">
-                      Purchase Price
+                <div className="bg-white border border-zinc-100 shadow-sm rounded-[2rem] p-8 hover:border-red-600/20 transition-all group">
+                  <div className="flex justify-between items-start mb-8">
+                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.25em]">
+                      GIÁ BÁN NIÊM YẾT
                     </p>
-                    <div className="flex items-center gap-1.5 text-green-600 text-[10px] font-bold uppercase tracking-wider">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> In Stock
+                    <div className="flex items-center gap-2 py-1 px-3 rounded-full bg-green-50 border border-green-100 text-green-700 text-[9px] font-black uppercase tracking-widest">
+                      <CheckCircle2 className="w-3 h-3" /> CÒN HÀNG
                     </div>
                   </div>
-                  <p className="text-3xl font-bold text-zinc-900 mb-8">
+                  <p className="text-4xl font-black text-zinc-950 mb-10 tracking-tighter">
                     {product.salePrice
                       ? formatVND(product.salePrice)
                       : "Liên hệ"}
                   </p>
-                  <Button className="w-full rounded-full h-14 bg-zinc-900 text-white text-sm font-bold shadow-md transition-all active:scale-[0.98] border-none flex items-center justify-center gap-2 group-hover:bg-[#ff8c5a] group-hover:text-black">
-                    <ShoppingCart className="w-5 h-5" /> Thêm vào giỏ hàng
-                  </Button>
+                  
+                  <div className="flex flex-col gap-3">
+                    <Button 
+                      onClick={handleAddToCart}
+                      disabled={isAddingToCart}
+                      className="w-full rounded-2xl h-15 bg-red-600 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-red-200 transition-all active:scale-[0.98] border-none flex items-center justify-center gap-3 hover:bg-zinc-900 disabled:opacity-50"
+                    >
+                      {isAddingToCart ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <ShoppingCart className="w-5 h-5" />
+                      )}
+                      Thêm vào giỏ hàng
+                    </Button>
+                    <Button 
+                      onClick={handleBuyNow}
+                      disabled={isAddingToCart}
+                      variant="outline"
+                      className="w-full rounded-2xl h-15 border-zinc-200 bg-zinc-50/50 text-zinc-900 text-xs font-black uppercase tracking-widest hover:bg-white hover:border-zinc-900 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                    >
+                      Mua ngay
+                    </Button>
+                  </div>
                 </div>
               )}
 
-              {/* Rental Box */}
+              {/* Rental Box - Standardized Admin Style */}
               {product.forRent && (
-                <div className="bg-white border border-zinc-200 shadow-sm rounded-3xl p-6 md:p-8 hover:border-amber-400 transition-all group">
-                  <div className="flex justify-between items-start mb-6">
-                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.15em]">
-                      Rental Service
+                <div className="bg-white border border-zinc-100 shadow-sm rounded-[2rem] p-8 hover:border-amber-400/30 transition-all group">
+                  <div className="flex justify-between items-start mb-8">
+                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.25em]">
+                      DỊCH VỤ CHO THUÊ
                     </p>
-                    <span className="px-2.5 py-0.5 rounded bg-amber-100 text-amber-700 text-[9px] font-black tracking-widest uppercase">
-                      INSURED
+                    <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-600 text-[9px] font-black tracking-widest uppercase border border-amber-100">
+                      BẢO HIỂM 100%
                     </span>
                   </div>
-                  <p className="text-3xl font-bold text-amber-600 mb-8">
+                  <p className="text-4xl font-black text-amber-600 mb-10 tracking-tighter">
                     {product.rentPricePerDay
                       ? formatVND(product.rentPricePerDay)
                       : "Liên hệ"}{" "}
-                    <span className="text-sm font-medium text-zinc-500 normal-case">
+                    <span className="text-xs font-bold text-zinc-400 normal-case tracking-normal">
                       / ngày
                     </span>
                   </p>
-                  <Button className="w-full rounded-full h-14 bg-zinc-100 hover:bg-amber-400 hover:text-black text-zinc-900 font-bold shadow-sm transition-all active:scale-[0.98] border border-zinc-200 hover:border-transparent flex items-center justify-center gap-2 group-hover:bg-amber-400 group-hover:border-transparent group-hover:text-black">
+                  <Button className="w-full rounded-2xl h-15 bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs font-black uppercase tracking-widest hover:bg-amber-400 hover:text-black hover:border-amber-400 shadow-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2">
                     <Calendar className="w-5 h-5" /> Đặt lịch thuê ngay
                   </Button>
                 </div>

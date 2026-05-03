@@ -15,4 +15,4 @@ declare global {
   }
 }
 
-export type { IBackendRes }
+export type { IBackendRes, IPagination }

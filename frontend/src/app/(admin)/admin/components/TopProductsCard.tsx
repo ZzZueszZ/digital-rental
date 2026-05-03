@@ -57,19 +57,19 @@ export function TopProductsCard({ products }: TopProductsCardProps) {
                   )}
                 </div>
                 <div className="min-w-0 flex flex-col justify-center">
-                  <p className="text-sm sm:text-[15px] font-bold text-zinc-950 group-hover:text-red-600 transition-colors truncate">
+                  <p className="text-[15px] font-semibold text-zinc-950 group-hover:text-red-600 transition-colors truncate">
                     {p.productName}
                   </p>
-                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400 truncate mt-0.5">
+                  <p className="text-xs font-medium text-zinc-400 truncate mt-0.5">
                     {p.brand}
                   </p>
                 </div>
               </div>
               <div className="text-right flex flex-col items-end">
-                <div className="font-black text-md sm:text-lg text-zinc-950 leading-none">
+                <div className="font-bold text-lg text-zinc-950 leading-none">
                   {p.totalSold}
                 </div>
-                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 mt-1">
+                <div className="text-xs font-medium text-zinc-400 mt-1">
                   Đã bán
                 </div>
               </div>

@@ -59,14 +59,14 @@ export function LowStockCard({ products }: LowStockCardProps) {
                   )}
                 </div>
                 <div className="min-w-0 flex flex-col justify-center">
-                  <p className="text-sm font-bold text-zinc-950 truncate">
+                  <p className="text-[15px] font-semibold text-zinc-950 truncate">
                     {p.productName}
                   </p>
                   <div className="flex items-center gap-2 mt-1.5">
-                    <div className="inline-flex px-2 py-0.5 rounded-md bg-red-50 text-red-600 border border-red-100 text-[9px] font-black uppercase tracking-[0.15em]">
+                    <div className="inline-flex px-2 py-0.5 rounded-md bg-red-50 text-red-600 border border-red-100 text-xs font-bold uppercase tracking-wider">
                       Còn {p.stock}
                     </div>
-                    <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">
+                    <span className="text-xs font-medium text-zinc-400">
                       Cần nhập thêm
                     </span>
                   </div>
@@ -78,7 +78,7 @@ export function LowStockCard({ products }: LowStockCardProps) {
             </div>
           ))}
         </div>
-        <Button className="w-full mt-6 h-12 sm:h-14 bg-zinc-950 text-white hover:bg-red-600 rounded-xl font-bold transition-all">
+        <Button className="w-full mt-6 h-12 bg-zinc-950 text-white hover:bg-red-600 rounded-xl font-semibold text-[15px] transition-all">
           Quản lý kho hàng
         </Button>
       </CardContent>

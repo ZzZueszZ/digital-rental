@@ -104,7 +104,7 @@ export function AdminSidebar({
 
         <nav className="flex-1 space-y-1.5 p-6 overflow-y-auto custom-scrollbar">
           <div className="px-3 mb-6">
-            <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">
+            <p className="text-xs font-semibold text-zinc-400">
               Hệ thống
             </p>
           </div>

@@ -51,10 +51,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {/* Dynamic Page Title in Header */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-lg sm:text-2xl font-black tracking-tight text-zinc-950 truncate max-w-[140px] sm:max-w-none">{pageTitle.title}</span>
+                    <span className="text-2xl font-bold tracking-tight text-zinc-950 truncate max-w-[140px] sm:max-w-none">{pageTitle.title}</span>
                     <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-0.5 shrink-0" />
                   </div>
-                  <span className="text-[9px] sm:text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mt-0.5">{pageTitle.subtitle}</span>
+                  <span className="text-sm font-medium text-zinc-500 mt-0.5">{pageTitle.subtitle}</span>
                 </div>
               </div>
 
@@ -87,10 +87,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       {user?.email?.charAt(0).toUpperCase()}
                     </div>
                     <div className="hidden sm:flex flex-col items-start text-left">
-                      <span className="text-xs font-black text-zinc-950 tracking-tight leading-none mb-1">
+                      <span className="text-sm font-semibold text-zinc-950 tracking-tight leading-none mb-1">
                         {user?.email?.split('@')[0]}
                       </span>
-                      <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest leading-none">
+                      <span className="text-xs text-zinc-400 font-medium leading-none">
                         {user?.roles?.[0] || 'Member'}
                       </span>
                     </div>
@@ -107,8 +107,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             {user?.email?.charAt(0).toUpperCase()}
                           </div>
                           <div className="flex flex-col overflow-hidden">
-                            <span className="truncate font-black text-zinc-950 text-sm">{user?.email?.split('@')[0]}</span>
-                            <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">{user?.roles?.[0]}</span>
+                            <span className="truncate font-semibold text-zinc-950 text-sm">{user?.email?.split('@')[0]}</span>
+                            <span className="text-xs text-zinc-400 font-medium">{user?.roles?.[0]}</span>
                           </div>
                         </div>
                         <div className="p-2">

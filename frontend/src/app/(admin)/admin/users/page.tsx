@@ -177,7 +177,7 @@ export default function UsersAdminPage() {
     return (
       <span
         className={cn(
-          "inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full",
+          "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full",
           config.badge,
         )}
       >
@@ -233,33 +233,33 @@ export default function UsersAdminPage() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-6">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-100">
-                    <Camera className="w-5 h-5 text-white" strokeWidth={2.5} />
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-100">
+                    <Camera className="w-5 h-5 text-white" strokeWidth={2} />
                   </div>
-                  <h2 className="text-xl font-black text-zinc-950 tracking-tight">
+                  <h2 className="text-xl font-bold text-zinc-950 tracking-tight">
                     {viewMode === "ACTIVE" ? "Quản lý thành viên" : "Thùng rác"}
                   </h2>
                 </div>
-                <p className="text-xs text-zinc-400 font-medium ml-13">
-                  Giám sát &amp; phân quyền tài khoản nhiếp ảnh gia
+                <p className="text-sm text-zinc-500 font-medium ml-13">
+                  Giám sát & phân quyền tài khoản nhiếp ảnh gia
                 </p>
               </div>
 
               {/* Tab Toggle */}
               <div className="flex items-center gap-1 bg-zinc-50 border border-zinc-100 p-1 rounded-xl w-fit">
                 {(["ACTIVE", "DELETED"] as const).map((mode) => (
-                  <button
-                    key={mode}
-                    onClick={() => handleViewModeChange(mode)}
-                    className={cn(
-                      "px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300",
-                      viewMode === mode
-                        ? "bg-zinc-950 text-white shadow-md"
-                        : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50",
-                    )}
-                  >
-                    {mode === "ACTIVE" ? "Hoạt động" : "Thùng rác"}
-                  </button>
+                    <button
+                      key={mode}
+                      onClick={() => handleViewModeChange(mode)}
+                      className={cn(
+                        "px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300",
+                        viewMode === mode
+                          ? "bg-zinc-950 text-white shadow-md"
+                          : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50",
+                      )}
+                    >
+                      {mode === "ACTIVE" ? "Hoạt động" : "Thùng rác"}
+                    </button>
                 ))}
               </div>
             </div>
@@ -270,7 +270,7 @@ export default function UsersAdminPage() {
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors duration-200" />
                 <Input
                   placeholder="Tìm theo email, ID..."
-                  className="pl-10 h-11 rounded-xl border-zinc-200 bg-zinc-50 focus:bg-white focus:border-red-500/30 focus:ring-2 focus:ring-red-500/20 transition-all text-xs font-bold text-zinc-900 placeholder:text-zinc-400"
+                  className="pl-10 h-11 rounded-xl border-zinc-200 bg-zinc-50 focus:bg-white focus:border-red-500/30 focus:ring-2 focus:ring-red-500/20 transition-all text-sm font-medium text-zinc-900 placeholder:text-zinc-400"
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
@@ -280,7 +280,7 @@ export default function UsersAdminPage() {
               </div>
               <Button
                 onClick={() => setCreateDialogOpen(true)}
-                className="h-11 px-6 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold text-xs flex items-center gap-2 shadow-sm whitespace-nowrap"
+                className="h-11 px-6 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-semibold text-sm flex items-center gap-2 shadow-sm whitespace-nowrap"
               >
                 <Plus className="w-4 h-4" />
                 Thêm thành viên
@@ -429,10 +429,10 @@ export default function UsersAdminPage() {
                     </span>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-zinc-900 truncate">
+                    <p className="text-sm font-semibold text-zinc-900 truncate">
                       {u.email}
                     </p>
-                    <p className="text-[10px] text-zinc-400 font-mono">
+                    <p className="text-xs text-zinc-400 font-mono">
                       #{u.id.toString().padStart(5, "0")}
                     </p>
                   </div>
@@ -446,7 +446,7 @@ export default function UsersAdminPage() {
                         className="w-52 p-1.5 rounded-xl border-zinc-100 shadow-lg bg-white"
                       >
                         <DropdownMenuGroup>
-                          <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">
+                          <DropdownMenuLabel className="text-xs font-semibold text-zinc-400 px-3 py-1.5">
                             Tác vụ quản trị
                           </DropdownMenuLabel>
                           {viewMode === "ACTIVE" ? (
@@ -573,7 +573,7 @@ export default function UsersAdminPage() {
                 <div className="mt-3 flex flex-wrap items-center gap-2 pl-13">
                   <span
                     className={cn(
-                      "inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full",
+                      "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full",
                       statusCfg.badge,
                     )}
                   >
@@ -583,7 +583,7 @@ export default function UsersAdminPage() {
                     {statusCfg.label}
                   </span>
                   {u.kycStatus === KycStatus.VERIFIED ? (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                       <ShieldCheck className="w-3 h-3" /> KYC
                     </span>
                   ) : null}
@@ -591,7 +591,7 @@ export default function UsersAdminPage() {
                     <span
                       key={role}
                       className={cn(
-                        "inline-block text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-[0.15em] border",
+                        "inline-block text-xs font-bold px-2 py-0.5 rounded-md border",
                         role === "SUPER_ADMIN" || role === "ADMIN"
                           ? "bg-red-50 text-red-700 border-red-200"
                           : "bg-zinc-50 text-zinc-600 border-zinc-200",
@@ -600,7 +600,7 @@ export default function UsersAdminPage() {
                       {role}
                     </span>
                   ))}
-                  <span className="text-[10px] text-zinc-400 font-medium ml-auto">
+                  <span className="text-xs text-zinc-400 font-medium ml-auto">
                     {new Date(u.createdAt).toLocaleDateString("vi-VN", {
                       day: "2-digit",
                       month: "2-digit",
@@ -643,7 +643,7 @@ export default function UsersAdminPage() {
                   <th
                     key={i}
                     className={cn(
-                      "px-8 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] whitespace-nowrap",
+                      "px-8 py-4 text-xs font-semibold text-zinc-400 whitespace-nowrap",
                       i === 5 && "text-right",
                     )}
                   >
@@ -736,10 +736,10 @@ export default function UsersAdminPage() {
                           </span>
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-bold text-zinc-900 truncate max-w-[180px] group-hover:text-red-600 transition-colors duration-300">
+                          <p className="text-sm font-semibold text-zinc-900 truncate max-w-[180px] group-hover:text-red-600 transition-colors duration-300">
                             {u.email}
                           </p>
-                          <p className="text-[10px] text-zinc-400 font-mono mt-0.5">
+                          <p className="text-xs text-zinc-400 font-mono mt-0.5">
                             #{u.id.toString().padStart(5, "0")}
                           </p>
                         </div>
@@ -754,12 +754,12 @@ export default function UsersAdminPage() {
                     {/* KYC */}
                     <td className="px-8 py-4">
                       {u.kycStatus === KycStatus.VERIFIED ? (
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                           <ShieldCheck className="w-3 h-3" />
                           Đã xác minh
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                           <Clock className="w-3 h-3" />
                           Chờ duyệt
                         </span>
@@ -776,7 +776,7 @@ export default function UsersAdminPage() {
                             <span
                               key={role}
                               className={cn(
-                                "inline-block text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-[0.15em] border",
+                                "inline-block text-xs font-bold px-2 py-0.5 rounded-md border",
                                 isSpecial
                                   ? "bg-red-50 text-red-700 border-red-200"
                                   : "bg-zinc-50 text-zinc-600 border-zinc-200",

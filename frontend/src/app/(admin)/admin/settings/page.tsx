@@ -29,7 +29,7 @@ export default function SettingsAdminPage() {
     <div className="flex-1 space-y-10">
       {/* Header Section */}
       <div className="flex justify-end">
-        <Button className="h-12 px-8 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-bold flex items-center gap-2 group shadow-xl shadow-zinc-950/20">
+        <Button className="h-12 px-8 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-300 font-semibold flex items-center gap-2 group shadow-xl shadow-zinc-950/20 text-sm">
           <Save className="w-5 h-5" />
           Lưu tất cả thay đổi
         </Button>
@@ -50,7 +50,7 @@ export default function SettingsAdminPage() {
             <CardContent className="p-8 space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold uppercase tracking-widest text-zinc-400">
+                  <Label className="text-xs font-semibold text-zinc-400">
                     Tên nền tảng
                   </Label>
                   <Input
@@ -59,7 +59,7 @@ export default function SettingsAdminPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold uppercase tracking-widest text-zinc-400">
+                  <Label className="text-xs font-semibold text-zinc-400">
                     Email hệ thống
                   </Label>
                   <Input
@@ -69,7 +69,7 @@ export default function SettingsAdminPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase tracking-widest text-zinc-400">
+                <Label className="text-xs font-semibold text-zinc-400">
                   Mô tả ngắn
                 </Label>
                 <Input
@@ -111,10 +111,10 @@ export default function SettingsAdminPage() {
             <CardContent className="p-8 space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <p className="text-sm font-bold text-zinc-900 italic">
+                  <p className="text-sm font-semibold text-zinc-900 italic">
                     Xác thực 2 lớp
                   </p>
-                  <p className="text-[10px] text-zinc-400 font-medium uppercase tracking-tighter">
+                  <p className="text-xs text-zinc-400 font-medium">
                     Bắt buộc cho Admin/Staff
                   </p>
                 </div>
@@ -122,10 +122,10 @@ export default function SettingsAdminPage() {
               </div>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <p className="text-sm font-bold text-zinc-900 italic">
+                  <p className="text-sm font-semibold text-zinc-900 italic">
                     Khóa IP lạ
                   </p>
-                  <p className="text-[10px] text-zinc-400 font-medium uppercase tracking-tighter">
+                  <p className="text-xs text-zinc-400 font-medium">
                     Tự động chặn khi có 5 lần login sai
                   </p>
                 </div>
@@ -133,7 +133,7 @@ export default function SettingsAdminPage() {
               </div>
               <Button
                 variant="outline"
-                className="w-full h-12 rounded-xl border-zinc-200 font-bold gap-2"
+                className="w-full h-12 rounded-xl border-zinc-200 font-semibold gap-2 text-sm"
               >
                 <Lock className="w-4 h-4" />
                 Nhật ký đăng nhập
@@ -151,7 +151,7 @@ export default function SettingsAdminPage() {
               <p className="text-zinc-500 text-xs font-medium mb-6">
                 Mọi thứ đang vận hành ổn định trên Cloud Engine.
               </p>
-              <div className="flex items-center gap-2 bg-green-500/10 text-green-500 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase">
+              <div className="flex items-center gap-2 bg-green-500/10 text-green-500 px-4 py-1.5 rounded-full text-xs font-semibold">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                 Healthy
               </div>

@@ -88,21 +88,21 @@ export function RecentActivityCard() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm font-bold text-zinc-900 truncate">
+                      <p className="text-sm font-semibold text-zinc-900 truncate">
                         {log.actorEmail}
                       </p>
-                      <span className="text-[10px] font-medium text-zinc-400 whitespace-nowrap">
+                      <span className="text-xs font-medium text-zinc-400 whitespace-nowrap">
                         {formatDistanceToNow(new Date(log.createdAt), { addSuffix: true, locale: vi })}
                       </span>
                     </div>
-                    <p className="text-xs text-zinc-600 mt-0.5 line-clamp-1">
+                    <p className="text-sm text-zinc-500 mt-0.5 line-clamp-1">
                       {log.description}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-500">
+                      <span className="text-[11px] font-bold uppercase px-2 py-0.5 rounded bg-zinc-100 text-zinc-500">
                         {log.action}
                       </span>
-                      <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-50 text-red-600">
+                      <span className="text-[11px] font-bold uppercase px-2 py-0.5 rounded bg-red-50 text-red-600">
                         {log.targetType} #{log.targetId}
                       </span>
                     </div>
@@ -117,9 +117,9 @@ export function RecentActivityCard() {
           <Button 
             onClick={() => router.push("/admin/audit-logs")}
             variant="ghost" 
-            className="w-full h-11 rounded-xl text-xs font-black uppercase tracking-widest text-zinc-500 hover:text-zinc-950 hover:bg-white border border-transparent hover:border-zinc-200 transition-all gap-2"
+            className="w-full h-11 rounded-xl text-sm font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-white border border-transparent hover:border-zinc-200 transition-all gap-2"
           >
-            Xem tất cả nhật ký <ArrowRight className="w-3.5 h-3.5" />
+            Xem tất cả nhật ký <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
       </CardContent>

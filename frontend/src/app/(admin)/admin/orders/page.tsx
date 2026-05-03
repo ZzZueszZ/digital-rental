@@ -38,11 +38,11 @@ export default function OrdersAdminPage() {
     <div className="flex-1 space-y-6 lg:space-y-10">
       {/* Action Bar */}
       <div className="flex flex-col sm:flex-row justify-end gap-3">
-        <Button variant="outline" className="h-12 w-full sm:w-auto px-8 rounded-xl border-zinc-200 hover:bg-zinc-50 font-bold transition-all duration-300 gap-2 flex items-center justify-center">
+        <Button variant="outline" className="h-12 w-full sm:w-auto px-8 rounded-xl border-zinc-200 hover:bg-zinc-50 font-semibold transition-all duration-300 gap-2 flex items-center justify-center text-sm">
           <Download className="w-5 h-5" />
           Báo cáo tháng
         </Button>
-        <Button className="h-12 w-full sm:w-auto px-8 rounded-xl bg-red-600 text-white hover:bg-zinc-950 transition-all duration-300 font-bold flex items-center justify-center gap-2 group shadow-xl shadow-red-600/20">
+        <Button className="h-12 w-full sm:w-auto px-8 rounded-xl bg-red-600 text-white hover:bg-zinc-950 transition-all duration-300 font-semibold flex items-center justify-center gap-2 group shadow-xl shadow-red-600/20 text-sm">
           Trình quản lý thuê máy
           <ExternalLink className="w-5 h-5" />
         </Button>
@@ -68,7 +68,7 @@ export default function OrdersAdminPage() {
                 <stat.icon className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{stat.label}</p>
+                <p className="text-xs font-semibold text-zinc-400 mb-0.5">{stat.label}</p>
                 <p className="text-xl font-bold text-zinc-950">{stat.value}</p>
               </div>
             </CardContent>
@@ -83,9 +83,9 @@ export default function OrdersAdminPage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
               <CardTitle className="text-xl sm:text-2xl font-bold text-zinc-950">Giao dịch gần đây</CardTitle>
               <div className="flex items-center gap-1 sm:gap-2 bg-zinc-100/50 p-1 rounded-lg w-full sm:w-auto overflow-x-auto no-scrollbar">
-                <Button variant="ghost" size="sm" className="h-8 rounded-md bg-white shadow-xs text-[10px] sm:text-xs font-bold px-3 min-w-fit">Tất cả</Button>
-                <Button variant="ghost" size="sm" className="h-8 rounded-md text-[10px] sm:text-xs font-bold px-3 text-zinc-500 min-w-fit">Thuê máy</Button>
-                <Button variant="ghost" size="sm" className="h-8 rounded-md text-[10px] sm:text-xs font-bold px-3 text-zinc-500 min-w-fit">Mua đứt</Button>
+                <Button variant="ghost" size="sm" className="h-8 rounded-md bg-white shadow-xs text-xs font-semibold px-3 min-w-fit">Tất cả</Button>
+                <Button variant="ghost" size="sm" className="h-8 rounded-md text-xs font-semibold px-3 text-zinc-500 min-w-fit">Thuê máy</Button>
+                <Button variant="ghost" size="sm" className="h-8 rounded-md text-xs font-semibold px-3 text-zinc-500 min-w-fit">Mua đứt</Button>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -98,7 +98,7 @@ export default function OrdersAdminPage() {
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
-              <Button variant="outline" className="h-12 px-5 rounded-xl border-zinc-200 font-bold gap-2">
+              <Button variant="outline" className="h-12 px-5 rounded-xl border-zinc-200 font-semibold gap-2 text-sm">
                 <Filter className="w-4 h-4" />
                 Bộ lọc
               </Button>
@@ -110,12 +110,12 @@ export default function OrdersAdminPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                  <th className="px-8 py-5 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]">Mã đơn & Thời gian</th>
-                  <th className="px-8 py-5 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]">Khách hàng</th>
-                  <th className="px-8 py-5 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]">Loại</th>
-                  <th className="px-8 py-5 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]">Tổng tiền</th>
-                  <th className="px-8 py-5 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]">Trạng thái</th>
-                  <th className="px-8 py-5 text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]"></th>
+                  <th className="px-8 py-5 text-xs font-semibold text-zinc-400">Mã đơn & Thời gian</th>
+                  <th className="px-8 py-5 text-xs font-semibold text-zinc-400">Khách hàng</th>
+                  <th className="px-8 py-5 text-xs font-semibold text-zinc-400">Loại</th>
+                  <th className="px-8 py-5 text-xs font-semibold text-zinc-400">Tổng tiền</th>
+                  <th className="px-8 py-5 text-xs font-semibold text-zinc-400">Trạng thái</th>
+                  <th className="px-8 py-5 text-xs font-semibold text-zinc-400"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-50">
@@ -123,8 +123,8 @@ export default function OrdersAdminPage() {
                   <tr key={o.id} className="group hover:bg-zinc-50/80 transition-all duration-300">
                     <td className="px-8 py-6">
                       <div className="flex flex-col gap-1">
-                        <span className="font-black text-zinc-950 tracking-tighter text-sm">{o.id}</span>
-                        <span className="text-[10px] text-zinc-400 font-bold flex items-center gap-1">
+                        <span className="font-semibold text-zinc-950 tracking-tight text-sm">{o.id}</span>
+                        <span className="text-xs text-zinc-400 font-medium flex items-center gap-1">
                           <Clock className="w-3 h-3" /> {o.date}
                         </span>
                       </div>
@@ -139,16 +139,16 @@ export default function OrdersAdminPage() {
                     </td>
                     <td className="px-8 py-6">
                       <Badge variant="outline" className={cn(
-                        "rounded-lg px-2.5 py-1 text-[9px] font-black tracking-widest border-none",
+                        "rounded-lg px-2.5 py-1 text-xs font-semibold border-none",
                         o.type === 'RENTAL' ? "bg-red-50 text-red-600" : "bg-zinc-100 text-zinc-600"
                       )}>
-                        {o.type}
+                        {o.type === 'RENTAL' ? "Thuê máy" : "Mua đứt"}
                       </Badge>
                     </td>
                     <td className="px-8 py-6 font-bold text-zinc-950 text-sm italic">{o.total}</td>
                     <td className="px-8 py-6">
                       <div className={cn(
-                        "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase",
+                        "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold",
                         o.status === 'COMPLETED' ? "bg-green-50 text-green-600" :
                         o.status === 'PENDING' ? "bg-amber-50 text-amber-600" :
                         o.status === 'SHIPPING' ? "bg-blue-50 text-blue-600" :
@@ -156,7 +156,10 @@ export default function OrdersAdminPage() {
                         "bg-red-600 text-white shadow-lg shadow-red-600/20"
                       )}>
                         {o.status === 'COMPLETED' ? <CheckCircle2 className="w-3.5 h-3.5" /> : o.status === 'OVERDUE' ? <AlertCircle className="w-3.5 h-3.5" /> : null}
-                        {o.status}
+                        {o.status === 'COMPLETED' ? "Hoàn tất" : 
+                         o.status === 'PENDING' ? "Chờ xử lý" :
+                         o.status === 'SHIPPING' ? "Đang giao" :
+                         o.status === 'CANCELLED' ? "Đã hủy" : "Quá hạn"}
                       </div>
                     </td>
                     <td className="px-8 py-6 text-right">
@@ -172,7 +175,7 @@ export default function OrdersAdminPage() {
           <div className="p-8 border-t border-zinc-50 bg-zinc-50/20 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <CreditCard className="w-5 h-5 text-zinc-300" />
-              <p className="text-xs text-zinc-400 font-bold tracking-widest uppercase">Hiển thị 5 của 8,245 giao dịch</p>
+              <p className="text-xs text-zinc-400 font-semibold">Hiển thị 5 của 8,245 giao dịch</p>
             </div>
             <div className="flex gap-2">
               <Button disabled variant="outline" className="h-11 px-6 rounded-xl border-zinc-200">Trang trước</Button>

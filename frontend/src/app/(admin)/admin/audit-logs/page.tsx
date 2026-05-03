@@ -40,16 +40,16 @@ export default function AuditLogsPage() {
             <div className="w-8 h-8 rounded-lg bg-zinc-950 flex items-center justify-center shadow-sm">
               <Terminal className="w-4 h-4 text-white" />
             </div>
-            <h2 className="text-lg font-black text-zinc-950 tracking-tight">Nhật ký hệ thống</h2>
+            <h2 className="text-lg font-bold text-zinc-950 tracking-tight">Nhật ký hệ thống</h2>
           </div>
-          <p className="text-xs text-zinc-400 font-medium ml-10.5">Theo dõi mọi thay đổi và hoạt động trên nền tảng</p>
+          <p className="text-xs text-zinc-500 font-medium ml-10.5">Theo dõi mọi thay đổi và hoạt động trên nền tảng</p>
         </div>
         
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
           <Input 
             placeholder="Tìm theo email, hành động..." 
-            className="pl-9 h-10 rounded-xl bg-zinc-50 border-zinc-100 text-xs font-medium focus:bg-white transition-all"
+            className="pl-9 h-10 rounded-xl bg-zinc-50 border-zinc-100 text-sm font-medium focus:bg-white transition-all"
           />
         </div>
       </div>
@@ -60,11 +60,11 @@ export default function AuditLogsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Người thực hiện</th>
-                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Hành động</th>
-                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Đối tượng</th>
-                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Thời gian</th>
-                <th className="px-6 py-4 text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Địa chỉ IP</th>
+                <th className="px-6 py-4 text-xs font-semibold text-zinc-400">Người thực hiện</th>
+                <th className="px-6 py-4 text-xs font-semibold text-zinc-400">Hành động</th>
+                <th className="px-6 py-4 text-xs font-semibold text-zinc-400">Đối tượng</th>
+                <th className="px-6 py-4 text-xs font-semibold text-zinc-400">Thời gian</th>
+                <th className="px-6 py-4 text-xs font-semibold text-zinc-400">Địa chỉ IP</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-50">
@@ -93,43 +93,43 @@ export default function AuditLogsPage() {
                           <User className="w-4 h-4 text-zinc-400" />
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-zinc-900">{log.actorEmail}</p>
-                          <p className="text-[10px] text-zinc-400 font-mono">ID: {log.actorUserId}</p>
+                          <p className="text-sm font-semibold text-zinc-900">{log.actorEmail}</p>
+                          <p className="text-xs text-zinc-400 font-mono">ID: {log.actorUserId}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="space-y-1">
-                        <span className="inline-flex px-2 py-0.5 rounded bg-zinc-950 text-white text-[9px] font-black uppercase tracking-wider">
+                        <span className="inline-flex px-2 py-0.5 rounded bg-zinc-950 text-white text-[10px] font-bold">
                           {log.action}
                         </span>
-                        <p className="text-[11px] text-zinc-600 font-medium line-clamp-1" title={log.description}>
+                        <p className="text-xs text-zinc-600 font-medium line-clamp-1" title={log.description}>
                           {log.description}
                         </p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-zinc-700 bg-zinc-100 px-2 py-0.5 rounded">
+                        <span className="text-xs font-semibold text-zinc-700 bg-zinc-100 px-2 py-0.5 rounded">
                           {log.targetType}
                         </span>
-                        <span className="text-[10px] font-mono text-zinc-400">#{log.targetId}</span>
+                        <span className="text-xs font-mono text-zinc-400">#{log.targetId}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="text-xs font-bold text-zinc-900">
+                        <span className="text-sm font-semibold text-zinc-900">
                           {format(new Date(log.createdAt), "HH:mm:ss", { locale: vi })}
                         </span>
-                        <span className="text-[10px] text-zinc-400 font-medium">
+                        <span className="text-xs text-zinc-400 font-medium">
                           {format(new Date(log.createdAt), "dd/MM/yyyy", { locale: vi })}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5 text-zinc-400">
-                        <Cpu className="w-3 h-3" />
-                        <span className="text-[10px] font-mono font-medium">{log.ipAddress}</span>
+                        <Cpu className="w-3.5 h-3.5" />
+                        <span className="text-xs font-mono font-medium">{log.ipAddress}</span>
                       </div>
                     </td>
                   </tr>
@@ -142,7 +142,7 @@ export default function AuditLogsPage() {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-between">
-            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
               Trang {page + 1} / {totalPages}
             </p>
             <div className="flex items-center gap-2">

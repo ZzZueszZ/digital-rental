@@ -64,26 +64,26 @@ export function VoucherTableRow({
             <Ticket className="w-5 h-5 text-zinc-400 group-hover:text-red-600 transition-colors" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xs font-black text-zinc-950 uppercase tracking-wider">{voucher.code}</span>
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">ID: #{voucher.id}</span>
+            <span className="text-sm font-semibold text-zinc-950 tracking-tight">{voucher.code}</span>
+            <span className="text-xs font-medium text-zinc-400">ID: #{voucher.id}</span>
           </div>
         </div>
       </td>
       <td className="px-8 py-5">
         <div className="flex flex-col max-w-[200px]">
-          <span className="text-xs font-black text-zinc-900 line-clamp-1">{voucher.name}</span>
-          <span className="text-[10px] font-medium text-zinc-400 line-clamp-1 italic">{voucher.description || "Không có mô tả"}</span>
+          <span className="text-sm font-semibold text-zinc-900 line-clamp-1">{voucher.name}</span>
+          <span className="text-xs font-medium text-zinc-400 line-clamp-1 italic">{voucher.description || "Không có mô tả"}</span>
         </div>
       </td>
       <td className="px-8 py-5">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={cn("text-[9px] uppercase font-black px-1.5 py-0 border-0 shadow-none", status.className)}>
+            <Badge variant="outline" className={cn("text-xs font-semibold px-2 py-0.5 border-0 shadow-none", status.className)}>
               {status.label}
             </Badge>
           </div>
-          <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-500">
-            <Zap className="w-3 h-3 text-red-600" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500">
+            <Zap className="w-3.5 h-3.5 text-red-600" />
             <span>
               {voucher.type === "PERCENTAGE" 
                 ? `Giảm ${voucher.discountValue}%` 
@@ -102,20 +102,20 @@ export function VoucherTableRow({
                 style={{ width: `${voucher.maxUsage ? (voucher.usedCount / voucher.maxUsage) * 100 : 0}%` }} 
               />
             </div>
-            <span className="text-[10px] font-black text-zinc-600">{voucher.usedCount}/{voucher.maxUsage || "∞"}</span>
+            <span className="text-xs font-semibold text-zinc-600">{voucher.usedCount}/{voucher.maxUsage || "∞"}</span>
           </div>
-          <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest pl-5">Lượt sử dụng</span>
+          <span className="text-[11px] font-medium text-zinc-400 pl-5">Lượt sử dụng</span>
         </div>
       </td>
       <td className="px-8 py-5">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <Calendar className="w-3.5 h-3.5 text-zinc-300" />
-            <span className="text-[10px] font-bold text-zinc-600">
+            <span className="text-xs font-semibold text-zinc-600">
               {voucher.endDate ? format(new Date(voucher.endDate), "dd/MM/yy", { locale: vi }) : "Vô thời hạn"}
             </span>
           </div>
-          <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest pl-5">Ngày hết hạn</span>
+          <span className="text-[11px] font-medium text-zinc-400 pl-5">Ngày hết hạn</span>
         </div>
       </td>
       <td className="px-8 py-5 text-right">

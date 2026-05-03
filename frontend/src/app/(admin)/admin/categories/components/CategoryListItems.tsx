@@ -27,23 +27,23 @@ export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: Item
             <Tag className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-xs font-black text-zinc-900 tracking-tight uppercase mb-0.5">
+            <p className="text-sm font-semibold text-zinc-900 tracking-tight mb-0.5">
               {category.code}
             </p>
-            <p className="text-[11px] font-bold text-zinc-400">ID: #{category.id}</p>
+            <p className="text-xs font-medium text-zinc-400">ID: #{category.id}</p>
           </div>
         </div>
       </td>
       <td className="px-6 py-4">
-        <p className="text-xs font-bold text-zinc-900 group-hover:text-red-600 transition-colors duration-300">{category.name}</p>
-        <p className="text-[11px] text-zinc-500 line-clamp-1 max-w-xs" title={category.description}>
+        <p className="text-sm font-semibold text-zinc-900 group-hover:text-red-600 transition-colors duration-300">{category.name}</p>
+        <p className="text-xs text-zinc-500 line-clamp-1 max-w-xs" title={category.description}>
           {category.description || "Chưa có mô tả"}
         </p>
       </td>
       <td className="px-6 py-4">
         <Badge
           className={cn(
-            "rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-wider border-0 ring-0",
+            "rounded-md px-2.5 py-1 text-xs font-semibold border-0 ring-0 shadow-none",
             category.isActive
               ? "bg-emerald-50 text-emerald-600"
               : "bg-zinc-900 text-white"
@@ -54,10 +54,10 @@ export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: Item
       </td>
       <td className="px-6 py-4">
         <div className="flex flex-col">
-          <span className="text-[11px] font-bold text-zinc-900">
+          <span className="text-xs font-semibold text-zinc-900">
             {format(new Date(category.createdAt), "dd/MM/yyyy", { locale: vi })}
           </span>
-          <span className="text-[10px] text-zinc-400 font-medium">
+          <span className="text-[11px] text-zinc-400 font-medium">
             {format(new Date(category.createdAt), "HH:mm", { locale: vi })}
           </span>
         </div>

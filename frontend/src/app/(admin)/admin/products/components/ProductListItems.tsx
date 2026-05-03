@@ -46,16 +46,16 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
           </div>
           <div>
             <p 
-              className="text-sm font-black text-zinc-950 tracking-tight mb-0.5 max-w-[200px] truncate group-hover:text-red-600 transition-colors duration-300" 
+              className="text-sm font-semibold text-zinc-950 tracking-tight mb-0.5 max-w-[200px] truncate group-hover:text-red-600 transition-colors duration-300" 
               title={product.name}
             >
               {product.name}
             </p>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-100 px-1.5 py-0.5 rounded">
+              <span className="text-xs font-medium text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded">
                 ID: {product.id}
               </span>
-              <span className="text-[10px] font-bold text-zinc-500 line-clamp-1 max-w-[150px]">
+              <span className="text-xs font-medium text-zinc-500 line-clamp-1 max-w-[150px]">
                 {product.categoryName || "Chưa phân loại"}
               </span>
             </div>
@@ -65,19 +65,19 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
       <td className="px-6 py-4">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={cn("text-[9px] uppercase font-black px-1.5 py-0 border-0", product.isForRent ? "bg-amber-100/50 text-amber-700" : "bg-zinc-100 text-zinc-400")}>Thuê</Badge>
-            <span className="text-xs font-bold text-zinc-900">{product.rentPricePerDay?.toLocaleString('vi-VN')} ₫<span className="text-[10px] text-zinc-500 font-medium">/ngày</span></span>
+            <Badge variant="outline" className={cn("text-[10px] font-bold px-1.5 py-0 border-0 shadow-none", product.isForRent ? "bg-amber-100/50 text-amber-700" : "bg-zinc-100 text-zinc-400")}>Thuê</Badge>
+            <span className="text-sm font-semibold text-zinc-900">{product.rentPricePerDay?.toLocaleString('vi-VN')} ₫<span className="text-xs text-zinc-400 font-medium">/ngày</span></span>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={cn("text-[9px] uppercase font-black px-1.5 py-0 border-0", product.isForSale ? "bg-blue-100/50 text-blue-700" : "bg-zinc-100 text-zinc-400")}>Bán</Badge>
-            <span className="text-xs font-bold text-zinc-900">{product.salePrice?.toLocaleString('vi-VN')} ₫</span>
+            <Badge variant="outline" className={cn("text-[10px] font-bold px-1.5 py-0 border-0 shadow-none", product.isForSale ? "bg-blue-100/50 text-blue-700" : "bg-zinc-100 text-zinc-400")}>Bán</Badge>
+            <span className="text-sm font-semibold text-zinc-900">{product.salePrice?.toLocaleString('vi-VN')} ₫</span>
           </div>
         </div>
       </td>
       <td className="px-6 py-4">
         <Badge
           className={cn(
-            "rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-wider border-0 ring-0",
+            "rounded-md px-2.5 py-1 text-xs font-semibold border-0 ring-0 shadow-none",
             !isDeleted
               ? (product.active ? "bg-emerald-50 text-emerald-600" : "bg-zinc-100 text-zinc-500")
               : "bg-red-50 text-red-600"
@@ -88,10 +88,10 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
       </td>
       <td className="px-6 py-4">
         <div className="flex flex-col">
-          <span className="text-[11px] font-bold text-zinc-900">
+          <span className="text-xs font-semibold text-zinc-900">
             {format(new Date(product.createdAt), "dd/MM/yyyy", { locale: vi })}
           </span>
-          <span className="text-[10px] text-zinc-400 font-medium">
+          <span className="text-[11px] text-zinc-400 font-medium">
             {format(new Date(product.createdAt), "HH:mm", { locale: vi })}
           </span>
         </div>

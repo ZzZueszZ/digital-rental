@@ -136,12 +136,12 @@ export function ProductListSection() {
               >
                 {/* Image Wrapper */}
                 <div className="relative h-[220px] w-full bg-zinc-50 p-4 flex items-center justify-center overflow-hidden">
-                  <div className="absolute top-4 left-4 z-10 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-zinc-200 text-[10px] font-bold tracking-widest uppercase text-zinc-900 shadow-xs">
+                  <div className="absolute top-4 left-4 z-10 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-zinc-200 text-xs font-semibold text-zinc-900 shadow-xs">
                     {product.brand}
                   </div>
                   {product.forRent && product.rentPricePerDay && (
-                    <div className="absolute bottom-4 right-4 z-10 px-3 py-1.5 rounded-full bg-red-600 text-[11px] font-bold tracking-widest uppercase text-white shadow-lg">
-                      {formatVND(product.rentPricePerDay)} / NGÀY
+                    <div className="absolute bottom-4 right-4 z-10 px-3 py-1.5 rounded-full bg-red-600 text-[11px] font-bold text-white shadow-lg">
+                      {formatVND(product.rentPricePerDay)} / ngày
                     </div>
                   )}
 
@@ -161,7 +161,7 @@ export function ProductListSection() {
                 {/* Content */}
                 <div className="flex-1 p-5 flex flex-col justify-between">
                   <div>
-                    <p className="text-red-600 text-[12px] font-bold tracking-widest uppercase mb-2">
+                    <p className="text-red-600 text-sm font-semibold mb-2">
                       {product.categoryName}
                     </p>
                     <h3 className="text-[18px] md:text-[22px] font-semibold text-zinc-950 tracking-tight line-clamp-2 leading-[1.3] group-hover:text-red-600 transition-colors">

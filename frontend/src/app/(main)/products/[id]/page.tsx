@@ -219,23 +219,23 @@ export default function ProductDetailPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 pb-24 text-zinc-900 relative selection:bg-[#ff8c5a]/30">
-      <div className="container mx-auto px-6 md:px-12 max-w-[1600px] pt-8 md:pt-12">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1600px] pt-6">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="group flex items-center gap-2 text-zinc-500 hover:text-red-600 transition-colors mb-10"
+          className="group flex items-center gap-2 text-zinc-500 hover:text-red-600 transition-colors mb-6"
         >
           <div className="w-10 h-10 rounded-full bg-white border border-zinc-200 shadow-sm flex items-center justify-center group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600 transition-all">
             <ArrowLeft className="w-4 h-4" />
           </div>
-          <span className="text-xs font-bold uppercase tracking-widest">
+          <span className="text-sm font-semibold tracking-wide">
             Trang trước
           </span>
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Column: Image Gallery & Engineering */}
-          <div className="lg:col-span-7 space-y-12">
+          <div className="lg:col-span-7 space-y-8">
             {/* Main Image & Thumbnail Gallery */}
             <div className="space-y-4">
               <div className="relative w-full aspect-square md:aspect-4/3 bg-white rounded-[2.5rem] flex items-center justify-center overflow-hidden p-6 md:p-8 mask-[radial-gradient(circle_at_center,black_75%,transparent_100%)] group-hover:mask-[radial-gradient(circle_at_center,black_85%,transparent_100%)] transition-all duration-700">
@@ -318,24 +318,24 @@ export default function ProductDetailPage() {
             {/* Engineering Excellence Section (Dynamic from specifications) */}
             {product.specifications && product.specifications.length > 0 && (
               <div className="pt-8">
-                <h2 className="text-2xl font-bold text-zinc-900 mb-6 tracking-tight">
+                <h2 className="text-[28px] md:text-[32px] font-semibold text-zinc-900 mb-4 tracking-tight">
                   Cấu hình nổi bật
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {product.specifications.slice(0, 2).map((spec, idx) => (
                     <div
                       key={spec.id}
-                      className="bg-white border border-zinc-200 shadow-sm rounded-[2rem] p-8 hover:bg-zinc-50 transition-colors"
+                      className="bg-white border border-zinc-200 shadow-sm rounded-xl p-5 hover:bg-zinc-50 transition-colors"
                     >
                       {idx === 0 ? (
-                        <Camera className="w-6 h-6 text-[#ff8c5a] mb-6" />
+                        <Camera className="w-6 h-6 text-red-600 mb-6" />
                       ) : (
-                        <Video className="w-6 h-6 text-[#ff8c5a] mb-6" />
+                        <Video className="w-6 h-6 text-red-600 mb-6" />
                       )}
-                      <h3 className="text-lg font-bold text-zinc-900 mb-3">
+                      <h3 className="text-[18px] md:text-[20px] font-semibold text-zinc-900 mb-3">
                         {spec.specKey}
                       </h3>
-                      <p className="text-zinc-500 text-sm leading-relaxed">
+                      <p className="text-zinc-500 text-base leading-[1.6]">
                         {spec.specValue}
                       </p>
                     </div>
@@ -348,12 +348,12 @@ export default function ProductDetailPage() {
           {/* Right Column: Information & Pricing */}
           <div className="lg:col-span-5 flex flex-col justify-start pb-12 lg:pb-0">
             <div className="inline-flex items-center gap-4 mb-4">
-              <span className="px-3 py-1 rounded-sm bg-[#efc352]/10 text-[#efc352] text-[10px] font-black tracking-widest uppercase border border-[#efc352]/20">
-                NEW ARRIVAL
+              <span className="px-3 py-1 rounded-sm bg-amber-500/10 text-amber-600 text-sm font-semibold border border-amber-500/20">
+                Sản phẩm mới
               </span>
               {reviewMeta && (
-                <span className="flex items-center gap-1.5 text-[#ff8c5a] text-[11px] font-bold">
-                  <Star className="w-3.5 h-3.5 fill-[#ff8c5a]" />{" "}
+                <span className="flex items-center gap-1.5 text-red-600 text-sm font-semibold">
+                  <Star className="w-3.5 h-3.5 fill-red-600" />{" "}
                   {(reviewMeta.averageRating || 0).toFixed(1)}{" "}
                   <span className="text-zinc-500 font-medium ml-1">
                     ({reviewMeta.totalReviews || 0} Reviews)
@@ -362,20 +362,20 @@ export default function ProductDetailPage() {
               )}
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold text-zinc-900 tracking-tight leading-[1.15] mb-6">
+            <h1 className="text-[32px] md:text-[40px] lg:text-[44px] font-bold text-zinc-900 tracking-tight leading-[1.2] mb-6">
               {product.name}
             </h1>
 
-            <p className="text-zinc-500 text-sm md:text-base leading-relaxed mb-8">
+            <p className="text-zinc-500 text-base leading-[1.6] mb-8">
               {product.description ||
                 "Máy ảnh mirrorless full-frame phù hợp chụp sự kiện, chân dung và quay video 4K. Hiệu năng vượt trội trong mọi điều kiện ánh sáng."}
             </p>
 
             {/* Quantity Selector */}
-            <div className="mb-8 p-6 bg-white border border-zinc-100 rounded-[2rem] flex items-center justify-between shadow-sm">
+            <div className="mb-6 p-5 bg-white border border-zinc-100 rounded-xl flex items-center justify-between shadow-sm">
               <div>
-                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-1.5">Số lượng</p>
-                <p className="text-xs font-bold text-zinc-900">Thiết lập quy mô đơn hàng</p>
+                <p className="text-sm font-semibold text-zinc-400 mb-1.5">Số lượng</p>
+                <p className="text-sm font-medium text-zinc-900">Thiết lập quy mô đơn hàng</p>
               </div>
               <div className="flex items-center gap-4 bg-zinc-50 p-2 rounded-2xl border border-zinc-100">
                 <button 
@@ -396,19 +396,19 @@ export default function ProductDetailPage() {
 
             {/* Shipping Address Preview - Premium Light Version */}
             {accessToken && (
-              <div className="mb-8 p-6 bg-white border border-zinc-100 rounded-[2rem] shadow-sm relative overflow-hidden group transition-all hover:border-red-600/30">
+              <div className="mb-6 p-5 bg-white border border-zinc-100 rounded-xl shadow-sm relative overflow-hidden group transition-all hover:border-red-600/30">
                 <div className="relative z-10">
                   <div className="flex items-center gap-2.5 mb-5">
                     <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center">
                       <MapPin className="w-4 h-4 text-zinc-900" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900">Địa chỉ giao hàng</p>
+                    <p className="text-sm font-semibold text-zinc-900">Địa chỉ giao hàng</p>
                   </div>
                   
                   {defaultAddress ? (
                     <div className="space-y-1.5">
-                      <p className="font-black text-xs text-zinc-950">{defaultAddress.receiverName} • {defaultAddress.receiverPhone}</p>
-                      <p className="text-[11px] font-medium text-zinc-500 line-clamp-1 uppercase tracking-wider">{defaultAddress.fullAddress}</p>
+                      <p className="font-semibold text-sm text-zinc-950">{defaultAddress.receiverName} • {defaultAddress.receiverPhone}</p>
+                      <p className="text-sm font-medium text-zinc-500 line-clamp-1">{defaultAddress.fullAddress}</p>
                     </div>
                   ) : (
                     <p className="text-xs text-zinc-400 font-bold uppercase tracking-widest italic">Chưa cấu hình địa chỉ mặc định</p>
@@ -416,7 +416,7 @@ export default function ProductDetailPage() {
 
                   <button 
                     onClick={() => router.push("/profile/addresses")}
-                    className="mt-6 text-[10px] font-black uppercase tracking-[0.15em] text-red-600 hover:text-zinc-950 transition-colors flex items-center gap-2"
+                    className="mt-6 text-sm font-semibold text-red-600 hover:text-zinc-950 transition-colors flex items-center gap-2"
                   >
                     Cập nhật thông tin nhận hàng <ArrowLeft className="w-3 h-3 rotate-180" />
                   </button>
@@ -427,19 +427,19 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            <div className="space-y-4 mb-10">
+            <div className="space-y-4 mb-8">
               {/* Purchase Box - Standardized Admin Style */}
               {product.forSale && (
-                <div className="bg-white border border-zinc-100 shadow-sm rounded-[2rem] p-8 hover:border-red-600/20 transition-all group">
-                  <div className="flex justify-between items-start mb-8">
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.25em]">
-                      GIÁ BÁN NIÊM YẾT
+                <div className="bg-white border border-zinc-100 shadow-sm rounded-xl p-5 hover:border-red-600/20 transition-all group">
+                  <div className="flex justify-between items-start mb-4">
+                    <p className="text-sm font-semibold text-zinc-400">
+                      Giá bán niêm yết
                     </p>
-                    <div className="flex items-center gap-2 py-1 px-3 rounded-full bg-green-50 border border-green-100 text-green-700 text-[9px] font-black uppercase tracking-widest">
-                      <CheckCircle2 className="w-3 h-3" /> CÒN HÀNG
+                    <div className="flex items-center gap-2 py-1 px-3 rounded-full bg-green-50 border border-green-100 text-green-700 text-xs font-semibold">
+                      <CheckCircle2 className="w-3 h-3" /> Còn hàng
                     </div>
                   </div>
-                  <p className="text-4xl font-black text-zinc-950 mb-10 tracking-tighter">
+                  <p className="text-[32px] md:text-[40px] font-bold text-zinc-950 mb-6 tracking-tight">
                     {product.salePrice
                       ? formatVND(product.salePrice)
                       : "Liên hệ"}
@@ -449,7 +449,7 @@ export default function ProductDetailPage() {
                     <Button 
                       onClick={handleAddToCart}
                       disabled={isAddingToCart}
-                      className="w-full rounded-2xl h-15 bg-red-600 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-red-200 transition-all active:scale-[0.98] border-none flex items-center justify-center gap-3 hover:bg-zinc-900 disabled:opacity-50"
+                      className="w-full rounded-xl h-12 bg-red-600 text-white text-[14px] md:text-[16px] font-semibold transition-all active:scale-[0.98] border-none flex items-center justify-center gap-3 hover:bg-zinc-900 disabled:opacity-50"
                     >
                       {isAddingToCart ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
@@ -462,7 +462,7 @@ export default function ProductDetailPage() {
                       onClick={handleBuyNow}
                       disabled={isAddingToCart}
                       variant="outline"
-                      className="w-full rounded-2xl h-15 border-zinc-200 bg-zinc-50/50 text-zinc-900 text-xs font-black uppercase tracking-widest hover:bg-white hover:border-zinc-900 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                      className="w-full rounded-xl h-12 border-zinc-200 bg-zinc-50/50 text-zinc-900 text-[14px] md:text-[16px] font-semibold hover:bg-white hover:border-zinc-900 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                     >
                       Mua ngay
                     </Button>
@@ -472,24 +472,24 @@ export default function ProductDetailPage() {
 
               {/* Rental Box - Standardized Admin Style */}
               {product.forRent && (
-                <div className="bg-white border border-zinc-100 shadow-sm rounded-[2rem] p-8 hover:border-amber-400/30 transition-all group">
-                  <div className="flex justify-between items-start mb-8">
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.25em]">
-                      DỊCH VỤ CHO THUÊ
+                <div className="bg-white border border-zinc-100 shadow-sm rounded-xl p-5 hover:border-amber-400/30 transition-all group">
+                  <div className="flex justify-between items-start mb-4">
+                    <p className="text-sm font-semibold text-zinc-400">
+                      Dịch vụ cho thuê
                     </p>
-                    <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-600 text-[9px] font-black tracking-widest uppercase border border-amber-100">
-                      BẢO HIỂM 100%
+                    <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-600 text-xs font-semibold border border-amber-100">
+                      Bảo hiểm 100%
                     </span>
                   </div>
-                  <p className="text-4xl font-black text-amber-600 mb-10 tracking-tighter">
+                  <p className="text-[32px] md:text-[40px] font-bold text-amber-600 mb-6 tracking-tight">
                     {product.rentPricePerDay
                       ? formatVND(product.rentPricePerDay)
                       : "Liên hệ"}{" "}
-                    <span className="text-xs font-bold text-zinc-400 normal-case tracking-normal">
+                    <span className="text-sm font-semibold text-zinc-400 normal-case tracking-normal">
                       / ngày
                     </span>
                   </p>
-                  <Button className="w-full rounded-2xl h-15 bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs font-black uppercase tracking-widest hover:bg-amber-400 hover:text-black hover:border-amber-400 shadow-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                  <Button className="w-full rounded-xl h-12 bg-zinc-50 border border-zinc-200 text-zinc-900 text-[14px] md:text-[16px] font-semibold hover:bg-amber-400 hover:text-black hover:border-amber-400 shadow-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2">
                     <Calendar className="w-5 h-5" /> Đặt lịch thuê ngay
                   </Button>
                 </div>
@@ -497,26 +497,26 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Trust Badges */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-10">
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <div className="flex-1 bg-zinc-50 border border-zinc-200 rounded-2xl p-4 flex items-center gap-4">
                 <ShieldCheck className="w-6 h-6 text-amber-500" />
                 <div>
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-                    Warranty
+                  <p className="text-sm font-semibold text-zinc-500">
+                    Bảo hành
                   </p>
                   <p className="text-xs font-bold text-zinc-900 mt-0.5">
-                    24 Months Official
+                    24 tháng chính hãng
                   </p>
                 </div>
               </div>
               <div className="flex-1 bg-zinc-50 border border-zinc-200 rounded-2xl p-4 flex items-center gap-4">
                 <Truck className="w-6 h-6 text-amber-500" />
                 <div>
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-                    Shipping
+                  <p className="text-sm font-semibold text-zinc-500">
+                    Giao hàng
                   </p>
                   <p className="text-xs font-bold text-zinc-900 mt-0.5">
-                    Free Nationwide
+                    Miễn phí toàn quốc
                   </p>
                 </div>
               </div>
@@ -531,8 +531,8 @@ export default function ProductDetailPage() {
                   }
                   className="w-full py-4 flex items-center justify-between text-left group"
                 >
-                  <span className="text-sm font-bold text-zinc-900 group-hover:text-[#ff8c5a] transition-colors">
-                    Full Specifications
+                  <span className="text-base font-semibold text-zinc-900 group-hover:text-red-600 transition-colors">
+                    Thông số kỹ thuật
                   </span>
                   {activeTab === "specs" ? (
                     <ChevronUp className="w-4 h-4 text-zinc-500" />
@@ -573,8 +573,8 @@ export default function ProductDetailPage() {
                   }
                   className="w-full py-4 flex items-center justify-between text-left group"
                 >
-                  <span className="text-sm font-bold text-zinc-900 group-hover:text-[#ff8c5a] transition-colors">
-                    Rental Terms
+                  <span className="text-base font-semibold text-zinc-900 group-hover:text-red-600 transition-colors">
+                    Điều khoản thuê
                   </span>
                   {activeTab === "terms" ? (
                     <ChevronUp className="w-4 h-4 text-zinc-500" />
@@ -597,15 +597,15 @@ export default function ProductDetailPage() {
         </div>
 
         {/* Reviews Section */}
-        <div className="mt-24 border-t border-zinc-200 pt-16">
-          <div className="flex items-center gap-4 mb-10">
-            <h2 className="text-3xl font-bold text-zinc-900 tracking-tight">
+        <div className="mt-10 border-t border-zinc-200 pt-8">
+          <div className="flex items-center gap-4 mb-6">
+            <h2 className="text-[28px] md:text-[32px] font-semibold text-zinc-900 tracking-tight">
               Đánh giá từ khách hàng
             </h2>
             {reviewMeta && (
-              <div className="flex items-center gap-2 bg-[#ff8c5a]/10 px-4 py-2 rounded-full border border-[#ff8c5a]/20">
-                <Star className="w-4 h-4 fill-[#ff8c5a] text-[#ff8c5a]" />
-                <span className="text-[#ff8c5a] font-bold">
+              <div className="flex items-center gap-2 bg-red-600/10 px-4 py-2 rounded-full border border-red-600/20">
+                <Star className="w-4 h-4 fill-red-600 text-red-600" />
+                <span className="text-red-600 font-bold">
                   {reviewMeta.averageRating.toFixed(1)}
                 </span>
                 <span className="text-zinc-500 font-medium text-sm">
@@ -620,18 +620,18 @@ export default function ProductDetailPage() {
               {reviews.map((r) => (
                 <div
                   key={r.id}
-                  className="bg-white p-6 lg:p-8 rounded-[2rem] border border-zinc-200 shadow-sm hover:shadow-md transition-all"
+                  className="bg-white p-5 lg:p-6 rounded-2xl border border-zinc-200 shadow-sm hover:shadow-md transition-all"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#ff8c5a] to-[#e85d04] flex items-center justify-center font-bold text-white text-lg shadow-lg">
+                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-red-600 to-zinc-950 flex items-center justify-center font-bold text-white text-lg shadow-lg">
                         {r.userName.charAt(0).toUpperCase()}
                       </div>
                       <div>
                         <p className="font-bold text-zinc-900 text-sm">
                           {r.userName}
                         </p>
-                        <p className="text-[11px] text-zinc-500 uppercase tracking-widest mt-0.5">
+                        <p className="text-xs text-zinc-500 mt-0.5">
                           {new Date(r.createdAt).toLocaleDateString("vi-VN", {
                             day: "numeric",
                             month: "short",
@@ -645,7 +645,7 @@ export default function ProductDetailPage() {
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-3.5 h-3.5 ${i < r.rating ? "fill-[#ff8c5a] text-[#ff8c5a]" : "text-zinc-300"}`}
+                        className={`w-3.5 h-3.5 ${i < r.rating ? "fill-red-600 text-red-600" : "text-zinc-300"}`}
                       />
                     ))}
                   </div>

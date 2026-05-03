@@ -85,16 +85,16 @@ export default function Home() {
               >
                 <Button
                   size="lg"
-                  className="rounded-full px-8 h-12 text-[14px] md:text-[16px] font-semibold tracking-wide bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all active:scale-95"
+                  className="rounded-full px-8 h-12 text-[14px] md:text-[16px] font-semibold bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all active:scale-95"
                 >
-                  KHÁM PHÁ THIẾT BỊ
+                  Khám phá thiết bị
                 </Button>
                 <Button
                   variant="outline"
                   size="lg"
-                  className="rounded-full px-8 h-12 text-[14px] md:text-[16px] font-semibold tracking-wide border border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-50 transition-all active:scale-95"
+                  className="rounded-full px-8 h-12 text-[14px] md:text-[16px] font-semibold border border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-50 transition-all active:scale-95"
                 >
-                  BẮT ĐẦU THUÊ
+                  Bắt đầu thuê
                 </Button>
               </motion.div>
             </motion.div>
@@ -118,9 +118,9 @@ export default function Home() {
               </div>
               <Button
                 variant="link"
-                className="text-zinc-900 hover:text-red-600 font-bold tracking-widest text-xs transition-all uppercase"
+                className="text-zinc-900 hover:text-red-600 font-bold text-sm transition-all"
               >
-                KHÁM PHÁ THIẾT BỊ <ChevronRight className="w-4 h-4 ml-2" />
+                Khám phá ngay <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
 
@@ -157,7 +157,7 @@ export default function Home() {
                       className="object-cover opacity-85 transition-all duration-1000 group-hover:scale-105 group-hover:opacity-100"
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-zinc-50/90 via-zinc-50/30 to-transparent flex flex-col justify-end p-8">
-                      <p className="text-red-600 text-xs font-bold tracking-widest uppercase mb-3">
+                      <p className="text-red-600 text-sm font-semibold mb-3">
                         {cat.desc}
                       </p>
                       <h3 className="text-[22px] md:text-[24px] font-semibold text-zinc-950 tracking-tight mb-4 leading-[1.3]">
@@ -264,14 +264,14 @@ export default function Home() {
             <div className="max-w-2xl px-4 md:px-0">
               {/* Badge */}
               <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-red-600 mb-8">
-                <span className="text-[12px] font-bold text-white tracking-widest uppercase">
-                  Ưu Đãi Giới Hạn
+                <span className="text-sm font-bold text-white">
+                  Ưu đãi giới hạn
                 </span>
               </div>
               
               {/* Heading */}
-              <h2 className="text-[28px] md:text-[32px] font-semibold text-zinc-950 tracking-tight leading-[1.2] uppercase mb-8">
-                SẴN SÀNG KIẾN TẠO <br />KHUNG HÌNH XUẤT CHÚNG
+              <h2 className="text-[28px] md:text-[32px] font-semibold text-zinc-950 tracking-tight leading-[1.2] mb-8">
+                Sẵn sàng kiến tạo <br />khung hình xuất chúng
               </h2>
               
               {/* Subtitle */}
@@ -280,8 +280,8 @@ export default function Home() {
               </p>
               
               {/* Button */}
-              <Button className="rounded-full px-10 h-14 bg-zinc-900 text-white hover:bg-black text-sm font-bold tracking-[0.08em] uppercase shadow-lg transition-all active:scale-95 border-none">
-                BẮT ĐẦU NGAY
+              <Button className="rounded-full px-10 h-14 bg-zinc-900 text-white hover:bg-black text-base font-semibold shadow-lg transition-all active:scale-95 border-none">
+                Bắt đầu ngay
               </Button>
             </div>
           </div>

@@ -120,7 +120,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   return (
     <div className="flex-1 space-y-8 animate-in fade-in duration-700">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mb-8">
         <div className="flex items-center gap-6">
           <Button 
             onClick={handleBack} 
@@ -162,9 +162,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
         {/* Left Column: Gallery & Visuals */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="xl:col-span-7 space-y-6">
           <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-zinc-50 border border-zinc-100 shadow-2xl group">
             <Image
               src={getImageUrl(currentImage)}
@@ -220,7 +220,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         </div>
 
         {/* Right Column: Key Info & Actions */}
-        <div className="lg:col-span-5 space-y-8">
+        <div className="xl:col-span-5 space-y-8">
           {/* Status & Inventory Card */}
           <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm space-y-6">
             <div className="grid grid-cols-2 gap-4">

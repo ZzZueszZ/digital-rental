@@ -175,7 +175,7 @@ export default function ProductsAdminPage() {
   return (
     <div className="flex-1 space-y-6">
       {/* KPI Stats */}
-      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 xl:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Tổng sản phẩm"
           value={totalElements}
@@ -283,7 +283,7 @@ export default function ProductsAdminPage() {
         {/* Products List */}
         <div className="overflow-x-auto">
           {/* Desktop View */}
-          <div className="hidden lg:block">
+          <div className="hidden md:block">
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-zinc-50/80 border-b border-zinc-100">
@@ -333,7 +333,7 @@ export default function ProductsAdminPage() {
           </div>
 
           {/* Mobile View */}
-          <div className="lg:hidden p-4 space-y-4">
+          <div className="md:hidden p-4 space-y-4">
             {query.isLoading ? (
               Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="h-32 bg-zinc-50 rounded-2xl animate-pulse" />

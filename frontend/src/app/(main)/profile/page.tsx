@@ -52,6 +52,7 @@ import {
   Search,
   ChevronDown,
   Menu,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -73,6 +74,12 @@ export default function ProfileDashboard() {
   const router = useRouter();
   const [activeSection, setActiveSection] = useState<Section>("overview");
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const onNavigate = (section: Section) => {
+    setActiveSection(section);
+    setIsSidebarOpen(false);
+  };
 
   const { accessToken } = useAuthStore();
   const { data: profileRes, isLoading: isFetchingProfile } = useMyProfile();
@@ -125,10 +132,23 @@ export default function ProfileDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50/50 flex selection:bg-red-100">
-      {/* Sidebar - Replicated from Admin Style */}
-      <aside className="w-72 shrink-0 border-r border-zinc-100 bg-white flex flex-col fixed h-full z-40 transition-all duration-300">
-        <div className="h-20 flex items-center px-8 border-b border-zinc-50">
+    <div className="min-h-screen bg-zinc-50/50 flex selection:bg-red-100 overflow-x-hidden">
+      {/* Sidebar Backdrop - Mobile only */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-zinc-950/40 backdrop-blur-sm z-40 lg:hidden animate-in fade-in duration-300"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={cn(
+          "w-64 shrink-0 border-r border-zinc-100 bg-white flex flex-col fixed h-full z-50 transition-all duration-300 lg:translate-x-0",
+          isSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full",
+        )}
+      >
+        <div className="h-16 sm:h-20 flex items-center justify-between px-6 border-b border-zinc-50">
           <Link
             href="/"
             className="flex items-center gap-3 group transition-all duration-300"
@@ -140,6 +160,12 @@ export default function ProfileDashboard() {
               LENSHUB<span className="text-red-600">.</span>
             </span>
           </Link>
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="lg:hidden w-8 h-8 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400 hover:text-zinc-950 transition-all"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
         <div className="p-6 flex-1 space-y-8 overflow-y-auto custom-scrollbar">
@@ -152,25 +178,25 @@ export default function ProfileDashboard() {
                 icon={<LayoutDashboard className="w-4 h-4" />}
                 label="Tổng quan"
                 active={activeSection === "overview"}
-                onClick={() => setActiveSection("overview")}
+                onClick={() => onNavigate("overview")}
               />
               <SidebarItem
                 icon={<User className="w-4 h-4" />}
                 label="Hồ sơ cá nhân"
                 active={activeSection === "info"}
-                onClick={() => setActiveSection("info")}
+                onClick={() => onNavigate("info")}
               />
               <SidebarItem
                 icon={<MapPin className="w-4 h-4" />}
                 label="Sổ địa chỉ"
                 active={activeSection === "address"}
-                onClick={() => setActiveSection("address")}
+                onClick={() => onNavigate("address")}
               />
               <SidebarItem
                 icon={<ShoppingBag className="w-4 h-4" />}
                 label="Đơn hàng"
                 active={activeSection === "orders"}
-                onClick={() => setActiveSection("orders")}
+                onClick={() => onNavigate("orders")}
               />
               <SidebarItem
                 icon={<ShoppingCart className="w-4 h-4" />}
@@ -217,14 +243,23 @@ export default function ProfileDashboard() {
       {/* Content Wrapper */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header - Replicated from Admin Style */}
-        <header className="sticky top-0 z-30 flex h-20 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-6 sm:px-8 backdrop-blur-xl lg:pl-[296px] transition-all duration-300">
-          <div className="flex items-center gap-6">
+        <header className="sticky top-0 z-30 flex h-16 sm:h-20 w-full items-center justify-between border-b border-zinc-100 bg-white/95 px-4 sm:px-6 backdrop-blur-xl lg:pl-[272px] transition-all duration-300">
+          <div className="flex items-center gap-4 lg:gap-6">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden h-12 w-12 rounded-xl hover:bg-zinc-100 border border-transparent hover:border-zinc-200 transition-all"
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              <Menu className="h-6 w-6 text-zinc-600" />
+            </Button>
+
             <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-black tracking-tight text-zinc-950">
+              <div className="flex items-center gap-1.5">
+                <span className="text-lg sm:text-2xl font-black tracking-tight text-zinc-950 truncate max-w-[140px] sm:max-w-none">
                   {pageInfo.title}
                 </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1" />
+                <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1 shrink-0" />
               </div>
               <span className="text-[11px] font-bold text-zinc-400 mt-0.5">
                 {pageInfo.subtitle}
@@ -328,13 +363,13 @@ export default function ProfileDashboard() {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 lg:ml-72 flex flex-col p-5 sm:p-12 md:p-20 lg:p-24 overflow-y-auto custom-scrollbar">
-          <div className="max-w-[1440px] mx-auto w-full">
+        <main className="flex-1 lg:ml-64 flex flex-col p-4 sm:p-6 md:p-8 overflow-y-auto custom-scrollbar">
+          <div className="w-full">
             {activeSection === "overview" && (
               <OverviewSection
                 profile={profile}
                 stats={{ addresses, cartItemsCount }}
-                onNavigate={setActiveSection}
+                onNavigate={onNavigate}
               />
             )}
             {activeSection === "info" && (
@@ -413,8 +448,8 @@ function OverviewSection({
   onNavigate: (s: Section) => void;
 }) {
   return (
-    <div className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="bg-white border border-zinc-100 rounded-2xl p-8 md:p-12 shadow-sm relative overflow-hidden">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="bg-white border border-zinc-100 rounded-xl p-6 md:p-8 shadow-sm relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div>
             <h1 className="text-4xl md:text-5xl font-black text-zinc-950 tracking-tight mb-4 leading-tight">
@@ -429,14 +464,14 @@ function OverviewSection({
           <div className="flex gap-3">
             <Button
               onClick={() => onNavigate("info")}
-              className="h-11 px-6 rounded-xl bg-zinc-950 text-white font-semibold text-sm hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
+              className="h-10 px-5 rounded-lg bg-zinc-950 text-white font-semibold text-sm hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
             >
               Xem hồ sơ
             </Button>
             <Button
               variant="outline"
               onClick={() => onNavigate("orders")}
-              className="h-11 px-6 rounded-xl border-zinc-200 bg-white text-zinc-950 font-semibold text-sm hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
+              className="h-10 px-5 rounded-lg border-zinc-200 bg-white text-zinc-950 font-semibold text-sm hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
             >
               Đơn hàng
             </Button>
@@ -477,8 +512,8 @@ function OverviewSection({
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white border border-zinc-100 rounded-2xl p-10 shadow-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="lg:col-span-2 bg-white border border-zinc-100 rounded-xl p-8 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-xl font-black text-zinc-950 tracking-tight">
               Hoạt động gần đây
@@ -500,7 +535,7 @@ function OverviewSection({
           </div>
         </div>
 
-        <div className="bg-white border border-zinc-100 rounded-2xl p-8 hover:border-red-600/30 transition-all shadow-sm group relative overflow-hidden active:scale-[0.99]">
+        <div className="bg-white border border-zinc-100 rounded-xl p-8 text-zinc-950 shadow-xl shadow-zinc-200/50 relative overflow-hidden group hover:scale-[1.01] transition-all">
           <div className="relative z-10">
             <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mb-8 border border-amber-100 shadow-sm">
               <Star className="w-8 h-8 text-amber-500 fill-amber-500" />
@@ -512,7 +547,7 @@ function OverviewSection({
               Mở khóa tất cả các đặc quyền: Miễn phí vận chuyển, Bảo hiểm thiết
               bị và Ưu tiên đặt lịch thuê máy.
             </p>
-            <Button className="w-full h-11 bg-zinc-950 text-white font-semibold text-sm rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-zinc-200">
+            <Button className="w-full h-10 bg-zinc-950 text-white font-semibold text-sm rounded-lg hover:bg-red-600 transition-all shadow-lg shadow-zinc-200">
               Nâng cấp ngay
             </Button>
           </div>
@@ -541,7 +576,7 @@ function OverviewCard({
   return (
     <button
       onClick={onClick}
-      className="group bg-white border border-zinc-100 rounded-2xl p-8 shadow-sm hover:border-red-600/30 transition-all text-left flex flex-col justify-between h-52 active:scale-95"
+      className="group bg-white border border-zinc-100 rounded-xl p-6 shadow-sm hover:border-red-600/30 transition-all text-left flex flex-col justify-between h-44 active:scale-95"
     >
       <div
         className={`w-14 h-14 rounded-2xl ${color} text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform`}
@@ -735,7 +770,7 @@ function InfoSection({
           <Button
             type="submit"
             disabled={isUpdating}
-            className="flex-1 h-12 rounded-xl bg-red-600 text-white font-semibold text-sm shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all disabled:opacity-50"
+            className="flex-1 h-10 rounded-lg bg-red-600 text-white font-semibold text-sm shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all disabled:opacity-50"
           >
             {isUpdating ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -746,7 +781,7 @@ function InfoSection({
           <Button
             type="button"
             variant="outline"
-            className="h-12 px-8 rounded-xl border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all"
+            className="h-10 px-6 rounded-lg border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all"
           >
             Hủy bỏ
           </Button>
@@ -821,7 +856,7 @@ function AddressSection() {
         </div>
         <Button
           onClick={() => handleOpenDialog()}
-          className="h-11 px-6 rounded-xl bg-zinc-950 text-white font-semibold text-sm flex items-center gap-2 hover:bg-red-600 border-none transition-all shadow-lg shadow-zinc-200"
+          className="h-10 px-5 rounded-lg bg-zinc-950 text-white font-semibold text-sm flex items-center gap-2 hover:bg-red-600 border-none transition-all shadow-lg shadow-zinc-200"
         >
           <Plus className="w-4 h-4" /> Thêm địa chỉ mới
         </Button>
@@ -839,7 +874,7 @@ function AddressSection() {
           <div
             key={addr.id}
             className={cn(
-              "bg-white border p-10 rounded-[3rem] shadow-sm transition-all group relative",
+              "bg-white border p-6 rounded-xl shadow-sm transition-all group relative",
               addr.isDefault
                 ? "border-red-600/30 bg-red-50/10 shadow-red-600/5"
                 : "border-zinc-100 hover:border-red-600/20",
@@ -849,9 +884,9 @@ function AddressSection() {
               <div className="flex items-center gap-3">
                 <div
                   className={cn(
-                    "w-12 h-12 rounded-2xl flex items-center justify-center transition-all",
+                    "w-10 h-10 rounded-xl flex items-center justify-center transition-all",
                     addr.isDefault
-                      ? "bg-red-600 text-white shadow-xl shadow-red-100 scale-110"
+                      ? "bg-red-600 text-white shadow-lg shadow-red-100 scale-105"
                       : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-900 group-hover:text-white",
                   )}
                 >
@@ -920,7 +955,7 @@ function AddressSection() {
 
         <button
           onClick={() => handleOpenDialog()}
-          className="border-4 border-dashed border-zinc-100 rounded-2xl p-16 flex flex-col items-center justify-center gap-6 text-zinc-300 hover:border-red-600/30 hover:text-red-600 hover:bg-red-50/30 transition-all group"
+          className="border-2 border-dashed border-zinc-100 rounded-xl p-12 flex flex-col items-center justify-center gap-4 text-zinc-300 hover:border-red-600/30 hover:text-red-600 hover:bg-red-50/30 transition-all group"
         >
           <div className="w-16 h-16 rounded-full bg-zinc-50 flex items-center justify-center group-hover:bg-white group-hover:shadow-xl transition-all">
             <Plus className="w-8 h-8" />
@@ -1154,7 +1189,7 @@ function OrdersSection() {
         </p>
       </div>
 
-      <div className="bg-white border border-zinc-100 rounded-2xl p-24 flex flex-col items-center justify-center text-center shadow-sm">
+      <div className="bg-white border border-zinc-100 rounded-xl p-16 flex flex-col items-center justify-center text-center shadow-sm">
         <div className="w-24 h-24 rounded-full bg-zinc-50 flex items-center justify-center mb-10 shadow-inner">
           <ShoppingBag className="w-12 h-12 text-zinc-200" />
         </div>
@@ -1164,7 +1199,7 @@ function OrdersSection() {
         <p className="text-sm text-zinc-400 font-medium max-w-sm leading-relaxed mb-12">
           Hiện chưa có dữ liệu giao dịch nào được đồng bộ với tài khoản của bạn.
         </p>
-        <Button className="h-11 px-8 rounded-xl bg-zinc-950 text-white font-semibold text-sm hover:bg-red-600 border-none shadow-lg shadow-zinc-200 transition-all">
+        <Button className="h-10 px-6 rounded-lg bg-zinc-950 text-white font-semibold text-sm hover:bg-red-600 border-none shadow-lg shadow-zinc-200 transition-all">
           Bắt đầu mua sắm ngay
         </Button>
       </div>

@@ -116,7 +116,7 @@ export default function ProfileDashboard() {
       <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 text-red-600 animate-spin" />
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">
+          <p className="text-[11px] font-bold text-zinc-400">
             Đang đồng bộ dữ liệu...
           </p>
         </div>
@@ -144,7 +144,7 @@ export default function ProfileDashboard() {
 
         <div className="p-6 flex-1 space-y-8 overflow-y-auto custom-scrollbar">
           <div>
-            <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.25em] mb-4 ml-2">
+            <p className="text-sm font-bold text-zinc-400 mb-5 ml-1">
               Menu chính
             </p>
             <nav className="space-y-1">
@@ -183,7 +183,7 @@ export default function ProfileDashboard() {
           </div>
 
           <div>
-            <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.25em] mb-4 ml-2">
+            <p className="text-[11px] font-bold text-zinc-400 mb-4 ml-1">
               Hỗ trợ
             </p>
             <nav className="space-y-1">
@@ -226,7 +226,7 @@ export default function ProfileDashboard() {
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1" />
               </div>
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mt-0.5">
+              <span className="text-[11px] font-bold text-zinc-400 mt-0.5">
                 {pageInfo.subtitle}
               </span>
             </div>
@@ -270,8 +270,8 @@ export default function ProfileDashboard() {
                   <span className="text-xs font-black text-zinc-950 tracking-tight leading-none mb-1">
                     {profile?.fullName?.split(" ").pop()}
                   </span>
-                  <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest leading-none">
-                    Customer
+                  <span className="text-[11px] text-zinc-400 font-bold leading-none">
+                    Khách hàng
                   </span>
                 </div>
                 <ChevronDown
@@ -306,7 +306,7 @@ export default function ProfileDashboard() {
                         <span className="truncate font-black text-zinc-950 text-sm">
                           {profile?.fullName}
                         </span>
-                        <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest truncate">
+                        <span className="text-[11px] text-zinc-400 font-bold truncate">
                           {profile?.email}
                         </span>
                       </div>
@@ -371,7 +371,7 @@ function SidebarItem({
     <button
       onClick={onClick}
       className={cn(
-        "w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-all font-bold text-xs group",
+        "w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-all font-medium text-sm group",
         active
           ? "bg-red-600 text-white shadow-lg shadow-red-100"
           : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900",
@@ -421,7 +421,7 @@ function OverviewSection({
               Chào buổi chiều, <br className="hidden md:block" />{" "}
               {profile?.firstName || "Người dùng"}!
             </h1>
-            <p className="text-zinc-500 font-medium max-w-md leading-relaxed">
+            <p className="text-base text-zinc-500 font-medium max-w-md leading-relaxed">
               Chào mừng bạn quay trở lại. Hãy quản lý các thiết bị nhiếp ảnh và
               đơn hàng của bạn ngay tại đây.
             </p>
@@ -429,14 +429,14 @@ function OverviewSection({
           <div className="flex gap-3">
             <Button
               onClick={() => onNavigate("info")}
-              className="h-10 px-6 rounded-full bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
+              className="h-10 px-6 rounded-full bg-zinc-950 text-white font-semibold text-sm hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
             >
               Xem hồ sơ
             </Button>
             <Button
               variant="outline"
               onClick={() => onNavigate("orders")}
-              className="h-10 px-6 rounded-full border-zinc-200 bg-white text-zinc-950 font-black uppercase tracking-widest text-[10px] hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
+              className="h-10 px-6 rounded-full border-zinc-200 bg-white text-zinc-950 font-semibold text-sm hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
             >
               Đơn hàng
             </Button>
@@ -485,7 +485,7 @@ function OverviewSection({
             </h3>
             <button
               onClick={() => onNavigate("orders")}
-              className="text-[10px] font-black uppercase tracking-widest text-red-600 hover:text-zinc-950 transition-colors"
+              className="text-sm font-semibold text-red-600 hover:text-zinc-950 transition-colors"
             >
               Xem toàn bộ nhật ký
             </button>
@@ -505,14 +505,14 @@ function OverviewSection({
             <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mb-8 border border-amber-100 shadow-sm">
               <Star className="w-8 h-8 text-amber-500 fill-amber-500" />
             </div>
-            <h3 className="text-2xl font-black mb-3 leading-tight uppercase tracking-tight text-zinc-950">
+            <h3 className="text-2xl font-black mb-3 leading-tight text-zinc-950">
               Hội viên <br /> LensHub Pro
             </h3>
-            <p className="text-[13px] text-zinc-500 font-medium leading-relaxed mb-10">
+            <p className="text-base text-zinc-500 font-medium leading-relaxed mb-10">
               Mở khóa tất cả các đặc quyền: Miễn phí vận chuyển, Bảo hiểm thiết
               bị và Ưu tiên đặt lịch thuê máy.
             </p>
-            <Button className="w-full h-10 bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] rounded-full hover:bg-red-600 transition-all shadow-lg shadow-zinc-200">
+            <Button className="w-full h-10 bg-zinc-950 text-white font-semibold text-sm rounded-full hover:bg-red-600 transition-all shadow-lg shadow-zinc-200">
               Nâng cấp ngay
             </Button>
           </div>
@@ -549,7 +549,7 @@ function OverviewCard({
         {icon}
       </div>
       <div>
-        <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.25em] mb-1.5">
+        <p className="text-sm font-semibold text-zinc-400 mb-1.5">
           {label}
         </p>
         <p className="text-xl font-black text-zinc-950 tracking-tight">
@@ -640,7 +640,7 @@ function InfoSection({
       <form onSubmit={handleUpdate} className="space-y-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            <Label className="text-sm font-semibold text-zinc-400 ml-1">
               Họ và tên đệm
             </Label>
             <Input
@@ -652,7 +652,7 @@ function InfoSection({
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            <Label className="text-sm font-semibold text-zinc-400 ml-1">
               Tên
             </Label>
             <Input
@@ -664,7 +664,7 @@ function InfoSection({
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            <Label className="text-sm font-semibold text-zinc-400 ml-1">
               Giới tính
             </Label>
             <Select
@@ -693,7 +693,7 @@ function InfoSection({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            <Label className="text-sm font-semibold text-zinc-400 ml-1">
               Ngày sinh nhật
             </Label>
             <Input
@@ -706,7 +706,7 @@ function InfoSection({
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            <Label className="text-sm font-semibold text-zinc-400 ml-1">
               Lĩnh vực hoạt động
             </Label>
             <Input
@@ -718,7 +718,7 @@ function InfoSection({
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            <Label className="text-sm font-semibold text-zinc-400 ml-1">
               Công ty / Studio
             </Label>
             <Input
@@ -735,7 +735,7 @@ function InfoSection({
           <Button
             type="submit"
             disabled={isUpdating}
-            className="flex-1 h-12 rounded-full bg-red-600 text-white font-black uppercase tracking-[0.15em] text-[10px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all disabled:opacity-50"
+            className="flex-1 h-12 rounded-full bg-red-600 text-white font-bold text-sm shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all disabled:opacity-50"
           >
             {isUpdating ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -746,7 +746,7 @@ function InfoSection({
           <Button
             type="button"
             variant="outline"
-            className="h-12 px-8 rounded-full border-zinc-200 bg-white text-zinc-500 font-bold uppercase tracking-[0.1em] text-[10px] hover:bg-zinc-50 hover:text-zinc-950 transition-all"
+            className="h-12 px-8 rounded-full border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all"
           >
             Hủy bỏ
           </Button>
@@ -821,7 +821,7 @@ function AddressSection() {
         </div>
         <Button
           onClick={() => handleOpenDialog()}
-          className="h-10 px-6 rounded-full bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-red-600 border-none transition-all shadow-lg shadow-zinc-200"
+          className="h-10 px-6 rounded-full bg-zinc-950 text-white font-semibold text-sm flex items-center gap-3 hover:bg-red-600 border-none transition-all shadow-lg shadow-zinc-200"
         >
           <Plus className="w-4 h-4" /> Thêm địa chỉ mới
         </Button>
@@ -859,10 +859,10 @@ function AddressSection() {
                 </div>
                 {addr.isDefault && (
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600">
+                    <span className="text-sm font-semibold text-red-600">
                       Địa chỉ chính
                     </span>
-                    <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">
+                    <span className="text-xs font-medium text-zinc-400">
                       Mặc định
                     </span>
                   </div>
@@ -878,18 +878,18 @@ function AddressSection() {
 
             <div className="space-y-6">
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest leading-none">
+                <p className="text-sm font-semibold text-zinc-400 leading-none">
                   Thông tin liên hệ
                 </p>
-                <p className="text-lg font-black text-zinc-950 tracking-tight leading-tight">
+                <p className="text-lg font-bold text-zinc-950 leading-tight">
                   {addr.receiverName} • {addr.receiverPhone}
                 </p>
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest leading-none">
+                <p className="text-sm font-semibold text-zinc-400 leading-none">
                   Vị trí địa lý
                 </p>
-                <p className="text-xs font-bold text-zinc-500 leading-relaxed uppercase tracking-widest">
+                <p className="text-xs font-bold text-zinc-500 leading-relaxed">
                   {addr.fullAddress}
                 </p>
               </div>
@@ -899,7 +899,7 @@ function AddressSection() {
               <div className="mt-10 flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
                 <button
                   onClick={() => setDefault(addr.id)}
-                  className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600 hover:text-zinc-950 transition-colors"
+                  className="text-xs font-bold text-red-600 hover:text-zinc-950 transition-colors"
                 >
                   Sử dụng làm mặc định
                 </button>
@@ -909,7 +909,7 @@ function AddressSection() {
                     if (confirm("Gỡ bỏ địa chỉ này khỏi danh sách?"))
                       deleteAddress(addr.id);
                   }}
-                  className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-red-600 transition-colors"
+                  className="text-xs font-bold text-zinc-400 hover:text-red-600 transition-colors"
                 >
                   Xóa bỏ
                 </button>
@@ -925,7 +925,7 @@ function AddressSection() {
           <div className="w-16 h-16 rounded-full bg-zinc-50 flex items-center justify-center group-hover:bg-white group-hover:shadow-xl transition-all">
             <Plus className="w-8 h-8" />
           </div>
-          <span className="text-[11px] font-black uppercase tracking-[0.3em]">
+          <span className="text-base font-semibold">
             Thiết lập địa chỉ mới
           </span>
         </button>
@@ -1008,7 +1008,7 @@ function AddressDialog({
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            <Label className="text-sm font-semibold text-zinc-400 ml-1">
               Người nhận
             </Label>
             <Input
@@ -1021,7 +1021,7 @@ function AddressDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            <Label className="text-sm font-semibold text-zinc-400 ml-1">
               Số điện thoại
             </Label>
             <Input
@@ -1037,7 +1037,7 @@ function AddressDialog({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            <Label className="text-sm font-semibold text-zinc-400 ml-1">
               Tỉnh / Thành phố
             </Label>
             <Select
@@ -1063,7 +1063,7 @@ function AddressDialog({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            <Label className="text-sm font-semibold text-zinc-400 ml-1">
               Quận / Huyện
             </Label>
             <Input
@@ -1079,7 +1079,7 @@ function AddressDialog({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            <Label className="text-sm font-semibold text-zinc-400 ml-1">
               Phường / Xã
             </Label>
             <Input
@@ -1092,7 +1092,7 @@ function AddressDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            <Label className="text-sm font-semibold text-zinc-400 ml-1">
               Địa chỉ chi tiết
             </Label>
             <Input
@@ -1107,7 +1107,7 @@ function AddressDialog({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+          <Label className="text-[11px] font-bold text-zinc-400 ml-1">
             Địa chỉ đầy đủ (Tự động cập nhật)
           </Label>
           <Input
@@ -1132,7 +1132,7 @@ function AddressDialog({
           />
           <label
             htmlFor="isDefault"
-            className="text-xs font-bold text-zinc-500 cursor-pointer uppercase tracking-widest"
+            className="text-xs font-bold text-zinc-500 cursor-pointer"
           >
             Đặt làm địa chỉ giao hàng mặc định
           </label>
@@ -1158,13 +1158,13 @@ function OrdersSection() {
         <div className="w-24 h-24 rounded-full bg-zinc-50 flex items-center justify-center mb-10 shadow-inner">
           <ShoppingBag className="w-12 h-12 text-zinc-200" />
         </div>
-        <h3 className="text-2xl font-black text-zinc-950 tracking-tight mb-3 uppercase">
+        <h3 className="text-2xl font-black text-zinc-950 tracking-tight mb-3">
           Danh sách đơn hàng rỗng
         </h3>
-        <p className="text-xs text-zinc-400 font-bold max-w-sm leading-relaxed mb-12 uppercase tracking-widest">
+        <p className="text-sm text-zinc-400 font-medium max-w-sm leading-relaxed mb-12">
           Hiện chưa có dữ liệu giao dịch nào được đồng bộ với tài khoản của bạn.
         </p>
-        <Button className="h-10 px-8 rounded-full bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] hover:bg-red-600 border-none shadow-lg shadow-zinc-200 transition-all">
+        <Button className="h-10 px-8 rounded-full bg-zinc-950 text-white font-semibold text-sm hover:bg-red-600 border-none shadow-lg shadow-zinc-200 transition-all">
           Bắt đầu mua sắm ngay
         </Button>
       </div>

@@ -63,11 +63,11 @@ export function AdminFormDialog({
                   <Icon className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-zinc-950 tracking-tight">
+                  <h2 className="text-xl font-bold text-zinc-950 tracking-tight">
                     {title}
                   </h2>
                   {description && (
-                    <p className="text-[11px] text-zinc-500 font-medium mt-0.5">
+                    <p className="text-xs text-zinc-500 font-medium mt-1">
                       {description}
                     </p>
                   )}
@@ -94,14 +94,14 @@ export function AdminFormDialog({
               <button
                 type="button"
                 onClick={() => onOpenChange(false)}
-                className="h-10 px-5 rounded-full border border-zinc-200 bg-white text-zinc-400 font-bold text-[11px] uppercase tracking-wider hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
+                className="h-10 px-5 rounded-full border border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
               >
                 {cancelText}
               </button>
               <Button
                 type="submit"
                 disabled={isPending}
-                className="h-10 px-6 rounded-full bg-zinc-950 hover:bg-red-600 text-white font-bold text-[11px] uppercase tracking-wider transition-all duration-300"
+                className="h-10 px-6 rounded-full bg-zinc-950 hover:bg-red-600 text-white font-semibold text-sm transition-all duration-300"
               >
                 {isPending ? (
                   <>

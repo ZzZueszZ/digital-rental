@@ -84,3 +84,35 @@ export const useCreateUserAddress = (userId: number) => {
     },
   });
 };
+export const useUpdateUserAddress = (userId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: ShippingAddressRequest }) => 
+      http.put<IAddressRes>(`/addresses/${id}/user/${userId}`, data).then(res => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ADDRESS_KEYS.user(userId) });
+    },
+  });
+};
+
+export const useDeleteUserAddress = (userId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => 
+      http.delete<IBackendRes<void>>(`/addresses/${id}/user/${userId}`).then(res => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ADDRESS_KEYS.user(userId) });
+    },
+  });
+};
+
+export const useSetDefaultUserAddress = (userId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => 
+      http.patch<IAddressRes>(`/addresses/${id}/default/user/${userId}`).then(res => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ADDRESS_KEYS.user(userId) });
+    },
+  });
+};

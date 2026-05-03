@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   CreditCard,
+  MapPin,
 } from "lucide-react";
 import { useAuthSession } from "@/components/auth/Guards";
 import { Role } from "@/constants/enum/role";
@@ -47,6 +48,12 @@ export function AdminSidebar({
       href: "/admin/categories",
       icon: Layers,
       label: "Danh mục",
+      roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
+    },
+    {
+      href: "/admin/address",
+      icon: MapPin,
+      label: "Địa chỉ nhận hàng",
       roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
     },
     {

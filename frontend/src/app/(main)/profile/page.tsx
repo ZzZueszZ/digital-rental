@@ -21,6 +21,7 @@ import {
   City,
   ShippingAddressResponse,
   ShippingAddressRequest,
+  CITY_LABELS,
 } from "@/types/address";
 import {
   useMyCart,
@@ -275,7 +276,7 @@ export default function ProfileDashboard() {
                 </h1>
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1 shrink-0" />
               </div>
-              <span className="text-xs font-medium text-zinc-400 mt-0.5 uppercase tracking-wider">
+              <span className="text-xs font-medium text-zinc-400 mt-0.5 tracking-tight">
                 {pageInfo.subtitle}
               </span>
             </div>
@@ -636,7 +637,7 @@ function CartSection() {
               </div>
 
               <div className="text-right hidden sm:block">
-                <p className="text-[12px] font-medium text-zinc-400 uppercase tracking-widest mb-1">
+                <p className="text-[12px] font-medium text-zinc-400 mb-1">
                   Thành tiền
                 </p>
                 <p className="text-[20px] font-bold text-zinc-950 tracking-tight">
@@ -663,7 +664,7 @@ function CartSection() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-zinc-500 font-normal text-sm">Phí vận chuyển</span>
-                  <span className="text-emerald-600 font-bold text-[11px] uppercase tracking-widest bg-emerald-50 px-2.5 py-1 rounded-md">Miễn phí</span>
+                  <span className="text-emerald-600 font-bold text-[11px] bg-emerald-50 px-2.5 py-1 rounded-md">Miễn phí</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-zinc-500 font-normal text-sm">Bảo hiểm thiết bị</span>
@@ -673,7 +674,7 @@ function CartSection() {
 
               <div className="flex justify-between items-end mb-8">
                 <div>
-                  <p className="text-zinc-400 text-[11px] font-semibold uppercase tracking-widest mb-1.5">Tổng thanh toán</p>
+                  <p className="text-zinc-400 text-[11px] font-semibold mb-1.5">Tổng thanh toán</p>
                   <p className="text-[28px] font-bold tracking-tight text-red-600 leading-none">
                     {formatVND(subtotal)}
                   </p>
@@ -1100,42 +1101,7 @@ function InfoSection({
   );
 }
 
-const CITY_LABELS: Record<City, string> = {
-  [City.TUYEN_QUANG]: "Tỉnh Tuyên Quang",
-  [City.LAO_CAI]: "Tỉnh Lào Cai",
-  [City.THAI_NGUYEN]: "Tỉnh Thái Nguyên",
-  [City.PHU_THO]: "Tỉnh Phú Thọ",
-  [City.BAC_NINH]: "Tỉnh Bắc Ninh",
-  [City.HUNG_YEN]: "Tỉnh Hưng Yên",
-  [City.HAI_PHONG]: "Thành phố Hải Phòng",
-  [City.NINH_BINH]: "Tỉnh Ninh Bình",
-  [City.QUANG_TRI]: "Tỉnh Quảng Trị",
-  [City.DA_NANG]: "Thành phố Đà Nẵng",
-  [City.QUANG_NGAI]: "Tỉnh Quảng Ngãi",
-  [City.GIA_LAI]: "Tỉnh Gia Lai",
-  [City.KHANH_HOA]: "Tỉnh Khánh Hoà",
-  [City.LAM_DONG]: "Tỉnh Lâm Đồng",
-  [City.DAK_LAK]: "Tỉnh Đắk Lắk",
-  [City.HO_CHI_MINH]: "Thành phố Hồ Chí Minh",
-  [City.DONG_NAI]: "Tỉnh Đồng Nai",
-  [City.TAY_NINH]: "Tỉnh Tây Ninh",
-  [City.CAN_THO]: "Thành phố Cần Thơ",
-  [City.VINH_LONG]: "Tỉnh Vĩnh Long",
-  [City.DONG_THAP]: "Tỉnh Đồng Tháp",
-  [City.CA_MAU]: "Tỉnh Cà Mau",
-  [City.AN_GIANG]: "Tỉnh An Giang",
-  [City.HA_NOI]: "Thành phố Hà Nội",
-  [City.HUE]: "Thành phố Huế",
-  [City.LAI_CHAU]: "Tỉnh Lai Châu",
-  [City.DIEN_BIEN]: "Tỉnh Điện Biên",
-  [City.SON_LA]: "Tỉnh Sơn La",
-  [City.LANG_SON]: "Tỉnh Lạng Sơn",
-  [City.QUANG_NINH]: "Tỉnh Quảng Ninh",
-  [City.THANH_HOA]: "Tỉnh Thanh Hoá",
-  [City.NGHE_AN]: "Tỉnh Nghệ An",
-  [City.HA_TINH]: "Tỉnh Hà Tĩnh",
-  [City.CAO_BANG]: "Tỉnh Cao Bằng",
-};
+
 
 function AddressSection() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

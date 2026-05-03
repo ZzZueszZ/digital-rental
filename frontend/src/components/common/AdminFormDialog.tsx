@@ -94,14 +94,14 @@ export function AdminFormDialog({
               <button
                 type="button"
                 onClick={() => onOpenChange(false)}
-                className="h-10 px-5 rounded-xl border border-zinc-200 bg-white text-zinc-600 font-bold text-sm hover:bg-zinc-50 hover:border-zinc-300 transition-colors"
+                className="h-10 px-5 rounded-full border border-zinc-200 bg-white text-zinc-400 font-bold text-[11px] uppercase tracking-wider hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
               >
                 {cancelText}
               </button>
               <Button
                 type="submit"
                 disabled={isPending}
-                className="h-10 px-6 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-bold text-sm transition-all duration-300"
+                className="h-10 px-6 rounded-full bg-zinc-950 hover:bg-red-600 text-white font-bold text-[11px] uppercase tracking-wider transition-all duration-300"
               >
                 {isPending ? (
                   <>

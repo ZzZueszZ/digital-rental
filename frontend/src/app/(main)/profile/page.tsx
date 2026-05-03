@@ -17,7 +17,11 @@ import {
   useDeleteAddress,
   useSetDefaultAddress,
 } from "@/services/address";
-import { City, ShippingAddressResponse, ShippingAddressRequest } from "@/types/address";
+import {
+  City,
+  ShippingAddressResponse,
+  ShippingAddressRequest,
+} from "@/types/address";
 import { useMyCart } from "@/services/cart";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -125,7 +129,10 @@ export default function ProfileDashboard() {
       {/* Sidebar - Replicated from Admin Style */}
       <aside className="w-72 shrink-0 border-r border-zinc-100 bg-white flex flex-col fixed h-full z-40 transition-all duration-300">
         <div className="h-20 flex items-center px-8 border-b border-zinc-50">
-          <Link href="/" className="flex items-center gap-3 group transition-all duration-300">
+          <Link
+            href="/"
+            className="flex items-center gap-3 group transition-all duration-300"
+          >
             <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100 group-hover:rotate-12 transition-transform">
               <Camera className="w-5 h-5 text-white" />
             </div>
@@ -419,17 +426,17 @@ function OverviewSection({
               đơn hàng của bạn ngay tại đây.
             </p>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <Button
               onClick={() => onNavigate("info")}
-              className="h-14 px-8 rounded-2xl bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
+              className="h-10 px-6 rounded-full bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
             >
               Xem hồ sơ
             </Button>
             <Button
               variant="outline"
               onClick={() => onNavigate("orders")}
-              className="h-14 px-8 rounded-2xl border-zinc-200 bg-white text-zinc-950 font-black uppercase tracking-widest text-[10px] hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
+              className="h-10 px-6 rounded-full border-zinc-200 bg-white text-zinc-950 font-black uppercase tracking-widest text-[10px] hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
             >
               Đơn hàng
             </Button>
@@ -505,7 +512,7 @@ function OverviewSection({
               Mở khóa tất cả các đặc quyền: Miễn phí vận chuyển, Bảo hiểm thiết
               bị và Ưu tiên đặt lịch thuê máy.
             </p>
-            <Button className="w-full h-14 bg-red-600 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-zinc-950 transition-all shadow-lg shadow-red-200">
+            <Button className="w-full h-10 bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] rounded-full hover:bg-red-600 transition-all shadow-lg shadow-zinc-200">
               Nâng cấp ngay
             </Button>
           </div>
@@ -641,7 +648,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, firstName: e.target.value })
               }
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-8"
+              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
             />
           </div>
           <div className="space-y-2">
@@ -653,7 +660,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, lastName: e.target.value })
               }
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-8"
+              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
             />
           </div>
           <div className="space-y-2">
@@ -669,26 +676,17 @@ function InfoSection({
                 })
               }
             >
-              <SelectTrigger className="w-full h-14! bg-zinc-50/30 border-zinc-100 rounded-2xl font-bold px-8 focus:border-red-600/30 transition-all">
-                <SelectValue />
+              <SelectTrigger className="w-full h-11! bg-zinc-50/30 border-zinc-100 rounded-xl font-bold px-5 focus:border-red-600/30 transition-all">
+                <SelectValue placeholder="Chọn giới tính" />
               </SelectTrigger>
-              <SelectContent className="rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-zinc-100 p-2 bg-white/95 backdrop-blur-xl">
-                <SelectItem
-                  value="MALE"
-                  className="rounded-xl font-bold py-3 focus:bg-zinc-50 focus:text-red-600 transition-colors cursor-pointer"
-                >
+              <SelectContent className="rounded-xl shadow-2xl border-zinc-100 p-1 bg-white">
+                <SelectItem value="MALE" className="font-bold py-3">
                   Nam
                 </SelectItem>
-                <SelectItem
-                  value="FEMALE"
-                  className="rounded-xl font-bold py-3 focus:bg-zinc-50 focus:text-red-600 transition-colors cursor-pointer"
-                >
+                <SelectItem value="FEMALE" className="font-bold py-3">
                   Nữ
                 </SelectItem>
-                <SelectItem
-                  value="OTHER"
-                  className="rounded-xl font-bold py-3 focus:bg-zinc-50 focus:text-red-600 transition-colors cursor-pointer"
-                >
+                <SelectItem value="OTHER" className="font-bold py-3">
                   Khác
                 </SelectItem>
               </SelectContent>
@@ -704,7 +702,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, dateOfBirth: e.target.value })
               }
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-8"
+              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
             />
           </div>
           <div className="space-y-2">
@@ -716,7 +714,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, occupation: e.target.value })
               }
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-8"
+              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
             />
           </div>
           <div className="space-y-2">
@@ -728,19 +726,19 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, companyName: e.target.value })
               }
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-8"
+              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
             />
           </div>
         </div>
 
-        <div className="pt-10 flex items-center gap-6">
+        <div className="pt-10 flex items-center gap-4">
           <Button
             type="submit"
             disabled={isUpdating}
-            className="flex-1 h-16 rounded-2xl bg-red-600 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-red-200 hover:bg-zinc-950 transition-all disabled:opacity-50"
+            className="flex-1 h-12 rounded-full bg-red-600 text-white font-black uppercase tracking-[0.15em] text-[10px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all disabled:opacity-50"
           >
             {isUpdating ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               "Lưu cấu hình hồ sơ"
             )}
@@ -748,7 +746,7 @@ function InfoSection({
           <Button
             type="button"
             variant="outline"
-            className="h-16 px-10 rounded-2xl border-zinc-200 bg-white text-zinc-950 font-black uppercase tracking-widest text-[10px] hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
+            className="h-12 px-8 rounded-full border-zinc-200 bg-white text-zinc-500 font-bold uppercase tracking-[0.1em] text-[10px] hover:bg-zinc-50 hover:text-zinc-950 transition-all"
           >
             Hủy bỏ
           </Button>
@@ -797,7 +795,8 @@ const CITY_LABELS: Record<City, string> = {
 
 function AddressSection() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState<ShippingAddressResponse | null>(null);
+  const [selectedAddress, setSelectedAddress] =
+    useState<ShippingAddressResponse | null>(null);
   const { data: addressesRes } = useMyAddresses();
   const { mutateAsync: deleteAddress } = useDeleteAddress();
   const { mutateAsync: setDefault } = useSetDefaultAddress();
@@ -820,18 +819,18 @@ function AddressSection() {
             Lưu trữ các điểm giao nhận để thanh toán nhanh hơn
           </p>
         </div>
-        <Button 
+        <Button
           onClick={() => handleOpenDialog()}
-          className="h-14 px-8 rounded-2xl bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-red-600 border-none transition-all shadow-xl shadow-zinc-100"
+          className="h-10 px-6 rounded-full bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-red-600 border-none transition-all shadow-lg shadow-zinc-200"
         >
-          <Plus className="w-5 h-5" /> Thêm địa chỉ mới
+          <Plus className="w-4 h-4" /> Thêm địa chỉ mới
         </Button>
       </div>
 
-      <AddressDialog 
+      <AddressDialog
         key={selectedAddress?.id || "new"}
-        isOpen={isDialogOpen} 
-        onClose={() => setIsDialogOpen(false)} 
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
         address={selectedAddress}
       />
 
@@ -869,7 +868,7 @@ function AddressSection() {
                   </div>
                 )}
               </div>
-              <button 
+              <button
                 onClick={() => handleOpenDialog(addr)}
                 className="h-10 w-10 rounded-xl hover:bg-zinc-100 flex items-center justify-center text-zinc-300 hover:text-zinc-900 transition-colors"
               >
@@ -919,7 +918,7 @@ function AddressSection() {
           </div>
         ))}
 
-        <button 
+        <button
           onClick={() => handleOpenDialog()}
           className="border-4 border-dashed border-zinc-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-6 text-zinc-300 hover:border-red-600/30 hover:text-red-600 hover:bg-red-50/30 transition-all group"
         >
@@ -935,18 +934,20 @@ function AddressSection() {
   );
 }
 
-function AddressDialog({ 
-  isOpen, 
-  onClose, 
-  address 
-}: { 
-  isOpen: boolean; 
-  onClose: () => void; 
+function AddressDialog({
+  isOpen,
+  onClose,
+  address,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
   address: ShippingAddressResponse | null;
 }) {
-  const { mutateAsync: createAddress, isPending: isCreating } = useCreateAddress();
-  const { mutateAsync: updateAddress, isPending: isUpdating } = useUpdateAddress();
-  
+  const { mutateAsync: createAddress, isPending: isCreating } =
+    useCreateAddress();
+  const { mutateAsync: updateAddress, isPending: isUpdating } =
+    useUpdateAddress();
+
   const [formData, setFormData] = useState<ShippingAddressRequest>(() => {
     if (address) {
       return {
@@ -984,8 +985,8 @@ function AddressDialog({
       }
       onClose();
     } catch (error) {
-      const message = isAxiosError(error) 
-        ? error.response?.data?.message 
+      const message = isAxiosError(error)
+        ? error.response?.data?.message
         : "Đã xảy ra lỗi không xác định";
       toast.error(message);
     }
@@ -1007,20 +1008,28 @@ function AddressDialog({
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Người nhận</Label>
-            <Input 
+            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+              Người nhận
+            </Label>
+            <Input
               value={formData.receiverName}
-              onChange={e => setFormData({...formData, receiverName: e.target.value})}
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl px-6 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              onChange={(e) =>
+                setFormData({ ...formData, receiverName: e.target.value })
+              }
+              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:bg-white focus:border-red-600/30 transition-all"
               placeholder="Họ và tên"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Số điện thoại</Label>
-            <Input 
+            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+              Số điện thoại
+            </Label>
+            <Input
               value={formData.receiverPhone}
-              onChange={e => setFormData({...formData, receiverPhone: e.target.value})}
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl px-6 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              onChange={(e) =>
+                setFormData({ ...formData, receiverPhone: e.target.value })
+              }
+              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:bg-white focus:border-red-600/30 transition-all"
               placeholder="09xx xxx xxx"
             />
           </div>
@@ -1028,17 +1037,25 @@ function AddressDialog({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Tỉnh / Thành phố</Label>
+            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+              Tỉnh / Thành phố
+            </Label>
             <Select
               value={formData.province as string}
-              onValueChange={(v) => setFormData({ ...formData, province: v as City })}
+              onValueChange={(v) =>
+                setFormData({ ...formData, province: v as City })
+              }
             >
-              <SelectTrigger className="w-full! h-14! bg-zinc-50/30 border-zinc-100 rounded-2xl px-8 font-bold focus:border-red-600/30 transition-all text-left">
+              <SelectTrigger className="w-full! p-5! h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:border-red-600/30 transition-all text-left">
                 <SelectValue placeholder="Chọn Tỉnh/Thành phố" />
               </SelectTrigger>
-              <SelectContent className="rounded-2xl shadow-2xl border-zinc-100 max-h-72">
+              <SelectContent className="rounded-xl shadow-2xl border-zinc-100 max-h-72">
                 {Object.entries(CITY_LABELS).map(([value, label]) => (
-                  <SelectItem key={value} value={value} className="font-bold py-3">
+                  <SelectItem
+                    key={value}
+                    value={value}
+                    className="font-bold py-3"
+                  >
                     {label}
                   </SelectItem>
                 ))}
@@ -1046,11 +1063,15 @@ function AddressDialog({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Quận / Huyện</Label>
-            <Input 
+            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+              Quận / Huyện
+            </Label>
+            <Input
               value={formData.district}
-              onChange={e => setFormData({...formData, district: e.target.value})}
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl px-6 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              onChange={(e) =>
+                setFormData({ ...formData, district: e.target.value })
+              }
+              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:bg-white focus:border-red-600/30 transition-all"
               placeholder="Nhập Quận/Huyện"
             />
           </div>
@@ -1058,44 +1079,61 @@ function AddressDialog({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Phường / Xã</Label>
-            <Input 
+            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+              Phường / Xã
+            </Label>
+            <Input
               value={formData.ward}
-              onChange={e => setFormData({...formData, ward: e.target.value})}
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl px-6 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              onChange={(e) =>
+                setFormData({ ...formData, ward: e.target.value })
+              }
+              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:bg-white focus:border-red-600/30 transition-all"
               placeholder="Nhập Phường/Xã"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Địa chỉ chi tiết</Label>
-            <Input 
+            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+              Địa chỉ chi tiết
+            </Label>
+            <Input
               value={formData.detailAddress}
-              onChange={e => setFormData({...formData, detailAddress: e.target.value})}
-              className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl px-6 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              onChange={(e) =>
+                setFormData({ ...formData, detailAddress: e.target.value })
+              }
+              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:bg-white focus:border-red-600/30 transition-all"
               placeholder="Số nhà, ngõ, tên đường..."
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">Địa chỉ đầy đủ (Tự động cập nhật)</Label>
-          <Input 
+          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-1">
+            Địa chỉ đầy đủ (Tự động cập nhật)
+          </Label>
+          <Input
             value={formData.fullAddress}
-            onChange={e => setFormData({...formData, fullAddress: e.target.value})}
-            className="h-14 bg-zinc-50/30 border-zinc-100 rounded-2xl px-6 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+            onChange={(e) =>
+              setFormData({ ...formData, fullAddress: e.target.value })
+            }
+            className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:bg-white focus:border-red-600/30 transition-all"
             placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
           />
         </div>
 
-        <div className="flex items-center gap-3 p-6 bg-zinc-50/30 rounded-2xl border border-zinc-100">
-          <input 
-            type="checkbox" 
+        <div className="flex items-center gap-3 p-3 bg-zinc-50/50 rounded-xl border border-zinc-100">
+          <input
+            type="checkbox"
             id="isDefault"
             checked={formData.setAsDefault}
-            onChange={e => setFormData({...formData, setAsDefault: e.target.checked})}
+            onChange={(e) =>
+              setFormData({ ...formData, setAsDefault: e.target.checked })
+            }
             className="w-5 h-5 rounded-md border-zinc-200 text-zinc-950 focus:ring-zinc-950 cursor-pointer"
           />
-          <label htmlFor="isDefault" className="text-xs font-bold text-zinc-500 cursor-pointer uppercase tracking-widest">
+          <label
+            htmlFor="isDefault"
+            className="text-xs font-bold text-zinc-500 cursor-pointer uppercase tracking-widest"
+          >
             Đặt làm địa chỉ giao hàng mặc định
           </label>
         </div>
@@ -1126,7 +1164,7 @@ function OrdersSection() {
         <p className="text-xs text-zinc-400 font-bold max-w-sm leading-relaxed mb-12 uppercase tracking-widest">
           Hiện chưa có dữ liệu giao dịch nào được đồng bộ với tài khoản của bạn.
         </p>
-        <Button className="h-16 px-12 rounded-2xl bg-zinc-950 text-white font-black uppercase tracking-widest text-xs hover:bg-red-600 border-none shadow-2xl shadow-zinc-200 transition-all">
+        <Button className="h-10 px-8 rounded-full bg-zinc-950 text-white font-black uppercase tracking-widest text-[10px] hover:bg-red-600 border-none shadow-lg shadow-zinc-200 transition-all">
           Bắt đầu mua sắm ngay
         </Button>
       </div>

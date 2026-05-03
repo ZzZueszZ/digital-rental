@@ -36,8 +36,8 @@ export function ProductDialog({
     categoryId: undefined,
     rentPricePerDay: 0,
     salePrice: 0,
-    forRent: true,
-    forSale: false,
+    isForRent: true,
+    isForSale: false,
     specifications: [],
   });
 
@@ -60,8 +60,8 @@ export function ProductDialog({
         categoryId: product.categoryId,
         rentPricePerDay: product.rentPricePerDay,
         salePrice: product.salePrice,
-        forRent: product.forRent,
-        forSale: product.forSale,
+        isForRent: product.isForRent,
+        isForSale: product.isForSale,
         specifications: product.specifications?.map(s => ({ specKey: s.specKey, specValue: s.specValue })) || [],
       });
       setImagePreview(getImageUrl(product.mainImageUrl));
@@ -73,8 +73,8 @@ export function ProductDialog({
         categoryId: undefined,
         rentPricePerDay: 0,
         salePrice: 0,
-        forRent: true,
-        forSale: false,
+        isForRent: true,
+        isForSale: false,
         specifications: [],
       });
       setImagePreview(null);
@@ -124,13 +124,13 @@ export function ProductDialog({
     if (!formData.categoryId) newErrors.categoryId = "Vui lòng chọn danh mục";
     
     if (!isUpdate) {
-      if (!formData.forRent && !formData.forSale) {
-        newErrors.forRent = "Phải chọn ít nhất 1 hình thức kinh doanh";
+      if (!formData.isForRent && !formData.isForSale) {
+        newErrors.isForRent = "Phải chọn ít nhất 1 hình thức kinh doanh";
       }
-      if (formData.forRent && (!formData.rentPricePerDay || formData.rentPricePerDay <= 0)) {
+      if (formData.isForRent && (!formData.rentPricePerDay || formData.rentPricePerDay <= 0)) {
         newErrors.rentPricePerDay = "Giá thuê phải lớn hơn 0";
       }
-      if (formData.forSale && (!formData.salePrice || formData.salePrice <= 0)) {
+      if (formData.isForSale && (!formData.salePrice || formData.salePrice <= 0)) {
         newErrors.salePrice = "Giá bán phải lớn hơn 0";
       }
     }
@@ -284,8 +284,8 @@ export function ProductDialog({
                 <label className="flex items-center gap-2 cursor-pointer group">
                   <input 
                     type="checkbox" 
-                    checked={formData.forRent}
-                    onChange={(e) => setFormData({ ...formData, forRent: e.target.checked })}
+                    checked={formData.isForRent}
+                    onChange={(e) => setFormData({ ...formData, isForRent: e.target.checked })}
                     className="w-4 h-4 rounded text-red-600 focus:ring-red-600/20 cursor-pointer"
                   />
                   <span className="text-xs font-black uppercase text-zinc-700 tracking-wider group-hover:text-zinc-950">Cho thuê</span>
@@ -293,7 +293,7 @@ export function ProductDialog({
                 <div className="relative">
                   <Input
                     type="number"
-                    disabled={!formData.forRent}
+                    disabled={!formData.isForRent}
                     value={formData.rentPricePerDay || ""}
                     onChange={(e) => setFormData({ ...formData, rentPricePerDay: Number(e.target.value) })}
                     placeholder="Giá/Ngày"
@@ -311,8 +311,8 @@ export function ProductDialog({
                 <label className="flex items-center gap-2 cursor-pointer group">
                   <input 
                     type="checkbox" 
-                    checked={formData.forSale}
-                    onChange={(e) => setFormData({ ...formData, forSale: e.target.checked })}
+                    checked={formData.isForSale}
+                    onChange={(e) => setFormData({ ...formData, isForSale: e.target.checked })}
                     className="w-4 h-4 rounded text-red-600 focus:ring-red-600/20 cursor-pointer"
                   />
                   <span className="text-xs font-black uppercase text-zinc-700 tracking-wider group-hover:text-zinc-950">Bán</span>
@@ -320,7 +320,7 @@ export function ProductDialog({
                 <div className="relative">
                   <Input
                     type="number"
-                    disabled={!formData.forSale}
+                    disabled={!formData.isForSale}
                     value={formData.salePrice || ""}
                     onChange={(e) => setFormData({ ...formData, salePrice: Number(e.target.value) })}
                     placeholder="Giá Bán"
@@ -333,7 +333,7 @@ export function ProductDialog({
                 </div>
                 {errors.salePrice && <p className="text-[11px] font-medium text-red-500">{errors.salePrice}</p>}
               </div>
-              {errors.forRent && <p className="text-[11px] font-medium text-red-500 col-span-2 -mt-2">{errors.forRent}</p>}
+              {errors.isForRent && <p className="text-[11px] font-medium text-red-500 col-span-2 -mt-2">{errors.isForRent}</p>}
             </div>
           )}
         </div>

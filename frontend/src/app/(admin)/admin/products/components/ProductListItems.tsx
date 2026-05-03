@@ -65,11 +65,11 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
       <td className="px-6 py-4">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={cn("text-[9px] uppercase font-black px-1.5 py-0 border-0", product.forRent ? "bg-amber-100/50 text-amber-700" : "bg-zinc-100 text-zinc-400")}>Thuê</Badge>
+            <Badge variant="outline" className={cn("text-[9px] uppercase font-black px-1.5 py-0 border-0", product.isForRent ? "bg-amber-100/50 text-amber-700" : "bg-zinc-100 text-zinc-400")}>Thuê</Badge>
             <span className="text-xs font-bold text-zinc-900">{product.rentPricePerDay?.toLocaleString('vi-VN')} ₫<span className="text-[10px] text-zinc-500 font-medium">/ngày</span></span>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={cn("text-[9px] uppercase font-black px-1.5 py-0 border-0", product.forSale ? "bg-blue-100/50 text-blue-700" : "bg-zinc-100 text-zinc-400")}>Bán</Badge>
+            <Badge variant="outline" className={cn("text-[9px] uppercase font-black px-1.5 py-0 border-0", product.isForSale ? "bg-blue-100/50 text-blue-700" : "bg-zinc-100 text-zinc-400")}>Bán</Badge>
             <span className="text-xs font-bold text-zinc-900">{product.salePrice?.toLocaleString('vi-VN')} ₫</span>
           </div>
         </div>
@@ -176,13 +176,13 @@ export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, o
       <div className="grid grid-cols-2 gap-3 p-3 bg-zinc-50 rounded-xl">
         <div className="flex flex-col">
           <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest mb-1 flex items-center gap-1">
-            <div className={cn("w-1.5 h-1.5 rounded-full", product.forRent ? "bg-amber-500" : "bg-zinc-300")} /> Thuê
+            <div className={cn("w-1.5 h-1.5 rounded-full", product.isForRent ? "bg-amber-500" : "bg-zinc-300")} /> Thuê
           </span>
           <span className="text-sm font-bold text-zinc-950">{product.rentPricePerDay?.toLocaleString('vi-VN')} ₫</span>
         </div>
         <div className="flex flex-col pl-3 border-l border-zinc-200">
           <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest mb-1 flex items-center gap-1">
-            <div className={cn("w-1.5 h-1.5 rounded-full", product.forSale ? "bg-blue-500" : "bg-zinc-300")} /> Bán
+            <div className={cn("w-1.5 h-1.5 rounded-full", product.isForSale ? "bg-blue-500" : "bg-zinc-300")} /> Bán
           </span>
           <span className="text-sm font-bold text-zinc-950">{product.salePrice?.toLocaleString('vi-VN')} ₫</span>
         </div>

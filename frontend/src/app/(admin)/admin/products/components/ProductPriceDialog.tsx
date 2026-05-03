@@ -42,8 +42,8 @@ export function ProductPriceDialog({
       setFormData({
         rentPricePerDay: product.rentPricePerDay,
         salePrice: product.salePrice,
-        isForRent: product.forRent,
-        isForSale: product.forSale,
+        isForRent: product.isForRent,
+        isForSale: product.isForSale,
       });
     }
     setErrors({});
@@ -73,8 +73,8 @@ export function ProductPriceDialog({
       
       if (formData.rentPricePerDay !== product.rentPricePerDay) req.rentPricePerDay = formData.rentPricePerDay;
       if (formData.salePrice !== product.salePrice) req.salePrice = formData.salePrice;
-      if (formData.isForRent !== product.forRent) req.isForRent = formData.isForRent;
-      if (formData.isForSale !== product.forSale) req.isForSale = formData.isForSale;
+      if (formData.isForRent !== product.isForRent) req.isForRent = formData.isForRent;
+      if (formData.isForSale !== product.isForSale) req.isForSale = formData.isForSale;
 
       if (Object.keys(req).length > 0) {
         onSubmit(req as ProductPriceUpdateRequest);

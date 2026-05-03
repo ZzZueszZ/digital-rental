@@ -508,8 +508,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <div className="flex items-center gap-1">
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 rounded-lg hover:bg-white border border-transparent hover:border-zinc-200 disabled:opacity-30"
+                  size="icon-sm"
+                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
                   disabled={priceHistoryPage === 0}
                   onClick={() => setPriceHistoryPage(p => p - 1)}
                 >
@@ -517,8 +517,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </Button>
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 rounded-lg hover:bg-white border border-transparent hover:border-zinc-200 disabled:opacity-30"
+                  size="icon-sm"
+                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
                   disabled={priceHistoryPage >= pricePagination.totalPages - 1}
                   onClick={() => setPriceHistoryPage(p => p + 1)}
                 >
@@ -606,8 +606,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <div className="flex items-center gap-1">
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 rounded-lg hover:bg-white border border-zinc-200 disabled:opacity-30"
+                  size="icon-sm"
+                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
                   disabled={inventoryPage === 0}
                   onClick={() => setInventoryPage(p => p - 1)}
                 >
@@ -615,8 +615,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </Button>
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 rounded-lg hover:bg-white border border-transparent hover:border-zinc-200 disabled:opacity-30"
+                  size="icon-sm"
+                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
                   disabled={inventoryPage >= inventoryPagination.totalPages - 1}
                   onClick={() => setInventoryPage(p => p + 1)}
                 >

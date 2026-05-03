@@ -695,10 +695,10 @@ export default function UsersAdminPage() {
                     key={u.id}
                     onClick={() => router.push(`/admin/users/${u.id}`)}
                     className={cn(
-                      "group transition-all duration-200 border-l-[3px] cursor-pointer",
+                      "group transition-all duration-300 cursor-pointer",
                       selectedIds.has(u.id)
-                        ? "bg-red-50/40 border-red-300"
-                        : "hover:bg-zinc-50/80 border-transparent hover:border-red-600",
+                        ? "bg-red-50/40"
+                        : "hover:bg-zinc-50/50",
                     )}
                   >
                     {/* Checkbox */}
@@ -736,7 +736,7 @@ export default function UsersAdminPage() {
                           </span>
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-bold text-zinc-900 truncate max-w-[180px]">
+                          <p className="text-sm font-bold text-zinc-900 truncate max-w-[180px] group-hover:text-red-600 transition-colors duration-300">
                             {u.email}
                           </p>
                           <p className="text-[10px] text-zinc-400 font-mono mt-0.5">

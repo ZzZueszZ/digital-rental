@@ -19,7 +19,7 @@ export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: Item
   return (
     <tr 
       onClick={() => onEdit(category)}
-      className="group hover:bg-zinc-50/80 border-l-[3px] border-transparent hover:border-red-600 transition-all duration-200 cursor-pointer"
+      className="group transition-all duration-300 hover:bg-zinc-50/50 cursor-pointer"
     >
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
@@ -35,7 +35,7 @@ export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: Item
         </div>
       </td>
       <td className="px-6 py-4">
-        <p className="text-xs font-bold text-zinc-900">{category.name}</p>
+        <p className="text-xs font-bold text-zinc-900 group-hover:text-red-600 transition-colors duration-300">{category.name}</p>
         <p className="text-[11px] text-zinc-500 line-clamp-1 max-w-xs" title={category.description}>
           {category.description || "Chưa có mô tả"}
         </p>

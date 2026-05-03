@@ -26,7 +26,7 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
   return (
     <tr 
       onClick={() => onView(product.id)}
-      className="group hover:bg-zinc-50/80 border-l-[3px] border-transparent hover:border-red-600 transition-all duration-200 cursor-pointer"
+      className="group transition-all duration-300 hover:bg-zinc-50/50 cursor-pointer"
     >
       <td className="px-6 py-4">
         <div className="flex items-center gap-4">
@@ -46,7 +46,7 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
           </div>
           <div>
             <p 
-              className="text-sm font-black text-zinc-950 tracking-tight mb-0.5 max-w-[200px] truncate" 
+              className="text-sm font-black text-zinc-950 tracking-tight mb-0.5 max-w-[200px] truncate group-hover:text-red-600 transition-colors duration-300" 
               title={product.name}
             >
               {product.name}

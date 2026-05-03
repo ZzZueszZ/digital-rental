@@ -14,7 +14,8 @@ import {
   Truck,
   ShieldCheck,
   Zap,
-  Info
+  Info,
+  TrendingUp
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ import Image from "next/image";
 import { useState, useMemo } from "react";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { ProductDialog } from "../components/ProductDialog";
-import { useUpdateProductInfo, useProduct, useDeleteProduct, useRestoreProduct, PRODUCT_KEYS } from "@/services/product";
+import { useUpdateProductInfo, useProduct, useDeleteProduct, useRestoreProduct, PRODUCT_KEYS, usePriceHistory } from "@/services/product";
 import { useCategories } from "@/services/category";
 import { ProductInfoUpdateRequest } from "@/types/product";
 import { useQueryClient } from "@tanstack/react-query";
@@ -40,6 +41,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   const { data: response, isLoading, error } = useProduct(productId);
   const product = response?.data;
+
+  const { data: historyRes } = usePriceHistory(productId);
+  const priceHistory = historyRes?.data || [];
 
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [confirmConfig, setConfirmConfig] = useState<{
@@ -365,6 +369,108 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         onSubmit={handleUpdateInfo}
         isPending={updateInfoMutation.isPending}
       />
+      {/* Price History Section */}
+      <div className="bg-white rounded-[2.5rem] border border-zinc-100 shadow-sm overflow-hidden mt-8">
+        <div className="px-8 py-6 border-b border-zinc-50 bg-zinc-50/30 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-white shadow-sm border border-zinc-200/50 flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-red-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950">Lịch sử thay đổi giá</h3>
+              <p className="text-[10px] font-bold text-zinc-400 uppercase mt-0.5 tracking-tighter">Theo dõi biến động giá trị thiết bị</p>
+            </div>
+          </div>
+          <Badge className="bg-zinc-950 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full">
+            {priceHistory.length} bản ghi
+          </Badge>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-white">
+                <th className="px-8 py-4 text-left text-[10px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Loại giá</th>
+                <th className="px-8 py-4 text-left text-[10px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Giá cũ</th>
+                <th className="px-8 py-4 text-left text-[10px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Giá mới</th>
+                <th className="px-8 py-4 text-left text-[10px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Biến động</th>
+                <th className="px-8 py-4 text-left text-[10px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Người thực hiện</th>
+                <th className="px-8 py-4 text-right text-[10px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Thời gian</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-50">
+              {priceHistory.map((history) => (
+                <tr key={history.id} className="group hover:bg-zinc-50/50 transition-colors">
+                  <td className="px-8 py-5">
+                    <Badge className={cn(
+                      "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border-0 ring-0",
+                      history.priceType === "RENT" ? "bg-blue-50 text-blue-600" : "bg-purple-50 text-purple-600"
+                    )}>
+                      {history.priceType === "RENT" ? "Giá thuê" : "Giá thanh lý"}
+                    </Badge>
+                  </td>
+                  <td className="px-8 py-5">
+                    <span className="text-xs font-bold text-zinc-400">
+                      {history.oldPrice ? `${history.oldPrice.toLocaleString()} đ` : "---"}
+                    </span>
+                  </td>
+                  <td className="px-8 py-5">
+                    <span className="text-sm font-black text-zinc-950">
+                      {history.newPrice.toLocaleString()} đ
+                    </span>
+                  </td>
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-1.5">
+                      {history.changeType === "INCREASE" && (
+                        <div className="flex items-center gap-1 text-red-600">
+                          <TrendingUp className="w-3.5 h-3.5" />
+                          <span className="text-xs font-black">+{history.percentChange.toFixed(1)}%</span>
+                        </div>
+                      )}
+                      {history.changeType === "DECREASE" && (
+                        <div className="flex items-center gap-1 text-emerald-600">
+                          <TrendingUp className="w-3.5 h-3.5 rotate-180" />
+                          <span className="text-xs font-black">-{history.percentChange.toFixed(1)}%</span>
+                        </div>
+                      )}
+                      {history.changeType === "NONE" && (
+                        <span className="text-xs font-bold text-zinc-400 uppercase tracking-tighter">Khởi tạo</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-lg bg-zinc-100 flex items-center justify-center text-[10px] font-black text-zinc-500 uppercase">
+                        {history.changedBy.charAt(0)}
+                      </div>
+                      <span className="text-xs font-bold text-zinc-600 truncate max-w-[150px]" title={history.changedBy}>
+                        {history.changedBy}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-5 text-right">
+                    <span className="text-xs font-bold text-zinc-400 uppercase tracking-tighter">
+                      {format(new Date(history.createdAt), "dd/MM/yyyy HH:mm", { locale: vi })}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+              {priceHistory.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-8 py-20 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-16 h-16 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
+                        <Tag className="w-7 h-7 text-zinc-300" />
+                      </div>
+                      <p className="text-sm font-bold text-zinc-400 uppercase tracking-widest">Chưa có lịch sử thay đổi giá</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

@@ -28,10 +28,14 @@ import Image from "next/image";
 import { useState, useMemo } from "react";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { ProductDialog } from "../components/ProductDialog";
-import { useUpdateProductInfo, useProduct, useDeleteProduct, useRestoreProduct, PRODUCT_KEYS, usePriceHistory } from "@/services/product";
+import { useUpdateProductInfo, useProduct, useDeleteProduct, useRestoreProduct, PRODUCT_KEYS, usePriceHistory, useUpdateProductPrice } from "@/services/product";
+import { useInventoryLogs } from "@/services/inventory";
 import { useCategories } from "@/services/category";
-import { ProductInfoUpdateRequest } from "@/types/product";
+import { ProductInfoUpdateRequest, PriceHistoryResponse } from "@/types/product";
+import { InventoryAuditResponse } from "@/types/inventory";
 import { useQueryClient } from "@tanstack/react-query";
+import { StockAdjustmentDialog } from "../components/StockAdjustmentDialog";
+import { ProductPriceDialog } from "../components/ProductPriceDialog";
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -44,6 +48,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   const { data: historyRes } = usePriceHistory(productId);
   const priceHistory = historyRes?.data || [];
+
+  const { data: inventoryRes } = useInventoryLogs(productId);
+  const inventoryLogs = inventoryRes?.data || [];
 
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [confirmConfig, setConfirmConfig] = useState<{
@@ -62,10 +69,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const deleteMutation = useDeleteProduct();
   const restoreMutation = useRestoreProduct();
   const updateInfoMutation = useUpdateProductInfo(productId);
+  const updatePriceMutation = useUpdateProductPrice(productId);
   const { data: catRes } = useCategories({ activeOnly: true }, 0, 100);
   const categories = useMemo(() => catRes?.data || [], [catRes]);
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isStockDialogOpen, setIsStockDialogOpen] = useState(false);
+  const [isPriceDialogOpen, setIsPriceDialogOpen] = useState(false);
 
   const handleBack = () => router.push("/admin/products");
 
@@ -254,12 +264,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           {/* Status & Inventory Card */}
           <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-3xl bg-emerald-50/50 border border-emerald-100 flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
+              <div className="p-4 rounded-3xl bg-emerald-50/50 border border-emerald-100 flex flex-col items-center text-center relative group/stock">
+                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mb-3 group-hover/stock:scale-110 transition-transform">
                   <Package className="w-5 h-5 text-emerald-600" />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600/60 mb-1">Số lượng kho</span>
                 <span className="text-xl font-black text-emerald-950">{product.quantity} <span className="text-xs font-bold text-emerald-600/50">máy</span></span>
+                
+                <button 
+                  onClick={() => setIsStockDialogOpen(true)}
+                  className="mt-3 px-3 py-1 bg-white border border-emerald-200 rounded-lg text-[9px] font-black uppercase text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                >
+                  Điều chỉnh
+                </button>
               </div>
               <div className="p-4 rounded-3xl bg-indigo-50/50 border border-indigo-100 flex flex-col items-center text-center">
                 <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
@@ -271,12 +288,20 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             </div>
 
             <div className="space-y-4 pt-4 border-t border-zinc-50">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between group/price">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center group-hover/price:scale-110 transition-transform">
                     <Truck className="w-5 h-5 text-amber-600" />
                   </div>
-                  <span className="text-xs font-black text-zinc-900 uppercase tracking-tight">Giá thuê mỗi ngày</span>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-black text-zinc-900 uppercase tracking-tight">Giá thuê mỗi ngày</span>
+                    <button 
+                      onClick={() => setIsPriceDialogOpen(true)}
+                      className="text-[9px] font-black text-amber-600 uppercase tracking-widest hover:underline text-left"
+                    >
+                      Điều chỉnh
+                    </button>
+                  </div>
                 </div>
                 <div className="text-right">
                   <p className="text-xl font-black text-zinc-950 leading-none mb-1">{product.rentPricePerDay?.toLocaleString('vi-VN')} ₫</p>
@@ -284,12 +309,20 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-zinc-50">
+              <div className="flex items-center justify-between pt-4 border-t border-zinc-50 group/price2">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center group-hover/price2:scale-110 transition-transform">
                     <Zap className="w-5 h-5 text-blue-600" />
                   </div>
-                  <span className="text-xs font-black text-zinc-900 uppercase tracking-tight">Giá bán thanh lý</span>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-black text-zinc-900 uppercase tracking-tight">Giá bán thanh lý</span>
+                    <button 
+                      onClick={() => setIsPriceDialogOpen(true)}
+                      className="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:underline text-left"
+                    >
+                      Điều chỉnh
+                    </button>
+                  </div>
                 </div>
                 <div className="text-right">
                   <p className="text-xl font-black text-zinc-950 leading-none mb-1">{product.salePrice?.toLocaleString('vi-VN')} ₫</p>
@@ -369,106 +402,163 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         onSubmit={handleUpdateInfo}
         isPending={updateInfoMutation.isPending}
       />
-      {/* Price History Section */}
-      <div className="bg-white rounded-[2.5rem] border border-zinc-100 shadow-sm overflow-hidden mt-8">
-        <div className="px-8 py-6 border-b border-zinc-50 bg-zinc-50/30 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white shadow-sm border border-zinc-200/50 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-red-600" />
-            </div>
-            <div>
-              <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950">Lịch sử thay đổi giá</h3>
-              <p className="text-[10px] font-bold text-zinc-400 uppercase mt-0.5 tracking-tighter">Theo dõi biến động giá trị thiết bị</p>
-            </div>
-          </div>
-          <Badge className="bg-zinc-950 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full">
-            {priceHistory.length} bản ghi
-          </Badge>
-        </div>
+      <StockAdjustmentDialog
+        open={isStockDialogOpen}
+        onOpenChange={setIsStockDialogOpen}
+        product={product || null}
+      />
+      <ProductPriceDialog
+        open={isPriceDialogOpen}
+        onOpenChange={setIsPriceDialogOpen}
+        product={product || null}
+        onSubmit={async (data) => {
+          try {
+            await updatePriceMutation.mutateAsync(data);
+            toast.success("Cập nhật giá thành công");
+            setIsPriceDialogOpen(false);
+          } catch (error: unknown) {
+            const err = error as { response?: { data?: { message?: string } } };
+            toast.error(err.response?.data?.message || "Lỗi khi cập nhật giá");
+          }
+        }}
+        isPending={updatePriceMutation.isPending}
+      />
 
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-white">
-                <th className="px-8 py-4 text-left text-[10px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Loại giá</th>
-                <th className="px-8 py-4 text-left text-[10px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Giá cũ</th>
-                <th className="px-8 py-4 text-left text-[10px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Giá mới</th>
-                <th className="px-8 py-4 text-left text-[10px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Biến động</th>
-                <th className="px-8 py-4 text-left text-[10px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Người thực hiện</th>
-                <th className="px-8 py-4 text-right text-[10px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Thời gian</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-50">
-              {priceHistory.map((history) => (
-                <tr key={history.id} className="group hover:bg-zinc-50/50 transition-colors">
-                  <td className="px-8 py-5">
-                    <Badge className={cn(
-                      "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border-0 ring-0",
-                      history.priceType === "RENT" ? "bg-blue-50 text-blue-600" : "bg-purple-50 text-purple-600"
-                    )}>
-                      {history.priceType === "RENT" ? "Giá thuê" : "Giá thanh lý"}
-                    </Badge>
-                  </td>
-                  <td className="px-8 py-5">
-                    <span className="text-xs font-bold text-zinc-400">
-                      {history.oldPrice ? `${history.oldPrice.toLocaleString()} đ` : "---"}
-                    </span>
-                  </td>
-                  <td className="px-8 py-5">
-                    <span className="text-sm font-black text-zinc-950">
-                      {history.newPrice.toLocaleString()} đ
-                    </span>
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-1.5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 mb-12">
+        {/* Price History Section */}
+        <div className="bg-white rounded-[2.5rem] border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-8 py-6 border-b border-zinc-50 bg-zinc-50/30 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-white shadow-sm border border-zinc-200/50 flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950">Lịch sử thay đổi giá</h3>
+                <p className="text-[10px] font-bold text-zinc-400 uppercase mt-0.5 tracking-tighter">Biến động giá trị</p>
+              </div>
+            </div>
+            <Badge className="bg-zinc-950 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full">
+              {priceHistory.length}
+            </Badge>
+          </div>
+
+          <div className="flex-1 overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-white">
+                  <th className="px-6 py-4 text-left text-[9px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Giá mới</th>
+                  <th className="px-6 py-4 text-left text-[9px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Biến động</th>
+                  <th className="px-6 py-4 text-right text-[9px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Thời gian</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-50">
+                {priceHistory.slice(0, 5).map((history: PriceHistoryResponse) => (
+                  <tr key={history.id} className="group hover:bg-zinc-50/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-[11px] font-black text-zinc-950">{history.newPrice.toLocaleString()} đ</span>
+                        <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-tighter">
+                          {history.priceType === "RENT" ? "Giá thuê" : "Giá bán"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
                       {history.changeType === "INCREASE" && (
-                        <div className="flex items-center gap-1 text-red-600">
-                          <TrendingUp className="w-3.5 h-3.5" />
-                          <span className="text-xs font-black">+{history.percentChange.toFixed(1)}%</span>
-                        </div>
+                        <span className="text-[10px] font-black text-red-600">+{history.percentChange.toFixed(1)}%</span>
                       )}
                       {history.changeType === "DECREASE" && (
-                        <div className="flex items-center gap-1 text-emerald-600">
-                          <TrendingUp className="w-3.5 h-3.5 rotate-180" />
-                          <span className="text-xs font-black">-{history.percentChange.toFixed(1)}%</span>
-                        </div>
+                        <span className="text-[10px] font-black text-emerald-600">-{history.percentChange.toFixed(1)}%</span>
                       )}
                       {history.changeType === "NONE" && (
-                        <span className="text-xs font-bold text-zinc-400 uppercase tracking-tighter">Khởi tạo</span>
+                        <span className="text-[10px] font-bold text-zinc-300 uppercase">Khởi tạo</span>
                       )}
-                    </div>
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-zinc-100 flex items-center justify-center text-[10px] font-black text-zinc-500 uppercase">
-                        {history.changedBy.charAt(0)}
-                      </div>
-                      <span className="text-xs font-bold text-zinc-600 truncate max-w-[150px]" title={history.changedBy}>
-                        {history.changedBy}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <span className="text-[10px] font-bold text-zinc-400">
+                        {format(new Date(history.createdAt), "dd/MM/yy", { locale: vi })}
                       </span>
-                    </div>
-                  </td>
-                  <td className="px-8 py-5 text-right">
-                    <span className="text-xs font-bold text-zinc-400 uppercase tracking-tighter">
-                      {format(new Date(history.createdAt), "dd/MM/yyyy HH:mm", { locale: vi })}
-                    </span>
-                  </td>
+                    </td>
+                  </tr>
+                ))}
+                {priceHistory.length === 0 && (
+                  <tr>
+                    <td colSpan={3} className="px-6 py-10 text-center text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                      Trống
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Inventory History Section */}
+        <div className="bg-white rounded-[2.5rem] border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-8 py-6 border-b border-zinc-50 bg-zinc-50/30 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-white shadow-sm border border-zinc-200/50 flex items-center justify-center">
+                <Package className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950">Lịch sử kho</h3>
+                <p className="text-[10px] font-bold text-zinc-400 uppercase mt-0.5 tracking-tighter">Nhập xuất thiết bị</p>
+              </div>
+            </div>
+            <Badge className="bg-emerald-600 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full">
+              {inventoryLogs.length}
+            </Badge>
+          </div>
+
+          <div className="flex-1 overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-white">
+                  <th className="px-6 py-4 text-left text-[9px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Thay đổi</th>
+                  <th className="px-6 py-4 text-left text-[9px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Lý do</th>
+                  <th className="px-6 py-4 text-right text-[9px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">Thời gian</th>
                 </tr>
-              ))}
-              {priceHistory.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="px-8 py-20 text-center">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-16 h-16 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
-                        <Tag className="w-7 h-7 text-zinc-300" />
-                      </div>
-                      <p className="text-sm font-bold text-zinc-400 uppercase tracking-widest">Chưa có lịch sử thay đổi giá</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-50">
+                {inventoryLogs.slice(0, 5).map((log: InventoryAuditResponse) => {
+                  const diff = log.newStock - log.oldStock;
+                  return (
+                    <tr key={log.id} className="group hover:bg-zinc-50/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className={cn(
+                            "text-[11px] font-black",
+                            diff > 0 ? "text-emerald-600" : "text-red-600"
+                          )}>
+                            {diff > 0 ? `+${diff}` : diff}
+                          </span>
+                          <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-tighter">
+                            Tồn: {log.newStock}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="text-[11px] font-medium text-zinc-600 truncate max-w-[120px]" title={log.reason}>
+                          {log.reason || "Không có lý do"}
+                        </p>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <span className="text-[10px] font-bold text-zinc-400">
+                          {format(new Date(log.changedAt), "dd/MM/yy", { locale: vi })}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+                {inventoryLogs.length === 0 && (
+                  <tr>
+                    <td colSpan={3} className="px-6 py-10 text-center text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                      Trống
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

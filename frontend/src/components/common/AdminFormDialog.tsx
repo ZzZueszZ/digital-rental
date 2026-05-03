@@ -59,7 +59,7 @@ export function AdminFormDialog({
           <div className="px-6 pt-7 pb-5 border-b border-zinc-100 bg-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={cn("w-10 h-10 rounded-full flex items-center justify-center shadow-sm shrink-0", iconClassName)}>
+                <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shadow-sm shrink-0", iconClassName)}>
                   <Icon className="w-4 h-4" />
                 </div>
                 <div>
@@ -94,14 +94,14 @@ export function AdminFormDialog({
               <button
                 type="button"
                 onClick={() => onOpenChange(false)}
-                className="h-10 px-5 rounded-full border border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
+                className="h-10 px-5 rounded-xl border border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
               >
                 {cancelText}
               </button>
               <Button
                 type="submit"
                 disabled={isPending}
-                className="h-10 px-6 rounded-full bg-zinc-950 hover:bg-red-600 text-white font-semibold text-sm transition-all duration-300"
+                className="h-10 px-6 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold text-sm transition-all duration-300"
               >
                 {isPending ? (
                   <>

@@ -328,8 +328,8 @@ export default function ProfileDashboard() {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 lg:ml-72 flex flex-col p-6 sm:p-8 md:p-10 lg:p-12 overflow-y-auto custom-scrollbar">
-          <div className="max-w-[1600px] mx-auto w-full">
+        <main className="flex-1 lg:ml-72 flex flex-col p-5 sm:p-12 md:p-20 lg:p-24 overflow-y-auto custom-scrollbar">
+          <div className="max-w-[1440px] mx-auto w-full">
             {activeSection === "overview" && (
               <OverviewSection
                 profile={profile}
@@ -413,8 +413,8 @@ function OverviewSection({
   onNavigate: (s: Section) => void;
 }) {
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="bg-white border border-zinc-100 rounded-[2.5rem] p-8 md:p-12 shadow-sm relative overflow-hidden">
+    <div className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="bg-white border border-zinc-100 rounded-2xl p-8 md:p-12 shadow-sm relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div>
             <h1 className="text-4xl md:text-5xl font-black text-zinc-950 tracking-tight mb-4 leading-tight">
@@ -429,14 +429,14 @@ function OverviewSection({
           <div className="flex gap-3">
             <Button
               onClick={() => onNavigate("info")}
-              className="h-10 px-6 rounded-full bg-zinc-950 text-white font-semibold text-sm hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
+              className="h-11 px-6 rounded-xl bg-zinc-950 text-white font-semibold text-sm hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
             >
               Xem hồ sơ
             </Button>
             <Button
               variant="outline"
               onClick={() => onNavigate("orders")}
-              className="h-10 px-6 rounded-full border-zinc-200 bg-white text-zinc-950 font-semibold text-sm hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
+              className="h-11 px-6 rounded-xl border-zinc-200 bg-white text-zinc-950 font-semibold text-sm hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
             >
               Đơn hàng
             </Button>
@@ -477,8 +477,8 @@ function OverviewSection({
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white border border-zinc-100 rounded-[2.5rem] p-10 shadow-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white border border-zinc-100 rounded-2xl p-10 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-xl font-black text-zinc-950 tracking-tight">
               Hoạt động gần đây
@@ -490,7 +490,7 @@ function OverviewSection({
               Xem toàn bộ nhật ký
             </button>
           </div>
-          <div className="py-20 flex flex-col items-center justify-center text-center bg-zinc-50/50 rounded-[2rem] border border-dashed border-zinc-200">
+          <div className="py-20 flex flex-col items-center justify-center text-center bg-zinc-50/50 rounded-xl border border-dashed border-zinc-200">
             <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-sm mb-6">
               <ShoppingBag className="w-8 h-8 text-zinc-200" />
             </div>
@@ -500,7 +500,7 @@ function OverviewSection({
           </div>
         </div>
 
-        <div className="bg-white border border-zinc-100 rounded-[2.5rem] p-10 text-zinc-950 shadow-xl shadow-zinc-200/50 relative overflow-hidden group hover:scale-[1.02] transition-all">
+        <div className="bg-white border border-zinc-100 rounded-2xl p-8 hover:border-red-600/30 transition-all shadow-sm group relative overflow-hidden active:scale-[0.99]">
           <div className="relative z-10">
             <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mb-8 border border-amber-100 shadow-sm">
               <Star className="w-8 h-8 text-amber-500 fill-amber-500" />
@@ -512,7 +512,7 @@ function OverviewSection({
               Mở khóa tất cả các đặc quyền: Miễn phí vận chuyển, Bảo hiểm thiết
               bị và Ưu tiên đặt lịch thuê máy.
             </p>
-            <Button className="w-full h-10 bg-zinc-950 text-white font-semibold text-sm rounded-full hover:bg-red-600 transition-all shadow-lg shadow-zinc-200">
+            <Button className="w-full h-11 bg-zinc-950 text-white font-semibold text-sm rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-zinc-200">
               Nâng cấp ngay
             </Button>
           </div>
@@ -541,7 +541,7 @@ function OverviewCard({
   return (
     <button
       onClick={onClick}
-      className="group bg-white border border-zinc-100 rounded-[2.5rem] p-8 shadow-sm hover:border-red-600/30 transition-all text-left flex flex-col justify-between h-52 active:scale-95"
+      className="group bg-white border border-zinc-100 rounded-2xl p-8 shadow-sm hover:border-red-600/30 transition-all text-left flex flex-col justify-between h-52 active:scale-95"
     >
       <div
         className={`w-14 h-14 rounded-2xl ${color} text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform`}
@@ -735,7 +735,7 @@ function InfoSection({
           <Button
             type="submit"
             disabled={isUpdating}
-            className="flex-1 h-12 rounded-full bg-red-600 text-white font-bold text-sm shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all disabled:opacity-50"
+            className="flex-1 h-12 rounded-xl bg-red-600 text-white font-semibold text-sm shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all disabled:opacity-50"
           >
             {isUpdating ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -746,7 +746,7 @@ function InfoSection({
           <Button
             type="button"
             variant="outline"
-            className="h-12 px-8 rounded-full border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all"
+            className="h-12 px-8 rounded-xl border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all"
           >
             Hủy bỏ
           </Button>
@@ -821,7 +821,7 @@ function AddressSection() {
         </div>
         <Button
           onClick={() => handleOpenDialog()}
-          className="h-10 px-6 rounded-full bg-zinc-950 text-white font-semibold text-sm flex items-center gap-3 hover:bg-red-600 border-none transition-all shadow-lg shadow-zinc-200"
+          className="h-11 px-6 rounded-xl bg-zinc-950 text-white font-semibold text-sm flex items-center gap-2 hover:bg-red-600 border-none transition-all shadow-lg shadow-zinc-200"
         >
           <Plus className="w-4 h-4" /> Thêm địa chỉ mới
         </Button>
@@ -920,7 +920,7 @@ function AddressSection() {
 
         <button
           onClick={() => handleOpenDialog()}
-          className="border-4 border-dashed border-zinc-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-6 text-zinc-300 hover:border-red-600/30 hover:text-red-600 hover:bg-red-50/30 transition-all group"
+          className="border-4 border-dashed border-zinc-100 rounded-2xl p-16 flex flex-col items-center justify-center gap-6 text-zinc-300 hover:border-red-600/30 hover:text-red-600 hover:bg-red-50/30 transition-all group"
         >
           <div className="w-16 h-16 rounded-full bg-zinc-50 flex items-center justify-center group-hover:bg-white group-hover:shadow-xl transition-all">
             <Plus className="w-8 h-8" />
@@ -1154,7 +1154,7 @@ function OrdersSection() {
         </p>
       </div>
 
-      <div className="bg-white border border-zinc-100 rounded-[3rem] p-24 flex flex-col items-center justify-center text-center shadow-sm">
+      <div className="bg-white border border-zinc-100 rounded-2xl p-24 flex flex-col items-center justify-center text-center shadow-sm">
         <div className="w-24 h-24 rounded-full bg-zinc-50 flex items-center justify-center mb-10 shadow-inner">
           <ShoppingBag className="w-12 h-12 text-zinc-200" />
         </div>
@@ -1164,7 +1164,7 @@ function OrdersSection() {
         <p className="text-sm text-zinc-400 font-medium max-w-sm leading-relaxed mb-12">
           Hiện chưa có dữ liệu giao dịch nào được đồng bộ với tài khoản của bạn.
         </p>
-        <Button className="h-10 px-8 rounded-full bg-zinc-950 text-white font-semibold text-sm hover:bg-red-600 border-none shadow-lg shadow-zinc-200 transition-all">
+        <Button className="h-11 px-8 rounded-xl bg-zinc-950 text-white font-semibold text-sm hover:bg-red-600 border-none shadow-lg shadow-zinc-200 transition-all">
           Bắt đầu mua sắm ngay
         </Button>
       </div>

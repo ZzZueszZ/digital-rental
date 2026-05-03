@@ -124,9 +124,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         <div className="flex items-center gap-6">
           <Button 
             onClick={handleBack} 
-            variant="outline" 
+            variant="ghost" 
             size="icon" 
-            className="w-12 h-12 rounded-2xl hover:bg-zinc-50 border-zinc-100 shadow-sm transition-all active:scale-90"
+            className="h-12 w-12 rounded-full bg-white border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-sm shrink-0"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
@@ -147,15 +147,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         <div className="flex items-center gap-3 w-full sm:w-auto">
           {!isDeleted ? (
             <>
-              <Button className="flex-1 sm:flex-none h-12 rounded-2xl bg-zinc-950 hover:bg-indigo-600 text-white font-bold px-8 transition-all gap-2 shadow-xl shadow-zinc-200">
+              <Button className="flex-1 sm:flex-none h-12 rounded-2xl bg-white border border-zinc-200 hover:border-red-600 hover:bg-red-50 text-zinc-950 hover:text-red-600 font-bold px-8 transition-all gap-2 shadow-sm">
                 <Edit2 className="w-4 h-4" /> Chỉnh sửa
               </Button>
-              <Button onClick={handleDelete} variant="outline" className="flex-1 sm:flex-none h-12 rounded-2xl text-red-600 hover:bg-red-50 border-red-100 font-bold px-6 transition-all gap-2">
+              <Button onClick={handleDelete} variant="ghost" className="flex-1 sm:flex-none h-12 rounded-2xl bg-white border border-red-100 text-red-600 hover:bg-red-600 hover:text-white font-bold px-6 transition-all gap-2 shadow-sm">
                 <Trash2 className="w-4 h-4" /> Vô hiệu hóa
               </Button>
             </>
           ) : (
-            <Button onClick={handleRestore} className="flex-1 sm:flex-none h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 transition-all gap-2">
+            <Button onClick={handleRestore} variant="ghost" className="flex-1 sm:flex-none h-12 rounded-2xl bg-white border border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white font-bold px-8 transition-all gap-2 shadow-sm">
               <RotateCcw className="w-4 h-4" /> Khôi phục
             </Button>
           )}
@@ -268,23 +268,23 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
 
           {/* Specifications Table */}
-          <div className="bg-zinc-950 p-8 rounded-[2.5rem] shadow-2xl shadow-indigo-900/10 space-y-6">
+          <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-                  <ShieldCheck className="w-5 h-5 text-indigo-400" />
+                <div className="w-10 h-10 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5 text-red-600" />
                 </div>
-                <h3 className="text-sm font-black uppercase tracking-widest text-white">Thông số kỹ thuật</h3>
+                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950">Thông số kỹ thuật</h3>
               </div>
-              <Badge variant="outline" className="bg-white/5 border-white/10 text-white font-bold text-[9px] uppercase tracking-widest">Pro Specs</Badge>
+              <Badge variant="outline" className="bg-red-50 border-red-100 text-red-600 font-bold text-[9px] uppercase tracking-widest">Pro Specs</Badge>
             </div>
 
             <div className="space-y-4">
               {product.specifications?.map((spec, idx) => (
                 <div key={idx} className="flex items-center justify-between group">
-                  <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider group-hover:text-zinc-300 transition-colors">{spec.specKey}</span>
-                  <div className="flex-1 mx-4 border-b border-white/5 border-dashed" />
-                  <span className="text-xs font-black text-indigo-300">{spec.specValue}</span>
+                  <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider group-hover:text-zinc-600 transition-colors">{spec.specKey}</span>
+                  <div className="flex-1 mx-4 border-b border-zinc-100 border-dashed" />
+                  <span className="text-xs font-black text-zinc-900">{spec.specValue}</span>
                 </div>
               ))}
               {(!product.specifications || product.specifications.length === 0) && (

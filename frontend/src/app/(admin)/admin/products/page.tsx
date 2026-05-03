@@ -305,8 +305,10 @@ export default function ProductsAdminPage() {
                   <tr>
                     <td colSpan={5}>
                       <EmptyState 
-                        title="Không tìm thấy sản phẩm" 
-                        description="Hãy thử thay đổi bộ lọc hoặc thêm thiết bị mới."
+                        title="Trống" 
+                        description={viewMode === "DELETED" ? "Không có sản phẩm nào trong thùng rác." : "Hãy thử thay đổi bộ lọc hoặc thêm thiết bị mới."}
+                        actionText={viewMode === "DELETED" ? "Quay lại danh sách" : undefined}
+                        onAction={viewMode === "DELETED" ? () => { setViewMode("ACTIVE"); setPage(0); } : undefined}
                       />
                     </td>
                   </tr>
@@ -337,7 +339,12 @@ export default function ProductsAdminPage() {
                 <div key={i} className="h-32 bg-zinc-50 rounded-2xl animate-pulse" />
               ))
             ) : products.length === 0 ? (
-              <EmptyState title="Trống" description="Không có sản phẩm nào." />
+              <EmptyState 
+                title="Trống" 
+                description={viewMode === "DELETED" ? "Không có sản phẩm nào trong thùng rác." : "Không có sản phẩm nào."}
+                actionText={viewMode === "DELETED" ? "Quay lại danh sách" : undefined}
+                onAction={viewMode === "DELETED" ? () => { setViewMode("ACTIVE"); setPage(0); } : undefined}
+              />
             ) : (
               products.map((p) => (
                 <ProductMobileCard

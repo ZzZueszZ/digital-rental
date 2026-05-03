@@ -109,7 +109,7 @@ export default function ProductDetailPage() {
         description: `${product?.name} x${quantity}`,
         action: {
           label: "Xem giỏ hàng",
-          onClick: () => router.push("/cart"),
+          onClick: () => router.push("/profile?section=cart"),
         },
       });
     } catch (error) {

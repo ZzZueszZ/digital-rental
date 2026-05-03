@@ -63,11 +63,11 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
       <td className="px-6 py-4">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={cn("text-[9px] uppercase font-black px-1.5 py-0 border-0", product.isForRent ? "bg-amber-100/50 text-amber-700" : "bg-zinc-100 text-zinc-400")}>Thuê</Badge>
+            <Badge variant="outline" className={cn("text-[9px] uppercase font-black px-1.5 py-0 border-0", product.forRent ? "bg-amber-100/50 text-amber-700" : "bg-zinc-100 text-zinc-400")}>Thuê</Badge>
             <span className="text-xs font-bold text-zinc-900">{product.rentPricePerDay?.toLocaleString('vi-VN')} ₫<span className="text-[10px] text-zinc-500 font-medium">/ngày</span></span>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={cn("text-[9px] uppercase font-black px-1.5 py-0 border-0", product.isForSale ? "bg-blue-100/50 text-blue-700" : "bg-zinc-100 text-zinc-400")}>Bán</Badge>
+            <Badge variant="outline" className={cn("text-[9px] uppercase font-black px-1.5 py-0 border-0", product.forSale ? "bg-blue-100/50 text-blue-700" : "bg-zinc-100 text-zinc-400")}>Bán</Badge>
             <span className="text-xs font-bold text-zinc-900">{product.salePrice?.toLocaleString('vi-VN')} ₫</span>
           </div>
         </div>
@@ -77,11 +77,11 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
           className={cn(
             "rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-wider border-0 ring-0",
             !isDeleted
-              ? (product.isActive ? "bg-emerald-50 text-emerald-600" : "bg-zinc-100 text-zinc-500")
+              ? (product.active ? "bg-emerald-50 text-emerald-600" : "bg-zinc-100 text-zinc-500")
               : "bg-red-50 text-red-600"
           )}
         >
-          {!isDeleted ? (product.isActive ? "Hoạt động" : "Ẩn") : "Đã xóa"}
+          {!isDeleted ? (product.active ? "Hoạt động" : "Ẩn") : "Đã xóa"}
         </Badge>
       </td>
       <td className="px-6 py-4">
@@ -96,7 +96,7 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
       </td>
       <td className="px-6 py-4 text-right">
         <ProductActionMenu
-          isActive={product.isActive}
+          isActive={product.active}
           isDeleted={isDeleted}
           onEdit={() => onEdit(product)}
           onUpdatePrice={() => onUpdatePrice(product)}
@@ -136,15 +136,13 @@ export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, o
               <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 bg-zinc-100 px-1.5 rounded">
                 #{product.id}
               </span>
-              <Badge
-                className={cn(
-                  "rounded-md px-1.5 py-0 text-[8px] font-black uppercase border-0 ring-0",
-                  !isDeleted
-                    ? (product.isActive ? "bg-emerald-50 text-emerald-600" : "bg-zinc-100 text-zinc-500")
-                    : "bg-red-50 text-red-600"
-                )}
-              >
-                {!isDeleted ? (product.isActive ? "Hoạt động" : "Ẩn") : "Đã xóa"}
+              <Badge className={cn(
+                "rounded-full px-2 py-0 text-[9px] font-black uppercase tracking-widest border-0",
+                !isDeleted
+                  ? (product.active ? "bg-emerald-50 text-emerald-600" : "bg-zinc-100 text-zinc-500")
+                  : "bg-red-50 text-red-600"
+              )}>
+                {!isDeleted ? (product.active ? "Hoạt động" : "Ẩn") : "Đã xóa"}
               </Badge>
             </div>
             <h3 
@@ -160,7 +158,7 @@ export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, o
         </div>
         <div className="shrink-0">
           <ProductActionMenu
-            isActive={product.isActive}
+            isActive={product.active}
             isDeleted={isDeleted}
             onEdit={() => onEdit(product)}
             onUpdatePrice={() => onUpdatePrice(product)}

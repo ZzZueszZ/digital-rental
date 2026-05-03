@@ -26,8 +26,8 @@ export function ProductPriceDialog({
   const [formData, setFormData] = useState<ProductPriceUpdateRequest>({
     rentPricePerDay: 0,
     salePrice: 0,
-    isForRent: true,
-    isForSale: false,
+    forRent: true,
+    forSale: false,
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof ProductPriceUpdateRequest | "general", string>>>({});
@@ -42,8 +42,8 @@ export function ProductPriceDialog({
       setFormData({
         rentPricePerDay: product.rentPricePerDay,
         salePrice: product.salePrice,
-        isForRent: product.isForRent,
-        isForSale: product.isForSale,
+        forRent: product.forRent,
+        forSale: product.forSale,
       });
     }
     setErrors({});
@@ -73,8 +73,8 @@ export function ProductPriceDialog({
       
       if (formData.rentPricePerDay !== product.rentPricePerDay) req.rentPricePerDay = formData.rentPricePerDay;
       if (formData.salePrice !== product.salePrice) req.salePrice = formData.salePrice;
-      if (formData.isForRent !== product.isForRent) req.isForRent = formData.isForRent;
-      if (formData.isForSale !== product.isForSale) req.isForSale = formData.isForSale;
+      if (formData.forRent !== product.forRent) req.forRent = formData.forRent;
+      if (formData.forSale !== product.forSale) req.forSale = formData.forSale;
 
       if (Object.keys(req).length > 0) {
         onSubmit(req as ProductPriceUpdateRequest);
@@ -111,9 +111,9 @@ export function ProductPriceDialog({
           <label className="flex items-center gap-3 cursor-pointer group">
             <input 
               type="checkbox" 
-              checked={formData.isForRent}
-              onChange={(e) => setFormData({ ...formData, isForRent: e.target.checked })}
-              className="w-5 h-5 rounded text-amber-500 focus:ring-amber-500/20 cursor-pointer border-zinc-300"
+              checked={formData.forRent}
+              onChange={(e) => setFormData({ ...formData, forRent: e.target.checked })}
+              className="w-4 h-4 rounded text-red-600 focus:ring-red-600/20 cursor-pointer"
             />
             <span className="text-sm font-black uppercase text-zinc-700 tracking-wider group-hover:text-amber-600 transition-colors">Cho thuê thiết bị</span>
           </label>
@@ -124,7 +124,7 @@ export function ProductPriceDialog({
             <div className="relative">
               <Input
                 type="number"
-                disabled={!formData.isForRent}
+                disabled={!formData.forRent}
                 value={formData.rentPricePerDay || ""}
                 onChange={(e) => setFormData({ ...formData, rentPricePerDay: Number(e.target.value) })}
                 placeholder="Ví dụ: 150000"
@@ -143,9 +143,9 @@ export function ProductPriceDialog({
           <label className="flex items-center gap-3 cursor-pointer group">
             <input 
               type="checkbox" 
-              checked={formData.isForSale}
-              onChange={(e) => setFormData({ ...formData, isForSale: e.target.checked })}
-              className="w-5 h-5 rounded text-blue-500 focus:ring-blue-500/20 cursor-pointer border-zinc-300"
+              checked={formData.forSale}
+              onChange={(e) => setFormData({ ...formData, forSale: e.target.checked })}
+              className="w-4 h-4 rounded text-red-600 focus:ring-red-600/20 cursor-pointer"
             />
             <span className="text-sm font-black uppercase text-zinc-700 tracking-wider group-hover:text-blue-600 transition-colors">Bán thiết bị</span>
           </label>
@@ -156,7 +156,7 @@ export function ProductPriceDialog({
             <div className="relative">
               <Input
                 type="number"
-                disabled={!formData.isForSale}
+                disabled={!formData.forSale}
                 value={formData.salePrice || ""}
                 onChange={(e) => setFormData({ ...formData, salePrice: Number(e.target.value) })}
                 placeholder="Ví dụ: 25000000"

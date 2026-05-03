@@ -24,8 +24,10 @@ import {
   useUpdateProductPrice,
   useDeleteProduct, 
   useRestoreProduct,
-  useHardDeleteProduct
+  useHardDeleteProduct,
+  PRODUCT_KEYS
 } from "@/services/product";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCategories } from "@/services/category";
 import { ProductResponse, ProductRequest, ProductInfoUpdateRequest, ProductPriceUpdateRequest } from "@/types/product";
 import { ProductDialog } from "./components/ProductDialog";
@@ -40,6 +42,7 @@ import { cn } from "@/lib/utils";
 
 export default function ProductsAdminPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [viewMode, setViewMode] = useState<"ACTIVE" | "DELETED">("ACTIVE");
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -123,6 +126,7 @@ export default function ProductsAdminPage() {
       onConfirm: async () => {
         try {
           await deleteMutation.mutateAsync(id);
+          await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
           toast.success("Đã chuyển sản phẩm vào thùng rác");
           setConfirmConfig(prev => ({ ...prev, open: false }));
         } catch (error: unknown) {
@@ -141,6 +145,7 @@ export default function ProductsAdminPage() {
       onConfirm: async () => {
         try {
           await restoreMutation.mutateAsync(id);
+          await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
           toast.success("Đã khôi phục sản phẩm");
           setConfirmConfig(prev => ({ ...prev, open: false }));
         } catch (error: unknown) {
@@ -159,6 +164,7 @@ export default function ProductsAdminPage() {
       onConfirm: async () => {
         try {
           await hardDeleteMutation.mutateAsync(id);
+          await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
           toast.success("Đã xóa vĩnh viễn sản phẩm");
           setConfirmConfig(prev => ({ ...prev, open: false }));
         } catch (error: unknown) {

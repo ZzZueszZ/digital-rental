@@ -27,12 +27,14 @@ import Image from "next/image";
 import { useState, useMemo } from "react";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { ProductDialog } from "../components/ProductDialog";
-import { useUpdateProductInfo, useProduct, useDeleteProduct, useRestoreProduct } from "@/services/product";
+import { useUpdateProductInfo, useProduct, useDeleteProduct, useRestoreProduct, PRODUCT_KEYS } from "@/services/product";
 import { useCategories } from "@/services/category";
 import { ProductInfoUpdateRequest } from "@/types/product";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { id } = use(params);
   const productId = parseInt(id);
 
@@ -72,6 +74,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       onConfirm: async () => {
         try {
           await deleteMutation.mutateAsync(productId);
+          await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
           toast.success("Vô hiệu hóa thành công");
           setConfirmConfig(prev => ({ ...prev, open: false }));
         } catch (err) {
@@ -90,6 +93,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       onConfirm: async () => {
         try {
           await restoreMutation.mutateAsync(productId);
+          await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
           toast.success("Khôi phục thành công");
           setConfirmConfig(prev => ({ ...prev, open: false }));
         } catch (err) {

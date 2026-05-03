@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Image as ImageIcon, Plus, X, Loader2, Trash2 } from "lucide-react";
+import { Image as ImageIcon, Plus, X, Loader2, Trash2, RotateCcw } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -12,6 +12,8 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
+import { useQueryClient } from "@tanstack/react-query";
+import { PRODUCT_KEYS } from "@/services/product";
 
 interface ProductGalleryDialogProps {
   open: boolean;
@@ -24,8 +26,11 @@ export function ProductGalleryDialog({
   onOpenChange,
   product,
 }: ProductGalleryDialogProps) {
+  const queryClient = useQueryClient();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
+  const [markedForDeletionIds, setMarkedForDeletionIds] = useState<Set<number>>(new Set());
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const addGalleryMutation = useAddGallery(product?.id || 0);
@@ -58,31 +63,50 @@ export function ProductGalleryDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedFiles.length === 0) {
+    if (selectedFiles.length === 0 && markedForDeletionIds.size === 0) {
       onOpenChange(false);
       return;
     }
 
+    setIsSubmitting(true);
     try {
-      await addGalleryMutation.mutateAsync(selectedFiles);
-      toast.success("Đã thêm ảnh vào bộ sưu tập");
+      // Handle Deletions
+      if (markedForDeletionIds.size > 0) {
+        for (const id of Array.from(markedForDeletionIds)) {
+          await deleteGalleryMutation.mutateAsync(id);
+        }
+      }
+
+      // Handle Additions
+      if (selectedFiles.length > 0) {
+        await addGalleryMutation.mutateAsync(selectedFiles);
+      }
+
+      await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
+      toast.success("Đã cập nhật thư viện ảnh");
+      
       setSelectedFiles([]);
       setPreviews([]);
+      setMarkedForDeletionIds(new Set());
       onOpenChange(false);
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
-      toast.error(err.response?.data?.message || "Lỗi khi tải ảnh lên");
+      toast.error(err.response?.data?.message || "Lỗi khi cập nhật thư viện");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleDeleteExisting = async (imageId: number) => {
-    try {
-      await deleteGalleryMutation.mutateAsync(imageId);
-      toast.success("Đã xóa ảnh khỏi bộ sưu tập");
-    } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } };
-      toast.error(err.response?.data?.message || "Không thể xóa ảnh");
-    }
+  const toggleMarkForDeletion = (imageId: number) => {
+    setMarkedForDeletionIds(prev => {
+      const next = new Set(prev);
+      if (next.has(imageId)) {
+        next.delete(imageId);
+      } else {
+        next.add(imageId);
+      }
+      return next;
+    });
   };
 
   if (!product) return null;
@@ -96,10 +120,14 @@ export function ProductGalleryDialog({
       title="Thư viện ảnh"
       description={`Quản lý bộ sưu tập hình ảnh cho: ${product.name}`}
       onSubmit={handleSubmit}
-      isPending={addGalleryMutation.isPending}
-      submitText={selectedFiles.length > 0 ? `Tải lên ${selectedFiles.length} ảnh` : "Lưu thay đổi"}
+      isPending={isSubmitting}
+      submitText={
+        markedForDeletionIds.size > 0 || selectedFiles.length > 0
+          ? `Lưu ${markedForDeletionIds.size > 0 ? `(Xóa ${markedForDeletionIds.size}) ` : ""}${selectedFiles.length > 0 ? `(Thêm ${selectedFiles.length})` : ""}`
+          : "Đóng"
+      }
       submitIcon={Plus}
-      cancelText="Đóng"
+      cancelText="Hủy"
       maxWidth="max-w-3xl"
     >
       <div className="space-y-8">
@@ -108,23 +136,48 @@ export function ProductGalleryDialog({
           <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Ảnh hiện tại ({product.gallery?.length || 0})</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {product.gallery?.map((img) => (
-              <div key={img.id} className="group relative aspect-square rounded-2xl overflow-hidden bg-zinc-50 border border-zinc-100">
+              <div key={img.id} className={cn(
+                "group relative aspect-square rounded-2xl overflow-hidden bg-zinc-50 border transition-all duration-300",
+                markedForDeletionIds.has(img.id) ? "border-red-500 ring-2 ring-red-500/20" : "border-zinc-100"
+              )}>
                 <Image
                   src={getImageUrl(img.url)}
                   alt="Gallery"
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  className={cn(
+                    "object-cover transition-all duration-500",
+                    markedForDeletionIds.has(img.id) ? "scale-95 grayscale opacity-50" : "group-hover:scale-110"
+                  )}
                   unoptimized
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                
+                <div className={cn(
+                  "absolute inset-0 transition-opacity flex flex-col items-center justify-center gap-2",
+                  markedForDeletionIds.has(img.id) 
+                    ? "opacity-100 bg-red-600/60 backdrop-blur-[2px]" 
+                    : "bg-black/40 opacity-0 group-hover:opacity-100"
+                )}>
+                  {markedForDeletionIds.has(img.id) && (
+                    <span className="text-[10px] font-black text-white uppercase tracking-widest drop-shadow-md">
+                      Sẽ bị xóa
+                    </span>
+                  )}
                   <Button
                     size="icon"
-                    variant="destructive"
-                    className="rounded-full h-9 w-9"
-                    onClick={() => handleDeleteExisting(img.id)}
-                    disabled={deleteGalleryMutation.isPending}
+                    variant={markedForDeletionIds.has(img.id) ? "secondary" : "destructive"}
+                    className={cn(
+                      "rounded-full h-10 w-10 shadow-xl transition-all active:scale-90",
+                      markedForDeletionIds.has(img.id) ? "bg-white text-red-600 hover:bg-zinc-100 scale-110" : "hover:scale-110"
+                    )}
+                    onClick={() => toggleMarkForDeletion(img.id)}
+                    disabled={isSubmitting}
+                    title={markedForDeletionIds.has(img.id) ? "Hoàn tác" : "Xóa ảnh"}
                   >
-                    {deleteGalleryMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                    {markedForDeletionIds.has(img.id) ? (
+                      <RotateCcw className="w-5 h-5" />
+                    ) : (
+                      <Trash2 className="w-5 h-5" />
+                    )}
                   </Button>
                 </div>
               </div>

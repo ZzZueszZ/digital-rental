@@ -46,10 +46,18 @@ import { isAxiosError } from "axios";
 
 export default function AdminAddressPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedUser, setSelectedUser] = useState<{ id: number; fullName: string; email: string } | null>(null);
+  const [selectedUser, setSelectedUser] = useState<{
+    id: number;
+    fullName: string;
+    email: string;
+  } | null>(null);
 
   // Fetch users for the selector
-  const { data: usersRes, isLoading: isSearching } = useUsers({ keyword: searchQuery }, 0, 5);
+  const { data: usersRes, isLoading: isSearching } = useUsers(
+    { keyword: searchQuery },
+    0,
+    5,
+  );
   const users = usersRes?.data || [];
 
   return (
@@ -60,7 +68,7 @@ export default function AdminAddressPage() {
           <Label className="text-[14px] font-medium text-zinc-400 mb-4 block">
             Chọn người dùng để quản lý địa chỉ
           </Label>
-          
+
           <div className="relative group">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-red-600 transition-colors">
               <Search className="w-3.5 h-3.5" />
@@ -71,7 +79,7 @@ export default function AdminAddressPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-11 h-11 bg-zinc-50/50 border-zinc-100 rounded-lg focus:bg-white focus:border-red-600/30 transition-all font-medium text-sm"
             />
-            
+
             {/* Search Results Dropdown */}
             {searchQuery && users.length > 0 && !selectedUser && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-zinc-100 rounded-xl shadow-2xl z-50 overflow-hidden animate-in slide-in-from-top-2 duration-300">
@@ -79,7 +87,11 @@ export default function AdminAddressPage() {
                   <button
                     key={user.id}
                     onClick={() => {
-                      setSelectedUser({ id: user.id, fullName: user.email.split('@')[0], email: user.email });
+                      setSelectedUser({
+                        id: user.id,
+                        fullName: user.email.split("@")[0],
+                        email: user.email,
+                      });
                       setSearchQuery("");
                     }}
                     className="w-full px-5 py-4 flex items-center justify-between hover:bg-zinc-50 transition-all group/item text-left border-b border-zinc-50 last:border-0"
@@ -89,8 +101,12 @@ export default function AdminAddressPage() {
                         <UserIcon className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-zinc-950">{user.email}</p>
-                        <p className="text-xs font-medium text-zinc-400">ID: #{user.id}</p>
+                        <p className="text-sm font-bold text-zinc-950">
+                          {user.email}
+                        </p>
+                        <p className="text-xs font-medium text-zinc-400">
+                          ID: #{user.id}
+                        </p>
                       </div>
                     </div>
                     <ChevronRight className="w-4 h-4 text-zinc-200 group-hover/item:text-red-600 transition-all" />
@@ -107,13 +123,18 @@ export default function AdminAddressPage() {
                   <UserIcon className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[12px] font-semibold text-red-600 mb-0.5">Đang quản lý</p>
+                  <p className="text-[12px] font-semibold text-red-600 mb-0.5">
+                    Đang quản lý
+                  </p>
                   <p className="text-[22px] font-semibold text-zinc-950 tracking-tight leading-tight">
-                    {selectedUser.fullName} <span className="text-zinc-400 font-medium text-sm ml-1">({selectedUser.email})</span>
+                    {selectedUser.fullName}{" "}
+                    <span className="text-zinc-400 font-medium text-sm ml-1">
+                      ({selectedUser.email})
+                    </span>
                   </p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={() => setSelectedUser(null)}
                 className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:bg-white hover:text-red-600 transition-all"
               >
@@ -132,8 +153,12 @@ export default function AdminAddressPage() {
           <div className="w-14 h-14 rounded-full bg-zinc-50 flex items-center justify-center mb-5">
             <Search className="w-7 h-7 text-zinc-200" />
           </div>
-          <h3 className="text-lg font-bold text-zinc-400">Vui lòng chọn một người dùng</h3>
-          <p className="text-xs text-zinc-300 font-medium mt-1">Sử dụng thanh tìm kiếm phía trên để bắt đầu</p>
+          <h3 className="text-lg font-bold text-zinc-400">
+            Vui lòng chọn một người dùng
+          </h3>
+          <p className="text-xs text-zinc-300 font-medium mt-1">
+            Sử dụng thanh tìm kiếm phía trên để bắt đầu
+          </p>
         </div>
       )}
     </div>
@@ -142,7 +167,8 @@ export default function AdminAddressPage() {
 
 function AdminAddressManagement({ userId }: { userId: number }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState<ShippingAddressResponse | null>(null);
+  const [selectedAddress, setSelectedAddress] =
+    useState<ShippingAddressResponse | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<number | null>(null);
 
@@ -161,7 +187,9 @@ function AdminAddressManagement({ userId }: { userId: number }) {
     return (
       <div className="py-20 flex flex-col items-center justify-center">
         <Loader2 className="w-8 h-8 text-red-600 animate-spin mb-4" />
-        <p className="text-sm font-bold text-zinc-400">Đang tải danh sách địa chỉ...</p>
+        <p className="text-sm font-bold text-zinc-400">
+          Đang tải danh sách địa chỉ...
+        </p>
       </div>
     );
   }
@@ -211,7 +239,9 @@ function AdminAddressManagement({ userId }: { userId: number }) {
           <div className="w-16 h-16 rounded-full bg-zinc-50 flex items-center justify-center mb-6">
             <MapPin className="w-8 h-8 text-zinc-200" />
           </div>
-          <p className="text-sm font-bold text-zinc-400">Người dùng này chưa có địa chỉ nào</p>
+          <p className="text-sm font-bold text-zinc-400">
+            Người dùng này chưa có địa chỉ nào
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -257,19 +287,25 @@ function AdminAddressManagement({ userId }: { userId: number }) {
 
               <div className="space-y-5 mb-8">
                 <div>
-                  <p className="text-[12px] font-medium text-zinc-400 mb-1.5">Người nhận</p>
+                  <p className="text-[12px] font-medium text-zinc-400 mb-1.5">
+                    Người nhận
+                  </p>
                   <p className="text-[18px] font-semibold text-zinc-950 leading-tight">
                     {addr.receiverName}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[12px] font-medium text-zinc-400 mb-1.5">Số điện thoại</p>
+                  <p className="text-[12px] font-medium text-zinc-400 mb-1.5">
+                    Số điện thoại
+                  </p>
                   <p className="text-[15px] font-medium text-zinc-700">
                     {addr.receiverPhone}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[12px] font-medium text-zinc-400 mb-1.5">Địa chỉ chi tiết</p>
+                  <p className="text-[12px] font-medium text-zinc-400 mb-1.5">
+                    Địa chỉ chi tiết
+                  </p>
                   <p className="text-[16px] font-normal text-zinc-500 leading-relaxed">
                     {addr.fullAddress}
                   </p>
@@ -314,8 +350,10 @@ function AdminAddressDialog({
   address: ShippingAddressResponse | null;
   userId: number;
 }) {
-  const { mutateAsync: createAddress, isPending: isCreating } = useCreateUserAddress(userId);
-  const { mutateAsync: updateAddress, isPending: isUpdating } = useUpdateUserAddress(userId);
+  const { mutateAsync: createAddress, isPending: isCreating } =
+    useCreateUserAddress(userId);
+  const { mutateAsync: updateAddress, isPending: isUpdating } =
+    useUpdateUserAddress(userId);
 
   const [formData, setFormData] = useState<ShippingAddressRequest>(() => {
     if (address) {
@@ -377,37 +415,53 @@ function AdminAddressDialog({
       <div className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-[13px] font-bold text-zinc-400 ml-1">Người nhận</Label>
+            <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+              Người nhận
+            </Label>
             <Input
               value={formData.receiverName}
-              onChange={(e) => setFormData({ ...formData, receiverName: e.target.value })}
-              className="h-11 rounded-xl border-zinc-100 bg-zinc-50/30 font-semibold focus:bg-white transition-all"
+              onChange={(e) =>
+                setFormData({ ...formData, receiverName: e.target.value })
+              }
+              className="h-11 rounded-lg border-zinc-200 bg-white font-semibold focus:border-red-600/30 transition-all shadow-sm"
               placeholder="Nhập tên người nhận"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[13px] font-bold text-zinc-400 ml-1">Số điện thoại</Label>
+            <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+              Số điện thoại
+            </Label>
             <Input
               value={formData.receiverPhone}
-              onChange={(e) => setFormData({ ...formData, receiverPhone: e.target.value })}
-              className="h-11 rounded-xl border-zinc-100 bg-zinc-50/30 font-semibold focus:bg-white transition-all"
+              onChange={(e) =>
+                setFormData({ ...formData, receiverPhone: e.target.value })
+              }
+              className="h-11 rounded-lg border-zinc-200 bg-white font-semibold focus:border-red-600/30 transition-all shadow-sm"
               placeholder="09xx xxx xxx"
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[13px] font-bold text-zinc-400 ml-1">Tỉnh / Thành phố</Label>
+          <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+            Tỉnh / Thành phố
+          </Label>
           <Select
             value={formData.province as string}
-            onValueChange={(v) => setFormData({ ...formData, province: v as City })}
+            onValueChange={(v) =>
+              setFormData({ ...formData, province: v as City })
+            }
           >
-            <SelectTrigger className="w-full h-11 rounded-xl border-zinc-100 bg-zinc-50/30 font-semibold focus:border-red-600/30 transition-all">
+            <SelectTrigger className="w-full !h-11 px-4 rounded-lg !border-zinc-200 !bg-white font-semibold focus:!border-red-600/30 transition-all !shadow-sm">
               <SelectValue placeholder="Chọn Tỉnh/Thành phố" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-zinc-100 shadow-2xl max-h-64">
+            <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay max-h-64 bg-white">
               {Object.entries(CITY_LABELS).map(([value, label]) => (
-                <SelectItem key={value} value={value} className="font-medium py-2.5">
+                <SelectItem
+                  key={value}
+                  value={value}
+                  className="font-medium py-2.5"
+                >
                   {label}
                 </SelectItem>
               ))}
@@ -417,41 +471,57 @@ function AdminAddressDialog({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-[13px] font-bold text-zinc-400 ml-1">Quận / Huyện</Label>
+            <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+              Quận / Huyện
+            </Label>
             <Input
               value={formData.district}
-              onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-              className="h-11 rounded-xl border-zinc-100 bg-zinc-50/30 font-semibold focus:bg-white transition-all"
+              onChange={(e) =>
+                setFormData({ ...formData, district: e.target.value })
+              }
+              className="h-11 rounded-lg border-zinc-200 bg-white font-semibold focus:border-red-600/30 transition-all shadow-sm"
               placeholder="Nhập quận/huyện"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[13px] font-bold text-zinc-400 ml-1">Phường / Xã</Label>
+            <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+              Phường / Xã
+            </Label>
             <Input
               value={formData.ward}
-              onChange={(e) => setFormData({ ...formData, ward: e.target.value })}
-              className="h-11 rounded-xl border-zinc-100 bg-zinc-50/30 font-semibold focus:bg-white transition-all"
+              onChange={(e) =>
+                setFormData({ ...formData, ward: e.target.value })
+              }
+              className="h-11 rounded-lg border-zinc-200 bg-white font-semibold focus:border-red-600/30 transition-all shadow-sm"
               placeholder="Nhập phường/xã"
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[13px] font-bold text-zinc-400 ml-1">Địa chỉ chi tiết</Label>
+          <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+            Địa chỉ chi tiết
+          </Label>
           <Input
             value={formData.detailAddress}
-            onChange={(e) => setFormData({ ...formData, detailAddress: e.target.value })}
-            className="h-11 rounded-xl border-zinc-100 bg-zinc-50/30 font-semibold focus:bg-white transition-all"
+            onChange={(e) =>
+              setFormData({ ...formData, detailAddress: e.target.value })
+            }
+            className="h-11 rounded-lg border-zinc-200 bg-white font-semibold focus:border-red-600/30 transition-all shadow-sm"
             placeholder="Số nhà, tên đường..."
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[13px] font-bold text-zinc-400 ml-1">Địa chỉ đầy đủ</Label>
+          <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+            Địa chỉ đầy đủ
+          </Label>
           <Input
             value={formData.fullAddress}
-            onChange={(e) => setFormData({ ...formData, fullAddress: e.target.value })}
-            className="h-11 rounded-xl border-zinc-100 bg-zinc-50/30 font-semibold focus:bg-white transition-all"
+            onChange={(e) =>
+              setFormData({ ...formData, fullAddress: e.target.value })
+            }
+            className="h-11 rounded-lg border-zinc-200 bg-white font-semibold focus:border-red-600/30 transition-all shadow-sm"
             placeholder="VD: 123 Đường ABC, Phường X, Quận Y, Tỉnh Z"
           />
           <p className="text-[11px] text-zinc-400 font-medium italic ml-1">

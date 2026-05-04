@@ -211,6 +211,20 @@ export function Navbar() {
               <Search className="h-4 w-4 text-zinc-500" />
             </Button>
 
+            {/* Shopping Bag */}
+            <Link href="/profile?section=cart">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative w-9 h-9 lg:w-10 lg:h-10 rounded-xl hover:bg-zinc-100 transition-all group"
+              >
+                <ShoppingBag className="h-4 w-4 text-zinc-500 group-hover:text-zinc-900" />
+                <span className="absolute top-1 right-1 lg:top-1.5 lg:right-1.5 flex h-3.5 w-3.5 lg:h-4 lg:w-4 items-center justify-center rounded-full bg-red-600 text-[7px] lg:text-[8px] font-black text-white">
+                  0
+                </span>
+              </Button>
+            </Link>
+
             {/* Auth: Desktop */}
             <div className="hidden lg:flex items-center gap-1">
               {isLoading ? (
@@ -317,19 +331,6 @@ export function Navbar() {
               )}
             </div>
 
-            {/* Shopping Bag */}
-            <Link href="/profile?section=cart">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative w-9 h-9 lg:w-10 lg:h-10 rounded-xl hover:bg-zinc-100 transition-all group"
-              >
-                <ShoppingBag className="h-4 w-4 text-zinc-500 group-hover:text-zinc-900" />
-                <span className="absolute top-1 right-1 lg:top-1.5 lg:right-1.5 flex h-3.5 w-3.5 lg:h-4 lg:w-4 items-center justify-center rounded-full bg-red-600 text-[7px] lg:text-[8px] font-black text-white">
-                  0
-                </span>
-              </Button>
-            </Link>
 
             {/* Desktop CTA */}
             <Button className="hidden xl:flex ml-2 h-11 rounded-xl px-6 bg-red-600 text-white border border-transparent hover:bg-red-700 font-semibold text-[15px] transition-all shadow-md shadow-red-200 active:scale-95">

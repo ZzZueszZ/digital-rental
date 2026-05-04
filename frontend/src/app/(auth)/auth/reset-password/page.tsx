@@ -40,88 +40,87 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <main className='min-h-screen flex items-center justify-center bg-zinc-50 px-6 overflow-hidden relative'>
+    <main className='min-h-screen flex items-center justify-center bg-zinc-50 px-8 overflow-hidden relative'>
       <div className='absolute -top-1/4 -right-1/4 w-[1200px] h-[1200px] bg-indigo-500/5 rounded-full blur-[250px] pointer-events-none' />
 
-      <div className='w-full max-w-2xl bg-white border border-zinc-200 rounded-[4rem] p-16 flex flex-col space-y-12 shadow-sm animate-in fade-in zoom-in-95 duration-1000 relative z-10'>
+      <div className='w-full max-w-xl bg-white border border-black/5 rounded-2xl p-10 flex flex-col space-y-8 shadow-dash-card relative z-10'>
         {/* Header */}
-        <div className='space-y-6 text-center'>
-          <div className='inline-flex items-center justify-center w-24 h-24 rounded-[30%] bg-zinc-100 border border-zinc-200 mb-2 relative overflow-hidden shadow-sm'>
-            <div className='absolute inset-0 bg-indigo-500/5 animate-pulse' />
-            <KeyRound className='w-12 h-12 text-red-600 relative z-10' />
+        <div className='space-y-4 text-center'>
+          <div className='inline-flex items-center justify-center w-20 h-20 rounded-xl bg-zinc-50 border border-black/5 mb-2 relative overflow-hidden shadow-sm'>
+            <KeyRound className='w-10 h-10 text-red-600 relative z-10' />
           </div>
-          <div className='space-y-4'>
-            <h1 className='text-5xl font-black text-zinc-900 tracking-tighter uppercase font-heading leading-tight'>Cập Nhật</h1>
-            <p className='text-zinc-500 font-bold text-[10px] uppercase tracking-[0.4em] max-w-xs mx-auto leading-relaxed'>
-              Nhập mã OTP đã nhận được và thiết lập mật mã mới cho tài khoản.
+          <div className='space-y-2'>
+            <h1 className='text-3xl md:text-4xl font-bold text-zinc-900 tracking-tight'>Cập nhật mật khẩu</h1>
+            <p className='text-zinc-500 font-medium text-base max-w-sm mx-auto leading-relaxed'>
+              Nhập mã OTP đã nhận được và thiết lập mật mã mới cho tài khoản của bạn.
             </p>
           </div>
         </div>
 
-        <form onSubmit={onSubmit} className='space-y-10'>
+        <form onSubmit={onSubmit} className='space-y-4'>
           {/* Identity & OTP Grid */}
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-            <div className='space-y-4'>
-              <label className='text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1'>Tài Khoản (Email)</label>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div className='space-y-2'>
+              <label className='text-sm font-bold text-zinc-900 ml-1'>Tài khoản (Email)</label>
               <Input
                 placeholder='Nhập email'
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className='h-16 bg-white border-zinc-200 rounded-[1.5rem] px-6 text-zinc-900 placeholder:text-zinc-500 transition-all focus:ring-2 focus:ring-red-600 shadow-sm'
+                className='h-12 bg-white border-black/5 rounded-lg px-5 text-zinc-900 placeholder:text-zinc-400 transition-all focus-visible:ring-1 focus-visible:ring-red-600/30 shadow-dash-card'
                 required
               />
             </div>
 
-            <div className='space-y-4'>
-              <label className='text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1'>Mã Xác Thực (OTP)</label>
+            <div className='space-y-2'>
+              <label className='text-sm font-bold text-zinc-900 ml-1'>Mã xác thực (OTP)</label>
               <Input
-                placeholder='6-Chữ số'
+                placeholder='6 chữ số'
                 value={form.otpCode}
                 onChange={(e) => setForm({ ...form, otpCode: e.target.value })}
-                className='h-16 bg-white border-zinc-200 rounded-[1.5rem] px-6 text-zinc-900 text-center font-black tracking-[0.5em] focus:ring-2 focus:ring-red-600 shadow-sm placeholder:text-zinc-500'
+                className='h-12 bg-white border-black/5 rounded-lg px-5 text-zinc-900 text-center font-bold tracking-[0.2em] focus-visible:ring-1 focus-visible:ring-red-600/30 shadow-dash-card placeholder:text-zinc-400'
                 required
               />
             </div>
           </div>
 
           {/* New Password */}
-          <div className='space-y-4'>
-            <label className='text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1'>Mật Mã Mới</label>
+          <div className='space-y-2'>
+            <label className='text-sm font-bold text-zinc-900 ml-1'>Mật mã mới</label>
             <div className='relative group'>
               <Input
                 type={showPassword ? 'text' : 'password'}
                 placeholder='Nhập mật mã mới'
                 value={form.newPassword}
                 onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
-                className='h-16 bg-white border-zinc-200 rounded-[1.5rem] px-6 pr-14 text-zinc-900 placeholder:text-zinc-500 transition-all focus:ring-2 focus:ring-red-600 shadow-sm'
+                className='h-12 bg-white border-black/5 rounded-lg px-5 pr-14 text-zinc-900 placeholder:text-zinc-400 transition-all focus-visible:ring-1 focus-visible:ring-red-600/30 shadow-dash-card'
                 required
               />
               <button
                 type='button'
                 onClick={() => setShowPassword(!showPassword)}
-                className='absolute right-5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-900 transition-colors'
+                className='absolute right-5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-900 transition-colors'
               >
                 {showPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
               </button>
             </div>
           </div>
 
-          <div className='space-y-6 pt-4'>
+          <div className='space-y-4 pt-4'>
             <Button
               type='submit'
               disabled={isSubmitting || !form.email || !form.otpCode || !form.newPassword}
-              className='w-full h-14 text-lg font-bold bg-zinc-900 text-white rounded-full hover:bg-black shadow-md transition-all active:scale-[0.98] disabled:opacity-30'
+              className='w-full h-12 text-sm font-bold bg-zinc-900 text-white rounded-lg hover:bg-red-600 shadow-dash-card transition-all active:scale-[0.95] disabled:opacity-30'
             >
-              {isSubmitting ? 'ĐANG CẬP NHẬT...' : 'HOÀN TẤT THIẾT LẬP'}
+              {isSubmitting ? 'Đang cập nhật...' : 'Hoàn tất thiết lập'}
             </Button>
             
             <div className='flex justify-center'>
               <Link 
                 href={Routers.LOGIN} 
-                className='group flex items-center gap-3 text-zinc-500 hover:text-zinc-900 transition-all font-black text-[10px] uppercase tracking-[0.3em] underline underline-offset-8 decoration-2'
+                className='group flex items-center gap-3 text-zinc-500 hover:text-zinc-900 transition-all font-bold text-sm'
               >
                 <ChevronLeft className='w-4 h-4 group-hover:-translate-x-1 transition-transform' />
-                Quay Lại
+                Quay lại đăng nhập
               </Link>
             </div>
           </div>
@@ -129,7 +128,7 @@ export default function ResetPasswordPage() {
       </div>
 
       <div className='absolute bottom-12 w-full text-center opacity-40'>
-        <p className='text-[10px] font-black uppercase tracking-[0.6em] text-zinc-500'>Lens Studio Key Management</p>
+        <p className='text-[10px] font-bold text-zinc-400'>LensHub • Studio Visuals</p>
       </div>
     </main>
   );

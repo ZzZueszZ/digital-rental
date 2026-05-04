@@ -12,11 +12,11 @@ interface AuthHeroProps {
 export function AuthHero({ title, subtitle, imageSrc, imageAlt }: AuthHeroProps) {
   return (
     <div className='hidden lg:flex flex-col items-start justify-center relative pl-8'>
-      <div className='space-y-4 mb-8'>
-        <h1 className='text-[3.5rem] font-bold tracking-tight text-zinc-900 leading-[1.1]'>
+      <div className='space-y-3 mb-10'>
+        <h1 className='text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 leading-[1.1]'>
           {title}
         </h1>
-        <p className='text-2xl text-zinc-500 font-medium'>
+        <p className='text-lg md:text-xl text-zinc-500 font-medium'>
           {subtitle}
         </p>
       </div>
@@ -28,7 +28,7 @@ export function AuthHero({ title, subtitle, imageSrc, imageAlt }: AuthHeroProps)
           alt={imageAlt}
           width={600}
           height={500}
-          className='w-full h-auto object-contain scale-[1.15]'
+          className='w-full h-auto object-contain scale-[1.05]'
           priority
         />
       </div>

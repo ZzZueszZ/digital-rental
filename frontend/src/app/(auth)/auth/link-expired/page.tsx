@@ -9,22 +9,25 @@ import Routers from '@/constants/routers';
 export default function LinkExpiredPage() {
   return (
     <main className='min-h-screen bg-zinc-50 flex flex-col items-center justify-center px-6'>
-      <div className='w-full max-w-md bg-white border border-zinc-200 rounded-3xl p-10 flex flex-col items-center text-center space-y-8 shadow-sm'>
-        <div className='w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center'>
-          <AlertCircle className='w-10 h-10 text-red-500' />
+      <div className='w-full max-w-md bg-white border border-black/5 rounded-2xl p-10 flex flex-col items-center text-center space-y-8 shadow-dash-card'>
+        <div className='w-20 h-20 bg-zinc-50 border border-black/5 rounded-xl flex items-center justify-center'>
+          <AlertCircle className='w-10 h-10 text-red-600' />
         </div>
         <div className='space-y-2'>
-          <h1 className='text-3xl font-bold text-zinc-900 tracking-tight'>Link Expired</h1>
-          <p className='text-zinc-500 font-medium'>The activation token is no longer valid.</p>
+          <h1 className='text-3xl font-bold text-zinc-900 tracking-tight'>Liên kết hết hạn</h1>
+          <p className='text-zinc-500 font-medium text-base'>Mã xác thực của bạn không còn hiệu lực.</p>
         </div>
         <div className='w-full space-y-4'>
-          <Input placeholder='Enter email to resend' className='h-14 bg-white border-zinc-200 shadow-sm rounded-2xl px-6 text-zinc-900 text-center placeholder:text-zinc-500' />
-          <Button className='w-full h-14 bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 font-bold rounded-2xl shadow-sm'>
-            Resend Activation Link
+          <div className="space-y-2">
+             <label className="text-sm font-bold text-zinc-900 block text-left ml-1">Email của bạn</label>
+             <Input placeholder='Nhập email để gửi lại' className='h-12 bg-white border-black/5 shadow-dash-card rounded-lg px-5 text-zinc-900 text-sm placeholder:text-zinc-400 focus-visible:ring-1 focus-visible:ring-red-600/30' />
+          </div>
+          <Button className='w-full h-12 bg-zinc-900 text-white hover:bg-red-600 font-bold rounded-lg shadow-dash-card transition-all active:scale-[0.95]'>
+            Gửi lại liên kết kích hoạt
           </Button>
-          <Link href={Routers.LOGIN} className='flex items-center justify-center gap-2 text-zinc-500 hover:text-zinc-900 transition-colors font-bold text-sm'>
+          <Link href={Routers.LOGIN} className='flex items-center justify-center gap-2 text-zinc-500 hover:text-zinc-900 transition-all font-bold text-sm'>
             <ChevronLeft className='w-4 h-4' />
-            Back to Login
+            Quay lại đăng nhập
           </Link>
         </div>
       </div>

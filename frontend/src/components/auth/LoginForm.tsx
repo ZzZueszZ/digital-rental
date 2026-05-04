@@ -159,25 +159,25 @@ export function LoginForm() {
         </div>
       )}
 
-      <div className="lg:hidden space-y-4 mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-zinc-900">
-          Chào Mừng Trở Lại
+      <div className="lg:hidden space-y-2 mb-8 text-center">
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900">
+          Chào mừng trở lại
         </h1>
-        <p className="text-[1.125rem] text-zinc-500 font-medium">
+        <p className="text-sm font-medium text-zinc-500">
           Đăng nhập vào tài khoản của bạn
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="space-y-3">
-          <label className="text-[1.125rem] font-medium text-zinc-900">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-zinc-900">
             Email
           </label>
           <Input
             placeholder="Nhập địa chỉ email của bạn"
             type="email"
             {...register("email")}
-            className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-red-600 focus-visible:border-red-600 caret-red-600 text-zinc-900 text-[1.125rem] px-5 shadow-sm placeholder:text-zinc-500 ${errors.email ? "border-red-500 ring-red-500" : ""}`}
+            className={`h-12 bg-white border-black/5 rounded-lg focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600 text-zinc-900 text-sm px-5 shadow-dash-card placeholder:text-zinc-400 ${errors.email ? "border-red-500 ring-red-500" : ""}`}
           />
           {errors.email && (
             <p className="text-sm text-error font-medium">
@@ -186,8 +186,8 @@ export function LoginForm() {
           )}
         </div>
 
-        <div className="space-y-3">
-          <label className="text-[1.125rem] font-medium text-zinc-900">
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-zinc-900">
             Mật khẩu
           </label>
           <div className="relative">
@@ -195,7 +195,7 @@ export function LoginForm() {
               type={showPassword ? "text" : "password"}
               placeholder="Nhập mật khẩu của bạn"
               {...register("password")}
-              className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-red-600 focus-visible:border-red-600 caret-red-600 text-zinc-900 text-[1.125rem] px-5 pr-12 shadow-sm placeholder:text-zinc-500 ${errors.password ? "border-red-500 ring-red-500" : ""}`}
+              className={`h-12 bg-white border-black/5 rounded-lg focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600 text-zinc-900 text-sm px-5 pr-12 shadow-dash-card placeholder:text-zinc-400 ${errors.password ? "border-red-500 ring-red-500" : ""}`}
             />
             <button
               type="button"
@@ -227,7 +227,7 @@ export function LoginForm() {
 
         <Button
           type="submit"
-          className="w-full h-14 text-lg font-bold bg-zinc-900 text-white rounded-full hover:bg-black shadow-md transition-all active:scale-98"
+          className="w-full h-12 text-sm font-bold bg-zinc-900 text-white rounded-lg hover:bg-red-600 shadow-dash-card transition-all active:scale-95"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
@@ -235,42 +235,41 @@ export function LoginForm() {
       </form>
 
       {/* Divider */}
-      <div className="relative mt-12 mb-8 text-center">
+      <div className="relative mt-8 mb-6 text-center">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-zinc-200"></div>
+          <div className="w-full border-t border-black/5"></div>
         </div>
-        <span className="relative px-4 text-sm font-medium text-zinc-500 bg-zinc-50 uppercase tracking-widest">
+        <span className="relative px-4 text-[10px] font-bold uppercase tracking-wider text-zinc-400 bg-zinc-50">
           Hoặc
         </span>
       </div>
 
       {/* Social Login */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         <Button
-          variant="outline"
-          className="w-full h-14 justify-center gap-3 rounded-full bg-white border border-zinc-200 text-zinc-900 font-bold hover:bg-zinc-50 hover:text-zinc-900 transition-all active:scale-98 shadow-sm"
+          className="w-full h-12 justify-center gap-3 rounded-lg bg-white border border-black/5 text-zinc-900 font-bold text-sm hover:bg-zinc-50 transition-all shadow-dash-card hover:shadow-sm"
         >
           <Image
             src="https://www.svgrepo.com/show/475656/google-color.svg"
-            width={20}
-            height={20}
+            width={18}
+            height={18}
             alt="Google"
           />
           Tiếp tục với Google
         </Button>
-        <Button className="w-full h-14 justify-center gap-3 rounded-full bg-white border border-zinc-200 text-[#1877F2] font-bold hover:bg-zinc-50 hover:text-[#1877F2] transition-all active:scale-98 shadow-sm">
+        <Button className="w-full h-12 justify-center gap-3 rounded-lg bg-white border border-black/5 text-zinc-900 font-bold text-sm hover:bg-zinc-50 transition-all shadow-dash-card hover:shadow-sm">
           <svg className="w-5 h-5 fill-current text-[#1877F2]" viewBox="0 0 24 24">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
           </svg>
-          <span className="text-zinc-900">Tiếp tục với Facebook</span>
+          Tiếp tục với Facebook
         </Button>
       </div>
 
-      <p className="mt-10 text-center text-[1.125rem] text-zinc-500">
+      <p className="mt-8 text-center text-sm text-zinc-500">
         Chưa có tài khoản?{" "}
         <Link
           href={Routers.REGISTER}
-          className="text-red-600 underline decoration-2 underline-offset-4 hover:text-red-700 transition-all ml-1 font-bold"
+          className="text-red-600 hover:text-red-700 transition-all ml-1 font-bold"
         >
           Đăng ký ngay
         </Link>

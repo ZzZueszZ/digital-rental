@@ -11,27 +11,27 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex flex-col transition-colors duration-1000 bg-zinc-50">
       {/* Top Navigation */}
-      <div className="p-6 flex justify-between items-center relative z-10">
+      <div className="px-8 py-6 flex justify-between items-center relative z-10">
         <Link href={Routers.LOGIN}>
           <Button
             variant="outline"
             size="icon"
-            className="rounded-full h-12 w-12 border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-red-600 shadow-sm transition-colors"
+            className="rounded-lg h-10 w-10 border-black/5 bg-white text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-red-600 shadow-dash-card transition-colors"
           >
-            <ChevronLeft className="h-6 w-6" />
+            <ChevronLeft className="h-5 w-5" />
           </Button>
         </Link>
         <Button
           variant="ghost"
           size="icon"
-          className="rounded-full h-12 w-12 text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
+          className="rounded-lg h-10 w-10 text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
         >
-          <Share2 className="h-6 w-6" />
+          <Share2 className="h-5 w-5" />
         </Button>
       </div>
 
-      <main className="flex-1 flex items-center px-4 pb-12">
-        <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center">
+      <main className="flex-1 flex items-center px-8 pb-10">
+        <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
           <RegisterHero />
           <RegisterForm />
         </div>

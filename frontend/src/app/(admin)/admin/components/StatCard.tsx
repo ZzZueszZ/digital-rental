@@ -6,12 +6,12 @@ import { cn } from "@/lib/utils";
 interface StatCardProps {
   title: string;
   value: string | number;
-  trend: number;
+  trend?: number;
   icon: React.ElementType;
   accent: string;
 }
 
-export function StatCard({ title, value, trend, icon: Icon, accent }: StatCardProps) {
+export function StatCard({ title, value, trend = 0, icon: Icon, accent }: StatCardProps) {
   const isPositive = trend >= 0;
   return (
     <div className="admin-card group relative overflow-hidden flex flex-col justify-between">

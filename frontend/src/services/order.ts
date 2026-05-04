@@ -101,3 +101,21 @@ export const useConfirmReceived = () => {
     }
   });
 };
+
+export const useAllOrders = (params: { page?: number; size?: number }) => {
+  return useQuery({
+    queryKey: ["orders", "admin", params],
+    queryFn: () => orderService.getAllOrders(params)
+  });
+};
+
+export const useUpdateOrderStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status }: { id: number; status: OrderStatus }) => 
+      orderService.updateStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    }
+  });
+};

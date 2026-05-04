@@ -50,18 +50,22 @@ export function AdminFormDialog({
 
       {/* Dialog */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-        <div 
+        <div
           className={cn(
             "relative w-full bg-white rounded-2xl shadow-dash-overlay overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 border border-zinc-100",
-            maxWidth
+            maxWidth,
           )}
         >
-
           {/* Header */}
           <div className="px-6 pt-7 pb-5 border-b border-zinc-100 bg-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shadow-sm shrink-0", iconClassName)}>
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm shrink-0",
+                    iconClassName,
+                  )}
+                >
                   <Icon className="w-4 h-4" />
                 </div>
                 <div>
@@ -86,7 +90,10 @@ export function AdminFormDialog({
           </div>
 
           {/* Form */}
-          <form onSubmit={onSubmit} className="flex flex-col max-h-[calc(100vh-140px)]">
+          <form
+            onSubmit={onSubmit}
+            className="flex flex-col max-h-[calc(100vh-140px)]"
+          >
             <div className="px-6 py-5 space-y-4 overflow-y-auto custom-scrollbar">
               {children}
             </div>

@@ -12,6 +12,7 @@ declare global {
     success: boolean
     data?: T
     pagination?: IPagination
+    meta?: Record<string, unknown>
   }
 }
 

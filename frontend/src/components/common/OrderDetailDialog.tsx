@@ -13,17 +13,38 @@ import {
 } from "lucide-react";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { OrderResponse, OrderStatus, PaymentStatus } from "@/types/order";
-import { formatVND } from "@/lib/utils";
+import { useOrderDetail, useConfirmReceived } from "@/services/order";
+import { formatVND, getImageUrl, formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 interface OrderDetailDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  order: OrderResponse | null;
-  isLoading: boolean;
+  orderId?: number | null;
+  order?: OrderResponse | null;
+  isLoading?: boolean;
 }
 
-export function OrderDetailDialog({ isOpen, onClose, order, isLoading }: OrderDetailDialogProps) {
+export function OrderDetailDialog({ isOpen, onClose, orderId, order: initialOrder, isLoading: initialLoading }: OrderDetailDialogProps) {
+  const { data: orderRes, isLoading: isFetching } = useOrderDetail(orderId || 0);
+  const { mutateAsync: confirmReceived, isPending: isConfirming } = useConfirmReceived();
+  
+  const order = initialOrder || orderRes?.data;
+  const isLoading = initialLoading || (!!orderId && isFetching);
+
+  const handleConfirmReceived = async () => {
+    if (!order) return;
+    try {
+      await confirmReceived(order.id);
+      toast.success("Xác nhận đã nhận hàng và hoàn thành đơn hàng!");
+      onClose();
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Không thể xác nhận nhận hàng";
+      toast.error(message);
+    }
+  };
   return (
     <AdminFormDialog
       open={isOpen}
@@ -59,7 +80,7 @@ export function OrderDetailDialog({ isOpen, onClose, order, isLoading }: OrderDe
             <div className="text-right">
               <span className="text-[10px] font-bold text-zinc-400 block mb-1">Ngày đặt hàng</span>
               <span className="text-xs font-bold text-zinc-950">
-                {new Date(order.createdAt).toLocaleString("vi-VN")}
+                {formatDate(order.createdAt)}
               </span>
             </div>
           </div>
@@ -75,7 +96,7 @@ export function OrderDetailDialog({ isOpen, onClose, order, isLoading }: OrderDe
                 <div key={item.id} className="flex gap-4 p-3 bg-white border border-zinc-100 rounded-xl hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-200 group">
                   <div className="w-16 h-16 rounded-lg bg-zinc-50 p-2 flex items-center justify-center border border-zinc-100 overflow-hidden shrink-0">
                     <img
-                      src={item.productMainImage ? `http://localhost:8080${item.productMainImage}` : "/placeholder-camera.jpg"}
+                      src={getImageUrl(item.productMainImage) || "/placeholder-camera.jpg"}
                       alt={item.productName}
                       className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                     />
@@ -131,7 +152,7 @@ export function OrderDetailDialog({ isOpen, onClose, order, isLoading }: OrderDe
                 <div className="flex justify-between items-center pt-2 border-t border-zinc-100/50">
                   <span className="text-[10px] font-bold text-zinc-400">Ngày cập nhật</span>
                   <span className="text-xs font-bold text-zinc-900">
-                    {order.completedAt ? new Date(order.completedAt).toLocaleString("vi-VN") : "---"}
+                    {order.completedAt ? formatDate(order.completedAt) : "---"}
                   </span>
                 </div>
               </div>
@@ -168,6 +189,27 @@ export function OrderDetailDialog({ isOpen, onClose, order, isLoading }: OrderDe
               </div>
             </div>
           </div>
+
+          {/* Action Button for Confirmation */}
+          {order.status === OrderStatus.DELIVERED && (
+            <div className="pt-2">
+              <Button
+                onClick={handleConfirmReceived}
+                disabled={isConfirming}
+                className="w-full h-12 rounded-2xl bg-emerald-600 text-white font-black text-xs uppercase transition-all shadow-xl shadow-emerald-100 border-none hover:bg-zinc-950"
+              >
+                {isConfirming ? (
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                ) : (
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                )}
+                Hoàn thành đơn hàng
+              </Button>
+              <p className="text-[10px] text-center text-zinc-400 font-bold mt-3 uppercase tracking-widest">
+                Vui lòng chỉ xác nhận khi đã kiểm tra kỹ thiết bị
+              </p>
+            </div>
+          )}
         </div>
       ) : null}
     </AdminFormDialog>

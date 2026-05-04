@@ -1,0 +1,218 @@
+import { 
+  Eye, 
+  MoreHorizontal, 
+  EyeOff, 
+  Flag, 
+  CheckCircle2, 
+  XCircle, 
+  Star,
+  User,
+  MessageSquare,
+  Package,
+  Clock
+} from "lucide-react";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuGroup
+} from "@/components/ui/dropdown-menu";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { ReviewResponse } from "@/types/review";
+import { cn, getImageUrl } from "@/lib/utils";
+
+interface ReviewItemsProps {
+  review: ReviewResponse;
+  onView: (review: ReviewResponse) => void;
+  onHide: (id: number) => void;
+  onUnhide: (id: number) => void;
+  onDelete: (id: number) => void;
+}
+
+export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: ReviewItemsProps) {
+  return (
+    <tr className="admin-table-row group">
+      <td className="px-6 py-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center border border-zinc-200 overflow-hidden shrink-0">
+            {review.userAvatar ? (
+              <img src={getImageUrl(review.userAvatar)} alt={review.userName} className="w-full h-full object-cover" />
+            ) : (
+              <User className="w-5 h-5 text-zinc-400" />
+            )}
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-sm font-bold text-zinc-950 truncate max-w-[150px]">
+              {review.userName}
+            </span>
+            <span className="text-[11px] font-medium text-zinc-400">
+              ID: #{review.userId}
+            </span>
+          </div>
+        </div>
+      </td>
+      <td className="px-6 py-4">
+        <div className="flex flex-col max-w-[250px]">
+          <div className="flex items-center gap-0.5 mb-1">
+            {[...Array(5)].map((_, i) => (
+              <Star 
+                key={i} 
+                className={cn(
+                  "w-3 h-3", 
+                  i < review.rating ? "fill-amber-400 text-amber-400" : "text-zinc-200"
+                )} 
+              />
+            ))}
+          </div>
+          <span className="text-sm font-medium text-zinc-600 line-clamp-2 leading-relaxed italic">
+            "{review.content}"
+          </span>
+          {review.images && review.images.length > 0 && (
+            <div className="flex items-center gap-1 mt-2">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tight bg-zinc-50 px-1.5 py-0.5 rounded border border-zinc-100">
+                +{review.images.length} ảnh
+              </span>
+            </div>
+          )}
+        </div>
+      </td>
+      <td className="px-6 py-4">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-zinc-100 bg-zinc-50/50 w-fit">
+          <Clock className="w-3.5 h-3.5 text-zinc-400" />
+          <span className="text-[11px] font-bold text-zinc-600">
+            {new Date(review.createdAt).toLocaleDateString("vi-VN")}
+          </span>
+        </div>
+      </td>
+      <td className="px-6 py-4">
+        <div className="flex flex-col gap-1.5">
+          <div className={cn(
+            "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest w-fit",
+            review.hidden 
+              ? "bg-zinc-100 text-zinc-500 border border-zinc-200" 
+              : "bg-emerald-50 text-emerald-600 border border-emerald-100"
+          )}>
+            {review.hidden ? (
+              <><EyeOff className="w-2.5 h-2.5" /> Ẩn</>
+            ) : (
+              <><CheckCircle2 className="w-2.5 h-2.5" /> Hiển thị</>
+            )}
+          </div>
+          {review.reporterCount > 0 && (
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-100 text-[10px] font-black uppercase tracking-widest w-fit animate-pulse">
+              <Flag className="w-2.5 h-2.5" /> {review.reporterCount} Báo cáo
+            </div>
+          )}
+        </div>
+      </td>
+      <td className="px-6 py-4 text-right">
+        <DropdownMenu>
+          <DropdownMenuTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 hover:bg-zinc-100 rounded-lg outline-none")}>
+            <MoreHorizontal className="h-4 w-4 text-zinc-500" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52 p-1.5 rounded-xl shadow-xl border-zinc-100 bg-white animate-in zoom-in-95 duration-200">
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="text-[10px] font-bold text-zinc-400 px-2 py-1.5 uppercase tracking-widest">
+                Quản lý đánh giá
+              </DropdownMenuLabel>
+              <DropdownMenuItem 
+                onClick={() => onView(review)}
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-bold text-zinc-600 hover:text-zinc-950 hover:bg-zinc-50 transition-colors cursor-pointer"
+              >
+                <Eye className="w-4 h-4" />
+                Xem chi tiết
+              </DropdownMenuItem>
+              {review.hidden ? (
+                <DropdownMenuItem 
+                  onClick={() => onUnhide(review.id)}
+                  className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-bold text-emerald-600 hover:bg-emerald-50 transition-colors cursor-pointer"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  Hiển thị lại
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem 
+                  onClick={() => onHide(review.id)}
+                  className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-bold text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer"
+                >
+                  <EyeOff className="w-4 h-4" />
+                  Ẩn đánh giá
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem 
+                onClick={() => onDelete(review.id)}
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-bold text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+              >
+                <XCircle className="w-4 h-4" />
+                Xóa vĩnh viễn
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </td>
+    </tr>
+  );
+}
+
+export function ReviewMobileCard({ review, onView, onHide, onUnhide, onDelete }: ReviewItemsProps) {
+  return (
+    <div className="bg-white border border-zinc-100 rounded-2xl p-5 shadow-sm space-y-4">
+      <div className="flex justify-between items-start">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-zinc-50 border border-zinc-100 flex items-center justify-center overflow-hidden">
+             {review.userAvatar ? (
+                <img src={getImageUrl(review.userAvatar)} alt={review.userName} className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-6 h-6 text-zinc-400" />
+              )}
+          </div>
+          <div>
+            <h4 className="font-black text-zinc-950">{review.userName}</h4>
+            <div className="flex items-center gap-1 mt-0.5">
+              {[...Array(5)].map((_, i) => (
+                <Star 
+                  key={i} 
+                  className={cn(
+                    "w-3 h-3", 
+                    i < review.rating ? "fill-amber-400 text-amber-400" : "text-zinc-200"
+                  )} 
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className={cn(
+          "px-2.5 py-1 rounded-lg border text-[10px] font-black uppercase tracking-widest",
+          review.hidden ? "bg-zinc-50 text-zinc-400 border-zinc-100" : "bg-emerald-50 text-emerald-600 border-emerald-100"
+        )}>
+          {review.hidden ? "Đã ẩn" : "Hiển thị"}
+        </div>
+      </div>
+
+      <div className="bg-zinc-50 rounded-xl p-4 border border-zinc-100/50">
+        <p className="text-sm font-medium text-zinc-600 leading-relaxed italic">
+          "{review.content}"
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between pt-2">
+        <div className="flex items-center gap-2">
+           <Clock className="w-3.5 h-3.5 text-zinc-400" />
+           <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest">
+             {new Date(review.createdAt).toLocaleDateString("vi-VN")}
+           </span>
+        </div>
+        <div className="flex gap-2">
+           <Button variant="ghost" size="icon" className="h-9 w-9 bg-zinc-50 hover:bg-zinc-100 rounded-xl text-zinc-400 hover:text-zinc-950" onClick={() => onView(review)}>
+              <Eye className="w-4 h-4" />
+           </Button>
+           <Button variant="ghost" size="icon" className="h-9 w-9 bg-zinc-50 hover:bg-zinc-100 rounded-xl text-zinc-400 hover:text-zinc-950">
+              <MoreHorizontal className="w-4 h-4" />
+           </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

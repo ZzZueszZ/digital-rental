@@ -17,6 +17,7 @@ import {
   CreditCard,
   MapPin,
   Camera,
+  MessageCircle
 } from "lucide-react";
 import { useAuthSession } from "@/components/auth/Guards";
 import { Role } from "@/constants/enum/role";
@@ -73,6 +74,12 @@ export function AdminSidebar({
       href: "/admin/vouchers",
       icon: CreditCard,
       label: "Vouchers",
+      roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
+    },
+    {
+      href: "/admin/reviews",
+      icon: MessageCircle,
+      label: "Đánh giá",
       roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
     },
     {

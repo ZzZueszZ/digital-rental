@@ -24,9 +24,29 @@ import {
   Layers,
   Cpu,
   Zap,
-  Shield
+  Shield,
+  Flag,
+  Edit,
+  Trash2,
+  MoreHorizontal,
+  Image as ImageIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { ReviewFormDialog } from "@/components/common/ReviewFormDialog";
+import { 
+  useProductReviews, 
+  useReportReview, 
+  useDeleteReview 
+} from "@/hooks/useReviews";
+import { useMyProfile } from "@/services/profile";
+import { ReviewResponse } from "@/types/review";
 import { api } from "@/services/api";
 import { useAddToCart } from "@/services/cart";
 import { useMyAddresses } from "@/services/address";
@@ -63,14 +83,7 @@ interface Product {
   gallery: ProductImage[];
 }
 
-interface Review {
-  id: number;
-  content: string;
-  rating: number;
-  userName: string;
-  createdAt: string;
-  userAvatar?: string | null;
-}
+type Review = ReviewResponse;
 
 interface MetaData {
   averageRating: number;
@@ -93,14 +106,24 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [mainImageUrl, setMainImageUrl] = useState<string | null>(null);
 
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [reviewMeta, setReviewMeta] = useState<MetaData | null>(null);
-
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("specs"); // 'specs' or 'terms'
   const [quantity, setQuantity] = useState(1);
+  const [editingReview, setEditingReview] = useState<Review | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [deletingReviewId, setDeletingReviewId] = useState<number | null>(null);
 
   const { accessToken } = useAuthStore();
+  const { data: profileRes } = useMyProfile();
+  const currentUser = profileRes?.data;
+
+  const { data: reviewsRes, isLoading: isReviewsLoading } = useProductReviews(Number(id));
+  const reviews = reviewsRes?.data || [];
+  const reviewMeta = reviewsRes?.meta as unknown as MetaData | null;
+
+  const reportMutation = useReportReview();
+  const deleteMutation = useDeleteReview();
+
   const { mutateAsync: addToCart, isPending: isAddingToCart } = useAddToCart();
   const { data: addressesRes } = useMyAddresses();
   const defaultAddress = addressesRes?.data?.find(a => a.isDefault) || addressesRes?.data?.[0];
@@ -148,19 +171,11 @@ export default function ProductDetailPage() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const [productRes, reviewRes] = await Promise.all([
-          api.get<ApiResponse<Product>>(`/products/${id}`),
-          api.get<ApiResponse<Review[]>>(`/reviews/product/${id}`),
-        ]);
+        const productRes = await api.get<ApiResponse<Product>>(`/products/${id}`);
 
         if (productRes.data?.success) {
           setProduct(productRes.data.data);
           setMainImageUrl(productRes.data.data.mainImageUrl);
-        }
-
-        if (reviewRes.data?.success) {
-          setReviews(reviewRes.data.data);
-          setReviewMeta(reviewRes.data.meta || null);
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -179,10 +194,38 @@ export default function ProductDetailPage() {
     }).format(amount);
   };
 
-  const getImageUrl = (url: string | null) => {
+  const getImageUrlLocal = (url: string | null) => {
     if (!url) return "";
-    if (url.startsWith("http")) return url;
+    if (url.startsWith("http") || url.startsWith("blob:")) return url;
     return `http://localhost:8080${url}`;
+  };
+
+  const handleReportReview = async (reviewId: number) => {
+    if (!accessToken) {
+      toast.error("Vui lòng đăng nhập để báo cáo");
+      return;
+    }
+
+    try {
+      await reportMutation.mutateAsync(reviewId);
+      toast.success("Đã gửi báo cáo đánh giá");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Không thể gửi báo cáo";
+      toast.error(message);
+    }
+  };
+
+  const handleDeleteReview = async () => {
+    if (!deletingReviewId) return;
+
+    try {
+      await deleteMutation.mutateAsync(deletingReviewId);
+      toast.success("Đã xóa đánh giá");
+      setDeletingReviewId(null);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Không thể xóa đánh giá";
+      toast.error(message);
+    }
   };
 
   if (isLoading) {
@@ -252,7 +295,7 @@ export default function ProductDetailPage() {
               {/* Main Image */}
               {mainImageUrl ? (
                 <Image
-                  src={getImageUrl(mainImageUrl)}
+                  src={getImageUrlLocal(mainImageUrl)}
                   alt={product.name}
                   fill
                   unoptimized
@@ -274,7 +317,7 @@ export default function ProductDetailPage() {
                   mainImageUrl === product.mainImageUrl ? "border-red-600 ring-2 ring-red-600/10 scale-105" : "border-black/5 hover:border-zinc-200"
                 )}
               >
-                <img src={getImageUrl(product.mainImageUrl)} className="w-full h-full object-contain" alt="thumb-main" />
+                <img src={getImageUrlLocal(product.mainImageUrl)} className="w-full h-full object-contain" alt="thumb-main" />
               </button>
               
               {/* Gallery Images */}
@@ -287,7 +330,7 @@ export default function ProductDetailPage() {
                     mainImageUrl === img.url ? "border-red-600 ring-2 ring-red-600/10 scale-105" : "border-black/5 hover:border-zinc-200"
                   )}
                 >
-                  <img src={getImageUrl(img.url)} className="w-full h-full object-contain" alt={`thumb-${img.id}`} />
+                  <img src={getImageUrlLocal(img.url)} className="w-full h-full object-contain" alt={`thumb-${img.id}`} />
                 </button>
               ))}
             </div>
@@ -468,26 +511,83 @@ export default function ProductDetailPage() {
           {reviews.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {reviews.map((r) => (
-                <div key={r.id} className="bg-white p-8 rounded-2xl border border-black/5 shadow-dash-card hover:border-red-600/20 transition-all duration-300 group">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center font-bold text-zinc-950 text-sm shadow-sm group-hover:bg-red-50 group-hover:border-red-100 transition-colors">
-                      {r.userName.charAt(0).toUpperCase()}
+                <div key={r.id} className="bg-white p-8 rounded-2xl border border-black/5 shadow-dash-card hover:border-red-600/20 transition-all duration-300 group flex flex-col h-full">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-4">
+                      {r.userAvatar ? (
+                        <div className="w-10 h-10 rounded-xl overflow-hidden border border-zinc-100 shadow-sm shrink-0">
+                          <img src={getImageUrlLocal(r.userAvatar)} className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center font-bold text-zinc-950 text-sm shadow-sm group-hover:bg-red-50 group-hover:border-red-100 transition-colors shrink-0">
+                          {r.userName.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-bold text-zinc-950 text-[15px] line-clamp-1">{r.userName}</p>
+                        <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">
+                          {new Date(r.createdAt).toLocaleDateString("vi-VN", { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-zinc-950 text-[15px]">{r.userName}</p>
-                      <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">
-                        {new Date(r.createdAt).toLocaleDateString("vi-VN", { day: 'numeric', month: 'long', year: 'numeric' })}
-                      </p>
-                    </div>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-950 hover:bg-zinc-50 transition-all cursor-pointer">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-40 rounded-xl border-zinc-100 shadow-dash-overlay">
+                        {currentUser?.id === r.userId ? (
+                          <>
+                            <DropdownMenuItem 
+                              onClick={() => {
+                                setEditingReview(r);
+                                setIsEditOpen(true);
+                              }}
+                              className="gap-2 text-xs font-bold py-2.5 rounded-lg cursor-pointer"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Chỉnh sửa
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => setDeletingReviewId(r.id)}
+                              className="gap-2 text-xs font-bold py-2.5 rounded-lg text-red-600 focus:text-red-600 cursor-pointer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Xóa đánh giá
+                            </DropdownMenuItem>
+                          </>
+                        ) : (
+                          <DropdownMenuItem 
+                            onClick={() => handleReportReview(r.id)}
+                            className="gap-2 text-xs font-bold py-2.5 rounded-lg text-amber-600 focus:text-amber-600 cursor-pointer"
+                          >
+                            <Flag className="w-3.5 h-3.5" /> Báo cáo
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
+                  
                   <div className="flex items-center gap-1 mb-5">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star key={i} className={cn("w-3.5 h-3.5", i < r.rating ? "fill-red-600 text-red-600" : "text-zinc-200")} />
                     ))}
                   </div>
-                  <p className="text-[15px] font-medium text-zinc-600 leading-relaxed italic border-l-2 border-zinc-100 pl-4 group-hover:border-red-200 transition-colors">
+
+                  <p className="text-[15px] font-medium text-zinc-600 leading-relaxed italic border-l-2 border-zinc-100 pl-4 group-hover:border-red-200 transition-colors mb-6 flex-grow">
                     &ldquo;{r.content}&rdquo;
                   </p>
+
+                  {/* Review Images */}
+                  {r.images && r.images.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-auto">
+                      {r.images.map((img, idx) => (
+                        <div key={idx} className="w-12 h-12 rounded-lg border border-zinc-100 overflow-hidden shadow-sm hover:scale-105 transition-transform cursor-pointer">
+                          <img src={getImageUrlLocal(img)} className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -498,8 +598,32 @@ export default function ProductDetailPage() {
             </div>
           )}
         </div>
-
       </div>
+
+      {/* Editing Dialog */}
+      {editingReview && (
+        <ReviewFormDialog
+          isOpen={isEditOpen}
+          onClose={() => {
+            setIsEditOpen(false);
+            setEditingReview(null);
+          }}
+          productId={product.id}
+          productName={product.name}
+          initialData={editingReview}
+        />
+      )}
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        open={!!deletingReviewId}
+        onOpenChange={(open) => !open && setDeletingReviewId(null)}
+        onConfirm={handleDeleteReview}
+        title="Xóa đánh giá?"
+        description="Hành động này không thể hoàn tác. Đánh giá của bạn sẽ bị gỡ bỏ hoàn toàn."
+        variant="danger"
+        isLoading={deleteMutation.isPending}
+      />
     </div>
   );
 }

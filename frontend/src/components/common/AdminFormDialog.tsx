@@ -8,12 +8,12 @@ import { ReactNode } from "react";
 interface AdminFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  icon: LucideIcon;
+  icon?: LucideIcon;
   iconClassName?: string;
   title: string;
   description?: string;
   children: ReactNode;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit?: (e: React.FormEvent) => void;
   isPending?: boolean;
   submitText?: string;
   submitIcon?: LucideIcon;
@@ -25,12 +25,12 @@ interface AdminFormDialogProps {
 export function AdminFormDialog({
   open,
   onOpenChange,
-  icon: Icon,
+  icon: Icon = X, // Fallback to X or similar
   iconClassName = "bg-red-600 text-white", // Default to brand red
   title,
   description,
   children,
-  onSubmit,
+  onSubmit = () => {},
   isPending = false,
   submitText = "Lưu thay đổi",
   submitIcon: SubmitIcon,

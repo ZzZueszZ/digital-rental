@@ -89,8 +89,10 @@ import {
   useOrderDetail,
   useConfirmReceived,
 } from "@/services/order";
-import { OrderStatus, PaymentStatus, PaymentMethod } from "@/types/order";
+import { OrderStatus, PaymentStatus, PaymentMethod, OrderResponse } from "@/types/order";
 import { OrderDetailDialog } from "@/components/common/OrderDetailDialog";
+import { ReviewFormDialog } from "@/components/common/ReviewFormDialog";
+import { getImageUrl, formatDate } from "@/lib/utils";
 
 type Section = "overview" | "info" | "address" | "orders" | "cart";
 
@@ -1517,18 +1519,30 @@ function OrdersSection() {
   const orders = ordersRes?.data || [];
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [selectedOrderForReview, setSelectedOrderForReview] = useState<OrderResponse | null>(null);
   const router = useRouter();
+
+  const { mutateAsync: confirmReceived } = useConfirmReceived();
 
   const handleShowDetail = (id: number) => {
     setSelectedOrderId(id);
     setIsDetailOpen(true);
   };
 
-  const formatVND = (amount: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(amount);
+  const handleReview = (order: OrderResponse) => {
+    setSelectedOrderForReview(order);
+    setIsReviewOpen(true);
+  };
+
+  const handleConfirmReceived = async (id: number) => {
+    try {
+      await confirmReceived(id);
+      toast.success("Xác nhận đã nhận hàng thành công");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Không thể xác nhận nhận hàng";
+      toast.error(message);
+    }
   };
 
   const getStatusColor = (status: OrderStatus) => {
@@ -1572,7 +1586,9 @@ function OrdersSection() {
   const tabs: { label: string; value: OrderStatus | "ALL" }[] = [
     { label: "Tất cả", value: "ALL" },
     { label: "Chờ xác nhận", value: OrderStatus.PENDING },
+    { label: "Đã xác nhận", value: OrderStatus.CONFIRMED },
     { label: "Đang giao", value: OrderStatus.SHIPPING },
+    { label: "Đã giao", value: OrderStatus.DELIVERED },
     { label: "Hoàn thành", value: OrderStatus.COMPLETED },
     { label: "Đã hủy", value: OrderStatus.CANCELED },
   ];
@@ -1665,7 +1681,7 @@ function OrdersSection() {
                       Ngày đặt
                     </span>
                     <span className="text-xs font-bold text-zinc-500">
-                      {new Date(order.createdAt).toLocaleDateString("vi-VN")}
+                      {formatDate(order.createdAt)}
                     </span>
                   </div>
                 </div>
@@ -1685,11 +1701,7 @@ function OrdersSection() {
                   <div key={item.id} className="flex gap-4 items-center h-12">
                     <div className="w-12 h-12 rounded-lg border border-zinc-50 bg-white p-1.5 flex items-center justify-center shrink-0">
                       <img
-                        src={
-                          item.productMainImage
-                            ? `http://localhost:8080${item.productMainImage}`
-                            : "/placeholder-camera.jpg"
-                        }
+                        src={getImageUrl(item.productMainImage) || "/placeholder-camera.jpg"}
                         alt={item.productName}
                         className="w-full h-full object-contain"
                       />
@@ -1730,13 +1742,18 @@ function OrdersSection() {
                     Xem chi tiết
                   </Button>
                   {order.status === OrderStatus.DELIVERED && (
-                    <Button className="h-10 px-5 rounded-lg bg-zinc-950 text-white text-[14px] font-semibold hover:bg-red-600 border-none shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all">
+                    <Button 
+                      onClick={() => handleConfirmReceived(order.id)}
+                      className="h-10 px-5 rounded-lg bg-emerald-600 text-white text-[14px] font-semibold hover:bg-emerald-700 border-none shadow-[0_4px_12px_rgba(16,185,129,0.2)] transition-all"
+                    >
                       Đã nhận hàng
                     </Button>
                   )}
-                  {(order.status === OrderStatus.COMPLETED ||
-                    order.status === OrderStatus.DELIVERED) && (
-                    <Button className="h-10 px-5 rounded-lg bg-zinc-950 text-white text-[14px] font-semibold hover:bg-red-600 border-none shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all">
+                  {order.status === OrderStatus.COMPLETED && (
+                    <Button 
+                      onClick={() => handleReview(order)}
+                      className="h-10 px-5 rounded-lg bg-red-600 text-white text-[14px] font-semibold hover:bg-zinc-950 border-none shadow-[0_4px_12px_rgba(220,38,38,0.2)] transition-all"
+                    >
                       Đánh giá ngay
                     </Button>
                   )}
@@ -1748,12 +1765,21 @@ function OrdersSection() {
       )}
       {selectedOrderId && (
         <OrderDetailDialog
-          orderId={selectedOrderId}
           isOpen={isDetailOpen}
           onClose={() => setIsDetailOpen(false)}
+          orderId={selectedOrderId}
+        />
+      )}
+      {selectedOrderForReview && (
+        <ReviewFormDialog
+          isOpen={isReviewOpen}
+          onClose={() => setIsReviewOpen(false)}
+          productId={selectedOrderForReview.items[0].productId}
+          productName={selectedOrderForReview.items[0].productName}
+          orderId={selectedOrderForReview.id}
+          orderCode={selectedOrderForReview.code}
         />
       )}
     </div>
   );
 }
-

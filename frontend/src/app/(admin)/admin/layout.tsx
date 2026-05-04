@@ -41,6 +41,8 @@ export default function AdminLayout({
       return { title: "Đơn hàng", subtitle: "Quản lý giao dịch" };
     if (pathname.includes("/vouchers"))
       return { title: "Vouchers", subtitle: "Mã giảm giá" };
+    if (pathname.includes("/reviews"))
+      return { title: "Đánh giá", subtitle: "Quản lý phản hồi" };
     if (pathname.includes("/settings"))
       return { title: "Cài đặt", subtitle: "Hệ thống" };
     return { title: "LensHub", subtitle: "Admin Pro" };

@@ -65,9 +65,9 @@ export default function AdminAddressPage() {
       {/* User Selector Section */}
       <div className="bg-white border border-zinc-100 rounded-xl p-5 shadow-sm">
         <div className="max-w-2xl">
-          <Label className="text-[14px] font-medium text-zinc-400 mb-4 block">
+          <label className="text-sm font-medium text-zinc-500 mb-4 block ml-1">
             Chọn người dùng để quản lý địa chỉ
-          </Label>
+          </label>
 
           <div className="relative group">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-red-600 transition-colors">
@@ -77,7 +77,7 @@ export default function AdminAddressPage() {
               placeholder="Tìm theo tên hoặc email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-11 h-11 bg-zinc-50/50 border-zinc-100 rounded-lg focus:bg-white focus:border-red-600/30 transition-all font-medium text-sm"
+              className="pl-11 h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg focus:bg-white focus:border-red-600/30 transition-all duration-200 font-semibold text-[15px] shadow-dash-card"
             />
 
             {/* Search Results Dropdown */}
@@ -204,7 +204,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
         </div>
         <Button
           onClick={() => handleOpenDialog()}
-          className="h-10 px-5 rounded-lg bg-red-600 text-white font-semibold text-[14px] flex items-center gap-2 hover:bg-zinc-950 transition-all shadow-lg shadow-red-100"
+          className="h-11 px-6 rounded-lg bg-red-600 text-white font-semibold text-[14px] flex items-center gap-2.5 hover:bg-zinc-950 transition-all shadow-lg shadow-red-100"
         >
           <Plus className="w-4 h-4" /> Thêm địa chỉ mới
         </Button>
@@ -249,10 +249,10 @@ function AdminAddressManagement({ userId }: { userId: number }) {
             <div
               key={addr.id}
               className={cn(
-                "bg-white border p-5 rounded-xl shadow-sm transition-all group relative",
+                "bg-white border p-6 rounded-xl shadow-dash-card transition-all group relative",
                 addr.isDefault
                   ? "border-red-600/30 bg-red-50/10"
-                  : "border-zinc-100 hover:border-red-600/20",
+                  : "border-zinc-950/5 hover:border-red-600/20 hover:shadow-dash-hover hover:-translate-y-0.5",
               )}
             >
               <div className="flex justify-between items-start mb-6">
@@ -269,7 +269,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
                   </div>
                   {addr.isDefault && (
                     <div className="flex flex-col">
-                      <span className="text-[12px] font-bold text-red-600">
+                      <span className="text-[13px] font-bold text-red-600">
                         Địa chỉ mặc định
                       </span>
                     </div>
@@ -287,23 +287,23 @@ function AdminAddressManagement({ userId }: { userId: number }) {
 
               <div className="space-y-5 mb-8">
                 <div>
-                  <p className="text-[12px] font-medium text-zinc-400 mb-1.5">
+                  <p className="text-[13px] font-medium text-zinc-400 mb-2 ml-0.5">
                     Người nhận
                   </p>
-                  <p className="text-[18px] font-semibold text-zinc-950 leading-tight">
+                  <p className="text-[20px] font-semibold text-zinc-950 leading-tight tracking-tight">
                     {addr.receiverName}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[12px] font-medium text-zinc-400 mb-1.5">
+                  <p className="text-[13px] font-medium text-zinc-400 mb-2 ml-0.5">
                     Số điện thoại
                   </p>
-                  <p className="text-[15px] font-medium text-zinc-700">
+                  <p className="text-[16px] font-semibold text-zinc-700">
                     {addr.receiverPhone}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[12px] font-medium text-zinc-400 mb-1.5">
+                  <p className="text-[13px] font-medium text-zinc-400 mb-2 ml-0.5">
                     Địa chỉ chi tiết
                   </p>
                   <p className="text-[16px] font-normal text-zinc-500 leading-relaxed">
@@ -415,44 +415,44 @@ function AdminAddressDialog({
       <div className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Người nhận
-            </Label>
+            </label>
             <Input
               value={formData.receiverName}
               onChange={(e) =>
                 setFormData({ ...formData, receiverName: e.target.value })
               }
-              className="h-11 rounded-lg border-zinc-200 bg-white font-semibold focus:border-red-600/30 transition-all shadow-sm"
+              className="h-12 rounded-lg border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="Nhập tên người nhận"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Số điện thoại
-            </Label>
+            </label>
             <Input
               value={formData.receiverPhone}
               onChange={(e) =>
                 setFormData({ ...formData, receiverPhone: e.target.value })
               }
-              className="h-11 rounded-lg border-zinc-200 bg-white font-semibold focus:border-red-600/30 transition-all shadow-sm"
+              className="h-12 rounded-lg border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="09xx xxx xxx"
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+          <label className="text-sm font-medium text-zinc-500 ml-1">
             Tỉnh / Thành phố
-          </Label>
+          </label>
           <Select
             value={formData.province as string}
             onValueChange={(v) =>
               setFormData({ ...formData, province: v as City })
             }
           >
-            <SelectTrigger className="w-full !h-11 px-4 rounded-lg !border-zinc-200 !bg-white font-semibold focus:!border-red-600/30 transition-all !shadow-sm">
+            <SelectTrigger className="w-full !h-12 px-4 rounded-lg !border-zinc-950/5 !bg-zinc-50/50 font-semibold text-[15px] focus:!bg-white focus:!border-red-600/30 transition-all duration-200 !shadow-dash-card">
               <SelectValue placeholder="Chọn Tỉnh/Thành phố" />
             </SelectTrigger>
             <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay max-h-64 bg-white">
@@ -471,57 +471,57 @@ function AdminAddressDialog({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Quận / Huyện
-            </Label>
+            </label>
             <Input
               value={formData.district}
               onChange={(e) =>
                 setFormData({ ...formData, district: e.target.value })
               }
-              className="h-11 rounded-lg border-zinc-200 bg-white font-semibold focus:border-red-600/30 transition-all shadow-sm"
+              className="h-12 rounded-lg border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="Nhập quận/huyện"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Phường / Xã
-            </Label>
+            </label>
             <Input
               value={formData.ward}
               onChange={(e) =>
                 setFormData({ ...formData, ward: e.target.value })
               }
-              className="h-11 rounded-lg border-zinc-200 bg-white font-semibold focus:border-red-600/30 transition-all shadow-sm"
+              className="h-12 rounded-lg border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="Nhập phường/xã"
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+          <label className="text-sm font-medium text-zinc-500 ml-1">
             Địa chỉ chi tiết
-          </Label>
+          </label>
           <Input
             value={formData.detailAddress}
             onChange={(e) =>
               setFormData({ ...formData, detailAddress: e.target.value })
             }
-            className="h-11 rounded-lg border-zinc-200 bg-white font-semibold focus:border-red-600/30 transition-all shadow-sm"
+            className="h-12 rounded-lg border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
             placeholder="Số nhà, tên đường..."
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[13px] font-bold text-zinc-400 ml-1">
+          <label className="text-sm font-medium text-zinc-500 ml-1">
             Địa chỉ đầy đủ
-          </Label>
+          </label>
           <Input
             value={formData.fullAddress}
             onChange={(e) =>
               setFormData({ ...formData, fullAddress: e.target.value })
             }
-            className="h-11 rounded-lg border-zinc-200 bg-white font-semibold focus:border-red-600/30 transition-all shadow-sm"
+            className="h-12 rounded-lg border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
             placeholder="VD: 123 Đường ABC, Phường X, Quận Y, Tỉnh Z"
           />
           <p className="text-[11px] text-zinc-400 font-medium italic ml-1">

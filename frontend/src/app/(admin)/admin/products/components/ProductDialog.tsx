@@ -177,7 +177,7 @@ export function ProductDialog({
       icon={Package}
       iconClassName="bg-red-600 text-white shadow-lg shadow-red-100"
       title={isUpdate ? "Cập nhật thông tin" : "Thêm sản phẩm mới"}
-      description={isUpdate ? "Chỉnh sửa thông tin cơ bản của thiết bị" : "Khai báo thiết bị nhiếp ảnh mới vào kho"}
+      description={isUpdate ? "Chỉnh sửa thông tin cơ bản của thiết bị" : "Thiết lập thông tin sản phẩm chuyên nghiệp cho cửa hàng"}
       onSubmit={handleSubmit}
       isPending={isPending}
       submitText={isUpdate ? "Lưu thông tin" : "Tạo sản phẩm"}
@@ -187,13 +187,13 @@ export function ProductDialog({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left Column - Image */}
         <div className="md:col-span-1 space-y-3">
-          <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+          <label className="text-sm font-medium text-zinc-500 ml-1">
             Ảnh đại diện
-          </Label>
+          </label>
           <div 
             className={cn(
-              "relative aspect-square w-full rounded-2xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all overflow-hidden group",
-              imagePreview ? "border-zinc-200 bg-white" : "border-zinc-200 bg-zinc-50 hover:bg-zinc-100",
+              "relative aspect-square w-full rounded-2xl border border-dashed flex flex-col items-center justify-center cursor-pointer transition-all overflow-hidden group",
+              imagePreview ? "border-zinc-200 bg-white shadow-dash-card" : "border-zinc-300 bg-zinc-50/50 hover:bg-zinc-100",
               errors.image && "border-red-400 bg-red-50"
             )}
             onClick={() => fileInputRef.current?.click()}
@@ -209,11 +209,11 @@ export function ProductDialog({
               </>
             ) : (
               <div className="text-center p-4">
-                <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center mx-auto mb-2 text-zinc-400 group-hover:text-red-600 transition-colors border border-zinc-100">
+                <div className="w-12 h-12 rounded-2xl bg-white shadow-dash-card flex items-center justify-center mx-auto mb-3 text-zinc-400 group-hover:text-red-600 transition-all duration-200 border border-zinc-950/5">
                   <Upload className="w-5 h-5" />
                 </div>
-                <span className="text-xs font-bold text-zinc-500 block">Tải ảnh lên</span>
-                <span className="text-[9px] font-medium text-zinc-400 block mt-1">JPEG/PNG, tối đa 5MB</span>
+                <span className="text-[13px] font-semibold text-zinc-600 block">Tải ảnh lên</span>
+                <span className="text-[11px] font-medium text-zinc-400 block mt-1.5">JPEG, PNG hoặc WebP (Tối đa 5MB)</span>
               </div>
             )}
           </div>
@@ -224,43 +224,43 @@ export function ProductDialog({
             className="hidden" 
             accept="image/jpeg,image/png,image/webp" 
           />
-          {errors.image && <p className="text-[10px] font-bold text-red-500 text-center">{errors.image}</p>}
+          {errors.image && <p className="text-[11px] font-medium text-red-600 text-center mt-2">{errors.image}</p>}
         </div>
 
         {/* Right Column - Info */}
         <div className="md:col-span-2 space-y-4">
           <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Tên sản phẩm *
-            </Label>
+            </label>
             <Input
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Sony Alpha A7IV Body..."
+              placeholder="VD: Sony Alpha A7IV Body..."
               className={cn(
-                "h-10 rounded-xl bg-white text-sm font-semibold text-zinc-900 shadow-sm transition-all",
-                errors.name ? "border-red-400 focus:ring-red-400/20" : "border-zinc-200 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5"
+                "h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
+                errors.name && "border-red-400 focus:ring-red-400/20"
               )}
             />
-            {errors.name && <p className="text-[11px] font-medium text-red-500">{errors.name}</p>}
+            {errors.name && <p className="text-[11px] font-medium text-red-600 ml-1">{errors.name}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+              <label className="text-sm font-medium text-zinc-500 ml-1">
                 Danh mục *
-              </Label>
+              </label>
               <Select
                 value={formData.categoryId?.toString() || ""}
                 onValueChange={(v) => setFormData({ ...formData, categoryId: Number(v) })}
               >
                 <SelectTrigger className={cn(
-                  "!w-full !h-10 px-4 rounded-xl !bg-white text-sm font-semibold text-zinc-900 !border-zinc-200 focus:!border-red-600/30 focus:!ring-4 focus:!ring-red-600/5 transition-all shadow-sm",
+                  "!w-full !h-12 px-4 rounded-lg !bg-zinc-50/50 !border-zinc-950/5 focus:!bg-white focus:!border-red-600/30 focus:!ring-4 focus:!ring-red-600/5 transition-all duration-200 shadow-dash-card text-[15px] font-semibold text-zinc-900",
                   errors.categoryId && "!border-red-400"
                 )}>
                   <SelectValue placeholder="Chọn danh mục" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay bg-white">
+                <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay bg-white overflow-hidden">
                   {categories.map(c => (
                     <SelectItem key={c.id} value={c.id.toString()} className="font-medium py-2.5">
                       {c.name}
@@ -268,18 +268,18 @@ export function ProductDialog({
                   ))}
                 </SelectContent>
               </Select>
-              {errors.categoryId && <p className="text-[11px] font-medium text-red-500">{errors.categoryId}</p>}
+              {errors.categoryId && <p className="text-[11px] font-medium text-red-600 ml-1">{errors.categoryId}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+              <label className="text-sm font-medium text-zinc-500 ml-1">
                 Thương hiệu
-              </Label>
+              </label>
               <Input
                 value={formData.brand}
                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                placeholder="Sony, Canon, Nikon..."
-                className="h-10 rounded-xl bg-white text-sm font-semibold text-zinc-900 border-zinc-200 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 transition-all shadow-sm"
+                placeholder="VD: Sony, Canon, Nikon..."
+                className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
               />
             </div>
           </div>
@@ -294,7 +294,7 @@ export function ProductDialog({
                     onChange={(e) => setFormData({ ...formData, isForRent: e.target.checked })}
                     className="w-4 h-4 cursor-pointer"
                   />
-                  <span className="text-xs font-black uppercase text-zinc-700 tracking-wider group-hover:text-zinc-950">Cho thuê</span>
+                  <span className="text-sm font-medium text-zinc-700 group-hover:text-zinc-950 transition-colors">Cho thuê</span>
                 </label>
                 <div className="relative">
                   <Input
@@ -302,15 +302,15 @@ export function ProductDialog({
                     disabled={!formData.isForRent}
                     value={formData.rentPricePerDay || ""}
                     onChange={(e) => setFormData({ ...formData, rentPricePerDay: Number(e.target.value) })}
-                    placeholder="Giá/Ngày"
+                    placeholder="Giá / Ngày"
                     className={cn(
-                      "h-10 rounded-xl bg-white text-sm font-semibold text-zinc-900 pr-8 disabled:bg-white/40 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all shadow-sm",
-                      errors.rentPricePerDay ? "border-red-400" : "border-zinc-200 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5"
+                      "h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-bold text-[15px] pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-dash-card focus:ring-4 focus:ring-red-600/5",
+                      errors.rentPricePerDay && "border-red-400"
                     )}
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-zinc-400">₫</span>
                 </div>
-                {errors.rentPricePerDay && <p className="text-[11px] font-medium text-red-500">{errors.rentPricePerDay}</p>}
+                {errors.rentPricePerDay && <p className="text-[11px] font-medium text-red-600 ml-1">{errors.rentPricePerDay}</p>}
               </div>
 
               <div className="space-y-3">
@@ -321,7 +321,7 @@ export function ProductDialog({
                     onChange={(e) => setFormData({ ...formData, isForSale: e.target.checked })}
                     className="w-4 h-4 cursor-pointer"
                   />
-                  <span className="text-xs font-black uppercase text-zinc-700 tracking-wider group-hover:text-zinc-950">Bán</span>
+                  <span className="text-sm font-medium text-zinc-700 group-hover:text-zinc-950 transition-colors">Bán</span>
                 </label>
                 <div className="relative">
                   <Input
@@ -329,26 +329,26 @@ export function ProductDialog({
                     disabled={!formData.isForSale}
                     value={formData.salePrice || ""}
                     onChange={(e) => setFormData({ ...formData, salePrice: Number(e.target.value) })}
-                    placeholder="Giá Bán"
+                    placeholder="Giá bán đứt"
                     className={cn(
-                      "h-10 rounded-xl bg-white text-sm font-semibold text-zinc-900 pr-8 disabled:bg-white/40 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all shadow-sm",
-                      errors.salePrice ? "border-red-400" : "border-zinc-200 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5"
+                      "h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-bold text-[15px] pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-dash-card focus:ring-4 focus:ring-red-600/5",
+                      errors.salePrice && "border-red-400"
                     )}
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-zinc-400">₫</span>
                 </div>
-                {errors.salePrice && <p className="text-[11px] font-medium text-red-500">{errors.salePrice}</p>}
+                {errors.salePrice && <p className="text-[11px] font-medium text-red-600 ml-1">{errors.salePrice}</p>}
               </div>
-              {errors.isForRent && <p className="text-[11px] font-medium text-red-500 col-span-2 -mt-2">{errors.isForRent}</p>}
+              {errors.isForRent && <p className="text-[11px] font-medium text-red-600 col-span-2 -mt-2 ml-1">{errors.isForRent}</p>}
             </div>
           )}
         </div>
       </div>
 
       <div className="space-y-2 mt-4 pt-4 border-t border-zinc-100">
-        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-3">
+        <label className="text-sm font-medium text-zinc-500 ml-1 block mb-3">
           Thông số kỹ thuật
-        </Label>
+        </label>
         
         {formData.specifications?.map((spec, index) => (
           <div key={index} className="flex gap-2 items-start mb-2">
@@ -356,18 +356,18 @@ export function ProductDialog({
               placeholder="VD: Cảm biến"
               value={spec.specKey}
               onChange={(e) => updateSpecification(index, "specKey", e.target.value)}
-              className="h-10 rounded-xl bg-white text-sm font-semibold text-zinc-900 border-zinc-200 focus:border-red-600/30 transition-all shadow-sm"
+              className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 text-sm font-semibold text-zinc-900 transition-all duration-200 shadow-dash-card"
             />
             <Input
               placeholder="VD: Full-frame CMOS 33MP"
               value={spec.specValue}
               onChange={(e) => updateSpecification(index, "specValue", e.target.value)}
-              className="h-10 rounded-xl bg-white text-sm font-semibold text-zinc-900 border-zinc-200 focus:border-red-600/30 transition-all shadow-sm"
+              className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 text-sm font-semibold text-zinc-900 transition-all duration-200 shadow-dash-card"
             />
             <button
               type="button"
               onClick={() => removeSpecification(index)}
-              className="h-10 w-10 shrink-0 rounded-xl flex items-center justify-center border border-zinc-200 bg-white text-zinc-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-all"
+              className="h-12 w-12 shrink-0 rounded-lg flex items-center justify-center border border-zinc-950/5 bg-zinc-50/50 text-zinc-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-all duration-200 shadow-dash-card"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -376,21 +376,21 @@ export function ProductDialog({
         <button
           type="button"
           onClick={addSpecification}
-          className="h-10 px-4 rounded-xl flex items-center justify-center gap-2 border border-dashed border-zinc-300 text-xs font-bold text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50 transition-all w-full mt-2"
+          className="h-11 px-4 rounded-lg flex items-center justify-center gap-2 border border-dashed border-zinc-200 text-[13px] font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50 hover:border-zinc-400 transition-all duration-200 w-full mt-3"
         >
           <Plus className="w-4 h-4" /> Thêm thông số
         </button>
       </div>
 
       <div className="space-y-2 mt-4 pt-4 border-t border-zinc-100">
-        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+        <label className="text-sm font-medium text-zinc-500 ml-1">
           Mô tả chi tiết
-        </Label>
+        </label>
         <textarea
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Mô tả về tình trạng, tính năng nổi bật..."
-          className="flex min-h-[100px] w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-900 ring-offset-white placeholder:text-zinc-400 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all resize-none shadow-sm"
+          className="flex min-h-[120px] w-full rounded-lg border border-zinc-950/5 bg-zinc-50/50 px-4 py-3 text-[15px] font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-dash-card leading-relaxed"
         />
       </div>
 

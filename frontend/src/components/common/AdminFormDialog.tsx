@@ -19,6 +19,7 @@ interface AdminFormDialogProps {
   submitIcon?: LucideIcon;
   cancelText?: string;
   maxWidth?: string;
+  hideFooter?: boolean;
 }
 
 export function AdminFormDialog({
@@ -35,6 +36,7 @@ export function AdminFormDialog({
   submitIcon: SubmitIcon,
   cancelText = "Hủy",
   maxWidth = "max-w-lg",
+  hideFooter = false,
 }: AdminFormDialogProps) {
   if (!open) return null;
 
@@ -90,32 +92,34 @@ export function AdminFormDialog({
             </div>
 
             {/* Actions / Footer */}
-            <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-end gap-3 mt-auto">
-              <button
-                type="button"
-                onClick={() => onOpenChange(false)}
-                className="h-10 px-5 rounded-lg border border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
-              >
-                {cancelText}
-              </button>
-              <Button
-                type="submit"
-                disabled={isPending}
-                className="h-10 px-6 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-all duration-300 shadow-md shadow-red-100"
-              >
-                {isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    Đang xử lý...
-                  </>
-                ) : (
-                  <>
-                    {SubmitIcon && <SubmitIcon className="w-4 h-4 mr-2" />}
-                    {submitText}
-                  </>
-                )}
-              </Button>
-            </div>
+            {!hideFooter && (
+              <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-end gap-3 mt-auto">
+                <button
+                  type="button"
+                  onClick={() => onOpenChange(false)}
+                  className="h-10 px-5 rounded-lg border border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
+                >
+                  {cancelText}
+                </button>
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  className="h-10 px-6 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-all duration-300 shadow-md shadow-red-100"
+                >
+                  {isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      Đang xử lý...
+                    </>
+                  ) : (
+                    <>
+                      {SubmitIcon && <SubmitIcon className="w-4 h-4 mr-2" />}
+                      {submitText}
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
           </form>
         </div>
       </div>

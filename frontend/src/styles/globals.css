@@ -272,6 +272,24 @@
     @apply text-zinc-400 font-normal;
     font-size: clamp(0.75rem, 1.2vw, 0.8125rem);
   }
+
+  /* Clean "White" Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-zinc-100 rounded-full transition-colors;
+  }
+  .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+    @apply bg-zinc-200;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-zinc-300;
+  }
 }
 
 /* Animations */

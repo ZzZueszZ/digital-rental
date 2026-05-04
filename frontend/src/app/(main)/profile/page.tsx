@@ -1362,27 +1362,27 @@ function AddressDialog({
             <label className="text-sm font-medium text-zinc-500 ml-1">
               Người nhận
             </label>
-            <Input
-              value={formData.receiverName}
-              onChange={(e) =>
-                setFormData({ ...formData, receiverName: e.target.value })
-              }
-              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
-              placeholder="Họ và tên"
-            />
+              <Input
+                value={formData.receiverName}
+                onChange={(e) =>
+                  setFormData({ ...formData, receiverName: e.target.value })
+                }
+                className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                placeholder="Họ và tên"
+              />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-500 ml-1">
               Số điện thoại
             </label>
-            <Input
-              value={formData.receiverPhone}
-              onChange={(e) =>
-                setFormData({ ...formData, receiverPhone: e.target.value })
-              }
-              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
-              placeholder="09xx xxx xxx"
-            />
+              <Input
+                value={formData.receiverPhone}
+                onChange={(e) =>
+                  setFormData({ ...formData, receiverPhone: e.target.value })
+                }
+                className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                placeholder="09xx xxx xxx"
+              />
           </div>
         </div>
 
@@ -1397,10 +1397,12 @@ function AddressDialog({
                 setFormData({ ...formData, province: v as City })
               }
             >
-              <SelectTrigger className="w-full! p-5! h-12 bg-white! border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 text-left !text-zinc-950 shadow-dash-card">
-                <SelectValue placeholder="Chọn Tỉnh/Thành phố" />
+              <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-lg px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
+                <span className={cn(formData.province ? "text-zinc-900" : "text-zinc-400")}>
+                  {formData.province ? CITY_LABELS[formData.province] : "Chọn Tỉnh/Thành phố"}
+                </span>
               </SelectTrigger>
-              <SelectContent className="rounded-xl shadow-2xl border-zinc-100 max-h-72 bg-white p-1">
+              <SelectContent className="rounded-xl shadow-dash-overlay border-black/5 max-h-72 bg-white p-1">
                 {Object.entries(CITY_LABELS).map(([value, label]) => (
                   <SelectItem
                     key={value}
@@ -1417,14 +1419,14 @@ function AddressDialog({
             <label className="text-sm font-medium text-zinc-500 ml-1">
               Quận / Huyện
             </label>
-            <Input
-              value={formData.district}
-              onChange={(e) =>
-                setFormData({ ...formData, district: e.target.value })
-              }
-              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
-              placeholder="Nhập Quận/Huyện"
-            />
+              <Input
+                value={formData.district}
+                onChange={(e) =>
+                  setFormData({ ...formData, district: e.target.value })
+                }
+                className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                placeholder="Nhập Quận/Huyện"
+              />
           </div>
         </div>
 
@@ -1433,32 +1435,32 @@ function AddressDialog({
             <label className="text-sm font-medium text-zinc-500 ml-1">
               Phường / Xã
             </label>
-            <Input
-              value={formData.ward}
-              onChange={(e) =>
-                setFormData({ ...formData, ward: e.target.value })
-              }
-              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
-              placeholder="Nhập Phường/Xã"
-            />
+              <Input
+                value={formData.ward}
+                onChange={(e) =>
+                  setFormData({ ...formData, ward: e.target.value })
+                }
+                className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                placeholder="Nhập Phường/Xã"
+              />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-500 ml-1">
               Địa chỉ chi tiết
             </label>
-            <Input
-              value={formData.detailAddress}
-              onChange={(e) =>
-                setFormData({ ...formData, detailAddress: e.target.value })
-              }
-              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
-              placeholder="Số nhà, ngõ, tên đường..."
-            />
+              <Input
+                value={formData.detailAddress}
+                onChange={(e) =>
+                  setFormData({ ...formData, detailAddress: e.target.value })
+                }
+                className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                placeholder="Số nhà, ngõ, tên đường..."
+              />
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-[13px] font-medium text-zinc-400 ml-1">
+          <label className="text-sm font-medium text-zinc-400 ml-1">
             Địa chỉ đầy đủ (Tự động cập nhật)
           </label>
           <Input
@@ -1466,7 +1468,7 @@ function AddressDialog({
             onChange={(e) =>
               setFormData({ ...formData, fullAddress: e.target.value })
             }
-            className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
+            className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
           />
         </div>

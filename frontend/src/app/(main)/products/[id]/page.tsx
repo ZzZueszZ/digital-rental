@@ -207,7 +207,7 @@ export default function ProductDetailPage() {
         </p>
         <Button
           onClick={() => router.push("/")}
-          className="h-12 px-10 rounded-2xl bg-zinc-950 text-white font-bold text-sm"
+          className="h-12 px-10 rounded-lg bg-zinc-950 text-white font-bold text-sm shadow-dash-card"
         >
           Quay lại trang chủ
         </Button>
@@ -220,15 +220,15 @@ export default function ProductDetailPage() {
       <div className="container mx-auto px-4 lg:px-8 max-w-[1600px] pt-10">
         
         {/* Header Actions */}
-        <div className="flex items-center justify-between mb-12">
+        <div className="flex items-center justify-between mb-8">
           <button
             onClick={() => router.back()}
             className="group flex items-center gap-4 text-zinc-400 hover:text-zinc-950 transition-all"
           >
-            <div className="w-10 h-10 rounded-full border border-zinc-100 flex items-center justify-center group-hover:bg-zinc-50 transition-all">
-              <ArrowLeft className="w-4 h-4" />
+            <div className="w-9 h-9 rounded-lg border border-black/5 flex items-center justify-center group-hover:bg-zinc-50 transition-all shadow-dash-card">
+              <ArrowLeft className="w-3.5 h-3.5" />
             </div>
-            <span className="text-xs font-medium">Quay lại</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Quay lại</span>
           </button>
           
           <div className="flex items-center gap-6">
@@ -244,11 +244,11 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           
           {/* Left: Image Showcase */}
           <div className="lg:col-span-7 space-y-10">
-            <div className="relative aspect-square w-full bg-zinc-50/50 rounded-[2.5rem] border border-zinc-100 overflow-hidden group flex items-center justify-center p-12 shadow-sm">
+            <div className="relative aspect-square w-full bg-white rounded-2xl border border-black/5 overflow-hidden group flex items-center justify-center p-8 shadow-dash-card">
               {/* Main Image */}
               {mainImageUrl ? (
                 <Image
@@ -256,7 +256,7 @@ export default function ProductDetailPage() {
                   alt={product.name}
                   fill
                   unoptimized
-                  className="object-contain p-8 transition-transform duration-1000 group-hover:scale-105"
+                  className="object-contain p-4 transition-transform duration-1000 group-hover:scale-105"
                   priority
                 />
               ) : (
@@ -270,8 +270,8 @@ export default function ProductDetailPage() {
               <button
                 onClick={() => setMainImageUrl(product.mainImageUrl)}
                 className={cn(
-                  "aspect-square rounded-2xl border-2 transition-all p-2 flex items-center justify-center bg-white overflow-hidden",
-                  mainImageUrl === product.mainImageUrl ? "border-red-600 shadow-lg shadow-red-50 scale-105" : "border-zinc-50 hover:border-zinc-200"
+                  "aspect-square rounded-lg border transition-all p-2 flex items-center justify-center bg-white overflow-hidden shadow-dash-card",
+                  mainImageUrl === product.mainImageUrl ? "border-red-600 ring-2 ring-red-600/10 scale-105" : "border-black/5 hover:border-zinc-200"
                 )}
               >
                 <img src={getImageUrl(product.mainImageUrl)} className="w-full h-full object-contain" alt="thumb-main" />
@@ -283,8 +283,8 @@ export default function ProductDetailPage() {
                   key={img.id}
                   onClick={() => setMainImageUrl(img.url)}
                   className={cn(
-                    "aspect-square rounded-2xl border-2 transition-all p-2 flex items-center justify-center bg-white overflow-hidden",
-                    mainImageUrl === img.url ? "border-red-600 shadow-lg shadow-red-50 scale-105" : "border-zinc-50 hover:border-zinc-200"
+                    "aspect-square rounded-lg border transition-all p-2 flex items-center justify-center bg-white overflow-hidden shadow-dash-card",
+                    mainImageUrl === img.url ? "border-red-600 ring-2 ring-red-600/10 scale-105" : "border-black/5 hover:border-zinc-200"
                   )}
                 >
                   <img src={getImageUrl(img.url)} className="w-full h-full object-contain" alt={`thumb-${img.id}`} />
@@ -293,22 +293,22 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Features Spotlight */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-12">
-              <div className="space-y-6">
-                <div className="w-12 h-12 rounded-2xl bg-zinc-950 text-white flex items-center justify-center shadow-lg">
-                  <Cpu className="w-6 h-6" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-zinc-100/50">
+              <div className="space-y-4">
+                <div className="w-10 h-10 rounded-xl bg-zinc-950 text-white flex items-center justify-center shadow-dash-card">
+                  <Cpu className="w-5 h-5" />
                 </div>
-                <h3 className="text-xl font-bold text-zinc-950 tracking-tight">Hiệu năng tối thượng</h3>
-                <p className="text-zinc-500 text-sm font-medium leading-relaxed">
+                <h3 className="text-lg font-bold text-zinc-950 tracking-tight">Hiệu năng tối thượng</h3>
+                <p className="text-zinc-500 text-[13px] font-medium leading-relaxed">
                   Trang bị vi xử lý thế hệ mới nhất, mang lại khả năng xử lý hình ảnh vượt trội trong mọi điều kiện.
                 </p>
               </div>
-              <div className="space-y-6">
-                <div className="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center shadow-lg shadow-red-50">
-                  <Zap className="w-6 h-6" />
+              <div className="space-y-4">
+                <div className="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-dash-card">
+                  <Zap className="w-5 h-5" />
                 </div>
-                <h3 className="text-xl font-bold text-zinc-950 tracking-tight">Tốc độ & Chính xác</h3>
-                <p className="text-zinc-500 text-sm font-medium leading-relaxed">
+                <h3 className="text-lg font-bold text-zinc-950 tracking-tight">Tốc độ & Chính xác</h3>
+                <p className="text-zinc-500 text-[13px] font-medium leading-relaxed">
                   Hệ thống lấy nét tự động cực nhanh, đảm bảo bạn không bỏ lỡ bất kỳ khoảnh khắc quý giá nào.
                 </p>
               </div>
@@ -316,7 +316,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Right: Detailed Info & Actions */}
-          <div className="lg:col-span-5 space-y-12">
+          <div className="lg:col-span-5 space-y-10">
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <span className="px-3 py-1 rounded-lg bg-zinc-950 text-white text-[10px] font-bold">
@@ -331,51 +331,50 @@ export default function ProductDetailPage() {
                 )}
               </div>
               
-              <h1 className="text-4xl md:text-5xl font-bold text-zinc-950 tracking-tight leading-tight mb-8">
+              <h1 className="text-3xl md:text-4xl font-bold text-zinc-950 tracking-tight leading-tight mb-6">
                 {product.name}
               </h1>
-
-              <p className="text-lg text-zinc-500 font-medium leading-relaxed mb-10 italic border-l-4 border-red-600 pl-6">
-                "{product.description}"
+              <p className="text-base text-zinc-500 font-medium leading-relaxed mb-8 italic border-l-2 border-red-600 pl-5">
+                &ldquo;{product.description}&rdquo;
               </p>
 
               {/* Status Pills */}
-              <div className="flex flex-wrap gap-3 mb-10">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-zinc-50 border border-zinc-100">
-                  <Box className="w-4 h-4 text-zinc-400" />
-                  <span className="text-xs font-bold text-zinc-950">Còn lại: {product.quantity}</span>
+              <div className="flex flex-wrap gap-2 mb-8">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-50 border border-black/5">
+                  <Box className="w-3.5 h-3.5 text-zinc-400" />
+                  <span className="text-[11px] font-bold text-zinc-950">Còn lại: {product.quantity}</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-zinc-50 border border-zinc-100">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  <span className="text-xs font-bold text-zinc-950">Chính hãng 100%</span>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-50 border border-black/5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <span className="text-[11px] font-bold text-zinc-950">Chính hãng 100%</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-zinc-50 border border-zinc-100">
-                  <Shield className="w-4 h-4 text-blue-500" />
-                  <span className="text-xs font-bold text-zinc-950">Bảo hiểm mặc định</span>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-50 border border-black/5">
+                  <Shield className="w-3.5 h-3.5 text-blue-500" />
+                  <span className="text-[11px] font-bold text-zinc-950">Bảo hiểm mặc định</span>
                 </div>
               </div>
             </div>
 
             {/* Configuration / Quantity Selection */}
             <div className="space-y-6">
-              <div className="flex items-center justify-between p-8 bg-zinc-50/50 rounded-[2rem] border border-zinc-100 border-dashed">
+              <div className="flex items-center justify-between p-6 bg-zinc-50/50 rounded-2xl border border-black/5 border-dashed">
                 <div>
-                  <p className="text-xs font-semibold text-zinc-400 mb-2">Số lượng thiết bị</p>
-                  <p className="text-sm font-bold text-zinc-950">Lựa chọn quy mô tác nghiệp</p>
+                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Số lượng thiết bị</p>
+                  <p className="text-sm font-bold text-zinc-950">Quy mô tác nghiệp</p>
                 </div>
-                <div className="flex items-center gap-5 bg-white p-2 rounded-2xl border border-zinc-100 shadow-sm">
+                <div className="flex items-center gap-4 bg-white p-1.5 rounded-lg border border-black/5 shadow-dash-card">
                   <button 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-400 hover:text-red-600 hover:bg-zinc-50 transition-all active:scale-90"
+                    className="w-8 h-8 rounded-md flex items-center justify-center text-zinc-400 hover:text-red-600 hover:bg-zinc-50 transition-all active:scale-90"
                   >
-                    <Minus className="w-4 h-4" />
+                    <Minus className="w-3.5 h-3.5" />
                   </button>
-                  <span className="w-8 text-center font-bold text-zinc-950 text-xl">{quantity}</span>
+                  <span className="w-6 text-center font-bold text-zinc-950 text-lg">{quantity}</span>
                   <button 
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-400 hover:text-red-600 hover:bg-zinc-50 transition-all active:scale-90"
+                    className="w-8 h-8 rounded-md flex items-center justify-center text-zinc-400 hover:text-red-600 hover:bg-zinc-50 transition-all active:scale-90"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -383,25 +382,25 @@ export default function ProductDetailPage() {
               {/* Pricing Cards */}
               <div className="grid grid-cols-1 gap-5">
                 {product.forSale && (
-                  <div className="bg-white rounded-[2.5rem] p-10 border border-zinc-100 shadow-xl shadow-zinc-100 relative overflow-hidden group">
-                    <p className="text-xs font-bold text-zinc-400 mb-6 uppercase tracking-wider">Giá bán niêm yết</p>
-                    <div className="mb-10">
-                      <p className="text-5xl font-bold tracking-tight text-zinc-950 leading-none">
-                        {formatVND(product.salePrice).replace("₫", "")}<span className="text-2xl ml-1 text-red-600 font-bold">₫</span>
+                  <div className="bg-white rounded-2xl p-8 border border-black/5 shadow-dash-card relative overflow-hidden group">
+                    <p className="text-[10px] font-bold text-zinc-400 mb-6 uppercase tracking-widest">Giá bán niêm yết</p>
+                    <div className="mb-8">
+                      <p className="text-4xl font-bold tracking-tight text-zinc-950 leading-none">
+                        {formatVND(product.salePrice).replace("₫", "")}<span className="text-xl ml-1 text-red-600 font-bold">₫</span>
                       </p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <Button 
                         onClick={handleAddToCart}
                         disabled={isAddingToCart}
-                        className="h-16 rounded-2xl bg-zinc-950 hover:bg-red-600 text-white font-bold text-sm transition-all shadow-lg shadow-zinc-100"
+                        className="h-14 rounded-lg bg-zinc-950 hover:bg-red-600 text-white font-bold text-sm transition-all shadow-dash-card"
                       >
-                        {isAddingToCart ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShoppingCart className="w-5 h-5 mr-3" />}
+                        {isAddingToCart ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShoppingCart className="w-4 h-4 mr-2" />}
                         Thêm giỏ hàng
                       </Button>
                       <Button 
                         onClick={handleBuyNow}
-                        className="h-16 rounded-2xl bg-red-600 hover:bg-zinc-950 text-white font-bold text-sm transition-all shadow-lg shadow-red-50"
+                        className="h-14 rounded-lg bg-red-600 hover:bg-zinc-950 text-white font-bold text-sm transition-all shadow-dash-card"
                       >
                         Mua ngay
                       </Button>
@@ -410,16 +409,16 @@ export default function ProductDetailPage() {
                 )}
 
                 {product.forRent && (
-                  <div className="bg-zinc-50/50 rounded-[2.5rem] p-10 border border-zinc-100 border-dashed relative overflow-hidden group">
-                    <p className="text-xs font-bold text-zinc-400 mb-6 uppercase tracking-wider">Giá thuê mỗi ngày</p>
-                    <div className="flex items-end justify-between mb-8">
-                      <p className="text-4xl font-bold tracking-tight text-amber-600 leading-none">
-                        {formatVND(product.rentPricePerDay).replace("₫", "")}<span className="text-xl ml-1 text-zinc-400 font-bold">₫</span>
+                  <div className="bg-zinc-50/50 rounded-2xl p-8 border border-black/5 border-dashed relative overflow-hidden group">
+                    <p className="text-[10px] font-bold text-zinc-400 mb-6 uppercase tracking-widest">Giá thuê mỗi ngày</p>
+                    <div className="flex items-end justify-between mb-6">
+                      <p className="text-3xl font-bold tracking-tight text-amber-600 leading-none">
+                        {formatVND(product.rentPricePerDay).replace("₫", "")}<span className="text-lg ml-1 text-zinc-400 font-bold">₫</span>
                       </p>
                       <span className="text-xs font-semibold text-zinc-400">Bảo hiểm trọn gói</span>
                     </div>
-                    <Button className="w-full h-14 rounded-2xl bg-white border border-zinc-200 text-zinc-950 font-bold text-sm hover:bg-zinc-950 hover:text-white transition-all">
-                      <Calendar className="w-4 h-4 mr-3" /> Đặt lịch thuê
+                    <Button className="w-full h-12 rounded-lg bg-white border border-black/5 text-zinc-950 font-bold text-sm hover:bg-zinc-950 hover:text-white transition-all shadow-dash-card">
+                      <Calendar className="w-4 h-4 mr-2" /> Đặt lịch thuê
                     </Button>
                   </div>
                 )}
@@ -441,53 +440,54 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
-        {/* Reviews Section */}
-        <div className="mt-32 pt-20 border-t border-zinc-100">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-            <div>
-              <h2 className="text-4xl font-bold text-zinc-950 tracking-tight mb-4">Đánh giá thực tế</h2>
-              <p className="text-zinc-500 font-medium">Trải nghiệm từ các nhiếp ảnh gia chuyên nghiệp.</p>
+        <div className="mt-16 pt-12 border-t border-zinc-100">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 mb-10">
+            <div className="max-w-2xl">
+              <h2 className="text-2xl md:text-3xl font-bold text-zinc-950 tracking-tight mb-3">Đánh giá thực tế</h2>
+              <p className="text-zinc-500 font-medium text-base leading-relaxed">Trải nghiệm từ các nhiếp ảnh gia chuyên nghiệp đã trực tiếp sử dụng thiết bị này.</p>
             </div>
             {reviewMeta && (
-              <div className="flex items-center gap-6 bg-white p-6 rounded-[2rem] border border-zinc-100 shadow-lg shadow-zinc-100">
+              <div className="flex items-center gap-8 bg-white p-6 rounded-2xl border border-black/5 shadow-dash-card">
                 <div className="text-center px-4">
-                  <p className="text-4xl font-bold text-zinc-950 leading-none mb-2">{reviewMeta.averageRating.toFixed(1)}</p>
-                  <div className="flex items-center gap-1">
+                  <p className="text-4xl font-bold text-zinc-950 leading-none mb-3">{reviewMeta.averageRating.toFixed(1)}</p>
+                  <div className="flex items-center gap-1 justify-center">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={cn("w-3 h-3", i < Math.round(reviewMeta.averageRating) ? "fill-red-600 text-red-600" : "text-zinc-200")} />
+                      <Star key={i} className={cn("w-3.5 h-3.5", i < Math.round(reviewMeta.averageRating) ? "fill-red-600 text-red-600" : "text-zinc-200")} />
                     ))}
                   </div>
                 </div>
                 <div className="w-px h-12 bg-zinc-100" />
                 <div className="px-4">
-                  <p className="text-lg font-bold text-zinc-950 leading-none mb-1">{reviewMeta.totalReviews}</p>
-                  <p className="text-xs font-semibold text-zinc-400">Đánh giá</p>
+                  <p className="text-2xl font-bold text-zinc-950 leading-none mb-2">{reviewMeta.totalReviews}</p>
+                  <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Đánh giá</p>
                 </div>
               </div>
             )}
           </div>
 
           {reviews.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {reviews.map((r) => (
-                <div key={r.id} className="bg-zinc-50/50 p-8 rounded-[2rem] border border-zinc-100 hover:bg-white hover:shadow-xl transition-all group">
+                <div key={r.id} className="bg-white p-8 rounded-2xl border border-black/5 shadow-dash-card hover:border-red-600/20 transition-all duration-300 group">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 rounded-2xl bg-zinc-950 text-white flex items-center justify-center font-bold text-lg">
+                    <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center font-bold text-zinc-950 text-sm shadow-sm group-hover:bg-red-50 group-hover:border-red-100 transition-colors">
                       {r.userName.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-bold text-zinc-950 text-sm">{r.userName}</p>
-                      <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wide">
+                      <p className="font-bold text-zinc-950 text-[15px]">{r.userName}</p>
+                      <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">
                         {new Date(r.createdAt).toLocaleDateString("vi-VN", { day: 'numeric', month: 'long', year: 'numeric' })}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 mb-6">
+                  <div className="flex items-center gap-1 mb-5">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star key={i} className={cn("w-3.5 h-3.5", i < r.rating ? "fill-red-600 text-red-600" : "text-zinc-200")} />
                     ))}
                   </div>
-                  <p className="text-sm font-medium text-zinc-600 leading-relaxed italic">"{r.content}"</p>
+                  <p className="text-[15px] font-medium text-zinc-600 leading-relaxed italic border-l-2 border-zinc-100 pl-4 group-hover:border-red-200 transition-colors">
+                    &ldquo;{r.content}&rdquo;
+                  </p>
                 </div>
               ))}
             </div>

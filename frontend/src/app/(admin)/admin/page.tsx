@@ -73,18 +73,15 @@ export default function AdminDashboardPage() {
       {/* Charts Section */}
       <DashboardCharts revenueData={revenueData} dailyOrders={dailyOrders} />
 
-      {/* Bottom Grid */}
-      <div className="grid gap-5 grid-cols-1 xl:grid-cols-3">
-        {/* Recent Activity - 2/3 width for better detail visibility */}
-        <div className="xl:col-span-2">
-          <RecentActivityCard />
-        </div>
-        
-        {/* Sidebar Cards - Stacked 1/3 width */}
-        <div className="xl:col-span-1 space-y-4 lg:space-y-5">
-          <TopProductsCard products={topProducts} />
-          <LowStockCard products={lowStock} />
-        </div>
+      {/* Bottom Grid: Inventory Alerts & Popular Items */}
+      <div className="grid gap-5 grid-cols-1 xl:grid-cols-2">
+        <LowStockCard products={lowStock} />
+        <TopProductsCard products={topProducts} />
+      </div>
+
+      {/* System Activity: Full Width for maximum detail */}
+      <div className="w-full">
+        <RecentActivityCard />
       </div>
     </div>
   );

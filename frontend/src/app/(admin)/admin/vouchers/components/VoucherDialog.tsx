@@ -126,6 +126,7 @@ export function VoucherDialog({
       open={open}
       onOpenChange={onOpenChange}
       icon={Ticket}
+      iconClassName="bg-red-600 text-white shadow-lg shadow-red-100"
       title={voucher ? "Cập nhật Voucher" : "Phát hành Voucher mới"}
       description={voucher ? `Đang chỉnh sửa mã: ${voucher.code}` : "Thiết lập chương trình khuyến mãi chuyên nghiệp"}
       onSubmit={handleSubmit}
@@ -138,42 +139,42 @@ export function VoucherDialog({
         <div className="space-y-8">
           {/* Basic Info Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-zinc-100 flex items-center justify-center">
-                <Info className="w-3.5 h-3.5 text-zinc-900" />
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center">
+                <Info className="w-4 h-4 text-red-600" />
               </div>
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900">Thông tin định danh</h3>
+              <h3 className="text-lg font-semibold tracking-tight text-zinc-900">Thông tin định danh</h3>
             </div>
             
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Mã Voucher</label>
+                <label className="text-sm font-medium text-zinc-500 ml-1">Mã Voucher</label>
                 <Input 
                   value={formData.code}
                   onChange={e => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                   placeholder="VD: PRO-PH-2024"
                   disabled={!!voucher}
-                  className="h-11 rounded-xl bg-zinc-50/50 border-zinc-100 focus:bg-white focus:border-red-600/30 font-black text-xs uppercase"
+                  className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-bold text-base shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 tracking-wider"
                 />
-                {errors.code && <p className="text-[9px] font-bold text-red-600 ml-1 uppercase">{errors.code}</p>}
+                {errors.code && <p className="text-[11px] font-medium text-red-600 ml-1">{errors.code}</p>}
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Tên chiến dịch</label>
+                <label className="text-sm font-medium text-zinc-500 ml-1">Tên chiến dịch</label>
                 <Input 
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
                   placeholder="VD: Ưu đãi khách hàng thân thiết"
-                  className="h-11 rounded-xl bg-zinc-50/50 border-zinc-100 focus:bg-white focus:border-red-600/30 font-bold text-xs"
+                  className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
                 />
-                {errors.name && <p className="text-[9px] font-bold text-red-600 ml-1 uppercase">{errors.name}</p>}
+                {errors.name && <p className="text-[11px] font-medium text-red-600 ml-1">{errors.name}</p>}
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Ghi chú chi tiết</label>
+                <label className="text-sm font-medium text-zinc-500 ml-1">Ghi chú chi tiết</label>
                 <Textarea 
                   value={formData.description}
                   onChange={e => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Nội dung hiển thị cho khách hàng..."
-                  className="rounded-xl bg-zinc-50/50 border-zinc-100 focus:bg-white focus:border-red-600/30 font-medium text-xs min-h-[90px] resize-none"
+                  className="rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-normal text-sm min-h-[100px] resize-none shadow-sm transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 leading-relaxed"
                 />
               </div>
             </div>
@@ -181,17 +182,17 @@ export function VoucherDialog({
 
           {/* Discount Config Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-zinc-100 flex items-center justify-center">
-                <DollarSign className="w-3.5 h-3.5 text-zinc-900" />
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center">
+                <DollarSign className="w-4 h-4 text-red-600" />
               </div>
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900">Giá trị ưu đãi</h3>
+              <h3 className="text-lg font-semibold tracking-tight text-zinc-900">Giá trị ưu đãi</h3>
             </div>
 
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Loại chiết khấu</label>
+                  <label className="text-sm font-medium text-zinc-500 ml-1">Loại chiết khấu</label>
                   <div className="flex p-1 bg-zinc-100 rounded-xl gap-1">
                     {(["PERCENTAGE", "FIXED_AMOUNT"] as VoucherType[]).map((t) => (
                       <button
@@ -199,8 +200,8 @@ export function VoucherDialog({
                         type="button"
                         onClick={() => setFormData({ ...formData, type: t, discountValue: 0 })}
                         className={cn(
-                          "flex-1 py-2 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all",
-                          formData.type === t ? "bg-white text-zinc-950 shadow-sm" : "text-zinc-500 hover:text-zinc-800"
+                          "flex-1 py-2.5 rounded-lg text-[11px] font-bold tracking-wider transition-all",
+                          formData.type === t ? "bg-red-600 text-white shadow-md shadow-red-100" : "text-zinc-500 hover:text-zinc-800"
                         )}
                       >
                         {t === "PERCENTAGE" ? "Phần trăm" : "Tiền mặt"}
@@ -209,7 +210,7 @@ export function VoucherDialog({
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">
+                  <label className="text-sm font-medium text-zinc-500 ml-1">
                     Giá trị ({formData.type === "PERCENTAGE" ? "%" : "VNĐ"})
                   </label>
                   <Input 
@@ -217,31 +218,31 @@ export function VoucherDialog({
                     value={formData.discountValue || ""}
                     onChange={e => setFormData({ ...formData, discountValue: Number(e.target.value) })}
                     placeholder="0"
-                    className="h-11 rounded-xl bg-zinc-50/50 border-zinc-100 focus:bg-white focus:border-red-600/30 font-black text-sm"
+                    className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-bold text-xl shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 tracking-tight"
                   />
                 </div>
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Giảm tối đa (VNĐ)</label>
+                  <label className="text-sm font-medium text-zinc-500 ml-1">Giảm tối đa (VNĐ)</label>
                   <Input 
                     type="number"
                     value={formData.maxDiscountAmount || ""}
                     onChange={e => setFormData({ ...formData, maxDiscountAmount: e.target.value ? Number(e.target.value) : undefined })}
                     placeholder="∞ Không giới hạn"
                     disabled={formData.type === "FIXED_AMOUNT"}
-                    className="h-11 rounded-xl bg-zinc-50/50 border-zinc-100 focus:bg-white focus:border-red-600/30 font-bold text-xs disabled:opacity-40"
+                    className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm disabled:opacity-40 shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Đơn tối thiểu (VNĐ)</label>
+                  <label className="text-sm font-medium text-zinc-500 ml-1">Đơn tối thiểu (VNĐ)</label>
                   <Input 
                     type="number"
                     value={formData.minOrderValue || ""}
                     onChange={e => setFormData({ ...formData, minOrderValue: Number(e.target.value) })}
                     placeholder="0"
-                    className="h-11 rounded-xl bg-zinc-50/50 border-zinc-100 focus:bg-white focus:border-red-600/30 font-bold text-xs"
+                    className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
                   />
                 </div>
               </div>
@@ -252,33 +253,33 @@ export function VoucherDialog({
         <div className="space-y-8">
           {/* Usage Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-zinc-100 flex items-center justify-center">
-                <Users className="w-3.5 h-3.5 text-zinc-900" />
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center">
+                <Users className="w-4 h-4 text-red-600" />
               </div>
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900">Quy mô & Giới hạn</h3>
+              <h3 className="text-lg font-semibold tracking-tight text-zinc-900">Quy mô & Giới hạn</h3>
             </div>
 
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Số lượt/Khách</label>
+                  <label className="text-sm font-medium text-zinc-500 ml-1">Số lượt/Khách</label>
                   <Input 
                     type="number"
                     value={formData.maxUsagePerUser || ""}
                     onChange={e => setFormData({ ...formData, maxUsagePerUser: Number(e.target.value) })}
                     placeholder="1"
-                    className="h-11 rounded-xl bg-zinc-50/50 border-zinc-100 focus:bg-white focus:border-red-600/30 font-bold text-xs"
+                    className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Tổng lượt phát hành</label>
+                  <label className="text-sm font-medium text-zinc-500 ml-1">Tổng lượt phát hành</label>
                   <Input 
                     type="number"
                     value={formData.maxUsage || ""}
                     onChange={e => setFormData({ ...formData, maxUsage: e.target.value ? Number(e.target.value) : undefined })}
                     placeholder="∞ Không giới hạn"
-                    className="h-11 rounded-xl bg-zinc-50/50 border-zinc-100 focus:bg-white focus:border-red-600/30 font-bold text-xs"
+                    className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
                   />
                 </div>
               </div>
@@ -287,58 +288,60 @@ export function VoucherDialog({
 
           {/* Timing Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-zinc-100 flex items-center justify-center">
-                <Calendar className="w-3.5 h-3.5 text-zinc-900" />
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center">
+                <Calendar className="w-4 h-4 text-red-600" />
               </div>
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900">Thời gian triển khai</h3>
+              <h3 className="text-lg font-semibold tracking-tight text-zinc-900">Thời gian triển khai</h3>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Bắt đầu lúc</label>
+                <label className="text-sm font-medium text-zinc-500 ml-1">Bắt đầu lúc</label>
                 <div className="relative group">
                   <input 
                     type="datetime-local"
                     value={formData.startDate}
                     onChange={e => setFormData({ ...formData, startDate: e.target.value })}
-                    className="absolute inset-0 opacity-0 z-10 cursor-pointer w-full"
+                    onClick={(e) => (e.currentTarget as HTMLInputElement & { showPicker?: () => void }).showPicker?.()}
+                    className="absolute inset-0 opacity-0 z-20 cursor-pointer w-full h-full [color-scheme:light] accent-red-600"
                   />
-                  <div className="h-11 px-4 rounded-xl bg-zinc-50/50 border border-zinc-100 flex items-center justify-between text-xs font-bold text-zinc-900 group-hover:border-red-600/30 group-focus-within:border-red-600/30 transition-all">
+                  <div className="h-12 px-4 rounded-lg bg-zinc-50/50 border border-zinc-950/5 flex items-center justify-between text-sm font-semibold text-zinc-900 group-hover:border-red-600/30 group-focus-within:bg-white group-focus-within:border-red-600/30 transition-all duration-200 shadow-dash-card focus-within:ring-4 focus-within:ring-red-600/5">
                     <span>{formatDateTime(formData.startDate)}</span>
-                    <Calendar className="w-3.5 h-3.5 text-zinc-400" />
+                    <Calendar className="w-4 h-4 text-red-400" />
                   </div>
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Kết thúc lúc</label>
+                <label className="text-sm font-medium text-zinc-500 ml-1">Kết thúc lúc</label>
                 <div className="relative group">
                   <input 
                     type="datetime-local"
                     value={formData.endDate}
                     onChange={e => setFormData({ ...formData, endDate: e.target.value })}
-                    className="absolute inset-0 opacity-0 z-10 cursor-pointer w-full"
+                    onClick={(e) => (e.currentTarget as HTMLInputElement & { showPicker?: () => void }).showPicker?.()}
+                    className="absolute inset-0 opacity-0 z-20 cursor-pointer w-full h-full [color-scheme:light] accent-red-600"
                   />
-                  <div className="h-11 px-4 rounded-xl bg-zinc-50/50 border border-zinc-100 flex items-center justify-between text-xs font-bold text-zinc-900 group-hover:border-red-600/30 group-focus-within:border-red-600/30 transition-all">
+                  <div className="h-12 px-4 rounded-lg bg-zinc-50/50 border border-zinc-950/5 flex items-center justify-between text-sm font-semibold text-zinc-900 group-hover:border-red-600/30 group-focus-within:bg-white group-focus-within:border-red-600/30 transition-all duration-200 shadow-dash-card focus-within:ring-4 focus-within:ring-red-600/5">
                     <span>{formatDateTime(formData.endDate)}</span>
-                    <Calendar className="w-3.5 h-3.5 text-zinc-400" />
+                    <Calendar className="w-4 h-4 text-red-400" />
                   </div>
                 </div>
-                {errors.endDate && <p className="text-[9px] font-bold text-red-600 ml-1 uppercase">{errors.endDate}</p>}
+                {errors.endDate && <p className="text-[11px] font-medium text-red-600 ml-1">{errors.endDate}</p>}
               </div>
             </div>
           </div>
 
           {/* Note Box */}
-          <div className="mt-4 p-5 rounded-2xl bg-zinc-50 border border-zinc-100">
+          <div className="mt-4 p-5 rounded-2xl bg-white border border-zinc-100 shadow-sm">
             <div className="flex gap-3">
-              <div className="w-6 h-6 rounded-full bg-zinc-950 flex items-center justify-center shrink-0">
+              <div className="w-6 h-6 rounded-full bg-red-600 flex items-center justify-center shrink-0 shadow-lg shadow-red-100">
                 <Info className="w-3 h-3 text-white" />
               </div>
               <div className="space-y-0.5">
-                <h4 className="text-[9px] font-black uppercase text-zinc-950 tracking-wider">Trạng thái phát hành</h4>
-                <p className="text-[9px] font-medium text-zinc-500 leading-relaxed uppercase">
-                  Voucher mới tạo sẽ ở trạng thái <span className="font-black text-zinc-950 underline underline-offset-2">NHÁP</span>. Bạn cần kích hoạt thủ công để bắt đầu áp dụng.
+                <h4 className="text-xs font-bold text-zinc-950 tracking-tight">Trạng thái phát hành</h4>
+                <p className="text-[11px] font-medium text-zinc-500 leading-relaxed">
+                  Voucher mới tạo sẽ ở trạng thái <span className="font-bold text-red-600 underline underline-offset-2">Nháp</span>. Bạn cần kích hoạt thủ công để bắt đầu áp dụng.
                 </p>
               </div>
             </div>

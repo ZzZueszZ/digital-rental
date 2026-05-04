@@ -25,7 +25,7 @@ export function AdminFormDialog({
   open,
   onOpenChange,
   icon: Icon,
-  iconClassName = "bg-zinc-950 text-white", // Default to black for general things, can override with red-600
+  iconClassName = "bg-red-600 text-white", // Default to brand red
   title,
   description,
   children,
@@ -50,7 +50,7 @@ export function AdminFormDialog({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
         <div 
           className={cn(
-            "relative w-full bg-white rounded-2xl shadow-[0_32px_80px_rgba(0,0,0,0.15)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300",
+            "relative w-full bg-white rounded-2xl shadow-dash-overlay overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 border border-zinc-100",
             maxWidth
           )}
         >
@@ -101,7 +101,7 @@ export function AdminFormDialog({
               <Button
                 type="submit"
                 disabled={isPending}
-                className="h-10 px-6 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold text-sm transition-all duration-300"
+                className="h-10 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-all duration-300 shadow-md shadow-red-100"
               >
                 {isPending ? (
                   <>

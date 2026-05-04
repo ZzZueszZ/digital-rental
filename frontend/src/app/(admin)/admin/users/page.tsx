@@ -254,8 +254,8 @@ export default function UsersAdminPage() {
                       className={cn(
                         "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150",
                         viewMode === mode
-                          ? "bg-zinc-950 text-white shadow-sm"
-                          : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50",
+                          ? "bg-red-600 text-white shadow-md shadow-red-100"
+                          : "text-zinc-500 hover:text-red-600 hover:bg-zinc-50",
                       )}
                     >
                       {mode === "ACTIVE" ? "Hoạt động" : "Thùng rác"}
@@ -280,7 +280,7 @@ export default function UsersAdminPage() {
               </div>
               <Button
                 onClick={() => setCreateDialogOpen(true)}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-150 font-semibold text-[14px] flex items-center gap-2 shadow-sm whitespace-nowrap"
+                className="h-10 px-5 rounded-xl bg-red-600 text-white hover:bg-red-700 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-red-100 whitespace-nowrap active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 Thêm thành viên
@@ -291,7 +291,7 @@ export default function UsersAdminPage() {
 
         {/* ── BULK ACTION TOOLBAR ─────────────────────────────────── */}
         {someSelected && (
-          <div className="px-6 py-3 bg-zinc-950 flex items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-200">
+          <div className="px-6 py-3 bg-red-600 flex items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-200 shadow-lg shadow-red-100">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSelectedIds(new Set())}
@@ -443,7 +443,7 @@ export default function UsersAdminPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         align="end"
-                        className="w-52 p-1.5 rounded-xl border-zinc-100 shadow-lg bg-white"
+                        className="w-52 p-1.5 rounded-xl border border-zinc-100 shadow-dash-overlay bg-white"
                       >
                         <DropdownMenuGroup>
                           <DropdownMenuLabel className="text-xs font-semibold text-zinc-400 px-3 py-1.5">

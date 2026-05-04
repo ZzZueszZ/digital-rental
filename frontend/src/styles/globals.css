@@ -37,7 +37,9 @@
   --spacing-dash-card-p: 1rem; /* 16px */
   --spacing-dash-card-p-lg: 1.25rem; /* 20px */
   --radius-dash-card: 12px;
-  --shadow-dash-card: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-dash-card: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-dash-hover: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-dash-overlay: 0 8px 24px rgba(0, 0, 0, 0.08);
   
   /* Sidebar/Navbar Dimensions */
   --dash-sidebar-w: 240px;
@@ -52,7 +54,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.6 0.2 25);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -149,7 +151,7 @@
   }
 
   .admin-sidebar-item.active {
-    @apply bg-zinc-950 text-white shadow-lg shadow-zinc-200;
+    @apply bg-red-600 text-white shadow-lg shadow-red-100;
   }
 
   .admin-navbar {
@@ -162,8 +164,13 @@
   }
 
   .admin-card {
-    @apply bg-white border border-zinc-100 rounded-xl p-4 transition-all hover:shadow-dash-card;
+    @apply bg-white border border-zinc-100 rounded-xl p-4 transition-all duration-200 ease-in-out;
     box-shadow: var(--shadow-dash-card);
+  }
+
+  .admin-card:hover {
+    @apply -translate-y-0.5 border-zinc-200;
+    box-shadow: var(--shadow-dash-hover);
   }
 
   .admin-card-header {

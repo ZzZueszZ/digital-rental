@@ -174,7 +174,7 @@ export function ProductDialog({
       open={open}
       onOpenChange={onOpenChange}
       icon={Package}
-      iconClassName="bg-zinc-950 text-white"
+      iconClassName="bg-red-600 text-white shadow-lg shadow-red-100"
       title={isUpdate ? "Cập nhật thông tin" : "Thêm sản phẩm mới"}
       description={isUpdate ? "Chỉnh sửa thông tin cơ bản của thiết bị" : "Khai báo thiết bị nhiếp ảnh mới vào kho"}
       onSubmit={handleSubmit}
@@ -208,7 +208,7 @@ export function ProductDialog({
               </>
             ) : (
               <div className="text-center p-4">
-                <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center mx-auto mb-2 text-zinc-400 group-hover:text-zinc-950 transition-colors">
+                <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center mx-auto mb-2 text-zinc-400 group-hover:text-red-600 transition-colors border border-zinc-100">
                   <Upload className="w-5 h-5" />
                 </div>
                 <span className="text-xs font-bold text-zinc-500 block">Tải ảnh lên</span>
@@ -237,8 +237,8 @@ export function ProductDialog({
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="Sony Alpha A7IV Body..."
               className={cn(
-                "h-10 rounded-xl bg-zinc-50 text-sm font-medium text-zinc-900",
-                errors.name ? "border-red-400 focus:ring-red-400/20" : "border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+                "h-10 rounded-xl bg-white text-sm font-semibold text-zinc-900 shadow-sm transition-all",
+                errors.name ? "border-red-400 focus:ring-red-400/20" : "border-zinc-200 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5"
               )}
             />
             {errors.name && <p className="text-[11px] font-medium text-red-500">{errors.name}</p>}
@@ -253,8 +253,8 @@ export function ProductDialog({
                 value={formData.categoryId || ""}
                 onChange={(e) => setFormData({ ...formData, categoryId: Number(e.target.value) })}
                 className={cn(
-                  "flex h-10 w-full rounded-xl border bg-zinc-50 px-3 py-2 text-sm font-medium focus-visible:outline-none transition-colors",
-                  errors.categoryId ? "border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-500/20" : "border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+                  "flex h-10 w-full rounded-xl border bg-white px-3 py-2 text-sm font-semibold text-zinc-900 focus-visible:outline-none transition-all shadow-sm",
+                  errors.categoryId ? "border-red-400 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5" : "border-zinc-200 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5"
                 )}
               >
                 <option value="" disabled>Chọn danh mục</option>
@@ -273,7 +273,7 @@ export function ProductDialog({
                 value={formData.brand}
                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                 placeholder="Sony, Canon, Nikon..."
-                className="h-10 rounded-xl bg-zinc-50 text-sm font-medium text-zinc-900 border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+                className="h-10 rounded-xl bg-white text-sm font-semibold text-zinc-900 border-zinc-200 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 transition-all shadow-sm"
               />
             </div>
           </div>
@@ -286,7 +286,7 @@ export function ProductDialog({
                     type="checkbox" 
                     checked={formData.isForRent}
                     onChange={(e) => setFormData({ ...formData, isForRent: e.target.checked })}
-                    className="w-4 h-4 rounded text-red-600 focus:ring-red-600/20 cursor-pointer"
+                    className="w-4 h-4 cursor-pointer"
                   />
                   <span className="text-xs font-black uppercase text-zinc-700 tracking-wider group-hover:text-zinc-950">Cho thuê</span>
                 </label>
@@ -298,8 +298,8 @@ export function ProductDialog({
                     onChange={(e) => setFormData({ ...formData, rentPricePerDay: Number(e.target.value) })}
                     placeholder="Giá/Ngày"
                     className={cn(
-                      "h-10 rounded-xl bg-zinc-50 text-sm font-medium text-zinc-900 pr-8 disabled:opacity-50",
-                      errors.rentPricePerDay ? "border-red-400" : "border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+                      "h-10 rounded-xl bg-white text-sm font-semibold text-zinc-900 pr-8 disabled:bg-white/40 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all shadow-sm",
+                      errors.rentPricePerDay ? "border-red-400" : "border-zinc-200 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5"
                     )}
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-zinc-400">₫</span>
@@ -313,7 +313,7 @@ export function ProductDialog({
                     type="checkbox" 
                     checked={formData.isForSale}
                     onChange={(e) => setFormData({ ...formData, isForSale: e.target.checked })}
-                    className="w-4 h-4 rounded text-red-600 focus:ring-red-600/20 cursor-pointer"
+                    className="w-4 h-4 cursor-pointer"
                   />
                   <span className="text-xs font-black uppercase text-zinc-700 tracking-wider group-hover:text-zinc-950">Bán</span>
                 </label>
@@ -325,8 +325,8 @@ export function ProductDialog({
                     onChange={(e) => setFormData({ ...formData, salePrice: Number(e.target.value) })}
                     placeholder="Giá Bán"
                     className={cn(
-                      "h-10 rounded-xl bg-zinc-50 text-sm font-medium text-zinc-900 pr-8 disabled:opacity-50",
-                      errors.salePrice ? "border-red-400" : "border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+                      "h-10 rounded-xl bg-white text-sm font-semibold text-zinc-900 pr-8 disabled:bg-white/40 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all shadow-sm",
+                      errors.salePrice ? "border-red-400" : "border-zinc-200 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5"
                     )}
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-zinc-400">₫</span>
@@ -350,13 +350,13 @@ export function ProductDialog({
               placeholder="VD: Cảm biến"
               value={spec.specKey}
               onChange={(e) => updateSpecification(index, "specKey", e.target.value)}
-              className="h-10 rounded-xl bg-zinc-50 text-sm font-medium text-zinc-900 border-zinc-200 focus:border-red-500/40"
+              className="h-10 rounded-xl bg-white text-sm font-semibold text-zinc-900 border-zinc-200 focus:border-red-600/30 transition-all shadow-sm"
             />
             <Input
               placeholder="VD: Full-frame CMOS 33MP"
               value={spec.specValue}
               onChange={(e) => updateSpecification(index, "specValue", e.target.value)}
-              className="h-10 rounded-xl bg-zinc-50 text-sm font-medium text-zinc-900 border-zinc-200 focus:border-red-500/40"
+              className="h-10 rounded-xl bg-white text-sm font-semibold text-zinc-900 border-zinc-200 focus:border-red-600/30 transition-all shadow-sm"
             />
             <button
               type="button"
@@ -384,7 +384,7 @@ export function ProductDialog({
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Mô tả về tình trạng, tính năng nổi bật..."
-          className="flex min-h-[100px] w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm font-medium text-zinc-900 ring-offset-white placeholder:text-zinc-400 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20 focus-visible:outline-none transition-all resize-none"
+          className="flex min-h-[100px] w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-900 ring-offset-white placeholder:text-zinc-400 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all resize-none shadow-sm"
         />
       </div>
 

@@ -115,6 +115,25 @@
     transition: background-color 5000s ease-in-out 0s;
   }
 
+  /* Admin Checkbox Standardization */
+  input[type="checkbox"] {
+    @apply appearance-none w-4 h-4 rounded border border-zinc-300 bg-white cursor-pointer transition-all relative shrink-0;
+  }
+
+  input[type="checkbox"]:checked {
+    @apply bg-red-600 border-red-600;
+  }
+
+  input[type="checkbox"]:checked::after {
+    content: '';
+    @apply absolute left-[50%] top-[45%] -translate-x-1/2 -translate-y-1/2 w-[8px] h-[8px] bg-white;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+
+  input[type="checkbox"]:focus-visible {
+    @apply ring-2 ring-red-600/20 ring-offset-2;
+  }
+
   /* Premium Typography Scale */
   h1 {
     @apply font-bold tracking-tighter;

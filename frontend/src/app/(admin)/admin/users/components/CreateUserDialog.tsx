@@ -105,7 +105,7 @@ export function CreateUserDialog({
             onChange={(e) =>
               setForm((p) => ({ ...p, lastName: e.target.value }))
             }
-            className="h-10 rounded-lg border-zinc-200 bg-zinc-50 text-sm font-medium text-zinc-900 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+            className="h-10 rounded-lg border-zinc-200 bg-white text-sm font-medium text-zinc-900 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
           />
         </div>
         <div>
@@ -118,7 +118,7 @@ export function CreateUserDialog({
             onChange={(e) =>
               setForm((p) => ({ ...p, firstName: e.target.value }))
             }
-            className="h-10 rounded-lg border-zinc-200 bg-zinc-50 text-sm font-medium text-zinc-900 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+            className="h-10 rounded-lg border-zinc-200 bg-white text-sm font-medium text-zinc-900 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
           />
         </div>
       </div>
@@ -136,7 +136,7 @@ export function CreateUserDialog({
             setErrors((p) => ({ ...p, email: "" }));
           }}
           className={cn(
-            "h-10 rounded-lg bg-zinc-50 text-sm font-medium text-zinc-900",
+            "h-10 rounded-lg bg-white text-sm font-medium text-zinc-900",
             errors.email
               ? "border-red-400 focus:ring-red-400/20"
               : "border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
@@ -159,7 +159,7 @@ export function CreateUserDialog({
           onChange={(e) =>
             setForm((p) => ({ ...p, phone: e.target.value }))
           }
-          className="h-10 rounded-lg border-zinc-200 bg-zinc-50 text-sm font-medium text-zinc-900 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+          className="h-10 rounded-lg border-zinc-200 bg-white text-sm font-medium text-zinc-900 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
         />
       </div>
 
@@ -177,7 +177,7 @@ export function CreateUserDialog({
               setErrors((p) => ({ ...p, password: "" }));
             }}
             className={cn(
-              "h-10 rounded-lg bg-zinc-50 text-sm font-medium text-zinc-900 pr-10",
+              "h-10 rounded-lg bg-white text-sm font-medium text-zinc-900 pr-10",
               errors.password
                 ? "border-red-400 focus:ring-red-400/20"
                 : "border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"

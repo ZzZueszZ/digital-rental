@@ -105,6 +105,16 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Force white background for autofilled inputs */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    -webkit-text-fill-color: #09090b !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
   /* Premium Typography Scale */
   h1 {
     @apply font-bold tracking-tighter;

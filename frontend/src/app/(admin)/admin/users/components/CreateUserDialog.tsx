@@ -86,9 +86,9 @@ export function CreateUserDialog({
       open={open}
       onOpenChange={onOpenChange}
       icon={UserPlus}
-      iconClassName="bg-gradient-to-br from-red-500 to-rose-600 text-white"
+      iconClassName="bg-red-600 text-white shadow-lg shadow-red-100"
       title="Tạo tài khoản mới"
-      description="Email kích hoạt sẽ được gửi tự động"
+      description="Thiết lập tài khoản người dùng hoặc nhân viên mới cho hệ thống"
       onSubmit={handleSubmit}
       isPending={createMutation.isPending}
       submitText="Tạo tài khoản"
@@ -96,7 +96,7 @@ export function CreateUserDialog({
     >
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-1.5 block">
+          <label className="text-sm font-medium text-zinc-500 ml-1 mb-1.5 block">
             Họ
           </label>
           <Input
@@ -105,11 +105,11 @@ export function CreateUserDialog({
             onChange={(e) =>
               setForm((p) => ({ ...p, lastName: e.target.value }))
             }
-            className="h-10 rounded-lg border-zinc-200 bg-white text-sm font-medium text-zinc-900 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+            className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
           />
         </div>
         <div>
-          <label className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-1.5 block">
+          <label className="text-sm font-medium text-zinc-500 ml-1 mb-1.5 block">
             Tên
           </label>
           <Input
@@ -118,13 +118,13 @@ export function CreateUserDialog({
             onChange={(e) =>
               setForm((p) => ({ ...p, firstName: e.target.value }))
             }
-            className="h-10 rounded-lg border-zinc-200 bg-white text-sm font-medium text-zinc-900 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+            className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
           />
         </div>
       </div>
 
       <div>
-        <label className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-1.5 block">
+        <label className="text-sm font-medium text-zinc-500 ml-1 mb-1.5 block">
           Email *
         </label>
         <Input
@@ -136,21 +136,19 @@ export function CreateUserDialog({
             setErrors((p) => ({ ...p, email: "" }));
           }}
           className={cn(
-            "h-10 rounded-lg bg-white text-sm font-medium text-zinc-900",
-            errors.email
-              ? "border-red-400 focus:ring-red-400/20"
-              : "border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+            "h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
+            errors.email && "border-red-400 focus:ring-red-400/20"
           )}
         />
         {errors.email && (
-          <p className="text-[11px] text-red-500 font-medium mt-1">
+          <p className="text-[11px] text-red-600 font-medium mt-1.5 ml-1">
             {errors.email}
           </p>
         )}
       </div>
 
       <div>
-        <label className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-1.5 block">
+        <label className="text-sm font-medium text-zinc-500 ml-1 mb-1.5 block">
           Số điện thoại
         </label>
         <Input
@@ -159,12 +157,12 @@ export function CreateUserDialog({
           onChange={(e) =>
             setForm((p) => ({ ...p, phone: e.target.value }))
           }
-          className="h-10 rounded-lg border-zinc-200 bg-white text-sm font-medium text-zinc-900 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+          className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
         />
       </div>
 
       <div>
-        <label className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-1.5 block">
+        <label className="text-sm font-medium text-zinc-500 ml-1 mb-1.5 block">
           Mật khẩu *
         </label>
         <div className="relative">
@@ -177,10 +175,8 @@ export function CreateUserDialog({
               setErrors((p) => ({ ...p, password: "" }));
             }}
             className={cn(
-              "h-10 rounded-lg bg-white text-sm font-medium text-zinc-900 pr-10",
-              errors.password
-                ? "border-red-400 focus:ring-red-400/20"
-                : "border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+              "h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 pr-10",
+              errors.password && "border-red-400 focus:ring-red-400/20"
             )}
           />
           <button
@@ -196,14 +192,14 @@ export function CreateUserDialog({
           </button>
         </div>
         {errors.password && (
-          <p className="text-[11px] text-red-500 font-medium mt-1">
+          <p className="text-[11px] text-red-600 font-medium mt-1.5 ml-1">
             {errors.password}
           </p>
         )}
       </div>
 
       <div>
-        <label className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-2 block">
+        <label className="text-sm font-medium text-zinc-500 ml-1 mb-2.5 block">
           Phân quyền
         </label>
         <div className="flex flex-wrap gap-2">
@@ -215,10 +211,10 @@ export function CreateUserDialog({
                 type="button"
                 onClick={() => toggleRole(role.value)}
                 className={cn(
-                  "px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-widest border transition-all duration-200",
+                  "px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 border shadow-dash-card",
                   selected
-                    ? "bg-red-600 text-white border-red-600 shadow-md shadow-red-100"
-                    : "bg-zinc-50 text-zinc-500 border-zinc-200 hover:border-zinc-400"
+                    ? "bg-red-600 text-white border-red-600 shadow-lg shadow-red-100"
+                    : "bg-zinc-50/50 text-zinc-500 border-zinc-950/5 hover:border-zinc-300 hover:text-zinc-900"
                 )}
               >
                 {role.label}

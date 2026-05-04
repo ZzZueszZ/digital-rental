@@ -67,7 +67,7 @@ export function CategoryDialog({
       open={open}
       onOpenChange={onOpenChange}
       icon={Tag}
-      iconClassName="bg-zinc-950 text-white"
+      iconClassName="bg-zinc-950 text-white shadow-lg shadow-zinc-200"
       title={category ? "Cập nhật danh mục" : "Tạo danh mục mới"}
       description={category ? "Chỉnh sửa thông tin danh mục sản phẩm" : "Thêm một danh mục sản phẩm mới vào hệ thống"}
       onSubmit={handleSubmit}
@@ -76,51 +76,47 @@ export function CategoryDialog({
       submitIcon={Save}
     >
       <div className="space-y-2">
-        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+        <label className="text-sm font-medium text-zinc-500 ml-1">
           Mã danh mục
-        </Label>
+        </label>
         <Input
           value={formData.code}
           onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
           disabled={!!category}
           placeholder="LAPTOP, CAMERA..."
           className={cn(
-            "h-10 rounded-xl bg-zinc-50 text-sm font-medium text-zinc-900 uppercase transition-all",
-            errors.code
-              ? "border-red-400 focus:ring-red-400/20"
-              : "border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+            "h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] uppercase shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
+            errors.code && "border-red-400 focus:ring-red-400/20"
           )}
         />
-        {errors.code && <p className="text-[11px] font-medium text-red-500 mt-1">{errors.code}</p>}
+        {errors.code && <p className="text-[11px] font-medium text-red-600 mt-1.5 ml-1">{errors.code}</p>}
       </div>
 
       <div className="space-y-2">
-        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+        <label className="text-sm font-medium text-zinc-500 ml-1">
           Tên danh mục
-        </Label>
+        </label>
         <Input
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           placeholder="Máy tính xách tay, Máy ảnh..."
           className={cn(
-            "h-10 rounded-xl bg-zinc-50 text-sm font-medium text-zinc-900 transition-all",
-            errors.name
-              ? "border-red-400 focus:ring-red-400/20"
-              : "border-zinc-200 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20"
+            "h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
+            errors.name && "border-red-400 focus:ring-red-400/20"
           )}
         />
-        {errors.name && <p className="text-[11px] font-medium text-red-500 mt-1">{errors.name}</p>}
+        {errors.name && <p className="text-[11px] font-medium text-red-600 mt-1.5 ml-1">{errors.name}</p>}
       </div>
 
       <div className="space-y-2">
-        <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+        <label className="text-sm font-medium text-zinc-500 ml-1">
           Mô tả
-        </Label>
+        </label>
         <textarea
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Thông tin thêm về danh mục này..."
-          className="flex min-h-[100px] w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm font-medium text-zinc-900 ring-offset-white placeholder:text-zinc-400 focus:border-red-500/40 focus:ring-1 focus:ring-red-500/20 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 transition-all resize-none"
+          className="flex min-h-[120px] w-full rounded-lg border border-zinc-950/5 bg-zinc-50/50 px-4 py-3 text-[15px] font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none shadow-dash-card leading-relaxed"
         />
       </div>
     </AdminFormDialog>

@@ -847,7 +847,7 @@ function OverviewSection({
           </div>
         </div>
 
-        <div className="bg-white border border-zinc-100 rounded-xl p-8 text-zinc-950 shadow-xl shadow-zinc-200/50 relative overflow-hidden group hover:scale-[1.01] transition-all">
+        <div className="bg-white border border-zinc-100 rounded-xl p-8 text-zinc-950 shadow-[0_4px_20px_rgba(0,0,0,0.05)] relative overflow-hidden group hover:scale-[1.01] transition-all">
           <div className="relative z-10">
             <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mb-8 border border-amber-100 shadow-sm">
               <Star className="w-8 h-8 text-amber-500 fill-amber-500" />
@@ -888,7 +888,7 @@ function OverviewCard({
   return (
     <button
       onClick={onClick}
-      className="group bg-white border border-zinc-100 rounded-xl p-6 shadow-sm hover:border-red-600/30 transition-all text-left flex flex-col justify-between h-44 active:scale-95"
+      className="group bg-white border border-zinc-100 rounded-xl p-6 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all text-left flex flex-col justify-between h-44 active:scale-95"
     >
       <div
         className={`w-14 h-14 rounded-2xl ${color} text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform`}
@@ -937,7 +937,7 @@ function InfoSection({
   };
 
   return (
-    <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-sm animate-in fade-in slide-in-from-right-4 duration-500">
+    <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-[0_2px_6px_rgba(0,0,0,0.04)] animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12">
         <div>
           <h1 className="text-3xl font-black text-zinc-950 tracking-tight mb-2">
@@ -1559,7 +1559,7 @@ function OrdersSection() {
           {orders.map((order) => (
             <div 
               key={order.id}
-              className="bg-white border border-zinc-100 rounded-3xl overflow-hidden hover:shadow-xl hover:shadow-zinc-200/40 transition-all group"
+              className="bg-white border border-zinc-100 rounded-xl overflow-hidden shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-300 group"
             >
               {/* Card Header - High Density */}
               <div className="px-5 py-3 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/20">
@@ -1575,7 +1575,7 @@ function OrdersSection() {
                   </div>
                 </div>
                 <div className={cn(
-                  "px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest border",
+                  "px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest border shadow-none",
                   getStatusColor(order.status)
                 )}>
                   {getStatusLabel(order.status)}
@@ -1615,21 +1615,21 @@ function OrdersSection() {
                 <div className="flex gap-2">
                   <Button 
                     variant="ghost" 
-                    className="h-9 px-4 rounded-lg border border-zinc-100 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-950 hover:bg-zinc-50 transition-all"
+                    className="h-9 px-4 rounded-lg border border-zinc-100 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-950 hover:bg-zinc-50 transition-all shadow-none"
                     onClick={() => toast.info("Tính năng xem chi tiết đang phát triển")}
                   >
                     Chi tiết
                   </Button>
                   {order.status === OrderStatus.DELIVERED && (
                     <Button 
-                      className="h-9 px-4 rounded-lg bg-zinc-950 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-red-600 border-none shadow-sm transition-all"
+                      className="h-9 px-4 rounded-lg bg-zinc-950 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-red-600 border-none shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all"
                     >
                       Đã nhận hàng
                     </Button>
                   )}
                   {(order.status === OrderStatus.COMPLETED || order.status === OrderStatus.DELIVERED) && (
                     <Button 
-                      className="h-9 px-4 rounded-lg bg-zinc-950 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-red-600 border-none shadow-sm transition-all"
+                      className="h-9 px-4 rounded-lg bg-zinc-950 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-red-600 border-none shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all"
                     >
                       Đánh giá
                     </Button>

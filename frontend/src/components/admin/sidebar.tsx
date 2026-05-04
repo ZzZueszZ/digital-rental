@@ -16,6 +16,7 @@ import {
   X,
   CreditCard,
   MapPin,
+  Camera,
 } from "lucide-react";
 import { useAuthSession } from "@/components/auth/Guards";
 import { Role } from "@/constants/enum/role";
@@ -100,19 +101,19 @@ export function AdminSidebar({
         )}
       >
         <div className="flex h-[var(--dash-navbar-h)] items-center px-6 border-b border-zinc-50 mb-2">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-600/10 transition-transform duration-300 group-hover:scale-105">
-              <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          <Link href="/" className="flex items-center gap-2.5 group transition-all duration-300">
+            <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-100 group-hover:rotate-12 transition-transform">
+              <Camera className="w-4 h-4 text-white" />
             </div>
-            <span className="text-lg font-bold tracking-tight text-zinc-950 uppercase">
-              Lenshub <span className="text-red-600">Pro</span>
+            <span className="text-lg font-black tracking-tighter text-zinc-950 group-hover:text-red-600 transition-colors">
+              LENSHUB<span className="text-red-600">.</span>
             </span>
           </Link>
         </div>
 
         <nav className="flex-1 space-y-1 p-4 overflow-y-auto custom-scrollbar">
-          <div className="px-3 mb-4">
-            <p className="text-[13px] font-medium text-zinc-300">Menu chính</p>
+          <div className="mb-5 ml-1">
+            <p className="text-sm font-bold text-zinc-400">Menu chính</p>
           </div>
           {navItems.map((item) => {
             const canAccess = user?.roles?.some((r) =>
@@ -130,10 +131,10 @@ export function AdminSidebar({
                 href={item.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  "group flex items-center gap-3 rounded-xl px-4 h-11 text-[15px] font-medium transition-all duration-150 relative overflow-hidden",
+                  "group flex items-center gap-3.5 rounded-xl px-4 h-12 text-[15px] font-medium transition-all duration-300 relative overflow-hidden",
                   isActive
                     ? "bg-zinc-950 text-white shadow-lg shadow-zinc-200"
-                    : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50",
+                    : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950",
                 )}
               >
                 <item.icon
@@ -141,26 +142,23 @@ export function AdminSidebar({
                     "h-4 w-4 transition-all duration-300",
                     isActive
                       ? "text-red-500"
-                      : "group-hover:text-red-600",
+                      : "text-zinc-400 group-hover:text-red-600",
                   )}
                 />
                 <span className="truncate">{item.label}</span>
-                {isActive && (
-                  <div className="absolute right-4 w-1 h-4 bg-red-600 rounded-full" />
-                )}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-zinc-50">
-           <button 
-             onClick={() => logout()}
-             className="w-full flex items-center gap-3 h-11 px-4 rounded-xl text-[13px] font-bold text-red-600 hover:bg-red-50 transition-all group"
-           >
-              <LogOut className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-              <span>Đăng xuất</span>
-           </button>
+        <div className="p-6 border-t border-zinc-50 bg-zinc-50/30">
+          <button
+            onClick={() => logout()}
+            className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-zinc-500 hover:text-red-600 hover:bg-red-50 transition-all font-bold text-xs"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Đăng xuất</span>
+          </button>
         </div>
       </aside>
     </>

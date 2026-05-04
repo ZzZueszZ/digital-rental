@@ -54,27 +54,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <Menu className="h-5 w-5 text-zinc-600" />
                 </Button>
                 
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[22px] font-semibold tracking-tight text-zinc-950 truncate max-w-[140px] sm:max-w-none leading-none">{pageTitle.title}</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0" />
-                  </div>
-                  <span className="text-[13px] font-medium text-zinc-400 mt-1 tracking-tight">{pageTitle.subtitle}</span>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950 leading-tight">
+                    {pageTitle.title}
+                  </h1>
+                  <div className="w-px h-4 bg-zinc-200" />
+                  <span className="text-xs font-semibold text-zinc-400 tracking-tight">
+                    {pageTitle.subtitle}
+                  </span>
                 </div>
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="hidden xl:flex relative w-64 mr-4">
+                <div className="hidden xl:flex relative w-64 mr-2">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400" />
                   <Input 
                     placeholder="Tìm kiếm nhanh..." 
-                    className="pl-9 h-9 text-xs rounded-lg border-zinc-100 bg-zinc-50/50"
+                    className="pl-9 h-11 text-xs rounded-xl border-zinc-100 bg-zinc-50/50 focus:bg-white transition-all"
                   />
                 </div>
 
-                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-lg hover:bg-zinc-100 relative group hidden md:flex border border-transparent hover:border-zinc-200 transition-all">
-                  <Bell className="h-4 w-4 text-zinc-500 group-hover:text-amber-500 transition-colors" />
-                  <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-600 rounded-full border-2 border-white" />
+                <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl hover:bg-zinc-100 relative group hidden md:flex">
+                  <Bell className="h-5 w-5 text-zinc-500 group-hover:text-red-600 transition-colors" />
+                  <span className="absolute top-3.5 right-3.5 w-2 h-2 bg-red-600 rounded-full border-2 border-white" />
                 </Button>
                 
                 <div className="h-6 w-px bg-zinc-100 mx-2 hidden sm:block" />
@@ -83,22 +85,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <button 
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className={cn(
-                      "flex items-center gap-3 p-1 rounded-xl transition-all duration-300 border border-transparent",
-                      isUserMenuOpen ? "bg-zinc-50 border-zinc-200" : "hover:bg-zinc-50 hover:border-zinc-100"
+                      "flex items-center gap-3 p-1.5 pr-4 rounded-2xl transition-all duration-300 border border-transparent",
+                      isUserMenuOpen ? "bg-zinc-100 border-zinc-200" : "hover:bg-zinc-100 hover:border-zinc-200"
                     )}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-zinc-950 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                    <div className="w-10 h-10 rounded-xl bg-zinc-950 text-white flex items-center justify-center font-black shadow-lg">
                       {user?.email?.charAt(0).toUpperCase()}
                     </div>
                     <div className="hidden sm:flex flex-col items-start text-left">
-                    <span className="text-[14px] font-semibold text-zinc-950 leading-none mb-1">
+                      <span className="text-xs font-black text-zinc-950 tracking-tight leading-none mb-1">
                         {user?.email?.split('@')[0]}
                       </span>
-                      <span className="text-[12px] text-zinc-400 font-medium leading-none">
+                      <span className="text-[11px] text-zinc-400 font-bold leading-none">
                         {user?.roles?.[0] || 'Staff'}
                       </span>
                     </div>
-                    <ChevronDown className={cn("w-3 h-3 text-zinc-400 transition-transform duration-300", isUserMenuOpen && "rotate-180")} />
+                    <ChevronDown className={cn("w-4 h-4 text-zinc-400 transition-transform duration-300", isUserMenuOpen && "rotate-180")} />
                   </button>
 
                   {isUserMenuOpen && (

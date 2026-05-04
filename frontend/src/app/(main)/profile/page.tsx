@@ -993,7 +993,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, firstName: e.target.value })
               }
-              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
+              className="h-11 bg-white border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
             />
           </div>
           <div className="space-y-2">
@@ -1005,7 +1005,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, lastName: e.target.value })
               }
-              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
+              className="h-11 bg-white border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
             />
           </div>
           <div className="space-y-2">
@@ -1021,17 +1021,17 @@ function InfoSection({
                 })
               }
             >
-              <SelectTrigger className="w-full h-11! bg-zinc-50/30 border-zinc-100 rounded-xl font-bold px-5 focus:border-red-600/30 transition-all">
+              <SelectTrigger className="w-full h-11! !bg-white border-zinc-100 rounded-xl font-bold px-5 focus:ring-red-600/5 focus:border-red-600/30 transition-all !text-zinc-950 shadow-none">
                 <SelectValue placeholder="Chọn giới tính" />
               </SelectTrigger>
-              <SelectContent className="rounded-xl shadow-2xl border-zinc-100 p-1 bg-white">
-                <SelectItem value="MALE" className="font-bold py-3">
+              <SelectContent className="rounded-xl shadow-2xl border-zinc-100 p-1 bg-white z-[100]">
+                <SelectItem value="MALE" className="font-bold py-3 text-zinc-950 focus:bg-red-600 focus:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none">
                   Nam
                 </SelectItem>
-                <SelectItem value="FEMALE" className="font-bold py-3">
+                <SelectItem value="FEMALE" className="font-bold py-3 text-zinc-950 focus:bg-red-600 focus:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none">
                   Nữ
                 </SelectItem>
-                <SelectItem value="OTHER" className="font-bold py-3">
+                <SelectItem value="OTHER" className="font-bold py-3 text-zinc-950 focus:bg-red-600 focus:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none">
                   Khác
                 </SelectItem>
               </SelectContent>
@@ -1047,7 +1047,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, dateOfBirth: e.target.value })
               }
-              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
+              className="h-11 bg-white border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
             />
           </div>
           <div className="space-y-2">
@@ -1059,7 +1059,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, occupation: e.target.value })
               }
-              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
+              className="h-11 bg-white border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
             />
           </div>
           <div className="space-y-2">
@@ -1071,7 +1071,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, companyName: e.target.value })
               }
-              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
+              className="h-11 bg-white border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
             />
           </div>
         </div>
@@ -1354,15 +1354,15 @@ function AddressDialog({
                 setFormData({ ...formData, province: v as City })
               }
             >
-              <SelectTrigger className="w-full! p-5! h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:border-red-600/30 transition-all text-left">
+              <SelectTrigger className="w-full! p-5! h-11 !bg-white border-zinc-100 rounded-xl px-5 font-bold focus:border-red-600/30 transition-all text-left !text-zinc-950 shadow-none">
                 <SelectValue placeholder="Chọn Tỉnh/Thành phố" />
               </SelectTrigger>
-              <SelectContent className="rounded-xl shadow-2xl border-zinc-100 max-h-72">
+              <SelectContent className="rounded-xl shadow-2xl border-zinc-100 max-h-72 bg-white p-1">
                 {Object.entries(CITY_LABELS).map(([value, label]) => (
                   <SelectItem
                     key={value}
                     value={value}
-                    className="font-bold py-3"
+                    className="font-bold py-3 text-zinc-950 focus:bg-zinc-50 focus:text-zinc-950 data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-colors"
                   >
                     {label}
                   </SelectItem>

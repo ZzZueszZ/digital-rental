@@ -262,7 +262,11 @@ export function ProductDialog({
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay bg-white overflow-hidden">
                   {categories.map(c => (
-                    <SelectItem key={c.id} value={c.id.toString()} className="font-medium py-2.5">
+                    <SelectItem 
+                      key={c.id} 
+                      value={c.id.toString()} 
+                      className="font-medium py-2.5 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
+                    >
                       {c.name}
                     </SelectItem>
                   ))}

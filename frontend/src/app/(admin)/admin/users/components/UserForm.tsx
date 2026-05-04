@@ -263,12 +263,12 @@ export function UserForm({
                       <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-sm font-bold text-zinc-900 focus:ring-1 focus:ring-red-600">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl border-zinc-200 p-1">
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={AccountStatus.ACTIVE}>Hoạt động</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={AccountStatus.PENDING}>Chờ duyệt</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={AccountStatus.SUSPENDED}>Đình chỉ</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={AccountStatus.DISABLED}>Vô hiệu</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={AccountStatus.DELETED}>Đã xóa</SelectItem>
+                      <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
+                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors" value={AccountStatus.ACTIVE}>Hoạt động</SelectItem>
+                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors" value={AccountStatus.PENDING}>Chờ duyệt</SelectItem>
+                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors" value={AccountStatus.SUSPENDED}>Đình chỉ</SelectItem>
+                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors" value={AccountStatus.DISABLED}>Vô hiệu</SelectItem>
+                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors" value={AccountStatus.DELETED}>Đã xóa</SelectItem>
                       </SelectContent>
                     </Select>
                   ) : (
@@ -355,11 +355,11 @@ export function UserForm({
                       <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-sm font-bold text-zinc-900 focus:ring-1 focus:ring-red-600">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl border-zinc-200 p-1">
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={KycStatus.NOT_STARTED}>Chưa bắt đầu</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={KycStatus.PENDING}>Chờ duyệt</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={KycStatus.VERIFIED}>Đã xác minh</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={KycStatus.REJECTED}>Bị từ chối</SelectItem>
+                      <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
+                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors" value={KycStatus.NOT_STARTED}>Chưa bắt đầu</SelectItem>
+                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors" value={KycStatus.PENDING}>Chờ duyệt</SelectItem>
+                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors" value={KycStatus.VERIFIED}>Đã xác minh</SelectItem>
+                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors" value={KycStatus.REJECTED}>Bị từ chối</SelectItem>
                       </SelectContent>
                     </Select>
                   ) : (
@@ -407,10 +407,10 @@ export function UserForm({
                       <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-sm font-bold text-zinc-900 focus:ring-1 focus:ring-red-600">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl border-zinc-200 p-1">
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={TrustLevel.BASIC}>BASIC</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={TrustLevel.VERIFIED}>VERIFIED</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={TrustLevel.ELITE}>ELITE</SelectItem>
+                      <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
+                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors" value={TrustLevel.BASIC}>BASIC</SelectItem>
+                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors" value={TrustLevel.VERIFIED}>VERIFIED</SelectItem>
+                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors" value={TrustLevel.ELITE}>ELITE</SelectItem>
                       </SelectContent>
                     </Select>
                   ) : (

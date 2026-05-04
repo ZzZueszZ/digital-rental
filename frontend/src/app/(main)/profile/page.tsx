@@ -800,7 +800,7 @@ function OverviewSection({
       <div className="bg-white border border-zinc-100 rounded-xl p-6 md:p-8 shadow-sm relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div>
-            <h1 className="text-[40px] font-bold text-zinc-950 tracking-tight mb-4 leading-[1.1]">
+            <h1 className="text-[36px] font-bold text-zinc-950 tracking-tight mb-4 leading-[1.2]">
               Chào buổi chiều, <br className="hidden md:block" />{" "}
               {profile?.fullName || "Người dùng"}!
             </h1>
@@ -863,7 +863,7 @@ function OverviewSection({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="lg:col-span-2 bg-white border border-zinc-100 rounded-xl p-8 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-zinc-950 tracking-tight">
+            <h3 className="text-[20px] font-semibold text-zinc-950 tracking-tight">
               Hoạt động gần đây
             </h3>
             <button
@@ -932,8 +932,8 @@ function OverviewCard({
         {icon}
       </div>
       <div>
-        <p className="text-[14px] font-normal text-zinc-400 mb-1">{label}</p>
-        <p className="text-[22px] font-bold text-zinc-950 tracking-tight">
+        <p className="text-[14px] font-medium text-zinc-400 mb-1">{label}</p>
+        <p className="text-[22px] font-semibold text-zinc-950 tracking-tight">
           {value}
         </p>
       </div>
@@ -975,11 +975,11 @@ function InfoSection({
   return (
     <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-[0_2px_6px_rgba(0,0,0,0.04)] animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12">
-          <div>
-            <h1 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
-              Thông tin chi tiết
-            </h1>
-          <p className="text-[13px] text-zinc-500 font-medium">
+        <div>
+          <h1 className="text-[28px] font-semibold text-zinc-950 tracking-tight leading-tight">
+            Thông tin chi tiết
+          </h1>
+          <p className="text-sm text-zinc-500 font-medium mt-1">
             Quản lý các thiết bị nhiếp ảnh và các thiết lập bảo mật định danh
           </p>
         </div>
@@ -1021,33 +1021,33 @@ function InfoSection({
       <form onSubmit={handleUpdate} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Họ và tên đệm
-            </Label>
+            </label>
             <Input
               value={formData.firstName}
               onChange={(e) =>
                 setFormData({ ...formData, firstName: e.target.value })
               }
-              className="h-11 bg-white border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
+              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Tên
-            </Label>
+            </label>
             <Input
               value={formData.lastName}
               onChange={(e) =>
                 setFormData({ ...formData, lastName: e.target.value })
               }
-              className="h-11 bg-white border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
+              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Giới tính
-            </Label>
+            </label>
             <Select
               value={formData.gender}
               onValueChange={(v) =>
@@ -1057,25 +1057,25 @@ function InfoSection({
                 })
               }
             >
-              <SelectTrigger className="w-full h-11! !bg-white border-zinc-100 rounded-xl font-bold px-5 focus:ring-red-600/5 focus:border-red-600/30 transition-all !text-zinc-950 shadow-none">
+              <SelectTrigger className="w-full h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 !text-zinc-950 shadow-dash-card">
                 <SelectValue placeholder="Chọn giới tính" />
               </SelectTrigger>
               <SelectContent className="rounded-xl shadow-2xl border-zinc-100 p-1 bg-white z-[100]">
                 <SelectItem
                   value="MALE"
-                  className="font-bold py-3 text-zinc-950 focus:bg-red-600 focus:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
+                  className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
                 >
                   Nam
                 </SelectItem>
                 <SelectItem
                   value="FEMALE"
-                  className="font-bold py-3 text-zinc-950 focus:bg-red-600 focus:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
+                  className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
                 >
                   Nữ
                 </SelectItem>
                 <SelectItem
                   value="OTHER"
-                  className="font-bold py-3 text-zinc-950 focus:bg-red-600 focus:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
+                  className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
                 >
                   Khác
                 </SelectItem>
@@ -1083,40 +1083,40 @@ function InfoSection({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Ngày sinh nhật
-            </Label>
+            </label>
             <Input
               type="date"
               value={formData.dateOfBirth}
               onChange={(e) =>
                 setFormData({ ...formData, dateOfBirth: e.target.value })
               }
-              className="h-11 bg-white border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
+              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Lĩnh vực hoạt động
-            </Label>
+            </label>
             <Input
               value={formData.occupation}
               onChange={(e) =>
                 setFormData({ ...formData, occupation: e.target.value })
               }
-              className="h-11 bg-white border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
+              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Công ty / Studio
-            </Label>
+            </label>
             <Input
               value={formData.companyName}
               onChange={(e) =>
                 setFormData({ ...formData, companyName: e.target.value })
               }
-              className="h-11 bg-white border-zinc-100 rounded-xl focus:bg-white focus:border-red-600/30 font-bold transition-all px-5"
+              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
             />
           </div>
         </div>
@@ -1125,7 +1125,7 @@ function InfoSection({
           <Button
             type="submit"
             disabled={isUpdating}
-            className="flex-1 h-10 rounded-lg bg-red-600 text-white font-semibold text-sm shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all disabled:opacity-50"
+            className="flex-1 h-12 rounded-xl bg-zinc-950 text-white font-semibold text-sm shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50"
           >
             {isUpdating ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -1136,7 +1136,7 @@ function InfoSection({
           <Button
             type="button"
             variant="outline"
-            className="h-10 px-6 rounded-lg border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all"
+            className="h-12 px-8 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
           >
             Hủy bỏ
           </Button>
@@ -1165,7 +1165,7 @@ function AddressSection() {
     <div className="space-y-12 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-[30px] font-semibold text-zinc-950 tracking-tight mb-2">
+          <h1 className="text-[28px] font-semibold text-zinc-950 tracking-tight mb-2">
             Địa chỉ nhận hàng
           </h1>
           <p className="text-sm text-zinc-500 font-medium">
@@ -1174,7 +1174,7 @@ function AddressSection() {
         </div>
         <Button
           onClick={() => handleOpenDialog()}
-          className="h-10 px-5 rounded-lg bg-zinc-950 text-white font-semibold text-[14px] flex items-center gap-2 hover:bg-red-600 border-none transition-all shadow-lg shadow-zinc-200"
+          className="h-12 px-6 rounded-xl bg-zinc-950 text-white font-semibold text-[14px] flex items-center gap-2 hover:bg-red-600 border-none transition-all shadow-lg shadow-zinc-200 active:scale-95"
         >
           <Plus className="w-4 h-4" /> Thêm địa chỉ mới
         </Button>
@@ -1231,18 +1231,18 @@ function AddressSection() {
 
             <div className="space-y-6">
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-zinc-400 leading-none">
+                <p className="text-[13px] font-medium text-zinc-400 leading-none">
                   Thông tin liên hệ
                 </p>
-                <p className="text-lg font-bold text-zinc-950 leading-tight">
+                <p className="text-[18px] font-semibold text-zinc-950 leading-tight">
                   {addr.receiverName} • {addr.receiverPhone}
                 </p>
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-zinc-400 leading-none">
+                <p className="text-[13px] font-medium text-zinc-400 leading-none">
                   Vị trí địa lý
                 </p>
-                <p className="text-xs font-bold text-zinc-500 leading-relaxed">
+                <p className="text-[14px] font-medium text-zinc-500 leading-relaxed">
                   {addr.fullAddress}
                 </p>
               </div>
@@ -1354,33 +1354,33 @@ function AddressDialog({
       isPending={isCreating || isUpdating}
       submitText={address ? "Cập nhật ngay" : "Lưu địa chỉ"}
       submitIcon={address ? Check : Plus}
-      maxWidth="max-w-2xl"
+      maxWidth="max-w-xl"
     >
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Người nhận
-            </Label>
+            </label>
             <Input
               value={formData.receiverName}
               onChange={(e) =>
                 setFormData({ ...formData, receiverName: e.target.value })
               }
-              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="Họ và tên"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Số điện thoại
-            </Label>
+            </label>
             <Input
               value={formData.receiverPhone}
               onChange={(e) =>
                 setFormData({ ...formData, receiverPhone: e.target.value })
               }
-              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="09xx xxx xxx"
             />
           </div>
@@ -1388,16 +1388,16 @@ function AddressDialog({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Tỉnh / Thành phố
-            </Label>
+            </label>
             <Select
               value={formData.province as string}
               onValueChange={(v) =>
                 setFormData({ ...formData, province: v as City })
               }
             >
-              <SelectTrigger className="w-full! p-5! h-11 !bg-white border-zinc-100 rounded-xl px-5 font-bold focus:border-red-600/30 transition-all text-left !text-zinc-950 shadow-none">
+              <SelectTrigger className="w-full! p-5! h-12 bg-white! border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 text-left !text-zinc-950 shadow-dash-card">
                 <SelectValue placeholder="Chọn Tỉnh/Thành phố" />
               </SelectTrigger>
               <SelectContent className="rounded-xl shadow-2xl border-zinc-100 max-h-72 bg-white p-1">
@@ -1405,7 +1405,7 @@ function AddressDialog({
                   <SelectItem
                     key={value}
                     value={value}
-                    className="font-bold py-3 text-zinc-950 focus:bg-zinc-50 focus:text-zinc-950 data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-colors"
+                    className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-colors"
                   >
                     {label}
                   </SelectItem>
@@ -1414,15 +1414,15 @@ function AddressDialog({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Quận / Huyện
-            </Label>
+            </label>
             <Input
               value={formData.district}
               onChange={(e) =>
                 setFormData({ ...formData, district: e.target.value })
               }
-              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="Nhập Quận/Huyện"
             />
           </div>
@@ -1430,43 +1430,43 @@ function AddressDialog({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Phường / Xã
-            </Label>
+            </label>
             <Input
               value={formData.ward}
               onChange={(e) =>
                 setFormData({ ...formData, ward: e.target.value })
               }
-              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="Nhập Phường/Xã"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-zinc-400 ml-1">
+            <label className="text-sm font-medium text-zinc-500 ml-1">
               Địa chỉ chi tiết
-            </Label>
+            </label>
             <Input
               value={formData.detailAddress}
               onChange={(e) =>
                 setFormData({ ...formData, detailAddress: e.target.value })
               }
-              className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="Số nhà, ngõ, tên đường..."
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] font-bold text-zinc-400 ml-1">
+          <label className="text-[13px] font-medium text-zinc-400 ml-1">
             Địa chỉ đầy đủ (Tự động cập nhật)
-          </Label>
+          </label>
           <Input
             value={formData.fullAddress}
             onChange={(e) =>
               setFormData({ ...formData, fullAddress: e.target.value })
             }
-            className="h-11 bg-zinc-50/30 border-zinc-100 rounded-xl px-5 font-bold focus:bg-white focus:border-red-600/30 transition-all"
+            className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
             placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
           />
         </div>
@@ -1483,7 +1483,7 @@ function AddressDialog({
           />
           <label
             htmlFor="isDefault"
-            className="text-xs font-bold text-zinc-500 cursor-pointer"
+            className="text-sm font-medium text-zinc-500 cursor-pointer"
           >
             Đặt làm địa chỉ giao hàng mặc định
           </label>

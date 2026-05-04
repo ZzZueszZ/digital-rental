@@ -56,10 +56,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xl font-bold tracking-tight text-zinc-950 truncate max-w-[140px] sm:max-w-none leading-none">{pageTitle.title}</span>
-                    <span className="w-1 h-1 rounded-full bg-red-600 shrink-0" />
+                    <span className="text-[22px] font-semibold tracking-tight text-zinc-950 truncate max-w-[140px] sm:max-w-none leading-none">{pageTitle.title}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0" />
                   </div>
-                  <span className="text-[11px] font-bold text-zinc-400 mt-1 uppercase tracking-widest">{pageTitle.subtitle}</span>
+                  <span className="text-[13px] font-medium text-zinc-400 mt-1 tracking-tight">{pageTitle.subtitle}</span>
                 </div>
               </div>
 
@@ -91,10 +91,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       {user?.email?.charAt(0).toUpperCase()}
                     </div>
                     <div className="hidden sm:flex flex-col items-start text-left">
-                      <span className="text-xs font-bold text-zinc-950 leading-none mb-1">
+                    <span className="text-[14px] font-semibold text-zinc-950 leading-none mb-1">
                         {user?.email?.split('@')[0]}
                       </span>
-                      <span className="text-[10px] text-zinc-400 font-bold uppercase leading-none">
+                      <span className="text-[12px] text-zinc-400 font-medium leading-none">
                         {user?.roles?.[0] || 'Staff'}
                       </span>
                     </div>

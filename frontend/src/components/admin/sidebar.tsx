@@ -112,7 +112,7 @@ export function AdminSidebar({
 
         <nav className="flex-1 space-y-1 p-4 overflow-y-auto custom-scrollbar">
           <div className="px-3 mb-4">
-            <p className="text-[11px] font-bold text-zinc-300 uppercase tracking-widest">Main Menu</p>
+            <p className="text-[13px] font-medium text-zinc-300">Menu chính</p>
           </div>
           {navItems.map((item) => {
             const canAccess = user?.roles?.some((r) =>
@@ -130,9 +130,9 @@ export function AdminSidebar({
                 href={item.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  "group flex items-center gap-3 rounded-xl px-4 h-11 text-[13px] font-semibold transition-all duration-150 relative overflow-hidden",
+                  "group flex items-center gap-3 rounded-xl px-4 h-11 text-[15px] font-medium transition-all duration-150 relative overflow-hidden",
                   isActive
-                    ? "bg-zinc-950 text-white shadow-md shadow-zinc-200"
+                    ? "bg-zinc-950 text-white shadow-lg shadow-zinc-200"
                     : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50",
                 )}
               >

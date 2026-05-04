@@ -54,7 +54,7 @@ export function RecentActivityCard() {
       <div className="p-4 border-b border-zinc-50 flex items-center justify-between">
         <div className="flex items-center gap-2">
            <History className="w-4 h-4 text-zinc-400" />
-           <span className="text-xs font-bold text-zinc-950 uppercase tracking-tight">Hoạt động hệ thống</span>
+           <span className="text-[15px] font-semibold text-zinc-900 tracking-tight">Hoạt động hệ thống</span>
         </div>
         <Button 
           onClick={() => router.push("/admin/audit-logs")}

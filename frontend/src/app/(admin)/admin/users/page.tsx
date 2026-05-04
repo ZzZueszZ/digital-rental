@@ -236,11 +236,11 @@ export default function UsersAdminPage() {
                   <div className="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
                     <Camera className="w-4.5 h-4.5 text-white" strokeWidth={2} />
                   </div>
-                  <h2 className="text-xl font-bold text-zinc-950 tracking-tight">
+                  <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
                     {viewMode === "ACTIVE" ? "Quản lý thành viên" : "Thùng rác"}
                   </h2>
                 </div>
-                <p className="text-xs text-zinc-500 font-medium ml-12">
+                <p className="text-[14px] text-zinc-500 font-medium ml-12">
                   Giám sát & phân quyền tài khoản nhiếp ảnh gia
                 </p>
               </div>
@@ -252,7 +252,7 @@ export default function UsersAdminPage() {
                       key={mode}
                       onClick={() => handleViewModeChange(mode)}
                       className={cn(
-                        "px-4 py-1.5 rounded-md text-xs font-semibold transition-all duration-150",
+                        "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150",
                         viewMode === mode
                           ? "bg-zinc-950 text-white shadow-sm"
                           : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50",
@@ -280,7 +280,7 @@ export default function UsersAdminPage() {
               </div>
               <Button
                 onClick={() => setCreateDialogOpen(true)}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-150 font-semibold text-xs flex items-center gap-2 shadow-sm whitespace-nowrap"
+                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-150 font-semibold text-[14px] flex items-center gap-2 shadow-sm whitespace-nowrap"
               >
                 <Plus className="w-4 h-4" />
                 Thêm thành viên
@@ -643,7 +643,7 @@ export default function UsersAdminPage() {
                   <th
                     key={i}
                     className={cn(
-                      "px-6 py-3.5 text-xs font-semibold text-zinc-400 whitespace-nowrap",
+                      "px-6 py-3.5 text-[13px] font-medium text-zinc-400 whitespace-nowrap",
                       i === 5 && "text-right",
                     )}
                   >
@@ -736,7 +736,7 @@ export default function UsersAdminPage() {
                           </span>
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-zinc-900 truncate max-w-[180px] group-hover:text-red-600 transition-colors duration-150">
+                          <p className="text-[15px] font-semibold text-zinc-900 truncate max-w-[180px] group-hover:text-red-600 transition-colors duration-150">
                             {u.email}
                           </p>
                           <p className="text-xs text-zinc-400 font-mono mt-0.5">

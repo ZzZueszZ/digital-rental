@@ -32,17 +32,17 @@ export function DashboardCharts({ revenueData, dailyOrders }: DashboardChartsPro
         <CardHeader className="border-b border-zinc-50 py-4 px-5">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950">
+              <CardTitle className="text-[22px] font-semibold tracking-tight text-zinc-950">
                 Biểu đồ dòng tiền
               </CardTitle>
-              <CardDescription className="text-sm font-medium text-zinc-500">
+              <CardDescription className="text-[14px] font-medium text-zinc-500">
                 Hoạt động doanh thu 30 ngày qua
               </CardDescription>
             </div>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-xl h-10 px-5 text-xs font-semibold border-zinc-200 hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all duration-150"
+              className="rounded-xl h-10 px-5 text-[14px] font-semibold border-zinc-200 hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all duration-150"
             >
               Xuất báo cáo
             </Button>
@@ -102,10 +102,10 @@ export function DashboardCharts({ revenueData, dailyOrders }: DashboardChartsPro
       {/* Daily Orders Bar Chart */}
       <Card className="xl:col-span-3 rounded-xl border-zinc-200 overflow-hidden bg-white shadow-sm">
         <CardHeader className="border-b border-zinc-50 py-4 px-5">
-          <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950">
+          <CardTitle className="text-[22px] font-semibold tracking-tight text-zinc-950">
             Đơn hàng mới
           </CardTitle>
-          <CardDescription className="text-sm font-medium text-zinc-500">
+          <CardDescription className="text-[14px] font-medium text-zinc-500">
             Tần suất giao dịch mỗi ngày
           </CardDescription>
         </CardHeader>

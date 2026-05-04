@@ -166,11 +166,11 @@ export default function CategoriesAdminPage() {
                   <div className="w-9 h-9 rounded-lg bg-zinc-950 flex items-center justify-center shadow-lg shadow-zinc-100">
                     <Layers className="w-4.5 h-4.5 text-white" strokeWidth={2} />
                   </div>
-                  <h2 className="text-xl font-bold text-zinc-950 tracking-tight">
+                  <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
                     {viewMode === "ACTIVE" ? "Quản lý danh mục" : "Danh mục lưu trữ"}
                   </h2>
                 </div>
-                <p className="text-xs text-zinc-500 font-medium ml-12">
+                <p className="text-[14px] text-zinc-500 font-medium ml-12">
                   Cơ cấu và phân loại thiết bị nhiếp ảnh
                 </p>
               </div>
@@ -182,7 +182,7 @@ export default function CategoriesAdminPage() {
                       key={mode}
                       onClick={() => { setViewMode(mode); setPage(0); }}
                       className={cn(
-                        "px-4 py-1.5 rounded-md text-xs font-semibold transition-all duration-150",
+                        "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150",
                         viewMode === mode
                           ? "bg-zinc-950 text-white shadow-sm"
                           : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50"
@@ -207,7 +207,7 @@ export default function CategoriesAdminPage() {
               </div>
               <Button
                 onClick={() => { setSelectedCategory(null); setIsDialogOpen(true); }}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-150 font-semibold text-xs flex items-center gap-2 shadow-sm whitespace-nowrap"
+                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-150 font-semibold text-[14px] flex items-center gap-2 shadow-sm whitespace-nowrap"
               >
                 <Plus className="w-4 h-4" />
                 Thêm danh mục
@@ -223,11 +223,11 @@ export default function CategoriesAdminPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                  <th className="px-6 py-3.5 text-xs font-semibold text-zinc-400">Mã & ID</th>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-zinc-400">Tên & Mô tả</th>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-zinc-400">Trạng thái</th>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-zinc-400">Ngày tạo</th>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-zinc-400 text-right">Thao tác</th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Mã & ID</th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Tên & Mô tả</th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Trạng thái</th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Ngày tạo</th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400 text-right">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-50">

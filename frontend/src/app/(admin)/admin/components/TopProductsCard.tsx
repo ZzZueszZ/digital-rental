@@ -30,7 +30,7 @@ export function TopProductsCard({ products }: TopProductsCardProps) {
       <div className="p-4 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/20">
         <div className="flex items-center gap-2">
            <PackageOpen className="w-4 h-4 text-zinc-400" />
-           <span className="text-xs font-bold text-zinc-950 uppercase tracking-tight">Sản phẩm tiêu biểu</span>
+           <span className="text-[15px] font-semibold text-zinc-900 tracking-tight">Sản phẩm tiêu biểu</span>
         </div>
         <TrendingUp className="w-4 h-4 text-emerald-500" />
       </div>

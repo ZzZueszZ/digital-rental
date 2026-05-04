@@ -57,7 +57,7 @@ export default function AdminAddressPage() {
       {/* User Selector Section */}
       <div className="bg-white border border-zinc-100 rounded-xl p-5 shadow-sm">
         <div className="max-w-2xl">
-          <Label className="text-[13px] font-bold text-zinc-400 mb-4 block">
+          <Label className="text-[14px] font-medium text-zinc-400 mb-4 block">
             Chọn người dùng để quản lý địa chỉ
           </Label>
           
@@ -107,9 +107,9 @@ export default function AdminAddressPage() {
                   <UserIcon className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-red-600 mb-0.5">Đang quản lý</p>
-                  <p className="text-[18px] font-bold text-zinc-950 tracking-tight leading-tight">
-                    {selectedUser.fullName} <span className="text-zinc-400 font-medium text-xs ml-1">({selectedUser.email})</span>
+                  <p className="text-[12px] font-semibold text-red-600 mb-0.5">Đang quản lý</p>
+                  <p className="text-[22px] font-semibold text-zinc-950 tracking-tight leading-tight">
+                    {selectedUser.fullName} <span className="text-zinc-400 font-medium text-sm ml-1">({selectedUser.email})</span>
                   </p>
                 </div>
               </div>
@@ -170,13 +170,13 @@ function AdminAddressManagement({ userId }: { userId: number }) {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[24px] font-semibold text-zinc-950 tracking-tight">
+          <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight">
             Danh sách địa chỉ ({addresses.length})
           </h2>
         </div>
         <Button
           onClick={() => handleOpenDialog()}
-          className="h-10 px-5 rounded-lg bg-red-600 text-white font-bold text-[13px] flex items-center gap-2 hover:bg-zinc-900 transition-all shadow-lg shadow-red-100"
+          className="h-10 px-5 rounded-lg bg-red-600 text-white font-semibold text-[14px] flex items-center gap-2 hover:bg-zinc-950 transition-all shadow-lg shadow-red-100"
         >
           <Plus className="w-4 h-4" /> Thêm địa chỉ mới
         </Button>
@@ -270,7 +270,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
                 </div>
                 <div>
                   <p className="text-[12px] font-medium text-zinc-400 mb-1.5">Địa chỉ chi tiết</p>
-                  <p className="text-[14px] font-normal text-zinc-500 leading-relaxed">
+                  <p className="text-[16px] font-normal text-zinc-500 leading-relaxed">
                     {addr.fullAddress}
                   </p>
                 </div>

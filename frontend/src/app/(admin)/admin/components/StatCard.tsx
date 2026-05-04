@@ -26,23 +26,23 @@ export function StatCard({ title, value, trend, icon: Icon, accent }: StatCardPr
            )}>
              <Icon className="w-4 h-4" />
            </div>
-           <p className="text-[12px] font-bold text-zinc-400 tracking-wide uppercase">{title}</p>
+           <p className="text-[13px] font-medium text-zinc-500 tracking-tight">{title}</p>
         </div>
 
-        <p className="text-2xl font-bold tracking-tight text-zinc-950 mb-2 leading-none">
+        <p className="text-[24px] font-bold tracking-tight text-zinc-950 mb-2 leading-none">
           {value}
         </p>
       </div>
 
       <div className="flex items-center gap-2 pt-1">
         <span className={cn(
-          "flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-lg", 
+          "flex items-center gap-0.5 text-[12px] font-semibold px-2 py-0.5 rounded-lg", 
           isPositive ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
         )}>
-          {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+          {isPositive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
           {isPositive ? "+" : ""}{trend}%
         </span>
-        <span className="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">Tháng này</span>
+        <span className="text-[12px] text-zinc-400 font-medium tracking-tight">Tháng này</span>
       </div>
     </div>
   );

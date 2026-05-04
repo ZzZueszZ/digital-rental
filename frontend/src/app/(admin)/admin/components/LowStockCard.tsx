@@ -30,7 +30,7 @@ export function LowStockCard({ products }: LowStockCardProps) {
       <div className="p-4 border-b border-red-50 flex items-center justify-between bg-red-50/10">
         <div className="flex items-center gap-2">
            <AlertTriangle className="w-4 h-4 text-red-500" />
-           <span className="text-xs font-bold text-zinc-950 uppercase tracking-tight">Cảnh báo kho</span>
+           <span className="text-[15px] font-semibold text-zinc-900 tracking-tight">Cảnh báo kho</span>
         </div>
         <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
       </div>

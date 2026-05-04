@@ -9,6 +9,7 @@ import { CategoryResponse } from "@/types/category";
 import { cn, getImageUrl } from "@/lib/utils";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import Image from "next/image";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ProductDialogProps {
   open: boolean;
@@ -249,19 +250,24 @@ export function ProductDialog({
               <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
                 Danh mục *
               </Label>
-              <select
-                value={formData.categoryId || ""}
-                onChange={(e) => setFormData({ ...formData, categoryId: Number(e.target.value) })}
-                className={cn(
-                  "flex h-10 w-full rounded-xl border bg-white px-3 py-2 text-sm font-semibold text-zinc-900 focus-visible:outline-none transition-all shadow-sm",
-                  errors.categoryId ? "border-red-400 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5" : "border-zinc-200 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5"
-                )}
+              <Select
+                value={formData.categoryId?.toString() || ""}
+                onValueChange={(v) => setFormData({ ...formData, categoryId: Number(v) })}
               >
-                <option value="" disabled>Chọn danh mục</option>
-                {categories.map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
+                <SelectTrigger className={cn(
+                  "!w-full !h-10 px-4 rounded-xl !bg-white text-sm font-semibold text-zinc-900 !border-zinc-200 focus:!border-red-600/30 focus:!ring-4 focus:!ring-red-600/5 transition-all shadow-sm",
+                  errors.categoryId && "!border-red-400"
+                )}>
+                  <SelectValue placeholder="Chọn danh mục" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay bg-white">
+                  {categories.map(c => (
+                    <SelectItem key={c.id} value={c.id.toString()} className="font-medium py-2.5">
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.categoryId && <p className="text-[11px] font-medium text-red-500">{errors.categoryId}</p>}
             </div>
 

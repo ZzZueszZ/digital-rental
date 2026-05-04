@@ -1029,7 +1029,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, firstName: e.target.value })
               }
-              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
+              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
           <div className="space-y-2">
@@ -1041,7 +1041,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, lastName: e.target.value })
               }
-              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
+              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
           <div className="space-y-2">
@@ -1057,10 +1057,12 @@ function InfoSection({
                 })
               }
             >
-              <SelectTrigger className="w-full h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 !text-zinc-950 shadow-dash-card">
-                <SelectValue placeholder="Chọn giới tính" />
+              <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-lg px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
+                <span className={cn(formData.gender ? "text-zinc-900" : "text-zinc-400")}>
+                  {formData.gender ? (formData.gender === "MALE" ? "Nam" : formData.gender === "FEMALE" ? "Nữ" : "Khác") : "Chọn giới tính"}
+                </span>
               </SelectTrigger>
-              <SelectContent className="rounded-xl shadow-2xl border-zinc-100 p-1 bg-white z-[100]">
+              <SelectContent className="rounded-xl shadow-dash-overlay border-black/5 p-1 bg-white z-[100]">
                 <SelectItem
                   value="MALE"
                   className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
@@ -1092,7 +1094,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, dateOfBirth: e.target.value })
               }
-              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
+              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
           <div className="space-y-2">
@@ -1104,7 +1106,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, occupation: e.target.value })
               }
-              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
+              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
           <div className="space-y-2">
@@ -1116,7 +1118,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, companyName: e.target.value })
               }
-              className="h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg px-5 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
+              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
         </div>
@@ -1125,7 +1127,7 @@ function InfoSection({
           <Button
             type="submit"
             disabled={isUpdating}
-            className="flex-1 h-12 rounded-xl bg-zinc-950 text-white font-semibold text-sm shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50"
+            className="flex-1 h-12 rounded-lg bg-zinc-950 text-white font-semibold text-sm shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50"
           >
             {isUpdating ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -1136,7 +1138,7 @@ function InfoSection({
           <Button
             type="button"
             variant="outline"
-            className="h-12 px-8 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
+            className="h-12 px-8 rounded-lg border border-zinc-100 bg-white text-zinc-500 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
           >
             Hủy bỏ
           </Button>

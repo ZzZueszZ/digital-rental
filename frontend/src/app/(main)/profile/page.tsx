@@ -77,7 +77,11 @@ import { cn } from "@/lib/utils";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { isAxiosError } from "axios";
-import { useMyOrders, useOrderDetail, useConfirmReceived } from "@/services/order";
+import {
+  useMyOrders,
+  useOrderDetail,
+  useConfirmReceived,
+} from "@/services/order";
 import { OrderStatus, PaymentStatus, PaymentMethod } from "@/types/order";
 
 type Section = "overview" | "info" | "address" | "orders" | "cart";
@@ -271,13 +275,13 @@ export default function ProfileDashboard() {
               <Menu className="h-5 w-5 text-zinc-600" />
             </Button>
             <div className="flex items-center gap-3">
-               <h1 className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950 leading-tight">
-                  {pageInfo.title}
-                </h1>
-                <div className="w-px h-4 bg-zinc-200" />
-                <span className="text-xs font-semibold text-zinc-400 tracking-tight">
-                  {pageInfo.subtitle}
-                </span>
+              <h1 className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950 leading-tight">
+                {pageInfo.title}
+              </h1>
+              <div className="w-px h-4 bg-zinc-200" />
+              <span className="text-xs font-semibold text-zinc-400 tracking-tight">
+                {pageInfo.subtitle}
+              </span>
             </div>
           </div>
 
@@ -501,9 +505,10 @@ function CartSection() {
           Giỏ hàng đang trống
         </h2>
         <p className="text-zinc-500 text-sm mb-8 max-w-sm mx-auto leading-relaxed font-medium">
-          Có vẻ như bạn chưa chọn sản phẩm nào. Hãy khám phá kho thiết bị nhiếp ảnh của chúng tôi ngay!
+          Có vẻ như bạn chưa chọn sản phẩm nào. Hãy khám phá kho thiết bị nhiếp
+          ảnh của chúng tôi ngay!
         </p>
-        <Button 
+        <Button
           onClick={() => router.push("/#product-section")}
           className="h-10 px-8 rounded-lg bg-red-600 text-white font-bold hover:bg-zinc-900 transition-all shadow-md shadow-red-100 border-none"
         >
@@ -517,18 +522,20 @@ function CartSection() {
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <button 
+          <button
             onClick={toggleSelectAll}
             className={cn(
               "w-5 h-5 rounded border flex items-center justify-center transition-all",
               selectedIds.length === items.length && items.length > 0
                 ? "bg-red-600 border-red-600 text-white"
-                : "border-zinc-300 hover:border-red-600 bg-white"
+                : "border-zinc-300 hover:border-red-600 bg-white",
             )}
           >
-            {selectedIds.length === items.length && items.length > 0 && <Check className="w-3.5 h-3.5" />}
+            {selectedIds.length === items.length && items.length > 0 && (
+              <Check className="w-3.5 h-3.5" />
+            )}
           </button>
-          <h2 className="text-[22px] font-semibold text-zinc-950 tracking-tight">
+          <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight">
             Giỏ hàng của bạn ({items.length})
           </h2>
         </div>
@@ -582,7 +589,9 @@ function CartSection() {
                     : "border-zinc-300 hover:border-red-600 bg-white",
                 )}
               >
-                {selectedIds.includes(item.id) && <Check className="w-3.5 h-3.5" />}
+                {selectedIds.includes(item.id) && (
+                  <Check className="w-3.5 h-3.5" />
+                )}
               </button>
 
               <div className="w-24 h-24 shrink-0 bg-zinc-50 rounded-lg overflow-hidden border border-zinc-100 p-2 flex items-center justify-center group-hover:bg-white transition-colors">
@@ -602,13 +611,18 @@ function CartSection() {
                   {item.productName}
                 </h4>
                 <p className="text-sm font-normal text-zinc-500 mb-4 leading-relaxed">
-                  Đơn giá: {formatVND(Number(item.salePrice || item.rentPricePerDay || 0))}
+                  Đơn giá:{" "}
+                  {formatVND(
+                    Number(item.salePrice || item.rentPricePerDay || 0),
+                  )}
                 </p>
 
                 <div className="flex items-center justify-center sm:justify-start gap-4">
                   <div className="flex items-center gap-1 bg-zinc-50 p-1 rounded-lg border border-zinc-100">
                     <button
-                      onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                      onClick={() =>
+                        handleUpdateQuantity(item.id, item.quantity - 1)
+                      }
                       className="w-7 h-7 rounded flex items-center justify-center text-zinc-500 hover:bg-white hover:text-red-600 transition-all"
                     >
                       <Minus className="w-3 h-3" />
@@ -617,7 +631,9 @@ function CartSection() {
                       {item.quantity}
                     </span>
                     <button
-                      onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                      onClick={() =>
+                        handleUpdateQuantity(item.id, item.quantity + 1)
+                      }
                       className="w-7 h-7 rounded flex items-center justify-center text-zinc-500 hover:bg-white hover:text-red-600 transition-all"
                     >
                       <Plus className="w-3 h-3" />
@@ -641,7 +657,8 @@ function CartSection() {
                 </p>
                 <p className="text-[20px] font-bold text-zinc-950 tracking-tight">
                   {formatVND(
-                    Number(item.salePrice || item.rentPricePerDay || 0) * item.quantity,
+                    Number(item.salePrice || item.rentPricePerDay || 0) *
+                      item.quantity,
                   )}
                 </p>
               </div>
@@ -658,31 +675,47 @@ function CartSection() {
 
               <div className="space-y-4 mb-8 pb-6 border-b border-zinc-100">
                 <div className="flex justify-between items-center">
-                  <span className="text-zinc-500 font-normal text-sm">Tạm tính</span>
-                  <span className="font-medium text-zinc-950 text-[15px]">{formatVND(subtotal)}</span>
+                  <span className="text-zinc-500 font-normal text-sm">
+                    Tạm tính
+                  </span>
+                  <span className="font-medium text-zinc-950 text-[15px]">
+                    {formatVND(subtotal)}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-zinc-500 font-normal text-sm">Phí vận chuyển</span>
-                  <span className="text-emerald-600 font-bold text-[11px] bg-emerald-50 px-2.5 py-1 rounded-md">Miễn phí</span>
+                  <span className="text-zinc-500 font-normal text-sm">
+                    Phí vận chuyển
+                  </span>
+                  <span className="text-emerald-600 font-bold text-[11px] bg-emerald-50 px-2.5 py-1 rounded-md">
+                    Miễn phí
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-zinc-500 font-normal text-sm">Bảo hiểm thiết bị</span>
-                  <span className="font-medium text-zinc-950 text-[15px]">Đã bao gồm</span>
+                  <span className="text-zinc-500 font-normal text-sm">
+                    Bảo hiểm thiết bị
+                  </span>
+                  <span className="font-medium text-zinc-950 text-[15px]">
+                    Đã bao gồm
+                  </span>
                 </div>
               </div>
 
               <div className="flex justify-between items-end mb-8">
                 <div>
-                  <p className="text-zinc-400 text-[11px] font-semibold mb-1.5">Tổng thanh toán</p>
+                  <p className="text-zinc-400 text-[11px] font-semibold mb-1.5">
+                    Tổng thanh toán
+                  </p>
                   <p className="text-[28px] font-bold tracking-tight text-red-600 leading-none">
                     {formatVND(subtotal)}
                   </p>
                 </div>
               </div>
 
-              <Button 
+              <Button
                 disabled={selectedIds.length === 0}
-                onClick={() => router.push(`/checkout?cartItemIds=${selectedIds.join(",")}`)}
+                onClick={() =>
+                  router.push(`/checkout?cartItemIds=${selectedIds.join(",")}`)
+                }
                 className="w-full h-12 rounded-xl bg-red-600 hover:bg-zinc-950 text-white font-black text-sm transition-all shadow-lg shadow-red-100 flex items-center justify-center gap-2 border-none group/btn disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
               >
                 Tiếp tục thanh toán ({selectedIds.length})
@@ -691,7 +724,10 @@ function CartSection() {
 
               <p className="mt-6 text-center text-[11px] text-zinc-500 font-medium leading-relaxed">
                 Bằng cách tiếp tục, bạn đồng ý với các <br />
-                <span className="text-zinc-400 underline cursor-pointer hover:text-zinc-950 transition-colors">Điều khoản dịch vụ</span> của LensHub.
+                <span className="text-zinc-400 underline cursor-pointer hover:text-zinc-950 transition-colors">
+                  Điều khoản dịch vụ
+                </span>{" "}
+                của LensHub.
               </p>
             </div>
           </div>
@@ -718,22 +754,22 @@ function SidebarItem({
     <button
       onClick={onClick}
       className={cn(
-        "w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg transition-all font-semibold text-sm group h-11",
+        "w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-300 group h-12",
         active
-          ? "bg-red-600 text-white shadow-md shadow-red-100"
-          : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900",
+          ? "bg-zinc-950 text-white shadow-lg shadow-zinc-200"
+          : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950",
       )}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3.5">
         <span
           className={cn(
-            "transition-transform group-hover:scale-110",
-            active ? "text-white" : "text-zinc-400 group-hover:text-zinc-900",
+            "transition-colors",
+            active ? "text-red-500" : "text-zinc-400 group-hover:text-red-600",
           )}
         >
           {icon}
         </span>
-        <span className="tracking-tight">{label}</span>
+        <span className="text-[15px] font-medium tracking-tight">{label}</span>
       </div>
       {badge !== undefined && (
         <span
@@ -764,7 +800,7 @@ function OverviewSection({
       <div className="bg-white border border-zinc-100 rounded-xl p-6 md:p-8 shadow-sm relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold text-zinc-950 tracking-tight mb-4 leading-tight">
+            <h1 className="text-[40px] font-bold text-zinc-950 tracking-tight mb-4 leading-[1.1]">
               Chào buổi chiều, <br className="hidden md:block" />{" "}
               {profile?.fullName || "Người dùng"}!
             </h1>
@@ -776,14 +812,14 @@ function OverviewSection({
           <div className="flex gap-3">
             <Button
               onClick={() => onNavigate("info")}
-              className="h-10 px-5 rounded-lg bg-zinc-950 text-white font-semibold text-sm hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
+              className="h-10 px-5 rounded-lg bg-zinc-950 text-white font-semibold text-[14px] hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
             >
               Xem hồ sơ
             </Button>
             <Button
               variant="outline"
               onClick={() => onNavigate("orders")}
-              className="h-10 px-5 rounded-lg border-zinc-200 bg-white text-zinc-950 font-semibold text-sm hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
+              className="h-10 px-5 rounded-lg border-zinc-200 bg-white text-zinc-950 font-semibold text-[14px] hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
             >
               Đơn hàng
             </Button>
@@ -896,8 +932,8 @@ function OverviewCard({
         {icon}
       </div>
       <div>
-        <p className="text-sm font-semibold text-zinc-400 mb-1.5">{label}</p>
-        <p className="text-xl font-black text-zinc-950 tracking-tight">
+        <p className="text-[14px] font-normal text-zinc-400 mb-1">{label}</p>
+        <p className="text-[22px] font-bold text-zinc-950 tracking-tight">
           {value}
         </p>
       </div>
@@ -939,10 +975,10 @@ function InfoSection({
   return (
     <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-[0_2px_6px_rgba(0,0,0,0.04)] animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12">
-        <div>
-          <h1 className="text-3xl font-black text-zinc-950 tracking-tight mb-2">
-            Thông tin chi tiết
-          </h1>
+          <div>
+            <h1 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
+              Thông tin chi tiết
+            </h1>
           <p className="text-[13px] text-zinc-500 font-medium">
             Quản lý các thiết bị nhiếp ảnh và các thiết lập bảo mật định danh
           </p>
@@ -1025,13 +1061,22 @@ function InfoSection({
                 <SelectValue placeholder="Chọn giới tính" />
               </SelectTrigger>
               <SelectContent className="rounded-xl shadow-2xl border-zinc-100 p-1 bg-white z-[100]">
-                <SelectItem value="MALE" className="font-bold py-3 text-zinc-950 focus:bg-red-600 focus:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none">
+                <SelectItem
+                  value="MALE"
+                  className="font-bold py-3 text-zinc-950 focus:bg-red-600 focus:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
+                >
                   Nam
                 </SelectItem>
-                <SelectItem value="FEMALE" className="font-bold py-3 text-zinc-950 focus:bg-red-600 focus:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none">
+                <SelectItem
+                  value="FEMALE"
+                  className="font-bold py-3 text-zinc-950 focus:bg-red-600 focus:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
+                >
                   Nữ
                 </SelectItem>
-                <SelectItem value="OTHER" className="font-bold py-3 text-zinc-950 focus:bg-red-600 focus:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none">
+                <SelectItem
+                  value="OTHER"
+                  className="font-bold py-3 text-zinc-950 focus:bg-red-600 focus:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
+                >
                   Khác
                 </SelectItem>
               </SelectContent>
@@ -1101,8 +1146,6 @@ function InfoSection({
   );
 }
 
-
-
 function AddressSection() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] =
@@ -1122,7 +1165,7 @@ function AddressSection() {
     <div className="space-y-12 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-black text-zinc-950 tracking-tight mb-2">
+          <h1 className="text-[30px] font-semibold text-zinc-950 tracking-tight mb-2">
             Địa chỉ nhận hàng
           </h1>
           <p className="text-sm text-zinc-500 font-medium">
@@ -1131,7 +1174,7 @@ function AddressSection() {
         </div>
         <Button
           onClick={() => handleOpenDialog()}
-          className="h-10 px-5 rounded-lg bg-zinc-950 text-white font-semibold text-sm flex items-center gap-2 hover:bg-red-600 border-none transition-all shadow-lg shadow-zinc-200"
+          className="h-10 px-5 rounded-lg bg-zinc-950 text-white font-semibold text-[14px] flex items-center gap-2 hover:bg-red-600 border-none transition-all shadow-lg shadow-zinc-200"
         >
           <Plus className="w-4 h-4" /> Thêm địa chỉ mới
         </Button>
@@ -1453,10 +1496,10 @@ function AddressDialog({
 function OrdersSection() {
   const [activeTab, setActiveTab] = useState<OrderStatus | "ALL">("ALL");
   const [page, setPage] = useState(0);
-  const { data: ordersRes, isLoading } = useMyOrders({ 
-    page, 
+  const { data: ordersRes, isLoading } = useMyOrders({
+    page,
     size: 10,
-    status: activeTab === "ALL" ? undefined : activeTab as OrderStatus
+    status: activeTab === "ALL" ? undefined : (activeTab as OrderStatus),
   });
 
   const orders = ordersRes?.data || [];
@@ -1471,25 +1514,39 @@ function OrdersSection() {
 
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
-      case OrderStatus.PENDING: return "bg-amber-50 text-amber-600 border-amber-100";
-      case OrderStatus.CONFIRMED: return "bg-blue-50 text-blue-600 border-blue-100";
-      case OrderStatus.SHIPPING: return "bg-indigo-50 text-indigo-600 border-indigo-100";
-      case OrderStatus.DELIVERED: return "bg-emerald-50 text-emerald-600 border-emerald-100";
-      case OrderStatus.COMPLETED: return "bg-emerald-600 text-white border-emerald-600";
-      case OrderStatus.CANCELED: return "bg-red-50 text-red-600 border-red-100";
-      default: return "bg-zinc-50 text-zinc-500 border-zinc-100";
+      case OrderStatus.PENDING:
+        return "bg-amber-50 text-amber-600 border-amber-100";
+      case OrderStatus.CONFIRMED:
+        return "bg-blue-50 text-blue-600 border-blue-100";
+      case OrderStatus.SHIPPING:
+        return "bg-indigo-50 text-indigo-600 border-indigo-100";
+      case OrderStatus.DELIVERED:
+        return "bg-emerald-50 text-emerald-600 border-emerald-100";
+      case OrderStatus.COMPLETED:
+        return "bg-emerald-600 text-white border-emerald-600";
+      case OrderStatus.CANCELED:
+        return "bg-red-50 text-red-600 border-red-100";
+      default:
+        return "bg-zinc-50 text-zinc-500 border-zinc-100";
     }
   };
 
   const getStatusLabel = (status: OrderStatus) => {
     switch (status) {
-      case OrderStatus.PENDING: return "Chờ xác nhận";
-      case OrderStatus.CONFIRMED: return "Đã xác nhận";
-      case OrderStatus.SHIPPING: return "Đang giao hàng";
-      case OrderStatus.DELIVERED: return "Đã giao";
-      case OrderStatus.COMPLETED: return "Hoàn thành";
-      case OrderStatus.CANCELED: return "Đã hủy";
-      default: return status;
+      case OrderStatus.PENDING:
+        return "Chờ xác nhận";
+      case OrderStatus.CONFIRMED:
+        return "Đã xác nhận";
+      case OrderStatus.SHIPPING:
+        return "Đang giao hàng";
+      case OrderStatus.DELIVERED:
+        return "Đã giao";
+      case OrderStatus.COMPLETED:
+        return "Hoàn thành";
+      case OrderStatus.CANCELED:
+        return "Đã hủy";
+      default:
+        return status;
     }
   };
 
@@ -1505,8 +1562,12 @@ function OrdersSection() {
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500 pb-20">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-1">
         <div>
-          <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight mb-1">Đơn hàng của bạn</h2>
-          <p className="text-sm font-medium text-zinc-500">Lịch sử giao dịch & Thiết bị thuê.</p>
+          <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
+            Đơn hàng của bạn
+          </h2>
+          <p className="text-sm font-medium text-zinc-500">
+            Lịch sử giao dịch & Thiết bị thuê.
+          </p>
         </div>
         <div className="flex items-center gap-2 text-[11px] font-bold text-zinc-400 uppercase tracking-widest">
           <Info className="w-3.5 h-3.5" />
@@ -1524,10 +1585,10 @@ function OrdersSection() {
               setPage(0);
             }}
             className={cn(
-              "whitespace-nowrap px-5 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider",
-              activeTab === tab.value 
-                ? "bg-white text-red-600 shadow-sm" 
-                : "text-zinc-400 hover:text-zinc-900 hover:bg-white/30"
+              "whitespace-nowrap px-5 py-2 rounded-lg text-xs font-bold transition-all duration-300",
+              activeTab === tab.value
+                ? "bg-zinc-950 text-white shadow-lg shadow-zinc-200"
+                : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100",
             )}
           >
             {tab.label}
@@ -1538,16 +1599,23 @@ function OrdersSection() {
       {isLoading ? (
         <div className="py-20 flex flex-col items-center">
           <Loader2 className="w-10 h-10 text-red-600 animate-spin mb-4" />
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Đang truy xuất đơn hàng...</p>
+          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
+            Đang truy xuất đơn hàng...
+          </p>
         </div>
       ) : orders.length === 0 ? (
         <div className="bg-white border-2 border-dashed border-zinc-100 rounded-[2.5rem] p-20 flex flex-col items-center text-center">
           <div className="w-20 h-20 rounded-3xl bg-zinc-50 flex items-center justify-center mb-6 text-zinc-200">
             <ShoppingBag className="w-10 h-10" />
           </div>
-          <h3 className="text-xl font-black text-zinc-950 tracking-tight mb-2">Danh sách trống</h3>
-          <p className="text-sm text-zinc-400 font-medium max-w-xs mb-10">Hiện chưa có đơn hàng nào trong mục này. Hãy bắt đầu trải nghiệm ngay.</p>
-          <Button 
+          <h3 className="text-xl font-black text-zinc-950 tracking-tight mb-2">
+            Danh sách trống
+          </h3>
+          <p className="text-sm text-zinc-400 font-medium max-w-xs mb-10">
+            Hiện chưa có đơn hàng nào trong mục này. Hãy bắt đầu trải nghiệm
+            ngay.
+          </p>
+          <Button
             onClick={() => router.push("/")}
             className="h-12 px-10 rounded-xl bg-red-600 hover:bg-zinc-950 text-white font-black text-xs uppercase transition-all shadow-xl shadow-red-100 border-none"
           >
@@ -1557,7 +1625,7 @@ function OrdersSection() {
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <div 
+            <div
               key={order.id}
               className="bg-white border border-zinc-100 rounded-xl overflow-hidden shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-300 group"
             >
@@ -1565,19 +1633,29 @@ function OrdersSection() {
               <div className="px-5 py-3 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/20">
                 <div className="flex items-center gap-5">
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest leading-none mb-1">Mã đơn</span>
-                    <span className="text-sm font-bold text-zinc-950 tracking-tight">#{order.code}</span>
+                    <span className="text-[10px] font-bold text-zinc-300 leading-none mb-1.5">
+                      Mã đơn hàng
+                    </span>
+                    <span className="text-sm font-bold text-zinc-950 tracking-tight">
+                      #{order.code}
+                    </span>
                   </div>
                   <div className="w-px h-6 bg-zinc-100 hidden sm:block" />
                   <div className="hidden sm:flex flex-col">
-                    <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest leading-none mb-1">Ngày đặt</span>
-                    <span className="text-xs font-bold text-zinc-500">{new Date(order.createdAt).toLocaleDateString('vi-VN')}</span>
+                    <span className="text-[10px] font-bold text-zinc-300 leading-none mb-1.5">
+                      Ngày đặt
+                    </span>
+                    <span className="text-xs font-bold text-zinc-500">
+                      {new Date(order.createdAt).toLocaleDateString("vi-VN")}
+                    </span>
                   </div>
                 </div>
-                <div className={cn(
-                  "px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest border shadow-none",
-                  getStatusColor(order.status)
-                )}>
+                <div
+                  className={cn(
+                    "px-3 py-1 rounded-lg text-xs font-semibold border shadow-none",
+                    getStatusColor(order.status),
+                  )}
+                >
                   {getStatusLabel(order.status)}
                 </div>
               </div>
@@ -1587,15 +1665,23 @@ function OrdersSection() {
                 {order.items.slice(0, 2).map((item) => (
                   <div key={item.id} className="flex gap-4 items-center h-12">
                     <div className="w-12 h-12 rounded-lg border border-zinc-50 bg-white p-1.5 flex items-center justify-center shrink-0">
-                      <img 
-                        src={item.productMainImage ? `http://localhost:8080${item.productMainImage}` : "/placeholder-camera.jpg"} 
+                      <img
+                        src={
+                          item.productMainImage
+                            ? `http://localhost:8080${item.productMainImage}`
+                            : "/placeholder-camera.jpg"
+                        }
                         alt={item.productName}
                         className="w-full h-full object-contain"
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-[13px] font-bold text-zinc-950 truncate leading-tight">{item.productName}</h4>
-                      <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">SL: {item.quantity} | {formatVND(item.unitPrice)}</p>
+                      <h4 className="text-[18px] font-semibold text-zinc-950 truncate leading-snug">
+                        {item.productName}
+                      </h4>
+                      <p className="text-[14px] text-zinc-400 font-normal mt-1">
+                        Số lượng: {item.quantity} | {formatVND(item.unitPrice)}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -1608,30 +1694,33 @@ function OrdersSection() {
 
               {/* Card Footer - Compact */}
               <div className="px-5 py-3 bg-zinc-50/10 border-t border-zinc-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">Tổng:</span>
-                  <span className="text-xl font-bold text-red-600 tracking-tight">{formatVND(order.totalPrice)}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-[14px] font-normal text-zinc-500">
+                    Tổng thanh toán:
+                  </span>
+                  <span className="text-[22px] font-bold text-red-600 tracking-tight">
+                    {formatVND(order.totalPrice)}
+                  </span>
                 </div>
-                <div className="flex gap-2">
-                  <Button 
-                    variant="ghost" 
-                    className="h-9 px-4 rounded-lg border border-zinc-100 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-950 hover:bg-zinc-50 transition-all shadow-none"
-                    onClick={() => toast.info("Tính năng xem chi tiết đang phát triển")}
+                <div className="flex gap-3">
+                  <Button
+                    variant="ghost"
+                    className="h-10 px-5 rounded-lg border border-zinc-100 text-[14px] font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50 transition-all shadow-none"
+                    onClick={() =>
+                      toast.info("Tính năng xem chi tiết đang phát triển")
+                    }
                   >
-                    Chi tiết
+                    Xem chi tiết
                   </Button>
                   {order.status === OrderStatus.DELIVERED && (
-                    <Button 
-                      className="h-9 px-4 rounded-lg bg-zinc-950 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-red-600 border-none shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all"
-                    >
+                    <Button className="h-10 px-5 rounded-lg bg-zinc-950 text-white text-[14px] font-semibold hover:bg-red-600 border-none shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all">
                       Đã nhận hàng
                     </Button>
                   )}
-                  {(order.status === OrderStatus.COMPLETED || order.status === OrderStatus.DELIVERED) && (
-                    <Button 
-                      className="h-9 px-4 rounded-lg bg-zinc-950 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-red-600 border-none shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all"
-                    >
-                      Đánh giá
+                  {(order.status === OrderStatus.COMPLETED ||
+                    order.status === OrderStatus.DELIVERED) && (
+                    <Button className="h-10 px-5 rounded-lg bg-zinc-950 text-white text-[14px] font-semibold hover:bg-red-600 border-none shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all">
+                      Đánh giá ngay
                     </Button>
                   )}
                 </div>

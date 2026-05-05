@@ -55,32 +55,32 @@ export function ProductActionMenu({
             {!isDeleted ? (
               <>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
                   onClick={onView}
                 >
-                  <Eye className="w-3.5 h-3.5 text-zinc-400" /> Xem chi tiết sản phẩm
+                  <Eye className="w-3.5 h-3.5" /> Xem chi tiết sản phẩm
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
                   onClick={onEdit}
                 >
-                  <Edit2 className="w-3.5 h-3.5 text-zinc-400" /> Cập nhật thông tin
+                  <Edit2 className="w-3.5 h-3.5" /> Cập nhật thông tin
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
                   onClick={onUpdatePrice}
                 >
-                  <DollarSign className="w-3.5 h-3.5 text-zinc-400" /> Cập nhật giá bán/thuê
+                  <DollarSign className="w-3.5 h-3.5" /> Cập nhật giá bán/thuê
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
                   onClick={onGallery}
                 >
-                  <ImageIcon className="w-3.5 h-3.5 text-zinc-400" /> Quản lý thư viện ảnh
+                  <ImageIcon className="w-3.5 h-3.5" /> Quản lý thư viện ảnh
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50"
+                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600"
                   onClick={onDelete}
                 >
                   <Trash2 className="w-3.5 h-3.5" /> Vô hiệu hóa
@@ -89,14 +89,14 @@ export function ProductActionMenu({
             ) : (
               <>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
+                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
                   onClick={onRestore}
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Khôi phục sản phẩm
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50"
+                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600"
                   onClick={onHardDelete}
                 >
                   <Trash2 className="w-3.5 h-3.5" /> Xóa vĩnh viễn

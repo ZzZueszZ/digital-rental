@@ -91,7 +91,7 @@ function DropdownMenuItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "group/dropdown-menu-item relative flex cursor-default items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden select-none focus:bg-red-600 focus:text-white dark:focus:bg-red-700 data-inset:pl-7 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-red-600 data-[variant=destructive]:focus:text-white data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 focus:[&_svg]:text-white",
+        "group/dropdown-menu-item relative flex cursor-default items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden select-none focus:bg-red-50 focus:text-red-600 dark:focus:bg-red-950/30 dark:focus:text-red-400 data-inset:pl-7 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-red-50 data-[variant=destructive]:focus:text-red-600 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 focus:[&_svg]:text-red-600",
         className,
       )}
       {...props}
@@ -116,7 +116,7 @@ function DropdownMenuSubTrigger({
       data-slot="dropdown-menu-sub-trigger"
       data-inset={inset}
       className={cn(
-        "flex cursor-default items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden select-none focus:bg-red-600 focus:text-white dark:focus:bg-red-700 data-inset:pl-7 data-popup-open:bg-red-600 data-popup-open:text-white data-open:bg-red-600 data-open:text-white [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 focus:[&_svg]:text-white",
+        "flex cursor-default items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden select-none focus:bg-red-50 focus:text-red-600 dark:focus:bg-red-950/30 dark:focus:text-red-400 data-inset:pl-7 data-popup-open:bg-red-50 data-popup-open:text-red-600 data-open:bg-red-50 data-open:text-red-600 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 focus:[&_svg]:text-red-600",
         className,
       )}
       {...props}

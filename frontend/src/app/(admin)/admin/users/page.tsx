@@ -471,7 +471,7 @@ export default function UsersAdminPage() {
                               </DropdownMenuItem>
                               <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                               <DropdownMenuItem
-                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-zinc-700"
                                 onClick={() =>
                                   requestAction(
                                     "Cấp lại mật khẩu",
@@ -488,7 +488,7 @@ export default function UsersAdminPage() {
                               </DropdownMenuItem>
                               {u.accountNonLocked ? (
                                 <DropdownMenuItem
-                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-amber-50 text-zinc-700"
+                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-amber-600"
                                   onClick={() =>
                                     requestAction(
                                       "Khóa tài khoản",
@@ -499,12 +499,12 @@ export default function UsersAdminPage() {
                                     )
                                   }
                                 >
-                                  <Lock className="w-3.5 h-3.5 text-amber-500" />{" "}
+                                  <Lock className="w-3.5 h-3.5" />{" "}
                                   Khóa tài khoản
                                 </DropdownMenuItem>
                               ) : (
                                 <DropdownMenuItem
-                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-emerald-50 text-zinc-700"
+                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-600"
                                   onClick={() =>
                                     requestAction(
                                       "Mở khóa tài khoản",
@@ -515,13 +515,13 @@ export default function UsersAdminPage() {
                                     )
                                   }
                                 >
-                                  <Unlock className="w-3.5 h-3.5 text-emerald-500" />{" "}
+                                  <Unlock className="w-3.5 h-3.5" />{" "}
                                   Mở khóa
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                               <DropdownMenuItem
-                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50"
+                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600"
                                 onClick={() =>
                                   requestAction(
                                     "Vô hiệu hóa",
@@ -538,7 +538,7 @@ export default function UsersAdminPage() {
                           ) : (
                             <>
                               <DropdownMenuItem
-                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-zinc-700"
                                 onClick={() =>
                                   router.push(`/admin/users/${u.id}`)
                                 }
@@ -548,7 +548,7 @@ export default function UsersAdminPage() {
                               </DropdownMenuItem>
                               <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                               <DropdownMenuItem
-                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
+                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
                                 onClick={() =>
                                   requestAction(
                                     "Khôi phục",
@@ -819,7 +819,7 @@ export default function UsersAdminPage() {
                                 {viewMode === "ACTIVE" ? (
                                   <>
                                     <DropdownMenuItem
-                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
                                       onClick={() =>
                                         router.push(`/admin/users/${u.id}`)
                                       }
@@ -828,7 +828,7 @@ export default function UsersAdminPage() {
                                       Xem chi tiết
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
-                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
                                       onClick={() =>
                                         router.push(`/admin/users/${u.id}/edit`)
                                       }
@@ -838,7 +838,7 @@ export default function UsersAdminPage() {
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                                     <DropdownMenuItem
-                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
                                       onClick={() =>
                                         requestAction(
                                           "Cấp lại mật khẩu",
@@ -863,7 +863,7 @@ export default function UsersAdminPage() {
                                     </DropdownMenuItem>
                                     {u.accountNonLocked ? (
                                       <DropdownMenuItem
-                                        className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-amber-50 focus:text-amber-700 text-zinc-700"
+                                        className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-amber-700"
                                         onClick={() =>
                                           requestAction(
                                             "Khóa tài khoản",
@@ -880,7 +880,7 @@ export default function UsersAdminPage() {
                                       </DropdownMenuItem>
                                     ) : (
                                       <DropdownMenuItem
-                                        className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-emerald-50 focus:text-emerald-700 text-zinc-700"
+                                        className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
                                         onClick={() =>
                                           requestAction(
                                             "Mở khóa tài khoản",
@@ -898,7 +898,7 @@ export default function UsersAdminPage() {
                                     )}
                                     <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                                     <DropdownMenuItem
-                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-700"
+                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600"
                                       onClick={() =>
                                         requestAction(
                                           "Vô hiệu hóa tài khoản",
@@ -917,7 +917,7 @@ export default function UsersAdminPage() {
                                 ) : (
                                   <>
                                     <DropdownMenuItem
-                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
                                       onClick={() =>
                                         router.push(`/admin/users/${u.id}`)
                                       }
@@ -927,7 +927,7 @@ export default function UsersAdminPage() {
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                                     <DropdownMenuItem
-                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
+                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
                                       onClick={() =>
                                         requestAction(
                                           "Khôi phục tài khoản",

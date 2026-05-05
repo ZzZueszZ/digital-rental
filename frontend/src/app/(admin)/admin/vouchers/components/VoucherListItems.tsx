@@ -57,15 +57,22 @@ export function VoucherTableRow({
   const status = getStatusConfig(voucher.status);
 
   return (
-    <tr className="group hover:bg-zinc-50/50 transition-all duration-300">
+    <tr 
+      onClick={() => onEdit(voucher)}
+      className="group transition-all duration-300 hover:bg-zinc-50/50 cursor-pointer"
+    >
       <td className="px-6 py-3.5">
         <div className="flex items-center gap-4">
-          <div className="w-9 h-9 rounded-lg bg-zinc-50 border border-zinc-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-150">
-            <Ticket className="w-4 h-4 text-zinc-400 group-hover:text-red-600 transition-colors" />
+          <div className="w-11 h-11 rounded-lg bg-zinc-100 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200/50 group-hover:scale-105 transition-transform duration-150">
+            <Ticket className="w-5 h-5 text-zinc-400 group-hover:text-red-600 transition-colors" />
           </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold text-zinc-950 tracking-tight">{voucher.code}</span>
-            <span className="text-xs font-medium text-zinc-400">ID: #{voucher.id}</span>
+          <div>
+            <p className="text-sm font-semibold text-zinc-950 tracking-tight mb-0.5 group-hover:text-red-600 transition-colors duration-300">{voucher.code}</p>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded">
+                ID: {voucher.id}
+              </span>
+            </div>
           </div>
         </div>
       </td>
@@ -78,7 +85,12 @@ export function VoucherTableRow({
       <td className="px-6 py-3.5">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={cn("text-xs font-semibold px-2 py-0.5 border-0 shadow-none", status.className)}>
+            <Badge 
+              className={cn(
+                "rounded-md px-2.5 py-1 text-[10px] font-bold border-0 ring-0 shadow-none",
+                status.className
+              )}
+            >
               {status.label}
             </Badge>
           </div>
@@ -118,37 +130,38 @@ export function VoucherTableRow({
           <span className="text-[11px] font-medium text-zinc-400 pl-5">Ngày hết hạn</span>
         </div>
       </td>
-      <td className="px-6 py-3.5 text-right">
+      <td className="px-6 py-3.5 text-right" onClick={(e) => e.stopPropagation()}>
         <DropdownMenu>
-          <DropdownMenuTrigger className={cn(
-            "h-8 w-8 rounded-xl flex items-center justify-center transition-all duration-300 outline-none",
-            "hover:bg-white hover:shadow-sm border border-transparent hover:border-zinc-200",
-            "text-zinc-400 hover:text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-950/10"
-          )}>
-            <MoreHorizontal className="w-4 h-4" />
+          <DropdownMenuTrigger
+            className="inline-flex items-center justify-center h-8 w-8 rounded-lg hover:bg-zinc-100 outline-none"
+          >
+            <MoreHorizontal className="w-4 h-4 text-zinc-500" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 p-2 rounded-xl border-zinc-100 shadow-xl">
+          <DropdownMenuContent align="end" className="w-56 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white">
+            <div className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">
+              Tác vụ Voucher
+            </div>
             <DropdownMenuItem 
               onClick={() => onEdit(voucher)}
-              className="flex items-center gap-2.5 p-2.5 rounded-xl cursor-pointer text-xs font-bold text-zinc-600 hover:text-zinc-950 hover:bg-zinc-50"
+              className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-zinc-700"
             >
-              <Edit2 className="w-3.5 h-3.5" /> Chỉnh sửa
+              <Edit2 className="w-3.5 h-3.5 text-zinc-400" /> Chỉnh sửa thông tin
             </DropdownMenuItem>
             <DropdownMenuSeparator className="my-1 bg-zinc-50" />
             {voucher.status !== "ACTIVE" && (
               <DropdownMenuItem 
                 onClick={() => onActivate(voucher.id)}
-                className="flex items-center gap-2.5 p-2.5 rounded-xl cursor-pointer text-xs font-bold text-emerald-600 hover:bg-emerald-50"
+                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
               >
-                <Power className="w-3.5 h-3.5" /> Kích hoạt
+                <Power className="w-3.5 h-3.5" /> Kích hoạt Voucher
               </DropdownMenuItem>
             )}
             {voucher.status === "ACTIVE" && (
               <DropdownMenuItem 
                 onClick={() => onDeactivate(voucher.id)}
-                className="flex items-center gap-2.5 p-2.5 rounded-xl cursor-pointer text-xs font-bold text-red-600 hover:bg-red-50"
+                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600"
               >
-                <PowerOff className="w-3.5 h-3.5" /> Vô hiệu hóa
+                <PowerOff className="w-3.5 h-3.5" /> Vô hiệu hóa mã
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>

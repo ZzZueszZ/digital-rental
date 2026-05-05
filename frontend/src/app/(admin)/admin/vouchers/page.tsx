@@ -172,7 +172,7 @@ export default function VouchersAdminPage() {
           <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <div className="w-9 h-9 rounded-lg bg-zinc-950 flex items-center justify-center shadow-lg shadow-zinc-100">
+                <div className="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
                   <Ticket className="w-4.5 h-4.5 text-white" strokeWidth={2} />
                 </div>
                 <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
@@ -189,7 +189,7 @@ export default function VouchersAdminPage() {
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors" />
                 <Input
                   placeholder="Tìm mã hoặc tên..."
-                  className="pl-10 h-10 rounded-xl border-zinc-100 bg-zinc-50/50 focus:bg-white transition-all font-medium text-xs"
+                  className="pl-10 h-10 rounded-xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:border-red-500/30 transition-all text-xs font-medium text-zinc-900 placeholder:text-zinc-400"
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);

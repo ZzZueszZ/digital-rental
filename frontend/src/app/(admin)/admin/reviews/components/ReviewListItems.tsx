@@ -33,23 +33,26 @@ interface ReviewItemsProps {
 
 export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: ReviewItemsProps) {
   return (
-    <tr className="admin-table-row group">
-      <td className="px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center border border-zinc-200 overflow-hidden shrink-0">
+    <tr 
+      onClick={() => onView(review)}
+      className="group transition-all duration-300 hover:bg-zinc-50/50 cursor-pointer"
+    >
+      <td className="px-6 py-3.5">
+        <div className="flex items-center gap-4">
+          <div className="w-11 h-11 rounded-lg bg-zinc-100 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200/50 group-hover:scale-105 transition-transform duration-150">
             {review.userAvatar ? (
               <img src={getImageUrl(review.userAvatar)} alt={review.userName} className="w-full h-full object-cover" />
             ) : (
               <User className="w-5 h-5 text-zinc-400" />
             )}
           </div>
-          <div className="flex flex-col min-w-0">
-            <span className="text-sm font-bold text-zinc-950 truncate max-w-[150px]">
-              {review.userName}
-            </span>
-            <span className="text-[11px] font-medium text-zinc-400">
-              ID: #{review.userId}
-            </span>
+          <div>
+            <p className="text-sm font-semibold text-zinc-950 tracking-tight mb-0.5 group-hover:text-red-600 transition-colors duration-300">{review.userName}</p>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded">
+                ID: {review.userId}
+              </span>
+            </div>
           </div>
         </div>
       </td>
@@ -67,7 +70,7 @@ export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: R
             ))}
           </div>
           <span className="text-sm font-medium text-zinc-600 line-clamp-2 leading-relaxed italic">
-            "{review.content}"
+            &ldquo;{review.content}&rdquo;
           </span>
           {review.images && review.images.length > 0 && (
             <div className="flex items-center gap-1 mt-2">
@@ -193,7 +196,7 @@ export function ReviewMobileCard({ review, onView, onHide, onUnhide, onDelete }:
 
       <div className="bg-zinc-50 rounded-xl p-4 border border-zinc-100/50">
         <p className="text-sm font-medium text-zinc-600 leading-relaxed italic">
-          "{review.content}"
+          &ldquo;{review.content}&rdquo;
         </p>
       </div>
 

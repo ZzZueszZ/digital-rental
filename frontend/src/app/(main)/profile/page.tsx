@@ -452,7 +452,7 @@ function CartSection() {
         </p>
         <Button
           onClick={() => router.push("/#product-section")}
-          className="h-10 px-8 rounded-lg bg-red-600 text-white font-bold hover:bg-zinc-900 transition-all shadow-md shadow-red-100 border-none"
+          className="h-10 px-8 rounded-xl bg-red-600 text-white font-bold hover:bg-zinc-900 transition-all shadow-md shadow-red-100 border-none"
         >
           Khám phá thiết bị
         </Button>
@@ -754,14 +754,14 @@ function OverviewSection({
           <div className="flex gap-3">
             <Button
               onClick={() => onNavigate("info")}
-              className="h-10 px-5 rounded-lg bg-zinc-950 text-white font-semibold text-[14px] hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white font-semibold text-[14px] hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
             >
               Xem hồ sơ
             </Button>
             <Button
               variant="outline"
               onClick={() => onNavigate("orders")}
-              className="h-10 px-5 rounded-lg border-zinc-200 bg-white text-zinc-950 font-semibold text-[14px] hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
+              className="h-10 px-5 rounded-xl border-zinc-200 bg-white text-zinc-950 font-semibold text-[14px] hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
             >
               Đơn hàng
             </Button>
@@ -837,7 +837,7 @@ function OverviewSection({
               Mở khóa tất cả các đặc quyền: Miễn phí vận chuyển, Bảo hiểm thiết
               bị và Ưu tiên đặt lịch thuê máy.
             </p>
-            <Button className="w-full h-10 bg-zinc-950 text-white font-semibold text-sm rounded-lg hover:bg-red-600 transition-all shadow-lg shadow-zinc-200">
+            <Button className="w-full h-10 bg-zinc-950 text-white font-semibold text-sm rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-zinc-200">
               Nâng cấp ngay
             </Button>
           </div>
@@ -1570,7 +1570,7 @@ function OrdersSection() {
               setPage(0);
             }}
             className={cn(
-              "whitespace-nowrap px-5 py-2 rounded-lg text-xs font-bold transition-all duration-300",
+              "whitespace-nowrap px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300",
               activeTab === tab.value
                 ? "bg-zinc-950 text-white shadow-lg shadow-zinc-200"
                 : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100",

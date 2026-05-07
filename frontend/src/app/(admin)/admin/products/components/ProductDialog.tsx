@@ -374,7 +374,7 @@ export function ProductDialog({
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Mô tả về tình trạng, tính năng nổi bật..."
-          className="flex min-h-[120px] w-full rounded-lg border border-zinc-950/5 bg-zinc-50/50 px-4 py-3 text-[15px] font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-dash-card leading-relaxed"
+          className="flex min-h-[120px] w-full rounded-lg border border-zinc-950/5 bg-zinc-50/50 px-4 py-3 text-[15px] font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-dash-card leading-relaxed custom-scrollbar"
         />
       </div>
 

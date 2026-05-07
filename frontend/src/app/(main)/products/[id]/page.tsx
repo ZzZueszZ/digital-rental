@@ -537,7 +537,7 @@ export default function ProductDetailPage() {
                           <MoreHorizontal className="w-4 h-4" />
                         </div>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-40 rounded-xl border-zinc-100 shadow-dash-overlay">
+                      <DropdownMenuContent align="end" className="w-44 bg-white rounded-xl border border-zinc-100 shadow-dash-overlay p-1.5">
                         {currentUser?.id === r.userId ? (
                           <>
                             <DropdownMenuItem 
@@ -545,23 +545,23 @@ export default function ProductDetailPage() {
                                 setEditingReview(r);
                                 setIsEditOpen(true);
                               }}
-                              className="gap-2 text-xs font-bold py-2.5 rounded-lg cursor-pointer"
+                              className="gap-3 text-[13px] font-bold py-3 rounded-lg cursor-pointer text-zinc-900 focus:bg-red-600 focus:text-white transition-all duration-200"
                             >
-                              <Edit className="w-3.5 h-3.5" /> Chỉnh sửa
+                              <Edit className="w-4 h-4" /> Chỉnh sửa
                             </DropdownMenuItem>
                             <DropdownMenuItem 
                               onClick={() => setDeletingReviewId(r.id)}
-                              className="gap-2 text-xs font-bold py-2.5 rounded-lg text-red-600 focus:text-red-600 cursor-pointer"
+                              className="gap-3 text-[13px] font-bold py-3 rounded-lg text-red-600 focus:bg-red-50 focus:text-red-700 cursor-pointer transition-all duration-200"
                             >
-                              <Trash2 className="w-3.5 h-3.5" /> Xóa đánh giá
+                              <Trash2 className="w-4 h-4" /> Xóa đánh giá
                             </DropdownMenuItem>
                           </>
                         ) : (
                           <DropdownMenuItem 
                             onClick={() => handleReportReview(r.id)}
-                            className="gap-2 text-xs font-bold py-2.5 rounded-lg text-amber-600 focus:text-amber-600 cursor-pointer"
+                            className="gap-3 text-[13px] font-bold py-3 rounded-lg text-amber-600 focus:bg-amber-50 focus:text-amber-700 cursor-pointer transition-all duration-200"
                           >
-                            <Flag className="w-3.5 h-3.5" /> Báo cáo
+                            <Flag className="w-4 h-4" /> Báo cáo
                           </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>

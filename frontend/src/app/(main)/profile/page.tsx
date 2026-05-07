@@ -89,7 +89,12 @@ import {
   useOrderDetail,
   useConfirmReceived,
 } from "@/services/order";
-import { OrderStatus, PaymentStatus, PaymentMethod, OrderResponse } from "@/types/order";
+import {
+  OrderStatus,
+  PaymentStatus,
+  PaymentMethod,
+  OrderResponse,
+} from "@/types/order";
 import { OrderDetailDialog } from "@/components/common/OrderDetailDialog";
 import { ReviewFormDialog } from "@/components/common/ReviewFormDialog";
 import { getImageUrl, formatDate } from "@/lib/utils";
@@ -314,79 +319,6 @@ export default function ProfileDashboard() {
             </Button>
 
             <div className="h-8 w-px bg-zinc-100 mx-1 hidden sm:block" />
-
-            {/* User Dropdown Profile */}
-            <div className="relative">
-              <button
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className={cn(
-                  "flex items-center gap-3 p-1.5 pr-4 rounded-2xl transition-all duration-300 border border-transparent",
-                  isUserMenuOpen
-                    ? "bg-zinc-100 border-zinc-200"
-                    : "hover:bg-zinc-100 hover:border-zinc-200",
-                )}
-              >
-                <div className="w-10 h-10 rounded-xl bg-zinc-950 text-white flex items-center justify-center font-black shadow-lg">
-                  {profile?.fullName?.charAt(0) || "U"}
-                </div>
-                <div className="hidden sm:flex flex-col items-start text-left">
-                  <span className="text-xs font-black text-zinc-950 tracking-tight leading-none mb-1">
-                    {profile?.fullName?.split(" ").pop()}
-                  </span>
-                  <span className="text-[11px] text-zinc-400 font-bold leading-none">
-                    Khách hàng
-                  </span>
-                </div>
-                <ChevronDown
-                  className={cn(
-                    "w-4 h-4 text-zinc-400 transition-transform duration-300",
-                    isUserMenuOpen && "rotate-180",
-                  )}
-                />
-              </button>
-
-              {isUserMenuOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setIsUserMenuOpen(false)}
-                  />
-                  <div className="absolute right-0 mt-3 w-64 bg-white border border-zinc-100 rounded-2xl shadow-2xl z-20 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
-                    <div className="p-5 border-b border-zinc-50 flex items-center gap-4 bg-zinc-50/30">
-                      <Avatar className="w-10 h-10 rounded-xl">
-                        <AvatarImage
-                          src={
-                            profile?.avatarUrl
-                              ? `http://localhost:8080${profile.avatarUrl}`
-                              : undefined
-                          }
-                        />
-                        <AvatarFallback className="font-black">
-                          {profile?.fullName?.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col overflow-hidden">
-                        <span className="truncate font-black text-zinc-950 text-sm">
-                          {profile?.fullName}
-                        </span>
-                        <span className="text-[11px] text-zinc-400 font-bold truncate">
-                          {profile?.email}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="p-2">
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all group"
-                      >
-                        <LogOut className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-                        Đăng xuất
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
           </div>
         </header>
 
@@ -1068,8 +1000,18 @@ function InfoSection({
               }
             >
               <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-lg px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
-                <span className={cn(formData.gender ? "text-zinc-900" : "text-zinc-400")}>
-                  {formData.gender ? (formData.gender === "MALE" ? "Nam" : formData.gender === "FEMALE" ? "Nữ" : "Khác") : "Chọn giới tính"}
+                <span
+                  className={cn(
+                    formData.gender ? "text-zinc-900" : "text-zinc-400",
+                  )}
+                >
+                  {formData.gender
+                    ? formData.gender === "MALE"
+                      ? "Nam"
+                      : formData.gender === "FEMALE"
+                        ? "Nữ"
+                        : "Khác"
+                    : "Chọn giới tính"}
                 </span>
               </SelectTrigger>
               <SelectContent className="rounded-xl shadow-dash-overlay border-black/5 p-1 bg-white z-[100]">
@@ -1374,27 +1316,27 @@ function AddressDialog({
             <label className="text-sm font-medium text-zinc-500 ml-1">
               Người nhận
             </label>
-              <Input
-                value={formData.receiverName}
-                onChange={(e) =>
-                  setFormData({ ...formData, receiverName: e.target.value })
-                }
-                className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
-                placeholder="Họ và tên"
-              />
+            <Input
+              value={formData.receiverName}
+              onChange={(e) =>
+                setFormData({ ...formData, receiverName: e.target.value })
+              }
+              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              placeholder="Họ và tên"
+            />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-500 ml-1">
               Số điện thoại
             </label>
-              <Input
-                value={formData.receiverPhone}
-                onChange={(e) =>
-                  setFormData({ ...formData, receiverPhone: e.target.value })
-                }
-                className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
-                placeholder="09xx xxx xxx"
-              />
+            <Input
+              value={formData.receiverPhone}
+              onChange={(e) =>
+                setFormData({ ...formData, receiverPhone: e.target.value })
+              }
+              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              placeholder="09xx xxx xxx"
+            />
           </div>
         </div>
 
@@ -1410,8 +1352,14 @@ function AddressDialog({
               }
             >
               <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-lg px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
-                <span className={cn(formData.province ? "text-zinc-900" : "text-zinc-400")}>
-                  {formData.province ? CITY_LABELS[formData.province] : "Chọn Tỉnh/Thành phố"}
+                <span
+                  className={cn(
+                    formData.province ? "text-zinc-900" : "text-zinc-400",
+                  )}
+                >
+                  {formData.province
+                    ? CITY_LABELS[formData.province]
+                    : "Chọn Tỉnh/Thành phố"}
                 </span>
               </SelectTrigger>
               <SelectContent className="rounded-xl shadow-dash-overlay border-black/5 max-h-72 bg-white p-1">
@@ -1431,14 +1379,14 @@ function AddressDialog({
             <label className="text-sm font-medium text-zinc-500 ml-1">
               Quận / Huyện
             </label>
-              <Input
-                value={formData.district}
-                onChange={(e) =>
-                  setFormData({ ...formData, district: e.target.value })
-                }
-                className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
-                placeholder="Nhập Quận/Huyện"
-              />
+            <Input
+              value={formData.district}
+              onChange={(e) =>
+                setFormData({ ...formData, district: e.target.value })
+              }
+              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              placeholder="Nhập Quận/Huyện"
+            />
           </div>
         </div>
 
@@ -1447,27 +1395,27 @@ function AddressDialog({
             <label className="text-sm font-medium text-zinc-500 ml-1">
               Phường / Xã
             </label>
-              <Input
-                value={formData.ward}
-                onChange={(e) =>
-                  setFormData({ ...formData, ward: e.target.value })
-                }
-                className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
-                placeholder="Nhập Phường/Xã"
-              />
+            <Input
+              value={formData.ward}
+              onChange={(e) =>
+                setFormData({ ...formData, ward: e.target.value })
+              }
+              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              placeholder="Nhập Phường/Xã"
+            />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-500 ml-1">
               Địa chỉ chi tiết
             </label>
-              <Input
-                value={formData.detailAddress}
-                onChange={(e) =>
-                  setFormData({ ...formData, detailAddress: e.target.value })
-                }
-                className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
-                placeholder="Số nhà, ngõ, tên đường..."
-              />
+            <Input
+              value={formData.detailAddress}
+              onChange={(e) =>
+                setFormData({ ...formData, detailAddress: e.target.value })
+              }
+              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              placeholder="Số nhà, ngõ, tên đường..."
+            />
           </div>
         </div>
 
@@ -1520,7 +1468,8 @@ function OrdersSection() {
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
-  const [selectedOrderForReview, setSelectedOrderForReview] = useState<OrderResponse | null>(null);
+  const [selectedOrderForReview, setSelectedOrderForReview] =
+    useState<OrderResponse | null>(null);
   const router = useRouter();
 
   const { mutateAsync: confirmReceived } = useConfirmReceived();
@@ -1540,7 +1489,8 @@ function OrdersSection() {
       await confirmReceived(id);
       toast.success("Xác nhận đã nhận hàng thành công");
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Không thể xác nhận nhận hàng";
+      const message =
+        error instanceof Error ? error.message : "Không thể xác nhận nhận hàng";
       toast.error(message);
     }
   };
@@ -1701,7 +1651,10 @@ function OrdersSection() {
                   <div key={item.id} className="flex gap-4 items-center h-12">
                     <div className="w-12 h-12 rounded-lg border border-zinc-50 bg-white p-1.5 flex items-center justify-center shrink-0">
                       <img
-                        src={getImageUrl(item.productMainImage) || "/placeholder-camera.jpg"}
+                        src={
+                          getImageUrl(item.productMainImage) ||
+                          "/placeholder-camera.jpg"
+                        }
                         alt={item.productName}
                         className="w-full h-full object-contain"
                       />
@@ -1742,21 +1695,22 @@ function OrdersSection() {
                     Xem chi tiết
                   </Button>
                   {order.status === OrderStatus.DELIVERED && (
-                    <Button 
+                    <Button
                       onClick={() => handleConfirmReceived(order.id)}
                       className="h-10 px-5 rounded-lg bg-emerald-600 text-white text-[14px] font-semibold hover:bg-emerald-700 border-none shadow-[0_4px_12px_rgba(16,185,129,0.2)] transition-all"
                     >
                       Đã nhận hàng
                     </Button>
                   )}
-                  {order.status === OrderStatus.COMPLETED && !order.isReviewed && (
-                    <Button 
-                      onClick={() => handleReview(order)}
-                      className="h-10 px-5 rounded-lg bg-red-600 text-white text-[14px] font-semibold hover:bg-zinc-950 border-none shadow-[0_4px_12px_rgba(220,38,38,0.2)] transition-all"
-                    >
-                      Đánh giá ngay
-                    </Button>
-                  )}
+                  {order.status === OrderStatus.COMPLETED &&
+                    !order.isReviewed && (
+                      <Button
+                        onClick={() => handleReview(order)}
+                        className="h-10 px-5 rounded-lg bg-red-600 text-white text-[14px] font-semibold hover:bg-zinc-950 border-none shadow-[0_4px_12px_rgba(220,38,38,0.2)] transition-all"
+                      >
+                        Đánh giá ngay
+                      </Button>
+                    )}
                 </div>
               </div>
             </div>

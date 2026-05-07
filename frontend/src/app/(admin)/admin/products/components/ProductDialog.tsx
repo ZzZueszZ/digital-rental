@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Save, Package, Upload, X, Plus, Trash2 } from "lucide-react";
 import { ProductResponse, ProductRequest, ProductInfoUpdateRequest, ProductSpecificationDto } from "@/types/product";
 import { CategoryResponse } from "@/types/category";
@@ -370,11 +371,13 @@ export function ProductDialog({
         <label className="text-sm font-medium text-zinc-500 ml-1">
           Mô tả chi tiết
         </label>
-        <textarea
+        <Textarea
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Mô tả về tình trạng, tính năng nổi bật..."
-          className="flex min-h-[120px] w-full rounded-lg border border-zinc-950/5 bg-zinc-50/50 px-4 py-3 text-[15px] font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-dash-card leading-relaxed custom-scrollbar"
+          className={cn(
+            "flex min-h-[120px] w-full rounded-lg border border-zinc-950/5 bg-zinc-50/50 px-4 py-3 text-[15px] font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-dash-card leading-relaxed"
+          )}
         />
       </div>
 

@@ -28,18 +28,20 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
 
-  /* Dashboard Specific Tokens (8px System) */
+  /* Dashboard Specific Tokens (Consistent Scale) */
   --spacing-dash-gap: 1.25rem; /* 20px */
   --spacing-dash-card-p: 1rem; /* 16px */
   --spacing-dash-card-p-lg: 1.25rem; /* 20px */
-  --radius-dash-card: 12px;
-  --shadow-dash-card: 0 2px 6px rgba(0, 0, 0, 0.04);
-  --shadow-dash-hover: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-dash-overlay: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --radius-dash-sm: 8px;
+  --radius-dash-md: 12px;
+  --radius-dash-lg: 16px;
+  --shadow-dash-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-dash-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-dash-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
   
   /* Sidebar/Navbar Dimensions */
   --dash-sidebar-w: 240px;

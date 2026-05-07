@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { 
   CheckCircle2, 
@@ -17,19 +17,10 @@ import { cn } from "@/lib/utils";
 export default function VNPayReturnPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [status, setStatus] = useState<"success" | "error" | "loading">("loading");
-  
   const message = searchParams.get("message");
   const orderCode = searchParams.get("orderCode");
   const urlStatus = searchParams.get("status");
-
-  useEffect(() => {
-    if (urlStatus === "success") {
-      setStatus("success");
-    } else if (urlStatus === "error") {
-      setStatus("error");
-    }
-  }, [urlStatus]);
+  const status = (urlStatus === "success" || urlStatus === "error") ? urlStatus : "loading";
 
   if (status === "loading") {
     return (

@@ -17,7 +17,8 @@ import {
   CreditCard,
   MapPin,
   Camera,
-  MessageCircle
+  MessageCircle,
+  MessageSquare
 } from "lucide-react";
 import { useAuthSession } from "@/components/auth/Guards";
 import { Role } from "@/constants/enum/role";
@@ -80,6 +81,12 @@ export function AdminSidebar({
       href: "/admin/reviews",
       icon: MessageCircle,
       label: "Đánh giá",
+      roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
+    },
+    {
+      href: "/admin/support",
+      icon: MessageSquare,
+      label: "Hỗ trợ",
       roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
     },
     {

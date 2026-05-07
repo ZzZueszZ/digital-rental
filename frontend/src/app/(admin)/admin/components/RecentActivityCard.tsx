@@ -1,19 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { 
-  History, 
-  User, 
-  Settings, 
-  Package, 
-  Trash2, 
-  RotateCcw, 
-  Lock, 
-  Unlock, 
-  Key, 
-  RefreshCw, 
+import {
+  History,
+  User,
+  Settings,
+  Package,
+  Trash2,
+  RotateCcw,
+  Lock,
+  Unlock,
+  Key,
+  RefreshCw,
   ArrowRight,
-  LucideIcon 
+  LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuditLogs } from "@/services/audit";
@@ -53,12 +53,14 @@ export function RecentActivityCard() {
     <div className="admin-card flex flex-col h-full !p-0">
       <div className="p-4 border-b border-zinc-50 flex items-center justify-between">
         <div className="flex items-center gap-2">
-           <History className="w-4 h-4 text-zinc-400" />
-           <span className="text-[15px] font-semibold text-zinc-900 tracking-tight">Hoạt động hệ thống</span>
+          <History className="w-4 h-4 text-zinc-400" />
+          <span className="text-[15px] font-semibold text-zinc-900 tracking-tight">
+            Hoạt động hệ thống
+          </span>
         </div>
-        <Button 
+        <Button
           onClick={() => router.push("/admin/audit-logs")}
-          variant="ghost" 
+          variant="ghost"
           size="sm"
           className="h-8 px-3 text-[11px] font-bold text-zinc-400 hover:text-zinc-950 transition-all gap-1"
         >
@@ -70,7 +72,10 @@ export function RecentActivityCard() {
         <div className="divide-y divide-zinc-50">
           {isLoading ? (
             Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="p-3.5 flex items-start gap-3 animate-pulse">
+              <div
+                key={i}
+                className="p-3.5 flex items-start gap-3 animate-pulse"
+              >
                 <div className="w-8 h-8 rounded-lg bg-zinc-50 flex-shrink-0" />
                 <div className="flex-1 space-y-1.5">
                   <div className="h-3 bg-zinc-50 rounded w-1/3" />
@@ -85,11 +90,20 @@ export function RecentActivityCard() {
           ) : (
             logs.map((log) => {
               const Icon = ACTION_ICONS[log.action] || History;
-              const colorClass = ACTION_COLORS[log.action] || "text-zinc-400 bg-zinc-50";
+              const colorClass =
+                ACTION_COLORS[log.action] || "text-zinc-400 bg-zinc-50";
 
               return (
-                <div key={log.id} className="p-3.5 flex items-start gap-3 hover:bg-zinc-50/50 transition-colors group">
-                  <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm border border-transparent group-hover:border-zinc-200 transition-all", colorClass)}>
+                <div
+                  key={log.id}
+                  className="p-3.5 flex items-start gap-3 hover:bg-zinc-50/50 transition-colors group"
+                >
+                  <div
+                    className={cn(
+                      "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm border border-transparent group-hover:border-zinc-200 transition-all",
+                      colorClass,
+                    )}
+                  >
                     <Icon className="w-4.5 h-4.5" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -98,19 +112,22 @@ export function RecentActivityCard() {
                         {log.actorEmail}
                       </p>
                       <span className="text-[10px] font-bold text-zinc-300 whitespace-nowrap uppercase">
-                        {formatDistanceToNow(new Date(log.createdAt), { addSuffix: true, locale: vi })}
+                        {formatDistanceToNow(new Date(log.createdAt), {
+                          addSuffix: true,
+                          locale: vi,
+                        })}
                       </span>
                     </div>
                     <p className="text-[12px] text-zinc-500 line-clamp-1 mt-0.5 font-medium leading-snug">
                       {log.description}
                     </p>
                     <div className="flex items-center gap-1.5 mt-2">
-                       <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md bg-zinc-100 text-zinc-500 border border-zinc-200/50 tracking-wider">
-                          {log.action.split('_').pop()}
-                       </span>
-                       <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md bg-red-50 text-red-600 border border-red-100 tracking-wider">
-                          {log.targetType} #{log.targetId}
-                       </span>
+                      <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md bg-zinc-100 text-zinc-500 border border-zinc-200/50 tracking-wider">
+                        {log.action.split("_").pop()}
+                      </span>
+                      <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md bg-red-50 text-red-600 border border-red-100 tracking-wider">
+                        {log.targetType} #{log.targetId}
+                      </span>
                     </div>
                   </div>
                 </div>

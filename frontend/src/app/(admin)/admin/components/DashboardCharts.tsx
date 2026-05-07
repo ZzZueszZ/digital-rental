@@ -11,12 +11,18 @@ import {
   BarChart,
   Bar,
 } from "recharts";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-import { 
-  RevenueDashboardResponse, 
-  DailyOrderStatResponse 
+import {
+  RevenueDashboardResponse,
+  DailyOrderStatResponse,
 } from "@/services/dashboard";
 
 interface DashboardChartsProps {
@@ -24,7 +30,10 @@ interface DashboardChartsProps {
   dailyOrders: DailyOrderStatResponse[];
 }
 
-export function DashboardCharts({ revenueData, dailyOrders }: DashboardChartsProps) {
+export function DashboardCharts({
+  revenueData,
+  dailyOrders,
+}: DashboardChartsProps) {
   return (
     <div className="grid gap-5 sm:gap-6 grid-cols-1 xl:grid-cols-7">
       {/* Revenue Area Chart */}
@@ -79,11 +88,29 @@ export function DashboardCharts({ revenueData, dailyOrders }: DashboardChartsPro
                   fontWeight={600}
                   tickFormatter={(val) => `${val / 1000000}M`}
                 />
-                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#e4e4e7" />
+                <CartesianGrid
+                  vertical={false}
+                  strokeDasharray="3 3"
+                  stroke="#e4e4e7"
+                />
                 <RechartsTooltip
-                  contentStyle={{ borderRadius: "1rem", border: "none", boxShadow: "0 20px 40px -10px rgba(0,0,0,0.1)", padding: "12px 16px" }}
-                  itemStyle={{ color: "#18181b", fontWeight: 800, fontSize: "14px" }}
-                  labelStyle={{ color: "#71717a", fontSize: "12px", fontWeight: 600, marginBottom: "4px" }}
+                  contentStyle={{
+                    borderRadius: "1rem",
+                    border: "none",
+                    boxShadow: "0 20px 40px -10px rgba(0,0,0,0.1)",
+                    padding: "12px 16px",
+                  }}
+                  itemStyle={{
+                    color: "#18181b",
+                    fontWeight: 800,
+                    fontSize: "14px",
+                  }}
+                  labelStyle={{
+                    color: "#71717a",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    marginBottom: "4px",
+                  }}
                 />
                 <Area
                   type="monotone"
@@ -112,7 +139,10 @@ export function DashboardCharts({ revenueData, dailyOrders }: DashboardChartsPro
         <CardContent className="p-4 sm:p-5">
           <div className="h-[280px] sm:h-[350px] w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dailyOrders} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <BarChart
+                data={dailyOrders}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
                 <XAxis
                   dataKey="date"
                   tickLine={false}
@@ -123,15 +153,44 @@ export function DashboardCharts({ revenueData, dailyOrders }: DashboardChartsPro
                   fontWeight={600}
                   dy={10}
                 />
-                <YAxis tickLine={false} axisLine={false} stroke="#a1a1aa" fontSize={10} fontWeight={600} />
-                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#e4e4e7" />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  stroke="#a1a1aa"
+                  fontSize={10}
+                  fontWeight={600}
+                />
+                <CartesianGrid
+                  vertical={false}
+                  strokeDasharray="3 3"
+                  stroke="#e4e4e7"
+                />
                 <RechartsTooltip
                   cursor={{ fill: "#f4f4f5", radius: 8 }}
-                  contentStyle={{ borderRadius: "1rem", border: "none", boxShadow: "0 20px 40px -10px rgba(0,0,0,0.1)", padding: "12px 16px" }}
-                  itemStyle={{ color: "#18181b", fontWeight: 800, fontSize: "14px" }}
-                  labelStyle={{ color: "#71717a", fontSize: "12px", fontWeight: 600, marginBottom: "4px" }}
+                  contentStyle={{
+                    borderRadius: "1rem",
+                    border: "none",
+                    boxShadow: "0 20px 40px -10px rgba(0,0,0,0.1)",
+                    padding: "12px 16px",
+                  }}
+                  itemStyle={{
+                    color: "#18181b",
+                    fontWeight: 800,
+                    fontSize: "14px",
+                  }}
+                  labelStyle={{
+                    color: "#71717a",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    marginBottom: "4px",
+                  }}
                 />
-                <Bar dataKey="count" fill="#18181b" radius={[4, 4, 0, 0]} barSize={15} />
+                <Bar
+                  dataKey="count"
+                  fill="#18181b"
+                  radius={[4, 4, 0, 0]}
+                  barSize={15}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>

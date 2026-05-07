@@ -44,7 +44,8 @@ export function AdminReviewDetailDialog({
       onOpenChange={onOpenChange}
       title="Chi tiết Đánh giá"
       icon={Star}
-      description={`Quản lý nội dung phản hồi từ #${review.userId}`}
+      iconClassName="bg-red-600 text-white shadow-lg shadow-red-100"
+      description={`Quản lý nội dung phản hồi từ khách hàng #${review.userId}`}
       hideFooter
       maxWidth="max-w-2xl"
     >
@@ -142,31 +143,35 @@ export function AdminReviewDetailDialog({
           )}
         </div>
 
-        {/* Admin Actions */}
-        <div className="flex gap-3 pt-6">
-          {review.hidden ? (
-            <Button 
-              onClick={() => onUnhide(review.id)}
-              className="flex-1 h-14 rounded-2xl bg-emerald-600 text-white font-black text-xs uppercase tracking-widest hover:bg-zinc-950 transition-all shadow-lg shadow-emerald-100"
-            >
-              <CheckCircle2 className="w-4 h-4 mr-2" />
-              Hiển thị lại
-            </Button>
-          ) : (
-            <Button 
-              onClick={() => onHide(review.id)}
-              className="flex-1 h-14 rounded-2xl bg-amber-500 text-white font-black text-xs uppercase tracking-widest hover:bg-zinc-950 transition-all shadow-lg shadow-amber-100"
-            >
-              <EyeOff className="w-4 h-4 mr-2" />
-              Ẩn đánh giá
-            </Button>
-          )}
+        {/* Action Buttons Section */}
+        <div className="pt-6 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            {review.hidden ? (
+              <Button 
+                onClick={() => onUnhide(review.id)}
+                className="flex-1 sm:flex-none h-12 px-8 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-100 font-bold transition-all duration-200"
+              >
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Hiển thị lại
+              </Button>
+            ) : (
+              <Button 
+                onClick={() => onHide(review.id)}
+                className="flex-1 sm:flex-none h-12 px-8 rounded-xl bg-zinc-950 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-100 font-bold transition-all duration-200"
+              >
+                <EyeOff className="w-4 h-4 mr-2" />
+                Ẩn đánh giá
+              </Button>
+            )}
+          </div>
+          
           <Button 
             variant="ghost"
             onClick={() => onDelete(review.id)}
-            className="h-14 w-14 rounded-2xl text-red-500 hover:bg-red-50 transition-all border border-transparent hover:border-red-100"
+            className="w-full sm:w-auto h-12 px-6 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700 font-bold transition-all duration-200"
           >
-            <Trash2 className="w-5 h-5" />
+            <Trash2 className="w-4 h-4 mr-2" />
+            Xóa vĩnh viễn
           </Button>
         </div>
       </div>

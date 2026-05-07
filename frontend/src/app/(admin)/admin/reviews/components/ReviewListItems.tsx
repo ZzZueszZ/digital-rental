@@ -110,7 +110,7 @@ export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: R
           )}
         </div>
       </td>
-      <td className="px-6 py-4 text-right">
+      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
         <DropdownMenu>
           <DropdownMenuTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 hover:bg-zinc-100 rounded-lg outline-none")}>
             <MoreHorizontal className="h-4 w-4 text-zinc-500" />

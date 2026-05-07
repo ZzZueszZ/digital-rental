@@ -25,9 +25,10 @@ interface OrderDetailDialogProps {
   orderId?: number | null;
   order?: OrderResponse | null;
   isLoading?: boolean;
+  isAdminView?: boolean;
 }
 
-export function OrderDetailDialog({ isOpen, onClose, orderId, order: initialOrder, isLoading: initialLoading }: OrderDetailDialogProps) {
+export function OrderDetailDialog({ isOpen, onClose, orderId, order: initialOrder, isLoading: initialLoading, isAdminView = false }: OrderDetailDialogProps) {
   const { data: orderRes, isLoading: isFetching } = useOrderDetail(orderId || 0);
   const { mutateAsync: confirmReceived, isPending: isConfirming } = useConfirmReceived();
   
@@ -190,8 +191,8 @@ export function OrderDetailDialog({ isOpen, onClose, orderId, order: initialOrde
             </div>
           </div>
 
-          {/* Action Button for Confirmation */}
-          {order.status === OrderStatus.DELIVERED && (
+          {/* Action Button for Confirmation - ONLY for Customer View */}
+          {!isAdminView && order.status === OrderStatus.DELIVERED && (
             <div className="pt-2">
               <Button
                 onClick={handleConfirmReceived}

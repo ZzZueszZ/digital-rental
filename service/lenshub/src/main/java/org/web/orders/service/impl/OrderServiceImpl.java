@@ -380,7 +380,8 @@ public class OrderServiceImpl implements OrderService {
         } else if (currentStatus == OrderStatus.SHIPPING) {
             validTransition = (newStatus == OrderStatus.DELIVERED);
         } else if (currentStatus == OrderStatus.DELIVERED) {
-            validTransition = (newStatus == OrderStatus.COMPLETED);
+            // Only CUSTOMERS can confirm completion via confirmReceived method
+            validTransition = false; 
         }
 
         if (!validTransition) {

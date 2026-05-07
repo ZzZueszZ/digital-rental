@@ -215,6 +215,7 @@ export default function OrdersAdminPage() {
         onClose={() => setIsDetailOpen(false)}
         order={selectedOrder || null}
         isLoading={isOrderLoading}
+        isAdminView={true}
       />
     </div>
   );

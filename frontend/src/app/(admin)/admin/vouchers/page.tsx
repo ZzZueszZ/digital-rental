@@ -313,6 +313,7 @@ export default function VouchersAdminPage() {
       </div>
 
       <VoucherDialog
+        key={isDialogOpen ? (selectedVoucher?.id || "new") : "closed"}
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         voucher={selectedVoucher}

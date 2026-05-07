@@ -382,6 +382,7 @@ export default function ProductsAdminPage() {
 
       {/* Dialogs */}
       <ProductDialog
+        key={dialogState.type === "INFO" ? (dialogState.product?.id || "new") : "closed"}
         open={dialogState.type === "INFO"}
         onOpenChange={(o) => !o && setDialogState({ type: "NONE", product: null })}
         product={dialogState.product}

@@ -30,31 +30,9 @@ export function ProductDialog({
 }: ProductDialogProps) {
   const isUpdate = !!product;
 
-  const [formData, setFormData] = useState<ProductRequest>({
-    name: "",
-    description: "",
-    brand: "",
-    categoryId: undefined,
-    rentPricePerDay: 0,
-    salePrice: 0,
-    isForRent: true,
-    isForSale: false,
-    specifications: [],
-  });
-
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [errors, setErrors] = useState<Partial<Record<keyof ProductRequest | "image", string>>>({});
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  const [prevProduct, setPrevProduct] = useState<ProductResponse | null | undefined>(undefined);
-  const [prevOpen, setPrevOpen] = useState<boolean>(false);
-
-  if (product !== prevProduct || (open && !prevOpen)) {
-    setPrevProduct(product);
-    setPrevOpen(open);
+  const [formData, setFormData] = useState<ProductRequest>(() => {
     if (product) {
-      setFormData({
+      return {
         name: product.name,
         description: product.description || "",
         brand: product.brand || "",
@@ -64,25 +42,27 @@ export function ProductDialog({
         isForRent: product.isForRent,
         isForSale: product.isForSale,
         specifications: product.specifications?.map(s => ({ specKey: s.specKey, specValue: s.specValue })) || [],
-      });
-      setImagePreview(getImageUrl(product.mainImageUrl));
-    } else {
-      setFormData({
-        name: "",
-        description: "",
-        brand: "",
-        categoryId: undefined,
-        rentPricePerDay: 0,
-        salePrice: 0,
-        isForRent: true,
-        isForSale: false,
-        specifications: [],
-      });
-      setImagePreview(null);
+      };
     }
-    setImageFile(null);
-    setErrors({});
-  }
+    return {
+      name: "",
+      description: "",
+      brand: "",
+      categoryId: undefined,
+      rentPricePerDay: 0,
+      salePrice: 0,
+      isForRent: true,
+      isForSale: false,
+      specifications: [],
+    };
+  });
+
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(() => 
+    product ? getImageUrl(product.mainImageUrl) : null
+  );
+  const [errors, setErrors] = useState<Partial<Record<keyof ProductRequest | "image", string>>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

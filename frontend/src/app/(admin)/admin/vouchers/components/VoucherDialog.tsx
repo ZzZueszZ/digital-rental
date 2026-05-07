@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,31 +27,9 @@ export function VoucherDialog({
   onSubmit,
   isPending
 }: VoucherDialogProps) {
-  const [formData, setFormData] = useState<VoucherCreateRequest>({
-    code: "",
-    name: "",
-    description: "",
-    type: "PERCENTAGE",
-    scope: "GLOBAL",
-    discountValue: 0,
-    maxDiscountAmount: undefined,
-    minOrderValue: 0,
-    maxUsagePerUser: 1,
-    maxUsage: undefined,
-    startDate: "",
-    endDate: "",
-  });
-
-  const [errors, setErrors] = useState<Partial<Record<keyof VoucherCreateRequest, string>>>({});
-  
-  const [prevVoucher, setPrevVoucher] = useState<VoucherResponse | null | undefined>(undefined);
-  const [prevOpen, setPrevOpen] = useState<boolean>(false);
-
-  if (voucher !== prevVoucher || (open && !prevOpen)) {
-    setPrevVoucher(voucher);
-    setPrevOpen(open);
+  const [formData, setFormData] = useState<VoucherCreateRequest>(() => {
     if (voucher) {
-      setFormData({
+      return {
         code: voucher.code,
         name: voucher.name,
         description: voucher.description || "",
@@ -64,25 +42,25 @@ export function VoucherDialog({
         maxUsage: voucher.maxUsage,
         startDate: voucher.startDate ? voucher.startDate.slice(0, 16) : "",
         endDate: voucher.endDate ? voucher.endDate.slice(0, 16) : "",
-      });
-    } else {
-      setFormData({
-        code: "",
-        name: "",
-        description: "",
-        type: "PERCENTAGE",
-        scope: "GLOBAL",
-        discountValue: 0,
-        maxDiscountAmount: undefined,
-        minOrderValue: 0,
-        maxUsagePerUser: 1,
-        maxUsage: undefined,
-        startDate: "",
-        endDate: "",
-      });
+      };
     }
-    setErrors({});
-  }
+    return {
+      code: "",
+      name: "",
+      description: "",
+      type: "PERCENTAGE",
+      scope: "GLOBAL",
+      discountValue: 0,
+      maxDiscountAmount: undefined,
+      minOrderValue: 0,
+      maxUsagePerUser: 1,
+      maxUsage: undefined,
+      startDate: "",
+      endDate: "",
+    };
+  });
+
+  const [errors, setErrors] = useState<Partial<Record<keyof VoucherCreateRequest, string>>>({});
 
   const validate = () => {
     const newErrors: Partial<Record<keyof VoucherCreateRequest, string>> = {};

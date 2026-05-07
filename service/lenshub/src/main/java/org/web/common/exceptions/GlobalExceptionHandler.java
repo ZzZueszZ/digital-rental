@@ -168,7 +168,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(
                 ApiResponse.failedResponse(
                         HttpStatus.PAYLOAD_TOO_LARGE.value(),
-                        "File quá lớn! Kích thước tối đa cho phép là 500MB.",
+                        "File quá lớn! Kích thước tối đa cho phép là 10MB.",
                         ex.getMessage()
                 )
         );

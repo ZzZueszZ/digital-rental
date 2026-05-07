@@ -14,7 +14,6 @@ export const http = axios.create({
   baseURL: apiBaseUrl,
   withCredentials: true,
   headers: {
-    "Content-Type": "application/json",
     Accept: "application/json",
   },
 });

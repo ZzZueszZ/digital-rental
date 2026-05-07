@@ -22,7 +22,20 @@ public class ProductRequest {
     private Boolean isForSale;
     
     private String brand;
-    private java.util.List<ProductSpecificationDto> specifications;
     
+    @Setter(AccessLevel.NONE)
+    private java.util.List<ProductSpecificationDto> specifications;
+
     private Long categoryId;
+
+    // This method handles the JSON string sent as "specificationsData" from the frontend
+    public void setSpecificationsData(String json) {
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            this.specifications = mapper.readValue(json, 
+                new com.fasterxml.jackson.core.type.TypeReference<java.util.List<ProductSpecificationDto>>() {});
+        } catch (Exception e) {
+            this.specifications = new java.util.ArrayList<>();
+        }
+    }
 }

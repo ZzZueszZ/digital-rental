@@ -19,7 +19,9 @@ import {
   DropdownMenuContent, 
   DropdownMenuItem, 
   DropdownMenuTrigger,
-  DropdownMenuSeparator
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+  DropdownMenuGroup
 } from "@/components/ui/dropdown-menu";
 import { VoucherResponse } from "@/types/voucher";
 import { cn } from "@/lib/utils";
@@ -31,13 +33,15 @@ interface VoucherRowProps {
   onEdit: (voucher: VoucherResponse) => void;
   onActivate: (id: number) => void;
   onDeactivate: (id: number) => void;
+  onDelete: (id: number) => void;
 }
 
 export function VoucherTableRow({ 
   voucher, 
   onEdit, 
   onActivate, 
-  onDeactivate 
+  onDeactivate,
+  onDelete
 }: VoucherRowProps) {
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -138,32 +142,40 @@ export function VoucherTableRow({
             <MoreHorizontal className="w-4 h-4 text-zinc-500" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white">
-            <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-500 px-3 py-1.5 tracking-widest">
-              Tác vụ Voucher
-            </DropdownMenuLabel>
-            <DropdownMenuItem 
-              onClick={() => onEdit(voucher)}
-              className="cursor-pointer"
-            >
-              <Edit2 className="w-3.5 h-3.5" /> Chỉnh sửa thông tin
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-            {voucher.status !== "ACTIVE" && (
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-500 px-3 py-1.5 tracking-widest">
+                Tác vụ Voucher
+              </DropdownMenuLabel>
               <DropdownMenuItem 
-                onClick={() => onActivate(voucher.id)}
-                className="cursor-pointer text-emerald-700 focus:bg-emerald-50 focus:text-emerald-700"
+                onClick={() => onEdit(voucher)}
+                className="cursor-pointer"
               >
-                <Power className="w-3.5 h-3.5" /> Kích hoạt Voucher
+                <Edit2 className="w-3.5 h-3.5" /> Chỉnh sửa thông tin
               </DropdownMenuItem>
-            )}
-            {voucher.status === "ACTIVE" && (
+              <DropdownMenuSeparator className="my-1 bg-zinc-50" />
+              {voucher.status !== "ACTIVE" && (
+                <DropdownMenuItem 
+                  onClick={() => onActivate(voucher.id)}
+                  className="cursor-pointer text-emerald-700 focus:bg-emerald-50 focus:text-emerald-700"
+                >
+                  <Power className="w-3.5 h-3.5" /> Kích hoạt Voucher
+                </DropdownMenuItem>
+              )}
+              {voucher.status === "ACTIVE" && (
+                <DropdownMenuItem 
+                  onClick={() => onDeactivate(voucher.id)}
+                  className="cursor-pointer text-amber-700 focus:bg-amber-50 focus:text-amber-700"
+                >
+                  <PowerOff className="w-3.5 h-3.5" /> Tạm dừng Voucher
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem 
-                onClick={() => onDeactivate(voucher.id)}
-                className="cursor-pointer text-amber-700 focus:bg-amber-50 focus:text-amber-700"
+                onClick={() => onDelete(voucher.id)}
+                className="cursor-pointer text-red-600"
               >
-                <PowerOff className="w-3.5 h-3.5" /> Tạm dừng Voucher
+                <Trash2 className="w-3.5 h-3.5" /> Xóa Voucher
               </DropdownMenuItem>
-            )}
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </td>
@@ -175,7 +187,8 @@ export function VoucherMobileCard({
   voucher, 
   onEdit, 
   onActivate, 
-  onDeactivate 
+  onDeactivate,
+  onDelete
 }: VoucherRowProps) {
   const getStatusConfig = (status: string) => {
     switch (status) {

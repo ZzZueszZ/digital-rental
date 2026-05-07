@@ -77,6 +77,7 @@ export interface OrderResponse {
   completedAt?: string;
   canceledAt?: string;
   createdAt: string;
+  isReviewed?: boolean;
   items: OrderItemResponse[];
 }
 

@@ -1749,7 +1749,7 @@ function OrdersSection() {
                       Đã nhận hàng
                     </Button>
                   )}
-                  {order.status === OrderStatus.COMPLETED && (
+                  {order.status === OrderStatus.COMPLETED && !order.isReviewed && (
                     <Button 
                       onClick={() => handleReview(order)}
                       className="h-10 px-5 rounded-lg bg-red-600 text-white text-[14px] font-semibold hover:bg-zinc-950 border-none shadow-[0_4px_12px_rgba(220,38,38,0.2)] transition-all"

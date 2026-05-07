@@ -13,6 +13,8 @@ import org.web.users.model.User;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
+    boolean existsByOrderId(Long orderId);
+
 
     @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Review r WHERE r.user = :user AND r.product = :product AND r.order = :order")
     boolean existsByUserAndProductAndOrder(@Param("user") User user, @Param("product") Product product, @Param("order") Order order);

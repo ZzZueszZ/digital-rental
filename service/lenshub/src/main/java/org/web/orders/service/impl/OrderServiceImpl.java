@@ -51,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
     private final VoucherService voucherService;
     private final AuditLogService auditLogService;
     private final ShippingAddressRepository shippingAddressRepository;
+    private final org.web.reviews.repository.ReviewRepository reviewRepository;
 
     @Override
     @Transactional
@@ -313,7 +314,9 @@ public class OrderServiceImpl implements OrderService {
         if (!order.getUser().getId().equals(userId)) {
             throw new ApplicationException(HttpStatus.FORBIDDEN, "Đơn hàng này không thuộc về bạn");
         }
-        return orderMapper.toOrderResponse(order);
+        OrderResponse res = orderMapper.toOrderResponse(order);
+        res.setIsReviewed(reviewRepository.existsByOrderId(orderId));
+        return res;
     }
 
     @Override
@@ -322,7 +325,11 @@ public class OrderServiceImpl implements OrderService {
         User user = getUser(userId);
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Order> orders = orderRepository.findMyOrders(user, status, paymentStatus, pageable);
-        return orders.map(orderMapper::toOrderResponse);
+        return orders.map(order -> {
+            OrderResponse res = orderMapper.toOrderResponse(order);
+            res.setIsReviewed(reviewRepository.existsByOrderId(order.getId()));
+            return res;
+        });
     }
 
     @Override

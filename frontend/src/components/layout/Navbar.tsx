@@ -89,10 +89,10 @@ export function Navbar() {
                 <Camera className="h-5 w-5 text-white" />
               </div>
               <div className="flex flex-col select-none leading-none">
-                <span className="text-[16px] lg:text-[18px] font-black tracking-tighter text-zinc-950 uppercase">
+                <span className="text-[16px] lg:text-[18px] font-black tracking-tighter text-zinc-950">
                   Studio
                 </span>
-                <span className="text-[16px] lg:text-[18px] font-black tracking-tighter text-red-600 uppercase">
+                <span className="text-[16px] lg:text-[18px] font-black tracking-tighter text-red-600">
                   Visuals
                 </span>
               </div>
@@ -103,7 +103,7 @@ export function Navbar() {
               <NavigationMenu>
                 <NavigationMenuList className="gap-2">
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="bg-transparent text-zinc-500 hover:!text-zinc-950 font-bold text-[15px] uppercase tracking-widest transition-all data-open:!text-red-600 data-open:!bg-transparent data-popup-open:!bg-transparent data-popup-open:!text-red-600 hover:!bg-transparent focus:!bg-transparent data-open:hover:!bg-transparent data-popup-open:hover:!bg-transparent data-active:!bg-transparent rounded-dash-sm h-10 px-4 border-none shadow-none outline-none">
+                    <NavigationMenuTrigger className="bg-transparent text-zinc-500 hover:!text-zinc-950 font-bold text-[15px] tracking-tight transition-all data-open:!text-red-600 data-open:!bg-transparent data-popup-open:!bg-transparent data-popup-open:!text-red-600 hover:!bg-transparent focus:!bg-transparent data-open:hover:!bg-transparent data-popup-open:hover:!bg-transparent data-active:!bg-transparent rounded-dash-sm h-10 px-4 border-none shadow-none outline-none">
                       Thiết bị
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="p-0 border-none bg-transparent shadow-none">
@@ -117,9 +117,7 @@ export function Navbar() {
                             Khám phá các dòng máy ảnh và ống kính chuyên nghiệp
                             nhất hiện nay.
                           </p>
-                          <Button
-                            className="rounded-dash-sm !bg-red-600 !text-white font-semibold text-[13px] tracking-tight px-6 h-10 hover:!bg-red-700 transition-all shadow-dash-sm"
-                          >
+                          <Button className="rounded-xl !bg-red-600 !text-white font-semibold text-[13px] tracking-tight px-6 h-10 hover:!bg-red-700 transition-all shadow-dash-sm">
                             Xem tất cả
                           </Button>
                         </div>
@@ -173,7 +171,7 @@ export function Navbar() {
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       href="/inventory"
-                      className="inline-flex h-10 items-center justify-center rounded-lg bg-transparent px-4 text-[15px] font-bold uppercase tracking-widest text-zinc-500 transition-all hover:text-zinc-950 hover:bg-zinc-50"
+                      className="inline-flex h-10 items-center justify-center rounded-lg bg-transparent px-4 text-[15px] font-bold tracking-tight text-zinc-500 transition-all hover:text-zinc-950 hover:bg-zinc-50"
                     >
                       Sản phẩm mới
                     </NavigationMenuLink>
@@ -181,7 +179,7 @@ export function Navbar() {
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       href="/about"
-                      className="inline-flex h-10 items-center justify-center rounded-lg bg-transparent px-4 text-[15px] font-bold uppercase tracking-widest text-zinc-500 transition-all hover:text-zinc-950 hover:bg-zinc-50"
+                      className="inline-flex h-10 items-center justify-center rounded-lg bg-transparent px-4 text-[15px] font-bold tracking-tight text-zinc-500 transition-all hover:text-zinc-950 hover:bg-zinc-50"
                     >
                       Về chúng tôi
                     </NavigationMenuLink>
@@ -242,7 +240,7 @@ export function Navbar() {
                       <p className="text-[14px] font-bold text-zinc-950 truncate">
                         {user.email}
                       </p>
-                      <p className="text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em] mt-1">
+                      <p className="text-[11px] font-black text-zinc-400 mt-1">
                         {user.roles?.[0] || "Customer"}
                       </p>
                     </div>
@@ -268,9 +266,7 @@ export function Navbar() {
                         className="flex items-center gap-3 px-1 py-1 w-full group"
                       >
                         <User className="w-4 h-4" />
-                        <span className="tracking-tight">
-                          Tài khoản
-                        </span>
+                        <span className="tracking-tight">Tài khoản</span>
                       </Link>
                     </DropdownMenuItem>
 
@@ -280,9 +276,7 @@ export function Navbar() {
                         className="flex items-center gap-3 px-1 py-1 w-full group"
                       >
                         <Settings className="w-4 h-4" />
-                        <span className="tracking-tight">
-                          Cài đặt
-                        </span>
+                        <span className="tracking-tight">Cài đặt</span>
                       </Link>
                     </DropdownMenuItem>
 
@@ -294,16 +288,14 @@ export function Navbar() {
                     >
                       <div className="flex items-center gap-3 px-1 py-1">
                         <LogOut className="w-4 h-4" />
-                        <span className="tracking-tight">
-                          Đăng xuất
-                        </span>
+                        <span className="tracking-tight">Đăng xuất</span>
                       </div>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
                 <Link href={Routers.LOGIN}>
-                  <Button className="h-10 rounded-dash-sm px-8 bg-zinc-950 text-white hover:bg-red-600 font-bold text-[13px] uppercase tracking-[0.1em] transition-all shadow-dash-sm active:scale-95 border-none">
+                  <Button className="h-10 rounded-dash-sm px-8 bg-zinc-950 text-white hover:bg-red-600 font-bold text-[13px] transition-all shadow-dash-sm active:scale-95 border-none">
                     Đăng nhập
                   </Button>
                 </Link>
@@ -324,16 +316,15 @@ export function Navbar() {
               ) : (
                 <Link
                   href={Routers.LOGIN}
-                  className="h-8 px-3.5 rounded-dash-sm bg-zinc-900 border border-zinc-800 text-white hover:bg-black font-black uppercase text-[8px] tracking-widest transition-all flex items-center"
+                  className="h-8 px-3.5 rounded-dash-sm bg-zinc-900 border border-zinc-800 text-white hover:bg-black font-black text-[10px] transition-all flex items-center"
                 >
                   Đăng nhập
                 </Link>
               )}
             </div>
 
-
             {/* Desktop CTA */}
-            <Button className="hidden xl:flex ml-2 h-10 rounded-dash-sm px-8 bg-red-600 text-white border-none hover:bg-red-700 font-bold text-[13px] uppercase tracking-[0.1em] transition-all shadow-dash-md active:scale-95">
+            <Button className="hidden xl:flex ml-2 h-10 rounded-xl px-8 bg-red-600 text-white border-none hover:bg-red-700 font-bold text-[14px] transition-all shadow-dash-md active:scale-95">
               Đặt thuê ngay
             </Button>
 
@@ -372,7 +363,7 @@ export function Navbar() {
         <div className="flex flex-col h-full">
           {/* Mobile Menu Header */}
           <div className="flex items-center justify-between h-16 px-5 border-b border-zinc-100">
-            <span className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">
+            <span className="text-[11px] font-black text-zinc-400 tracking-tight">
               Menu
             </span>
             <button
@@ -388,7 +379,7 @@ export function Navbar() {
             <div className="px-5 py-5 border-b border-zinc-200">
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-dash-md bg-red-600 flex items-center justify-center shrink-0 shadow-dash-md">
-                  <span className="text-sm font-black text-white uppercase">
+                  <span className="text-sm font-black text-white">
                     {user.email?.charAt(0) || "U"}
                   </span>
                 </div>
@@ -396,7 +387,7 @@ export function Navbar() {
                   <p className="text-[14px] font-bold text-zinc-950 truncate">
                     {user.email}
                   </p>
-                  <p className="text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em] mt-0.5">
+                  <p className="text-[11px] font-black text-zinc-400 mt-0.5">
                     {user.roles?.[0] || "Customer"}
                   </p>
                 </div>
@@ -407,8 +398,8 @@ export function Navbar() {
           {/* Mobile Menu Navigation */}
           <div className="flex-1 overflow-y-auto py-4">
             <div className="px-3 space-y-1">
-              <p className="px-3 py-2 text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">
-                Điều Hướng
+              <p className="px-3 py-2 text-[11px] font-black text-zinc-400 tracking-tight">
+                Điều hướng
               </p>
 
               <Link
@@ -417,8 +408,8 @@ export function Navbar() {
                 className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
               >
                 <Home className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                <span className="text-[13px] font-bold uppercase tracking-widest">
-                  Trang Chủ
+                <span className="text-[14px] font-bold">
+                  Trang chủ
                 </span>
                 <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
               </Link>
@@ -429,8 +420,8 @@ export function Navbar() {
                 className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
               >
                 <Camera className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                <span className="text-[13px] font-bold uppercase tracking-widest">
-                  Thiết Bị
+                <span className="text-[14px] font-bold">
+                  Thiết bị
                 </span>
                 <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
               </Link>
@@ -441,8 +432,8 @@ export function Navbar() {
                 className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
               >
                 <Package className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                <span className="text-[13px] font-bold uppercase tracking-widest">
-                  Sản Phẩm Mới
+                <span className="text-[14px] font-bold">
+                  Sản phẩm mới
                 </span>
                 <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
               </Link>
@@ -453,8 +444,8 @@ export function Navbar() {
                 className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
               >
                 <Info className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                <span className="text-[13px] font-bold uppercase tracking-widest">
-                  Về Chúng Tôi
+                <span className="text-[14px] font-bold">
+                  Về chúng tôi
                 </span>
                 <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
               </Link>
@@ -463,8 +454,8 @@ export function Navbar() {
             {/* Mobile Menu Account Section */}
             {!isLoading && isAuthenticated && user && (
               <div className="px-3 mt-4 space-y-1">
-                <p className="px-3 py-2 text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">
-                  Tài Khoản
+                <p className="px-3 py-2 text-[11px] font-black text-zinc-400 tracking-tight">
+                  Tài khoản
                 </p>
 
                 {dashboardLink && (
@@ -474,8 +465,8 @@ export function Navbar() {
                     className="flex items-center gap-3 px-3 py-3 rounded-dash-md text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
                   >
                     <LayoutDashboard className="w-4 h-4 text-red-600" />
-                    <span className="text-[13px] font-bold uppercase tracking-widest">
-                      Dashboard
+                    <span className="text-[14px] font-bold">
+                      Bảng điều khiển
                     </span>
                     <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
                   </Link>
@@ -487,8 +478,8 @@ export function Navbar() {
                   className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
                 >
                   <User className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                  <span className="text-[13px] font-bold uppercase tracking-widest">
-                    Tài Khoản
+                  <span className="text-[14px] font-bold">
+                    Tài khoản
                   </span>
                   <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
                 </Link>
@@ -499,8 +490,8 @@ export function Navbar() {
                   className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
                 >
                   <Settings className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                  <span className="text-[13px] font-bold uppercase tracking-widest">
-                    Cài Đặt
+                  <span className="text-[14px] font-bold">
+                    Cài đặt
                   </span>
                   <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
                 </Link>
@@ -513,14 +504,14 @@ export function Navbar() {
             {!isLoading && isAuthenticated && user ? (
               <>
                 <Button
-                  className="w-full h-11 rounded-dash-sm bg-zinc-950 text-white hover:bg-black font-bold uppercase text-[12px] tracking-[0.2em] shadow-dash-md active:scale-[0.98] transition-all"
+                  className="w-full h-11 rounded-xl bg-zinc-950 text-white hover:bg-black font-bold text-[14px] shadow-dash-md active:scale-[0.98] transition-all"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Đặt Thuê Ngay
                 </Button>
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center justify-center gap-2.5 h-11 rounded-dash-sm border border-red-500/20 text-red-500 hover:bg-red-50 font-bold uppercase text-[12px] tracking-[0.2em] transition-all"
+                  className="w-full flex items-center justify-center gap-2.5 h-11 rounded-dash-sm border border-red-500/20 text-red-500 hover:bg-red-50 font-bold text-[14px] transition-all"
                 >
                   <LogOut className="w-4 h-4" />
                   Đăng Xuất
@@ -532,12 +523,12 @@ export function Navbar() {
                   href={Routers.LOGIN}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <Button className="w-full h-11 rounded-dash-sm bg-zinc-950 text-white hover:bg-black font-bold uppercase text-[12px] tracking-[0.2em] shadow-dash-md active:scale-[0.98] transition-all">
-                    Đăng Nhập
+                  <Button className="w-full h-11 rounded-dash-sm bg-zinc-950 text-white hover:bg-black font-bold text-[14px] shadow-dash-md active:scale-[0.98] transition-all">
+                    Đăng nhập
                   </Button>
                 </Link>
                 <Button
-                  className="w-full h-11 rounded-dash-sm bg-red-600 text-white hover:bg-red-700 font-bold uppercase text-[12px] tracking-[0.2em] shadow-dash-md active:scale-[0.98] transition-all mt-2"
+                  className="w-full h-11 rounded-dash-sm bg-red-600 text-white hover:bg-red-700 font-bold text-[14px] shadow-dash-md active:scale-[0.98] transition-all mt-2"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Đặt Thuê Ngay

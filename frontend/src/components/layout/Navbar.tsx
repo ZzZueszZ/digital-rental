@@ -249,38 +249,38 @@ export function Navbar() {
                     <DropdownMenuSeparator className="bg-zinc-100" />
 
                     {dashboardLink && (
-                      <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-zinc-50 focus:text-zinc-900">
+                      <DropdownMenuItem className="cursor-pointer">
                         <Link
                           href={dashboardLink}
-                          className="flex items-center gap-3 px-3 py-2.5 w-full group"
+                          className="flex items-center gap-3 px-1 py-1 w-full group"
                         >
-                          <LayoutDashboard className="w-4 h-4 text-red-600" />
-                          <span className="text-[14px] font-medium text-zinc-900 tracking-tight">
+                          <LayoutDashboard className="w-4 h-4 text-red-600 group-hover:text-white" />
+                          <span className="tracking-tight">
                             Bảng điều khiển
                           </span>
                         </Link>
                       </DropdownMenuItem>
                     )}
 
-                    <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-zinc-50 focus:text-zinc-900">
+                    <DropdownMenuItem className="cursor-pointer">
                       <Link
                         href="/profile"
-                        className="flex items-center gap-3 px-3 py-2.5 w-full group"
+                        className="flex items-center gap-3 px-1 py-1 w-full group"
                       >
-                        <User className="w-4 h-4 text-zinc-500 group-hover:text-zinc-900 transition-colors" />
-                        <span className="text-[14px] font-medium text-zinc-900 tracking-tight">
+                        <User className="w-4 h-4" />
+                        <span className="tracking-tight">
                           Tài khoản
                         </span>
                       </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-zinc-50 focus:text-zinc-900">
+                    <DropdownMenuItem className="cursor-pointer">
                       <Link
                         href="/profile/settings"
-                        className="flex items-center gap-3 px-3 py-2.5 w-full group"
+                        className="flex items-center gap-3 px-1 py-1 w-full group"
                       >
-                        <Settings className="w-4 h-4 text-zinc-500 group-hover:text-zinc-900 transition-colors" />
-                        <span className="text-[14px] font-medium text-zinc-900 tracking-tight">
+                        <Settings className="w-4 h-4" />
+                        <span className="tracking-tight">
                           Cài đặt
                         </span>
                       </Link>
@@ -290,11 +290,11 @@ export function Navbar() {
 
                     <DropdownMenuItem
                       onClick={logout}
-                      className="rounded-xl cursor-pointer focus:bg-red-50 focus:text-red-500"
+                      className="cursor-pointer !text-red-600 focus:!bg-red-600 focus:!text-white"
                     >
-                      <div className="flex items-center gap-3 px-3 py-2.5">
-                        <LogOut className="w-4 h-4 text-red-500" />
-                        <span className="text-[14px] font-medium text-red-600 tracking-tight">
+                      <div className="flex items-center gap-3 px-1 py-1">
+                        <LogOut className="w-4 h-4" />
+                        <span className="tracking-tight">
                           Đăng xuất
                         </span>
                       </div>

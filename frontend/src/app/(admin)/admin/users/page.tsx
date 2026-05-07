@@ -446,32 +446,30 @@ export default function UsersAdminPage() {
                         className="w-52 p-1.5 rounded-xl border border-zinc-100 shadow-dash-overlay bg-white"
                       >
                         <DropdownMenuGroup>
-                          <DropdownMenuLabel className="text-xs font-semibold text-zinc-400 px-3 py-1.5">
+                          <DropdownMenuLabel className="text-[10px] font-black uppercase text-zinc-500 px-3 py-1.5 tracking-widest">
                             Tác vụ quản trị
                           </DropdownMenuLabel>
                           {viewMode === "ACTIVE" ? (
                             <>
                               <DropdownMenuItem
-                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                className="cursor-pointer"
                                 onClick={() =>
                                   router.push(`/admin/users/${u.id}`)
                                 }
                               >
-                                <Eye className="w-3.5 h-3.5 text-zinc-400" />{" "}
-                                Xem chi tiết
+                                <Eye className="w-3.5 h-3.5" /> Xem chi tiết
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                                className="cursor-pointer"
                                 onClick={() =>
                                   router.push(`/admin/users/${u.id}/edit`)
                                 }
                               >
-                                <Edit2 className="w-3.5 h-3.5 text-zinc-400" />{" "}
-                                Chỉnh sửa
+                                <Edit2 className="w-3.5 h-3.5" /> Chỉnh sửa
                               </DropdownMenuItem>
                               <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                               <DropdownMenuItem
-                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-zinc-700"
+                                className="cursor-pointer"
                                 onClick={() =>
                                   requestAction(
                                     "Cấp lại mật khẩu",
@@ -483,12 +481,11 @@ export default function UsersAdminPage() {
                                   )
                                 }
                               >
-                                <RefreshCw className="w-3.5 h-3.5 text-zinc-400" />{" "}
-                                Reset mật khẩu
+                                <RefreshCw className="w-3.5 h-3.5" /> Reset mật khẩu
                               </DropdownMenuItem>
                               {u.accountNonLocked ? (
                                 <DropdownMenuItem
-                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-amber-600"
+                                  className="cursor-pointer text-amber-600"
                                   onClick={() =>
                                     requestAction(
                                       "Khóa tài khoản",
@@ -499,12 +496,11 @@ export default function UsersAdminPage() {
                                     )
                                   }
                                 >
-                                  <Lock className="w-3.5 h-3.5" />{" "}
-                                  Khóa tài khoản
+                                  <Lock className="w-3.5 h-3.5" /> Khóa tài khoản
                                 </DropdownMenuItem>
                               ) : (
                                 <DropdownMenuItem
-                                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-600"
+                                  className="cursor-pointer text-emerald-600"
                                   onClick={() =>
                                     requestAction(
                                       "Mở khóa tài khoản",
@@ -515,13 +511,12 @@ export default function UsersAdminPage() {
                                     )
                                   }
                                 >
-                                  <Unlock className="w-3.5 h-3.5" />{" "}
-                                  Mở khóa
+                                  <Unlock className="w-3.5 h-3.5" /> Mở khóa
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                               <DropdownMenuItem
-                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600"
+                                className="cursor-pointer text-red-600"
                                 onClick={() =>
                                   requestAction(
                                     "Vô hiệu hóa",
@@ -538,17 +533,16 @@ export default function UsersAdminPage() {
                           ) : (
                             <>
                               <DropdownMenuItem
-                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-zinc-700"
+                                className="cursor-pointer"
                                 onClick={() =>
                                   router.push(`/admin/users/${u.id}`)
                                 }
                               >
-                                <Eye className="w-3.5 h-3.5 text-zinc-400" />{" "}
-                                Xem chi tiết
+                                <Eye className="w-3.5 h-3.5" /> Xem chi tiết
                               </DropdownMenuItem>
                               <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                               <DropdownMenuItem
-                                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
+                                className="cursor-pointer text-emerald-700"
                                 onClick={() =>
                                   requestAction(
                                     "Khôi phục",
@@ -559,8 +553,7 @@ export default function UsersAdminPage() {
                                   )
                                 }
                               >
-                                <RotateCcw className="w-3.5 h-3.5" /> Khôi phục
-                                tài khoản
+                                <RotateCcw className="w-3.5 h-3.5" /> Khôi phục tài khoản
                               </DropdownMenuItem>
                             </>
                           )}

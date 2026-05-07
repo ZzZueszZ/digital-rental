@@ -4,7 +4,7 @@ import {
   EyeOff, 
   Flag, 
   CheckCircle2, 
-  XCircle, 
+  Trash2,
   Star,
   User,
   MessageSquare,
@@ -117,12 +117,12 @@ export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: R
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52 p-1.5 rounded-xl shadow-xl border-zinc-100 bg-white animate-in zoom-in-95 duration-200">
             <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-[10px] font-bold text-zinc-400 px-2 py-1.5 uppercase tracking-widest">
+              <DropdownMenuLabel className="text-[10px] font-bold text-zinc-500 px-2 py-1.5 uppercase tracking-widest">
                 Quản lý đánh giá
               </DropdownMenuLabel>
               <DropdownMenuItem 
                 onClick={() => onView(review)}
-                className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-bold text-zinc-600 hover:text-zinc-950 hover:bg-zinc-50 transition-colors cursor-pointer"
+                className="cursor-pointer"
               >
                 <Eye className="w-4 h-4" />
                 Xem chi tiết
@@ -130,7 +130,7 @@ export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: R
               {review.hidden ? (
                 <DropdownMenuItem 
                   onClick={() => onUnhide(review.id)}
-                  className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-bold text-emerald-600 hover:bg-emerald-50 transition-colors cursor-pointer"
+                  className="cursor-pointer text-emerald-600 focus:bg-emerald-50 focus:text-emerald-600"
                 >
                   <CheckCircle2 className="w-4 h-4" />
                   Hiển thị lại
@@ -138,7 +138,7 @@ export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: R
               ) : (
                 <DropdownMenuItem 
                   onClick={() => onHide(review.id)}
-                  className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-bold text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer"
+                  className="cursor-pointer text-amber-600 focus:bg-amber-50 focus:text-amber-600"
                 >
                   <EyeOff className="w-4 h-4" />
                   Ẩn đánh giá
@@ -146,9 +146,9 @@ export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: R
               )}
               <DropdownMenuItem 
                 onClick={() => onDelete(review.id)}
-                className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-bold text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                className="cursor-pointer text-red-600"
               >
-                <XCircle className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" />
                 Xóa vĩnh viễn
               </DropdownMenuItem>
             </DropdownMenuGroup>

@@ -48,39 +48,39 @@ export function ProductActionMenu({
           className="w-56 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
         >
           <DropdownMenuGroup>
-            <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">
+            <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-500 px-3 py-1.5 tracking-widest">
               Tác vụ sản phẩm
             </DropdownMenuLabel>
 
             {!isDeleted ? (
               <>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
+                  className="cursor-pointer"
                   onClick={onView}
                 >
                   <Eye className="w-3.5 h-3.5" /> Xem chi tiết sản phẩm
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
+                  className="cursor-pointer"
                   onClick={onEdit}
                 >
                   <Edit2 className="w-3.5 h-3.5" /> Cập nhật thông tin
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
+                  className="cursor-pointer"
                   onClick={onUpdatePrice}
                 >
                   <DollarSign className="w-3.5 h-3.5" /> Cập nhật giá bán/thuê
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
+                  className="cursor-pointer"
                   onClick={onGallery}
                 >
                   <ImageIcon className="w-3.5 h-3.5" /> Quản lý thư viện ảnh
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600"
+                  className="cursor-pointer"
                   onClick={onDelete}
                 >
                   <Trash2 className="w-3.5 h-3.5" /> Vô hiệu hóa
@@ -89,14 +89,14 @@ export function ProductActionMenu({
             ) : (
               <>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
+                  className="cursor-pointer text-emerald-700 focus:bg-emerald-50 focus:text-emerald-700"
                   onClick={onRestore}
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Khôi phục sản phẩm
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600"
+                  className="cursor-pointer"
                   onClick={onHardDelete}
                 >
                   <Trash2 className="w-3.5 h-3.5" /> Xóa vĩnh viễn

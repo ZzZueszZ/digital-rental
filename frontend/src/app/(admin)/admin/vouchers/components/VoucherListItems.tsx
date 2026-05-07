@@ -138,20 +138,20 @@ export function VoucherTableRow({
             <MoreHorizontal className="w-4 h-4 text-zinc-500" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white">
-            <div className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">
+            <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-500 px-3 py-1.5 tracking-widest">
               Tác vụ Voucher
-            </div>
+            </DropdownMenuLabel>
             <DropdownMenuItem 
               onClick={() => onEdit(voucher)}
-              className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-zinc-700"
+              className="cursor-pointer"
             >
-              <Edit2 className="w-3.5 h-3.5 text-zinc-400" /> Chỉnh sửa thông tin
+              <Edit2 className="w-3.5 h-3.5" /> Chỉnh sửa thông tin
             </DropdownMenuItem>
             <DropdownMenuSeparator className="my-1 bg-zinc-50" />
             {voucher.status !== "ACTIVE" && (
               <DropdownMenuItem 
                 onClick={() => onActivate(voucher.id)}
-                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
+                className="cursor-pointer text-emerald-700 focus:bg-emerald-50 focus:text-emerald-700"
               >
                 <Power className="w-3.5 h-3.5" /> Kích hoạt Voucher
               </DropdownMenuItem>
@@ -159,9 +159,9 @@ export function VoucherTableRow({
             {voucher.status === "ACTIVE" && (
               <DropdownMenuItem 
                 onClick={() => onDeactivate(voucher.id)}
-                className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600"
+                className="cursor-pointer text-amber-700 focus:bg-amber-50 focus:text-amber-700"
               >
-                <PowerOff className="w-3.5 h-3.5" /> Vô hiệu hóa mã
+                <PowerOff className="w-3.5 h-3.5" /> Tạm dừng Voucher
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>
@@ -195,7 +195,7 @@ export function VoucherMobileCard({
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-zinc-50 flex items-center justify-center">
-            <Ticket className="w-4 h-4 text-zinc-400" />
+            <Ticket className="w-4 h-4" />
           </div>
           <div className="flex flex-col">
             <span className="text-xs font-black text-zinc-950 uppercase tracking-wider">{voucher.code}</span>

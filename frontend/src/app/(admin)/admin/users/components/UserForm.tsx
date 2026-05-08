@@ -141,7 +141,7 @@ export function UserForm({
             onClick={() =>
               router.push(isEditing ? `/admin/users/${userId}` : "/admin/users")
             }
-            className="h-12 w-12 rounded-full bg-white border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-sm shrink-0"
+            className="h-12 w-12 rounded-xl bg-white border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-sm shrink-0"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
@@ -305,7 +305,7 @@ export function UserForm({
                   ) : (
                     <span
                       className={cn(
-                        "inline-flex items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-full",
+                        "inline-flex items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-xl",
                         statusConfig.badge,
                       )}
                     >
@@ -336,12 +336,12 @@ export function UserForm({
                       </p>
                       {!isEditing &&
                         (user.accountNonLocked ? (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
                             <Unlock className="w-3.5 h-3.5" />
                             Không bị khóa
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">
+                          <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-xl bg-red-50 text-red-700 border border-red-200">
                             <Lock className="w-3.5 h-3.5" />
                             Đang bị khóa
                           </span>
@@ -416,7 +416,7 @@ export function UserForm({
                   ) : (
                     <span
                       className={cn(
-                        "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-md border",
+                        "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-xl border",
                         user.kycStatus === KycStatus.VERIFIED
                           ? "bg-emerald-50 border-emerald-200 text-emerald-700"
                           : user.kycStatus === KycStatus.PENDING
@@ -480,7 +480,7 @@ export function UserForm({
                       </SelectContent>
                     </Select>
                   ) : (
-                    <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-md bg-zinc-950 text-white">
+                    <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-xl bg-zinc-950 text-white">
                       {user.trustLevel}
                     </span>
                   )}

@@ -186,12 +186,12 @@ export function UserProfileCard({
             <img
               src={getAvatarUrl(profile.avatarUrl)}
               alt={displayName}
-              className="w-24 h-24 rounded-full object-cover shadow-inner border-4 border-zinc-50 bg-white"
+              className="w-24 h-24 rounded-xl object-cover shadow-inner border-4 border-zinc-50 bg-white"
             />
           ) : (
             <div
               className={cn(
-                "w-24 h-24 rounded-full bg-gradient-to-br flex items-center justify-center shadow-inner border-4 border-zinc-50",
+                "w-24 h-24 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-inner border-4 border-zinc-50",
                 avatarGradient,
               )}
             >
@@ -201,7 +201,7 @@ export function UserProfileCard({
             </div>
           )}
           {/* Upload overlay — always available for avatar management */}
-          <div className="absolute inset-0 rounded-full bg-zinc-950/50 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-1.5">
+          <div className="absolute inset-0 rounded-xl bg-zinc-950/50 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-1.5">
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadAvatarMutation.isPending}
@@ -256,7 +256,7 @@ export function UserProfileCard({
                   type="button"
                   onClick={() => toggleRole(role)}
                   className={cn(
-                    "text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-tight border transition-all",
+                    "text-[10px] font-bold px-3 py-1.5 rounded-xl uppercase tracking-tight border transition-all",
                     roles.includes(role)
                       ? "bg-zinc-950 text-white border-zinc-950"
                       : "bg-white text-zinc-400 border-zinc-200 hover:border-zinc-300",
@@ -272,7 +272,7 @@ export function UserProfileCard({
                 <span
                   key={role}
                   className={cn(
-                    "text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-tight border bg-white text-zinc-500 border-zinc-200",
+                    "text-[10px] font-bold px-3 py-1.5 rounded-xl uppercase tracking-tight border bg-white text-zinc-500 border-zinc-200",
                   )}
                 >
                   {role}
@@ -285,7 +285,7 @@ export function UserProfileCard({
       <div className="px-6 py-4 space-y-3 border-b border-zinc-100">
         {/* Email */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-400 shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400 shrink-0">
             <Mail className="w-3.5 h-3.5" />
           </div>
           <div className="min-w-0 flex-1">
@@ -305,7 +305,7 @@ export function UserProfileCard({
 
         {/* Phone */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-400 shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400 shrink-0">
             <Phone className="w-3.5 h-3.5" />
           </div>
           <div className="min-w-0 flex-1">
@@ -343,23 +343,23 @@ export function UserProfileCard({
           </p>
           {!isEditing &&
             (isProfileEditing ? (
-              <div className="flex gap-2">
+              <div className="flex items-center gap-3">
                 <button
                   onClick={handleProfileCancel}
-                  className="text-[10px] font-bold text-zinc-400 hover:text-zinc-700 flex items-center gap-1 transition-colors"
+                  className="h-10 px-4 text-[13px] font-semibold text-zinc-500 hover:text-zinc-950 flex items-center gap-2 transition-all rounded-xl hover:bg-zinc-50"
                 >
-                  <X className="w-3 h-3" /> Hủy
+                  <X className="w-4 h-4" /> Hủy
                 </button>
                 <Button
                   size="sm"
                   onClick={handleProfileSave}
                   disabled={updateMutation.isPending}
-                  className="h-8 px-3 text-[12px] rounded-lg bg-zinc-950 hover:bg-red-600 text-white font-semibold transition-all flex items-center gap-1.5 shadow-md shadow-zinc-200"
+                  className="h-10 px-6 text-[14px] rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold transition-all flex items-center gap-2 shadow-md shadow-zinc-200 border-none"
                 >
                   {updateMutation.isPending ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    <Save className="w-3.5 h-3.5" />
+                    <Save className="w-4 h-4" />
                   )}
                   Lưu
                 </Button>
@@ -367,9 +367,9 @@ export function UserProfileCard({
             ) : (
               <button
                 onClick={handleProfileEdit}
-                className="text-[10px] font-bold text-zinc-400 hover:text-zinc-700 flex items-center gap-1 transition-colors"
+                className="h-10 px-4 text-[13px] font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100 flex items-center gap-2 transition-all rounded-xl border border-transparent hover:border-zinc-200"
               >
-                <Edit2 className="w-3 h-3" /> Sửa
+                <Edit2 className="w-4 h-4" /> Sửa
               </button>
             ))}
         </div>
@@ -472,14 +472,14 @@ export function UserProfileCard({
         ) : (
           <div className="space-y-2">
             <ProfileRow
-              icon={<Users2 className="w-3.5 h-3.5" />}
+              icon={<Users2 className="w-4 h-4" />}
               label="Giới tính"
               value={
                 GENDERS.find((g) => g.value === profile?.gender)?.label || "—"
               }
             />
             <ProfileRow
-              icon={<CalendarDays className="w-3.5 h-3.5" />}
+              icon={<CalendarDays className="w-4 h-4" />}
               label="Ngày sinh"
               value={
                 profile?.dateOfBirth
@@ -488,12 +488,12 @@ export function UserProfileCard({
               }
             />
             <ProfileRow
-              icon={<Briefcase className="w-3.5 h-3.5" />}
+              icon={<Briefcase className="w-4 h-4" />}
               label="Nghề nghiệp"
               value={profile?.occupation || "—"}
             />
             <ProfileRow
-              icon={<Building2 className="w-3.5 h-3.5" />}
+              icon={<Building2 className="w-4 h-4" />}
               label="Công ty"
               value={profile?.companyName || "—"}
             />
@@ -543,13 +543,13 @@ function ProfileRow({
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-zinc-50/80 border border-zinc-100">
-      <span className="text-zinc-400 shrink-0">{icon}</span>
+    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-zinc-50/80 border border-zinc-100/50 hover:bg-white hover:border-zinc-200 hover:shadow-sm transition-all group/row">
+      <span className="text-zinc-400 shrink-0 group-hover/row:text-red-500 transition-colors">{icon}</span>
       <div className="min-w-0 flex-1 flex items-center justify-between gap-2">
-        <span className="text-[13px] font-medium text-zinc-400 shrink-0">
+        <span className="text-[14px] font-medium text-zinc-400 shrink-0">
           {label}
         </span>
-        <span className="text-[14px] font-semibold text-zinc-700 truncate">
+        <span className="text-[15px] font-semibold text-zinc-700 truncate">
           {value}
         </span>
       </div>

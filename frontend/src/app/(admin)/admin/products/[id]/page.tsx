@@ -216,7 +216,7 @@ export default function ProductDetailPage({
             onClick={handleBack}
             variant="ghost"
             size="icon"
-            className="h-12 w-12 rounded-full bg-white border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-sm shrink-0"
+            className="h-12 w-12 rounded-lg bg-white border border-black/5 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-[0_2px_6px_rgba(0,0,0,0.04)] shrink-0"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
@@ -227,7 +227,7 @@ export default function ProductDetailPage({
               </span>
               <Badge
                 className={cn(
-                  "rounded-full px-3 py-0.5 text-[10px] font-black uppercase tracking-widest border-0",
+                  "rounded-lg px-3 py-0.5 text-[10px] font-black uppercase tracking-widest border-0 shadow-none",
                   !isDeleted
                     ? "bg-emerald-50 text-emerald-600"
                     : "bg-red-50 text-red-600",
@@ -247,14 +247,14 @@ export default function ProductDetailPage({
             <>
               <Button
                 onClick={() => setIsEditDialogOpen(true)}
-                className="flex-1 sm:flex-none h-12 rounded-2xl bg-white border border-zinc-200 hover:border-red-600 hover:bg-red-50 text-zinc-950 hover:text-red-600 font-bold px-8 transition-all gap-2 shadow-sm"
+                className="flex-1 sm:flex-none h-12 rounded-lg bg-white border border-black/5 hover:border-red-600 hover:bg-red-50 text-zinc-950 hover:text-red-600 font-bold px-8 transition-all duration-200 gap-2 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-px"
               >
                 <Edit2 className="w-4 h-4" /> Chỉnh sửa
               </Button>
               <Button
                 onClick={handleDelete}
                 variant="ghost"
-                className="flex-1 sm:flex-none h-12 rounded-2xl bg-white border border-red-100 text-red-600 hover:bg-red-600 hover:text-white font-bold px-6 transition-all gap-2 shadow-sm"
+                className="flex-1 sm:flex-none h-12 rounded-lg bg-white border border-red-100 text-red-600 hover:bg-red-600 hover:text-white font-bold px-6 transition-all duration-200 gap-2 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-px"
               >
                 <Trash2 className="w-4 h-4" /> Vô hiệu hóa
               </Button>
@@ -263,7 +263,7 @@ export default function ProductDetailPage({
             <Button
               onClick={handleRestore}
               variant="ghost"
-              className="flex-1 sm:flex-none h-12 rounded-2xl bg-white border border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white font-bold px-8 transition-all gap-2 shadow-sm"
+              className="flex-1 sm:flex-none h-12 rounded-lg bg-white border border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white font-bold px-8 transition-all duration-200 gap-2 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-px"
             >
               <RotateCcw className="w-4 h-4" /> Khôi phục
             </Button>
@@ -274,7 +274,7 @@ export default function ProductDetailPage({
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
         {/* Left Column: Gallery & Visuals */}
         <div className="xl:col-span-7 space-y-6">
-          <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-zinc-50 border border-zinc-100 shadow-2xl group">
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-50 border border-black/5 shadow-[0_8px_24px_rgba(0,0,0,0.08)] group">
             <Image
               src={getImageUrl(currentImage)}
               alt={product.name}
@@ -284,7 +284,7 @@ export default function ProductDetailPage({
             />
             {/* Overlay Badges */}
             <div className="absolute top-6 left-6 flex flex-col gap-2">
-              <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-xl flex items-center gap-2">
+              <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-xl shadow-lg border border-black/5 flex items-center gap-2">
                 <Tag className="w-4 h-4 text-indigo-600" />
                 <span className="text-[11px] font-black uppercase text-zinc-900 tracking-widest">
                   {product.brand}
@@ -299,9 +299,9 @@ export default function ProductDetailPage({
                 key={idx}
                 onClick={() => setActiveImage(img)}
                 className={cn(
-                  "relative w-24 h-24 rounded-2xl flex-shrink-0 transition-all duration-300 overflow-hidden",
+                  "relative w-24 h-24 rounded-lg flex-shrink-0 transition-all duration-200 overflow-hidden",
                   currentImage === img
-                    ? "ring-2 ring-red-600 ring-offset-2 scale-105 shadow-md z-10"
+                    ? "ring-2 ring-red-600 ring-offset-2 scale-105 shadow-[0_4px_12px_rgba(0,0,0,0.06)] z-10"
                     : "opacity-50 grayscale hover:opacity-100 hover:grayscale-0",
                 )}
               >
@@ -317,9 +317,9 @@ export default function ProductDetailPage({
           </div>
 
           {/* Description Card */}
-          <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm space-y-4">
+          <div className="bg-white p-8 rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] transition-all duration-200 group">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-zinc-50 flex items-center justify-center border border-black/5 group-hover:bg-white transition-colors">
                 <Info className="w-5 h-5 text-zinc-400" />
               </div>
               <h3 className="text-sm font-black uppercase tracking-widest text-zinc-400">
@@ -336,10 +336,10 @@ export default function ProductDetailPage({
         {/* Right Column: Key Info & Actions */}
         <div className="xl:col-span-5 space-y-8">
           {/* Status & Inventory Card */}
-          <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm space-y-6">
+          <div className="bg-white p-8 rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)] space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-3xl bg-emerald-50/50 border border-emerald-100 flex flex-col items-center text-center relative group/stock">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mb-3 group-hover/stock:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-100 flex flex-col items-center text-center relative group/stock">
+                <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center mb-3 group-hover/stock:scale-110 transition-transform">
                   <Package className="w-5 h-5 text-emerald-600" />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600/60 mb-1">
@@ -354,13 +354,13 @@ export default function ProductDetailPage({
 
                 <button
                   onClick={() => setIsStockDialogOpen(true)}
-                  className="mt-3 px-3 py-1 bg-white border border-emerald-200 rounded-xl text-[9px] font-black uppercase text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                  className="mt-3 px-3 py-1 bg-white border border-emerald-200 rounded-lg text-[9px] font-black uppercase text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
                 >
                   Điều chỉnh
                 </button>
               </div>
-              <div className="p-4 rounded-3xl bg-indigo-50/50 border border-indigo-100 flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
+              <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 flex flex-col items-center text-center">
+                <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center mb-3">
                   <CheckCircle2 className="w-5 h-5 text-indigo-600" />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600/60 mb-1">
@@ -372,10 +372,10 @@ export default function ProductDetailPage({
               </div>
             </div>
 
-            <div className="space-y-4 pt-4 border-t border-zinc-50">
+            <div className="space-y-4 pt-4 border-t border-black/5">
               <div className="flex items-center justify-between group/price">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center group-hover/price:scale-110 transition-transform">
+                  <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center group-hover/price:scale-110 transition-transform border border-amber-100">
                     <Truck className="w-5 h-5 text-amber-600" />
                   </div>
                   <div className="flex flex-col">
@@ -400,9 +400,9 @@ export default function ProductDetailPage({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-zinc-50 group/price2">
+              <div className="flex items-center justify-between pt-4 border-t border-black/5 group/price2">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center group-hover/price2:scale-110 transition-transform">
+                  <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center group-hover/price2:scale-110 transition-transform border border-blue-100">
                     <Zap className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="flex flex-col">
@@ -430,10 +430,10 @@ export default function ProductDetailPage({
           </div>
 
           {/* Specifications Table */}
-          <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm space-y-6">
+          <div className="bg-white p-8 rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)] space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-zinc-50 border border-black/5 flex items-center justify-center">
                   <ShieldCheck className="w-5 h-5 text-red-600" />
                 </div>
                 <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950">
@@ -442,7 +442,7 @@ export default function ProductDetailPage({
               </div>
               <Badge
                 variant="outline"
-                className="bg-red-50 border-red-100 text-red-600 font-bold text-[9px] uppercase tracking-widest"
+                className="bg-red-50 border-red-100 text-red-600 font-bold text-[9px] uppercase tracking-widest rounded-lg"
               >
                 Pro Specs
               </Badge>
@@ -473,7 +473,7 @@ export default function ProductDetailPage({
           </div>
 
           {/* Timeline & Audit Card */}
-          <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm">
+          <div className="bg-white p-8 rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
             <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-6">
               Lịch sử hệ thống
             </h3>
@@ -554,10 +554,10 @@ export default function ProductDetailPage({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 mb-12">
         {/* Price History Section */}
-        <div className="bg-white rounded-[2.5rem] border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-8 py-6 border-b border-zinc-50 bg-zinc-50/30 flex items-center justify-between">
+        <div className="bg-white rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col">
+          <div className="px-8 py-6 border-b border-black/5 bg-zinc-50/30 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-white shadow-sm border border-zinc-200/50 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-white shadow-sm border border-black/5 flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-red-600" />
               </div>
               <div>
@@ -569,7 +569,7 @@ export default function ProductDetailPage({
                 </p>
               </div>
             </div>
-            <Badge className="bg-zinc-950 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full">
+            <Badge className="bg-zinc-950 text-white text-[10px] font-black uppercase px-3 py-1 rounded-lg">
               {pricePagination?.totalElements || 0}
             </Badge>
           </div>
@@ -649,7 +649,7 @@ export default function ProductDetailPage({
 
           {/* Pagination Controls */}
           {pricePagination && pricePagination.totalPages > 1 && (
-            <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-50 flex items-center justify-between">
+            <div className="px-6 py-4 bg-zinc-50/50 border-t border-black/5 flex items-center justify-between">
               <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">
                 Trang {priceHistoryPage + 1} / {pricePagination.totalPages}
               </span>
@@ -657,7 +657,7 @@ export default function ProductDetailPage({
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
+                  className="rounded-lg hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
                   disabled={priceHistoryPage === 0}
                   onClick={() => setPriceHistoryPage((p) => p - 1)}
                 >
@@ -666,7 +666,7 @@ export default function ProductDetailPage({
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
+                  className="rounded-lg hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
                   disabled={priceHistoryPage >= pricePagination.totalPages - 1}
                   onClick={() => setPriceHistoryPage((p) => p + 1)}
                 >
@@ -678,10 +678,10 @@ export default function ProductDetailPage({
         </div>
 
         {/* Inventory History Section */}
-        <div className="bg-white rounded-[2.5rem] border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-8 py-6 border-b border-zinc-50 bg-zinc-50/30 flex items-center justify-between">
+        <div className="bg-white rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col">
+          <div className="px-8 py-6 border-b border-black/5 bg-zinc-50/30 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-white shadow-sm border border-zinc-200/50 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-white shadow-sm border border-black/5 flex items-center justify-center">
                 <Package className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
@@ -693,7 +693,7 @@ export default function ProductDetailPage({
                 </p>
               </div>
             </div>
-            <Badge className="bg-emerald-600 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full">
+            <Badge className="bg-emerald-600 text-white text-[10px] font-black uppercase px-3 py-1 rounded-lg">
               {inventoryPagination?.totalElements || 0}
             </Badge>
           </div>
@@ -770,7 +770,7 @@ export default function ProductDetailPage({
 
           {/* Pagination Controls */}
           {inventoryPagination && inventoryPagination.totalPages > 1 && (
-            <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-50 flex items-center justify-between">
+            <div className="px-6 py-4 bg-zinc-50/50 border-t border-black/5 flex items-center justify-between">
               <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">
                 Trang {inventoryPage + 1} / {inventoryPagination.totalPages}
               </span>
@@ -778,7 +778,7 @@ export default function ProductDetailPage({
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
+                  className="rounded-lg hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
                   disabled={inventoryPage === 0}
                   onClick={() => setInventoryPage((p) => p - 1)}
                 >
@@ -787,7 +787,7 @@ export default function ProductDetailPage({
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
+                  className="rounded-lg hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
                   disabled={inventoryPage >= inventoryPagination.totalPages - 1}
                   onClick={() => setInventoryPage((p) => p + 1)}
                 >

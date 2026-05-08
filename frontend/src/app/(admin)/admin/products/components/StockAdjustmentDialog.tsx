@@ -76,9 +76,9 @@ export function StockAdjustmentDialog({
     >
       <div className="space-y-6">
         {/* Current Stock Indicator */}
-        <div className="bg-zinc-50 rounded-2xl p-4 flex items-center justify-between border border-zinc-100">
+        <div className="bg-zinc-50 rounded-xl p-4 flex items-center justify-between border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white border border-zinc-200 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-white border border-black/5 flex items-center justify-center">
               <Package className="w-5 h-5 text-zinc-400" />
             </div>
             <div>
@@ -115,9 +115,9 @@ export function StockAdjustmentDialog({
             type="button"
             onClick={() => setType("IMPORT")}
             className={cn(
-              "flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+              "flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all",
               type === "IMPORT"
-                ? "bg-white text-emerald-600 shadow-sm"
+                ? "bg-white text-emerald-600 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
                 : "text-zinc-500 hover:text-zinc-700",
             )}
           >
@@ -128,9 +128,9 @@ export function StockAdjustmentDialog({
             type="button"
             onClick={() => setType("EXPORT")}
             className={cn(
-              "flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+              "flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all",
               type === "EXPORT"
-                ? "bg-white text-red-600 shadow-sm"
+                ? "bg-white text-red-600 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
                 : "text-zinc-500 hover:text-zinc-700",
             )}
           >
@@ -149,7 +149,7 @@ export function StockAdjustmentDialog({
               type="number"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="pl-12 h-12 bg-zinc-50 border-zinc-100 focus:bg-white focus:ring-red-600/20 focus:border-red-600 transition-all text-sm font-black rounded-xl"
+              className="pl-12 h-12 bg-zinc-50 border-black/5 focus:bg-white focus:ring-red-600/20 focus:border-red-600 transition-all text-sm font-black rounded-lg shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
               placeholder="Nhập số lượng..."
               min="1"
             />
@@ -176,13 +176,13 @@ export function StockAdjustmentDialog({
           <Textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            className="min-h-[100px] bg-zinc-50 border-zinc-100 focus:bg-white focus:ring-red-600/20 focus:border-red-600 transition-all text-xs font-medium rounded-xl resize-none"
+            className="min-h-[100px] bg-zinc-50 border-black/5 focus:bg-white focus:ring-red-600/20 focus:border-red-600 transition-all text-xs font-medium rounded-lg shadow-[0_2px_6px_rgba(0,0,0,0.04)] resize-none"
             placeholder="Ghi chú lý do thay đổi kho (ví dụ: Nhập hàng mới, Hàng lỗi, Kiểm kê...)"
           />
         </div>
 
         {/* Info Note */}
-        <div className="flex gap-3 p-4 bg-red-50/50 rounded-2xl border border-red-100/50">
+        <div className="flex gap-3 p-4 bg-red-50/50 rounded-xl border border-red-100/50 shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
           <Info className="w-5 h-5 text-red-600 shrink-0" />
           <p className="text-[11px] font-medium text-red-900 leading-relaxed">
             Hành động này sẽ được ghi vào{" "}

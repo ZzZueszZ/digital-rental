@@ -102,12 +102,12 @@ export function ProductPriceDialog({
     >
       <div className="space-y-5">
         {errors.general && (
-          <div className="bg-red-50 text-red-600 text-xs font-bold p-3 rounded-xl border border-red-100">
+          <div className="bg-red-50 text-red-600 text-xs font-bold p-3 rounded-lg border border-red-100 shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
             {errors.general}
           </div>
         )}
 
-        <div className="p-4 rounded-2xl border border-zinc-200/60 bg-zinc-50/50 space-y-4">
+        <div className="p-4 rounded-xl border border-black/5 bg-zinc-50/50 space-y-4 shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
           <label className="flex items-center gap-3 cursor-pointer group">
             <input 
               type="checkbox" 
@@ -129,8 +129,8 @@ export function ProductPriceDialog({
                 onChange={(e) => setFormData({ ...formData, rentPricePerDay: Number(e.target.value) })}
                 placeholder="Ví dụ: 150000"
                 className={cn(
-                  "h-11 rounded-xl bg-white text-sm font-bold text-zinc-900 pr-10 disabled:opacity-50 disabled:bg-zinc-100",
-                  errors.rentPricePerDay ? "border-red-400" : "border-zinc-200 focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/20"
+                  "h-11 rounded-lg bg-white text-sm font-bold text-zinc-900 pr-10 disabled:opacity-50 disabled:bg-zinc-100 shadow-[0_2px_6px_rgba(0,0,0,0.04)]",
+                  errors.rentPricePerDay ? "border-red-400" : "border-black/5 focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/20"
                 )}
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-zinc-400">₫</span>
@@ -139,7 +139,7 @@ export function ProductPriceDialog({
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-zinc-200/60 bg-zinc-50/50 space-y-4">
+        <div className="p-4 rounded-xl border border-black/5 bg-zinc-50/50 space-y-4 shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
           <label className="flex items-center gap-3 cursor-pointer group">
             <input 
               type="checkbox" 
@@ -161,8 +161,8 @@ export function ProductPriceDialog({
                 onChange={(e) => setFormData({ ...formData, salePrice: Number(e.target.value) })}
                 placeholder="Ví dụ: 25000000"
                 className={cn(
-                  "h-11 rounded-xl bg-white text-sm font-bold text-zinc-900 pr-10 disabled:opacity-50 disabled:bg-zinc-100",
-                  errors.salePrice ? "border-red-400" : "border-zinc-200 focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/20"
+                  "h-11 rounded-lg bg-white text-sm font-bold text-zinc-900 pr-10 disabled:opacity-50 disabled:bg-zinc-100 shadow-[0_2px_6px_rgba(0,0,0,0.04)]",
+                  errors.salePrice ? "border-red-400" : "border-black/5 focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/20"
                 )}
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-zinc-400">₫</span>

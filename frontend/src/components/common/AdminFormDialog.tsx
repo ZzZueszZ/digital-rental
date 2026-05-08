@@ -115,7 +115,7 @@ export function AdminFormDialog({
                 >
                   {isPending ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      <Loader2 className="w-4 h-4 mr-2" />
                       Đang xử lý...
                     </>
                   ) : (

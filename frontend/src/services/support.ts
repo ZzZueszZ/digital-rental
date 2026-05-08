@@ -12,8 +12,16 @@ import type {
 export const SUPPORT_KEYS = {
   all: ["support"] as const,
   lists: () => [...SUPPORT_KEYS.all, "list"] as const,
-  list: (filters: any, page: number, size: number) =>
-    [...SUPPORT_KEYS.lists(), filters, page, size] as const,
+  list: (
+    filters: {
+      subject?: SupportSubject;
+      status?: SupportStatus;
+      processedById?: number;
+      keyword?: string;
+    },
+    page: number,
+    size: number
+  ) => [...SUPPORT_KEYS.lists(), filters, page, size] as const,
   detail: (id: number) => [...SUPPORT_KEYS.all, "detail", id] as const,
 };
 
@@ -21,6 +29,7 @@ export const SUPPORT_KEYS = {
 export const useSubmitTicket = () => {
   return useMutation({
     mutationFn: async (request: SupportTicketRequest) => {
+      console.log("Calling API POST /support/tickets with:", request);
       const { data } = await http.post<IBackendRes<void>>("/support/tickets", request);
       return data;
     },

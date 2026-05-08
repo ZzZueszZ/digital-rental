@@ -39,10 +39,10 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 const SUBJECT_OPTIONS = [
-  { value: SupportSubject.TECHNICAL, label: "Hỗ trợ kỹ thuật" },
-  { value: SupportSubject.RENTAL_PROCESS, label: "Quy trình thuê thiết bị" },
-  { value: SupportSubject.PAYMENT, label: "Vấn đề thanh toán" },
-  { value: SupportSubject.EQUIPMENT_ISSUE, label: "Sự cố thiết bị" },
+  { value: SupportSubject.PRODUCT_INQUIRY, label: "Thông tin sản phẩm" },
+  { value: SupportSubject.ORDER_ISSUE, label: "Vấn đề đơn hàng" },
+  { value: SupportSubject.PAYMENT_ISSUE, label: "Vấn đề thanh toán" },
+  { value: SupportSubject.TECHNICAL_SUPPORT, label: "Hỗ trợ kỹ thuật" },
   { value: SupportSubject.OTHER, label: "Vấn đề khác" },
 ];
 
@@ -85,11 +85,12 @@ export default function AboutPage() {
           name: "",
           email: "",
           phone: "",
-          subject: SupportSubject.OTHER,
+          subject: SupportSubject.PRODUCT_INQUIRY,
           message: "",
         });
       },
       onError: (error: unknown) => {
+        console.error("Support submission error:", error);
         const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
         toast.error(
           errorMessage || "Đã có lỗi xảy ra, vui lòng thử lại sau.",
@@ -552,6 +553,7 @@ export default function AboutPage() {
                 </div>
 
                 <Button
+                  type="submit"
                   disabled={isPending}
                   className="w-full h-16 rounded-xl bg-zinc-950 text-white font-black tracking-[0.2em] hover:bg-zinc-800 hover:text-white transition-all shadow-2xl shadow-zinc-200 active:scale-[0.98] border-none"
                 >

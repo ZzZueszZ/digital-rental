@@ -76,7 +76,7 @@ export function RecentActivityCard() {
                 key={i}
                 className="p-3.5 flex items-start gap-3 animate-pulse"
               >
-                <div className="w-8 h-8 rounded-lg bg-zinc-50 flex-shrink-0" />
+                <div className="w-8 h-8 rounded-xl bg-zinc-50 flex-shrink-0" />
                 <div className="flex-1 space-y-1.5">
                   <div className="h-3 bg-zinc-50 rounded w-1/3" />
                   <div className="h-2.5 bg-zinc-50 rounded w-2/3" />
@@ -100,7 +100,7 @@ export function RecentActivityCard() {
                 >
                   <div
                     className={cn(
-                      "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm border border-transparent group-hover:border-zinc-200 transition-all",
+                      "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm border border-transparent group-hover:border-zinc-200 transition-all",
                       colorClass,
                     )}
                   >

@@ -42,7 +42,7 @@
   --shadow-dash-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
   --shadow-dash-md: 0 4px 12px rgba(0, 0, 0, 0.06);
   --shadow-dash-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
-  
+
   /* Sidebar/Navbar Dimensions */
   --dash-sidebar-w: 240px;
   --dash-navbar-h: 60px;
@@ -129,7 +129,7 @@
   }
 
   input[type="checkbox"]:checked::after {
-    content: '';
+    content: "";
     @apply absolute left-[50%] top-[45%] -translate-x-1/2 -translate-y-1/2 w-[8px] h-[8px] bg-white;
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
   }
@@ -172,7 +172,7 @@
     opacity: 0.6;
     transition: opacity 0.2s;
   }
-  
+
   input[type="number"]:hover::-webkit-inner-spin-button,
   input[type="number"]:hover::-webkit-outer-spin-button {
     opacity: 1;
@@ -183,7 +183,7 @@
   /* =========================================
      ADMIN DASHBOARD SYSTEM (Compact & Data-Focused)
      ========================================= */
-  
+
   .admin-layout {
     @apply min-h-screen bg-zinc-50/50;
   }
@@ -194,7 +194,7 @@
   }
 
   .admin-sidebar-item {
-    @apply h-11 px-3.5 rounded-lg flex items-center gap-3 text-sm font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950 transition-all cursor-pointer mb-1;
+    @apply h-11 px-3.5 rounded-xl flex items-center gap-3 text-sm font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950 transition-all cursor-pointer mb-1;
   }
 
   .admin-sidebar-item.active {
@@ -250,17 +250,25 @@
   }
 
   /* Admin Buttons */
-  .btn-admin-sm { @apply px-3 py-1.5 text-xs font-bold rounded-lg; }
-  .btn-admin-md { @apply px-4 py-2 text-sm font-bold rounded-lg; }
+  .btn-admin-sm {
+    @apply px-3 py-1.5 text-xs font-bold rounded-xl;
+  }
+  .btn-admin-md {
+    @apply px-4 py-2 text-sm font-bold rounded-xl;
+  }
 
   /* Admin Forms */
-  .admin-form-group { @apply space-y-4; }
-  .admin-input { @apply h-10 px-3 rounded-lg border-zinc-200 text-sm focus-visible:ring-zinc-950/10; }
+  .admin-form-group {
+    @apply space-y-4;
+  }
+  .admin-input {
+    @apply h-10 px-3 rounded-xl border-zinc-200 text-sm focus-visible:ring-zinc-950/10;
+  }
 
   /* =========================================
      MARKETING / CLIENT SYSTEM
      ========================================= */
-  
+
   .text-premium-product {
     @apply font-semibold tracking-tight text-zinc-900;
     font-size: clamp(1.125rem, 2.5vw, 1.375rem); /* 18px - 22px */
@@ -316,8 +324,15 @@
 
 /* Animations */
 @keyframes pulse-subtle {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(0.99); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(0.99);
+  }
 }
 
 .animate-pulse-subtle {
@@ -325,8 +340,13 @@
 }
 
 @keyframes bounce-subtle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
 .animate-bounce-subtle {

@@ -84,7 +84,7 @@ export default function SettingsAdminPage() {
           <Card className="rounded-xl border-zinc-200 bg-white shadow-sm overflow-hidden border-l-4 border-l-amber-400">
             <CardContent className="p-5 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
                   <RefreshCw className="w-5 h-5" />
                 </div>
                 <div>

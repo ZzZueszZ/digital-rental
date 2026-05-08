@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { MessageSquare, Clock, CheckCircle2, AlertCircle, Search, Filter } from "lucide-react";
+import {
+  MessageSquare,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Search,
+  Filter,
+} from "lucide-react";
 import { SupportTicketList } from "./components/SupportTicketList";
 import { useSupportTickets } from "@/services/support";
 import { SupportStatus } from "@/types/support";
@@ -14,8 +21,16 @@ export default function AdminSupportPage() {
   const [search, setSearch] = useState("");
 
   const { data: totalData } = useSupportTickets({}, 0, 1);
-  const { data: pendingData } = useSupportTickets({ status: SupportStatus.PENDING }, 0, 1);
-  const { data: resolvedData } = useSupportTickets({ status: SupportStatus.RESOLVED }, 0, 1);
+  const { data: pendingData } = useSupportTickets(
+    { status: SupportStatus.PENDING },
+    0,
+    1,
+  );
+  const { data: resolvedData } = useSupportTickets(
+    { status: SupportStatus.RESOLVED },
+    0,
+    1,
+  );
 
   const totalCount = totalData?.pagination?.totalElements || 0;
   const pendingCount = pendingData?.pagination?.totalElements || 0;
@@ -57,8 +72,11 @@ export default function AdminSupportPage() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-8">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
-                    <MessageSquare className="w-4.5 h-4.5 text-white" strokeWidth={2} />
+                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
+                    <MessageSquare
+                      className="w-4.5 h-4.5 text-white"
+                      strokeWidth={2}
+                    />
                   </div>
                   <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
                     Hỗ trợ khách hàng
@@ -70,20 +88,33 @@ export default function AdminSupportPage() {
               </div>
 
               {/* Tab Toggle - Styled like Products Page */}
-              <div className="flex items-center gap-1 bg-zinc-50/50 border border-zinc-100 p-1 rounded-lg w-fit">
-                {(["ALL", SupportStatus.PENDING, SupportStatus.RESOLVED] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      onClick={() => { setViewMode(mode); setPage(0); }}
-                      className={cn(
-                        "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150 whitespace-nowrap",
-                        viewMode === mode
-                          ? "bg-zinc-950 text-white shadow-sm"
-                          : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50"
-                      )}
-                    >
-                      {mode === "ALL" ? "Tất cả" : mode === SupportStatus.PENDING ? "Chờ xử lý" : "Đã xong"}
-                    </button>
+              <div className="flex items-center gap-1 bg-zinc-50/50 border border-zinc-100 p-1 rounded-xl w-fit">
+                {(
+                  [
+                    "ALL",
+                    SupportStatus.PENDING,
+                    SupportStatus.RESOLVED,
+                  ] as const
+                ).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => {
+                      setViewMode(mode);
+                      setPage(0);
+                    }}
+                    className={cn(
+                      "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150 whitespace-nowrap",
+                      viewMode === mode
+                        ? "bg-zinc-950 text-white shadow-sm"
+                        : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50",
+                    )}
+                  >
+                    {mode === "ALL"
+                      ? "Tất cả"
+                      : mode === SupportStatus.PENDING
+                        ? "Chờ xử lý"
+                        : "Đã xong"}
+                  </button>
                 ))}
               </div>
             </div>
@@ -97,7 +128,10 @@ export default function AdminSupportPage() {
                   placeholder="Tìm theo tên, email, điện thoại..."
                   className="w-full pl-10 h-10 rounded-xl border border-zinc-100 bg-zinc-50/50 focus:bg-white focus:border-red-500/30 transition-all text-xs font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
                   value={search}
-                  onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(0);
+                  }}
                 />
               </div>
             </div>
@@ -105,7 +139,7 @@ export default function AdminSupportPage() {
         </div>
 
         {/* Support List Content */}
-        <SupportTicketList 
+        <SupportTicketList
           status={viewMode === "ALL" ? undefined : viewMode}
           keyword={search}
           page={page}

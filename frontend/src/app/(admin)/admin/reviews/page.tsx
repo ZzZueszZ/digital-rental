@@ -1,26 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Search, 
-  MessageSquare, 
-  Flag, 
-  EyeOff, 
+import {
+  Search,
+  MessageSquare,
+  Flag,
+  EyeOff,
   Star,
   MessageCircle,
   TrendingUp,
-  Package
+  Package,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { 
-  useReviews, 
-  useReportedReviews, 
-  useHiddenReviews, 
-  useHideReview, 
-  useUnhideReview, 
-  useDeleteReview 
+import {
+  useReviews,
+  useReportedReviews,
+  useHiddenReviews,
+  useHideReview,
+  useUnhideReview,
+  useDeleteReview,
 } from "@/hooks/useReviews";
 import { ReviewResponse } from "@/types/review";
 import { ReviewTableRow, ReviewMobileCard } from "./components/ReviewListItems";
@@ -32,11 +32,15 @@ import { StatCard } from "../components/StatCard";
 import { cn } from "@/lib/utils";
 
 export default function ReviewsAdminPage() {
-  const [viewMode, setViewMode] = useState<"ALL" | "REPORTED" | "HIDDEN">("ALL");
+  const [viewMode, setViewMode] = useState<"ALL" | "REPORTED" | "HIDDEN">(
+    "ALL",
+  );
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
 
-  const [selectedReview, setSelectedReview] = useState<ReviewResponse | null>(null);
+  const [selectedReview, setSelectedReview] = useState<ReviewResponse | null>(
+    null,
+  );
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const [confirmConfig, setConfirmConfig] = useState<{
@@ -56,10 +60,15 @@ export default function ReviewsAdminPage() {
   const reportedQuery = useReportedReviews(page, 10);
   const hiddenQuery = useHiddenReviews(page, 10);
 
-  const query = viewMode === "ALL" ? allQuery : viewMode === "REPORTED" ? reportedQuery : hiddenQuery;
+  const query =
+    viewMode === "ALL"
+      ? allQuery
+      : viewMode === "REPORTED"
+        ? reportedQuery
+        : hiddenQuery;
   const reviews: ReviewResponse[] = query.data?.data || [];
-  
-  const pagination = query.data?.pagination; 
+
+  const pagination = query.data?.pagination;
   const totalPages = pagination?.totalPages || 1;
   const totalElements = pagination?.totalElements || 0;
 
@@ -67,13 +76,17 @@ export default function ReviewsAdminPage() {
   const unhideMutation = useUnhideReview();
   const deleteMutation = useDeleteReview();
 
-  const handleAction = async (action: () => Promise<any>, successMsg: string) => {
+  const handleAction = async (
+    action: () => Promise<unknown>,
+    successMsg: string,
+  ) => {
     try {
       await action();
       toast.success(successMsg);
       if (isDetailOpen) setIsDetailOpen(false);
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Thao tác thất bại";
+      const message =
+        error instanceof Error ? error.message : "Thao tác thất bại";
       toast.error(message);
     }
   };
@@ -82,9 +95,11 @@ export default function ReviewsAdminPage() {
     setConfirmConfig({
       open: true,
       title: "Ẩn đánh giá?",
-      description: "Đánh giá này sẽ không còn hiển thị công khai trên cửa hàng.",
+      description:
+        "Đánh giá này sẽ không còn hiển thị công khai trên cửa hàng.",
       variant: "warning",
-      onConfirm: () => handleAction(() => hideMutation.mutateAsync(id), "Đã ẩn đánh giá"),
+      onConfirm: () =>
+        handleAction(() => hideMutation.mutateAsync(id), "Đã ẩn đánh giá"),
     });
   };
 
@@ -92,9 +107,11 @@ export default function ReviewsAdminPage() {
     setConfirmConfig({
       open: true,
       title: "Xóa vĩnh viễn?",
-      description: "Hành động này không thể hoàn tác. Đánh giá sẽ bị xóa khỏi hệ thống.",
+      description:
+        "Hành động này không thể hoàn tác. Đánh giá sẽ bị xóa khỏi hệ thống.",
       variant: "danger",
-      onConfirm: () => handleAction(() => deleteMutation.mutateAsync(id), "Đã xóa đánh giá"),
+      onConfirm: () =>
+        handleAction(() => deleteMutation.mutateAsync(id), "Đã xóa đánh giá"),
     });
   };
 
@@ -109,7 +126,7 @@ export default function ReviewsAdminPage() {
       <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Tổng phản hồi"
-          value={totalElements} 
+          value={totalElements}
           icon={MessageSquare}
           accent="bg-zinc-950"
         />
@@ -142,14 +159,21 @@ export default function ReviewsAdminPage() {
         <div className="px-5 py-4 sm:py-5 border-b border-zinc-50">
           <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
             {/* Left: Title + Tab Toggle */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-8">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
-                    <MessageSquare className="w-4.5 h-4.5 text-white" strokeWidth={2} />
+                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
+                    <MessageSquare
+                      className="w-4.5 h-4.5 text-white"
+                      strokeWidth={2}
+                    />
                   </div>
                   <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
-                    {viewMode === "ALL" ? "Quản lý đánh giá" : viewMode === "REPORTED" ? "Đánh giá bị báo cáo" : "Đánh giá đã ẩn"}
+                    {viewMode === "ALL"
+                      ? "Quản lý đánh giá"
+                      : viewMode === "REPORTED"
+                        ? "Đánh giá bị báo cáo"
+                        : "Đánh giá đã ẩn"}
                   </h2>
                 </div>
                 <p className="text-[14px] text-zinc-500 font-medium ml-12">
@@ -158,7 +182,7 @@ export default function ReviewsAdminPage() {
               </div>
 
               {/* Tab Toggle */}
-              <div className="flex items-center gap-1 bg-zinc-50/50 border border-zinc-100 p-1 rounded-lg w-fit">
+              <div className="flex items-center gap-1 bg-zinc-50/50 border border-zinc-100 p-1 rounded-xl w-fit">
                 {[
                   { id: "ALL", label: "Tất cả" },
                   { id: "REPORTED", label: "Báo cáo" },
@@ -166,12 +190,15 @@ export default function ReviewsAdminPage() {
                 ].map((tab) => (
                   <button
                     key={tab.id}
-                    onClick={() => { setViewMode(tab.id as any); setPage(0); }}
+                    onClick={() => {
+                      setViewMode(tab.id as typeof viewMode);
+                      setPage(0);
+                    }}
                     className={cn(
-                      "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150",
+                      "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150 whitespace-nowrap",
                       viewMode === tab.id
                         ? "bg-zinc-950 text-white shadow-sm"
-                        : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50"
+                        : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50",
                     )}
                   >
                     {tab.label}
@@ -188,7 +215,10 @@ export default function ReviewsAdminPage() {
                   placeholder="Tìm nội dung đánh giá..."
                   className="pl-10 h-10 rounded-xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:border-red-500/30 transition-all text-xs font-medium text-zinc-900 placeholder:text-zinc-400"
                   value={search}
-                  onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(0);
+                  }}
                 />
               </div>
             </div>
@@ -196,12 +226,14 @@ export default function ReviewsAdminPage() {
         </div>
 
         {/* List Content */}
-        <div className="flex-1 min-h-[500px]">
+        <div className="flex-1">
           {query.isLoading ? (
-            <div className="h-[500px] flex items-center justify-center">
+            <div className="py-24 flex items-center justify-center">
               <div className="flex flex-col items-center gap-4">
                 <div className="w-10 h-10 border-4 border-zinc-100 border-t-red-600 rounded-full animate-spin" />
-                <span className="text-[13px] font-medium text-zinc-400">Đang tải dữ liệu...</span>
+                <span className="text-[13px] font-medium text-zinc-400">
+                  Đang tải dữ liệu...
+                </span>
               </div>
             </div>
           ) : reviews.length > 0 ? (
@@ -211,11 +243,21 @@ export default function ReviewsAdminPage() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400">Người dùng</th>
-                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400">Nội dung & Đánh giá</th>
-                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400 text-center">Ngày đăng</th>
-                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400 text-center">Trạng thái</th>
-                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400 text-right">Thao tác</th>
+                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400">
+                        Người dùng
+                      </th>
+                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400">
+                        Nội dung & Đánh giá
+                      </th>
+                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400 text-center">
+                        Ngày đăng
+                      </th>
+                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400 text-center">
+                        Trạng thái
+                      </th>
+                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400 text-right">
+                        Thao tác
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-50">
@@ -225,7 +267,12 @@ export default function ReviewsAdminPage() {
                         review={review}
                         onView={(r) => handleShowDetail(r)}
                         onHide={(id) => confirmHide(id)}
-                        onUnhide={(id) => handleAction(() => unhideMutation.mutateAsync(id), "Đã hiển thị lại đánh giá")}
+                        onUnhide={(id) =>
+                          handleAction(
+                            () => unhideMutation.mutateAsync(id),
+                            "Đã hiển thị lại đánh giá",
+                          )
+                        }
                         onDelete={(id) => confirmDelete(id)}
                       />
                     ))}
@@ -241,7 +288,12 @@ export default function ReviewsAdminPage() {
                     review={review}
                     onView={(r) => handleShowDetail(r)}
                     onHide={(id) => confirmHide(id)}
-                    onUnhide={(id) => handleAction(() => unhideMutation.mutateAsync(id), "Đã hiển thị lại đánh giá")}
+                    onUnhide={(id) =>
+                      handleAction(
+                        () => unhideMutation.mutateAsync(id),
+                        "Đã hiển thị lại đánh giá",
+                      )
+                    }
                     onDelete={(id) => confirmDelete(id)}
                   />
                 ))}
@@ -251,7 +303,11 @@ export default function ReviewsAdminPage() {
             <div className="py-24">
               <EmptyState
                 title="Không tìm thấy đánh giá nào"
-                description={search ? `Không có kết quả nào cho "${search}"` : "Hiện tại chưa có đánh giá nào trong hệ thống."}
+                description={
+                  search
+                    ? `Không có kết quả nào cho "${search}"`
+                    : "Hiện tại chưa có đánh giá nào trong hệ thống."
+                }
                 icon={MessageSquare}
               />
             </div>
@@ -259,15 +315,13 @@ export default function ReviewsAdminPage() {
         </div>
 
         {/* Pagination */}
-        <div className="p-6 border-t border-zinc-50 bg-white">
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            totalElements={totalElements}
-            size={10}
-            onPageChange={setPage}
-          />
-        </div>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          totalElements={totalElements}
+          size={10}
+          onPageChange={setPage}
+        />
       </div>
 
       <AdminReviewDetailDialog
@@ -275,7 +329,12 @@ export default function ReviewsAdminPage() {
         open={isDetailOpen}
         onOpenChange={setIsDetailOpen}
         onHide={confirmHide}
-        onUnhide={(id) => handleAction(() => unhideMutation.mutateAsync(id), "Đã hiển thị lại đánh giá")}
+        onUnhide={(id) =>
+          handleAction(
+            () => unhideMutation.mutateAsync(id),
+            "Đã hiển thị lại đánh giá",
+          )
+        }
         onDelete={confirmDelete}
       />
 

@@ -115,7 +115,7 @@ export function StockAdjustmentDialog({
             type="button"
             onClick={() => setType("IMPORT")}
             className={cn(
-              "flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all",
+              "flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
               type === "IMPORT"
                 ? "bg-white text-emerald-600 shadow-sm"
                 : "text-zinc-500 hover:text-zinc-700",
@@ -128,7 +128,7 @@ export function StockAdjustmentDialog({
             type="button"
             onClick={() => setType("EXPORT")}
             className={cn(
-              "flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all",
+              "flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
               type === "EXPORT"
                 ? "bg-white text-red-600 shadow-sm"
                 : "text-zinc-500 hover:text-zinc-700",

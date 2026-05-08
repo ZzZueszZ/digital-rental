@@ -190,7 +190,7 @@ export default function ProfileDashboard() {
             href="/"
             className="flex items-center gap-2.5 group transition-all duration-300"
           >
-            <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-100 group-hover:rotate-12 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100 group-hover:rotate-12 transition-transform">
               <Camera className="w-4 h-4 text-white" />
             </div>
             <span className="text-lg font-black tracking-tighter text-zinc-950 group-hover:text-red-600 transition-colors">
@@ -199,7 +199,7 @@ export default function ProfileDashboard() {
           </Link>
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden w-8 h-8 rounded-lg bg-zinc-50 flex items-center justify-center text-zinc-400 hover:text-zinc-950 transition-all"
+            className="lg:hidden w-8 h-8 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400 hover:text-zinc-950 transition-all"
           >
             <X className="w-4 h-4" />
           </button>
@@ -536,7 +536,7 @@ function CartSection() {
                 )}
               </button>
 
-              <div className="w-24 h-24 shrink-0 bg-zinc-50 rounded-lg overflow-hidden border border-zinc-100 p-2 flex items-center justify-center group-hover:bg-white transition-colors">
+              <div className="w-24 h-24 shrink-0 bg-zinc-50 rounded-xl overflow-hidden border border-zinc-100 p-2 flex items-center justify-center group-hover:bg-white transition-colors">
                 {item.productImage ? (
                   <img
                     src={`http://localhost:8080${item.productImage}`}
@@ -560,7 +560,7 @@ function CartSection() {
                 </p>
 
                 <div className="flex items-center justify-center sm:justify-start gap-4">
-                  <div className="flex items-center gap-1 bg-zinc-50 p-1 rounded-lg border border-zinc-100">
+                  <div className="flex items-center gap-1 bg-zinc-50 p-1 rounded-xl border border-zinc-100">
                     <button
                       onClick={() =>
                         handleUpdateQuantity(item.id, item.quantity - 1)
@@ -586,7 +586,7 @@ function CartSection() {
                       setItemToRemove(item.id);
                       setRemoveConfirmOpen(true);
                     }}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-300 hover:text-red-600 hover:bg-red-50 transition-all"
+                    className="w-8 h-8 rounded-xl flex items-center justify-center text-zinc-300 hover:text-red-600 hover:bg-red-50 transition-all"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -971,7 +971,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, firstName: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
           <div className="space-y-2">
@@ -983,7 +983,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, lastName: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
           <div className="space-y-2">
@@ -999,7 +999,7 @@ function InfoSection({
                 })
               }
             >
-              <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-lg px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
+              <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-xl px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
                 <span
                   className={cn(
                     formData.gender ? "text-zinc-900" : "text-zinc-400",
@@ -1046,7 +1046,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, dateOfBirth: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
           <div className="space-y-2">
@@ -1058,7 +1058,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, occupation: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
           <div className="space-y-2">
@@ -1070,7 +1070,7 @@ function InfoSection({
               onChange={(e) =>
                 setFormData({ ...formData, companyName: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
         </div>
@@ -1079,7 +1079,7 @@ function InfoSection({
           <Button
             type="submit"
             disabled={isUpdating}
-            className="flex-1 h-12 rounded-lg bg-zinc-950 text-white font-semibold text-sm shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50"
+            className="flex-1 h-12 rounded-xl bg-zinc-950 text-white font-semibold text-sm shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50"
           >
             {isUpdating ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -1090,7 +1090,7 @@ function InfoSection({
           <Button
             type="button"
             variant="outline"
-            className="h-12 px-8 rounded-lg border border-zinc-100 bg-white text-zinc-500 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
+            className="h-12 px-8 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
           >
             Hủy bỏ
           </Button>
@@ -1321,7 +1321,7 @@ function AddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, receiverName: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               placeholder="Họ và tên"
             />
           </div>
@@ -1334,7 +1334,7 @@ function AddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, receiverPhone: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               placeholder="09xx xxx xxx"
             />
           </div>
@@ -1351,7 +1351,7 @@ function AddressDialog({
                 setFormData({ ...formData, province: v as City })
               }
             >
-              <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-lg px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
+              <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-xl px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
                 <span
                   className={cn(
                     formData.province ? "text-zinc-900" : "text-zinc-400",
@@ -1384,7 +1384,7 @@ function AddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, district: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               placeholder="Nhập Quận/Huyện"
             />
           </div>
@@ -1400,7 +1400,7 @@ function AddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, ward: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               placeholder="Nhập Phường/Xã"
             />
           </div>
@@ -1413,7 +1413,7 @@ function AddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, detailAddress: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               placeholder="Số nhà, ngõ, tên đường..."
             />
           </div>
@@ -1428,7 +1428,7 @@ function AddressDialog({
             onChange={(e) =>
               setFormData({ ...formData, fullAddress: e.target.value })
             }
-            className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+            className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
           />
         </div>
@@ -1637,7 +1637,7 @@ function OrdersSection() {
                 </div>
                 <div
                   className={cn(
-                    "px-3 py-1 rounded-lg text-xs font-semibold border shadow-none",
+                    "px-3 py-1 rounded-xl text-xs font-semibold border shadow-none",
                     getStatusColor(order.status),
                   )}
                 >
@@ -1649,7 +1649,7 @@ function OrdersSection() {
               <div className="px-5 py-4 space-y-3">
                 {order.items.slice(0, 2).map((item) => (
                   <div key={item.id} className="flex gap-4 items-center h-12">
-                    <div className="w-12 h-12 rounded-lg border border-zinc-50 bg-white p-1.5 flex items-center justify-center shrink-0">
+                    <div className="w-12 h-12 rounded-xl border border-zinc-50 bg-white p-1.5 flex items-center justify-center shrink-0">
                       <img
                         src={
                           getImageUrl(item.productMainImage) ||
@@ -1689,7 +1689,7 @@ function OrdersSection() {
                 <div className="flex gap-3">
                   <Button
                     variant="ghost"
-                    className="h-10 px-5 rounded-lg border border-zinc-100 text-[14px] font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50 transition-all shadow-none"
+                    className="h-10 px-5 rounded-xl border border-zinc-100 text-[14px] font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50 transition-all shadow-none"
                     onClick={() => handleShowDetail(order.id)}
                   >
                     Xem chi tiết
@@ -1697,7 +1697,7 @@ function OrdersSection() {
                   {order.status === OrderStatus.DELIVERED && (
                     <Button
                       onClick={() => handleConfirmReceived(order.id)}
-                      className="h-10 px-5 rounded-lg bg-emerald-600 text-white text-[14px] font-semibold hover:bg-emerald-700 border-none shadow-[0_4px_12px_rgba(16,185,129,0.2)] transition-all"
+                      className="h-10 px-5 rounded-xl bg-emerald-600 text-white text-[14px] font-semibold hover:bg-emerald-700 border-none shadow-[0_4px_12px_rgba(16,185,129,0.2)] transition-all"
                     >
                       Đã nhận hàng
                     </Button>
@@ -1706,7 +1706,7 @@ function OrdersSection() {
                     !order.isReviewed && (
                       <Button
                         onClick={() => handleReview(order)}
-                        className="h-10 px-5 rounded-lg bg-red-600 text-white text-[14px] font-semibold hover:bg-zinc-950 border-none shadow-[0_4px_12px_rgba(220,38,38,0.2)] transition-all"
+                        className="h-10 px-5 rounded-xl bg-red-600 text-white text-[14px] font-semibold hover:bg-zinc-950 border-none shadow-[0_4px_12px_rgba(220,38,38,0.2)] transition-all"
                       >
                         Đánh giá ngay
                       </Button>

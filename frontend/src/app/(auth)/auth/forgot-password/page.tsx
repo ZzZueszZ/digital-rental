@@ -89,7 +89,7 @@ function OtpInput({
           onChange={(e) => handleChange(i, e.target.value)}
           onKeyDown={(e) => handleKeyDown(i, e)}
           onPaste={handlePaste}
-          className="w-12 h-12 rounded-lg border border-black/5 bg-white text-center text-xl font-bold text-zinc-900 outline-none transition-all shadow-dash-card focus:border-red-600 focus:ring-1 focus:ring-red-600/30"
+          className="w-12 h-12 rounded-xl border border-black/5 bg-white text-center text-xl font-bold text-zinc-900 outline-none transition-all shadow-dash-card focus:border-red-600 focus:ring-1 focus:ring-red-600/30"
         />
       ))}
     </div>
@@ -197,7 +197,7 @@ export default function ForgotPasswordPage() {
           <Button
             variant="outline"
             size="icon"
-            className="rounded-lg h-10 w-10 border-black/5 bg-white text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-red-600 shadow-dash-card transition-colors"
+            className="rounded-xl h-10 w-10 border-black/5 bg-white text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-red-600 shadow-dash-card transition-colors"
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
@@ -257,7 +257,7 @@ export default function ForgotPasswordPage() {
                       placeholder="Nhập địa chỉ email của bạn"
                       type="email"
                       {...emailForm.register("email")}
-                      className={`h-12 bg-white border-black/5 rounded-lg focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600 text-zinc-900 text-sm px-5 shadow-dash-card ${emailForm.formState.errors.email ? "border-red-500 ring-red-500" : ""}`}
+                      className={`h-12 bg-white border-black/5 rounded-xl focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600 text-zinc-900 text-sm px-5 shadow-dash-card ${emailForm.formState.errors.email ? "border-red-500 ring-red-500" : ""}`}
                     />
                     {emailForm.formState.errors.email && (
                       <p className="text-xs text-error font-medium">
@@ -268,7 +268,7 @@ export default function ForgotPasswordPage() {
 
                   <Button
                     type="submit"
-                    className="w-full h-12 text-sm font-bold bg-zinc-900 text-white rounded-lg hover:bg-red-600 shadow-dash-card transition-all active:scale-95 gap-2 mt-2"
+                    className="w-full h-12 text-sm font-bold bg-zinc-900 text-white rounded-xl hover:bg-red-600 shadow-dash-card transition-all active:scale-95 gap-2 mt-2"
                     disabled={emailForm.formState.isSubmitting}
                   >
                     {emailForm.formState.isSubmitting ? (
@@ -366,7 +366,7 @@ export default function ForgotPasswordPage() {
                         type={showNewPassword ? "text" : "password"}
                         placeholder="Tối thiểu 6 ký tự"
                         {...resetForm.register("newPassword")}
-                        className={`h-12 bg-white border-black/5 rounded-lg focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600 text-zinc-900 text-sm px-5 pr-12 shadow-dash-card ${resetForm.formState.errors.newPassword ? "border-red-500 ring-red-500" : ""}`}
+                        className={`h-12 bg-white border-black/5 rounded-xl focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600 text-zinc-900 text-sm px-5 pr-12 shadow-dash-card ${resetForm.formState.errors.newPassword ? "border-red-500 ring-red-500" : ""}`}
                       />
                       <button
                         type="button"
@@ -397,7 +397,7 @@ export default function ForgotPasswordPage() {
                         type={showConfirmPassword ? "text" : "password"}
                         placeholder="Nhập lại mật khẩu mới"
                         {...resetForm.register("confirmPassword")}
-                        className={`h-12 bg-white border-black/5 rounded-lg focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600 text-zinc-900 text-sm px-5 pr-12 shadow-dash-card ${resetForm.formState.errors.confirmPassword ? "border-red-500 ring-red-500" : ""}`}
+                        className={`h-12 bg-white border-black/5 rounded-xl focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600 text-zinc-900 text-sm px-5 pr-12 shadow-dash-card ${resetForm.formState.errors.confirmPassword ? "border-red-500 ring-red-500" : ""}`}
                       />
                       <button
                         type="button"
@@ -423,7 +423,7 @@ export default function ForgotPasswordPage() {
                   {/* Submit */}
                   <Button
                     type="submit"
-                    className="w-full h-12 mt-4 text-sm font-bold bg-zinc-900 text-white rounded-lg hover:bg-red-600 shadow-dash-card transition-all active:scale-95 gap-2"
+                    className="w-full h-12 mt-4 text-sm font-bold bg-zinc-900 text-white rounded-xl hover:bg-red-600 shadow-dash-card transition-all active:scale-95 gap-2"
                     disabled={resetForm.formState.isSubmitting}
                   >
                     {resetForm.formState.isSubmitting ? (

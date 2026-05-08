@@ -105,7 +105,7 @@ export function CreateUserDialog({
             onChange={(e) =>
               setForm((p) => ({ ...p, lastName: e.target.value }))
             }
-            className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+            className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
           />
         </div>
         <div>
@@ -118,7 +118,7 @@ export function CreateUserDialog({
             onChange={(e) =>
               setForm((p) => ({ ...p, firstName: e.target.value }))
             }
-            className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+            className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
           />
         </div>
       </div>
@@ -136,8 +136,8 @@ export function CreateUserDialog({
             setErrors((p) => ({ ...p, email: "" }));
           }}
           className={cn(
-            "h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
-            errors.email && "border-red-400 focus:ring-red-400/20"
+            "h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
+            errors.email && "border-red-400 focus:ring-red-400/20",
           )}
         />
         {errors.email && (
@@ -154,10 +154,8 @@ export function CreateUserDialog({
         <Input
           placeholder="0376xxxxxx"
           value={form.phone}
-          onChange={(e) =>
-            setForm((p) => ({ ...p, phone: e.target.value }))
-          }
-          className="h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+          onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
+          className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
         />
       </div>
 
@@ -175,8 +173,8 @@ export function CreateUserDialog({
               setErrors((p) => ({ ...p, password: "" }));
             }}
             className={cn(
-              "h-12 rounded-lg bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 pr-10",
-              errors.password && "border-red-400 focus:ring-red-400/20"
+              "h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 pr-10",
+              errors.password && "border-red-400 focus:ring-red-400/20",
             )}
           />
           <button
@@ -211,10 +209,10 @@ export function CreateUserDialog({
                 type="button"
                 onClick={() => toggleRole(role.value)}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 border shadow-dash-card",
+                  "px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border shadow-dash-card",
                   selected
                     ? "bg-red-600 text-white border-red-600 shadow-lg shadow-red-100"
-                    : "bg-zinc-50/50 text-zinc-500 border-zinc-950/5 hover:border-zinc-300 hover:text-zinc-900"
+                    : "bg-zinc-50/50 text-zinc-500 border-zinc-950/5 hover:border-zinc-300 hover:text-zinc-900",
                 )}
               >
                 {role.label}
@@ -226,4 +224,3 @@ export function CreateUserDialog({
     </AdminFormDialog>
   );
 }
-

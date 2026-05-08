@@ -16,7 +16,7 @@ export default function RegisterPage() {
           <Button
             variant="outline"
             size="icon"
-            className="rounded-lg h-10 w-10 border-black/5 bg-white text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-red-600 shadow-dash-card transition-colors"
+            className="rounded-xl h-10 w-10 border-black/5 bg-white text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-red-600 shadow-dash-card transition-colors"
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
@@ -24,7 +24,7 @@ export default function RegisterPage() {
         <Button
           variant="ghost"
           size="icon"
-          className="rounded-lg h-10 w-10 text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
+          className="rounded-xl h-10 w-10 text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
         >
           <Share2 className="h-5 w-5" />
         </Button>

@@ -18,7 +18,7 @@ import {
   MapPin,
   Camera,
   MessageCircle,
-  MessageSquare
+  MessageSquare,
 } from "lucide-react";
 import { useAuthSession } from "@/components/auth/Guards";
 import { Role } from "@/constants/enum/role";
@@ -115,8 +115,11 @@ export function AdminSidebar({
         )}
       >
         <div className="flex h-[var(--dash-navbar-h)] items-center px-6 border-b border-zinc-50 mb-2">
-          <Link href="/" className="flex items-center gap-2.5 group transition-all duration-300">
-            <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-100 group-hover:rotate-12 transition-transform">
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 group transition-all duration-300"
+          >
+            <div className="w-8 h-8 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100 group-hover:rotate-12 transition-transform">
               <Camera className="w-4 h-4 text-white" />
             </div>
             <span className="text-lg font-black tracking-tighter text-zinc-950 group-hover:text-red-600 transition-colors">

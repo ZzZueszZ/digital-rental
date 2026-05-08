@@ -72,7 +72,7 @@ export default function AdminLayout({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="lg:hidden h-10 w-10 rounded-lg hover:bg-zinc-100 border border-zinc-100 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
+                  className="lg:hidden h-10 w-10 rounded-xl hover:bg-zinc-100 border border-zinc-100 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
                   onClick={() => setIsSidebarOpen(true)}
                 >
                   <Menu className="h-5 w-5 text-zinc-600" />
@@ -94,14 +94,14 @@ export default function AdminLayout({
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400" />
                   <Input
                     placeholder="Tìm kiếm nhanh..."
-                    className="pl-10 h-10 text-[13px] font-medium rounded-lg border-zinc-100 bg-zinc-50/50 focus:bg-white focus:ring-1 focus:ring-zinc-200 focus:shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all"
+                    className="pl-10 h-10 text-[13px] font-medium rounded-xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:ring-1 focus:ring-zinc-200 focus:shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all"
                   />
                 </div>
 
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-10 w-10 rounded-lg hover:bg-zinc-50 relative group hidden md:flex border border-transparent hover:border-zinc-100 transition-all hover:shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
+                  className="h-10 w-10 rounded-xl hover:bg-zinc-50 relative group hidden md:flex border border-transparent hover:border-zinc-100 transition-all hover:shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
                 >
                   <Bell className="h-4.5 w-4.5 text-zinc-500 group-hover:text-zinc-900 transition-colors" />
                   <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-600 rounded-full border-2 border-white" />
@@ -119,7 +119,7 @@ export default function AdminLayout({
                         : "hover:bg-zinc-50 hover:border-zinc-100 hover:shadow-[0_2px_6px_rgba(0,0,0,0.04)]",
                     )}
                   >
-                    <div className="w-9 h-9 rounded-lg bg-red-600 text-white flex items-center justify-center font-semibold text-sm shadow-md shadow-red-100">
+                    <div className="w-9 h-9 rounded-xl bg-red-600 text-white flex items-center justify-center font-semibold text-sm shadow-md shadow-red-100">
                       {user?.email?.charAt(0).toUpperCase()}
                     </div>
                     <div className="hidden sm:flex flex-col items-start text-left pr-2">
@@ -146,7 +146,7 @@ export default function AdminLayout({
                       />
                       <div className="absolute right-0 mt-2 w-56 bg-white border border-zinc-100 rounded-xl shadow-dash-overlay z-20 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                         <div className="p-4 border-b border-zinc-50 flex items-center gap-3 bg-zinc-50/30">
-                          <div className="w-10 h-10 rounded-lg bg-white border border-zinc-200 flex items-center justify-center font-bold text-sm">
+                          <div className="w-10 h-10 rounded-xl bg-white border border-zinc-200 flex items-center justify-center font-bold text-sm">
                             {user?.email?.charAt(0).toUpperCase()}
                           </div>
                           <div className="flex flex-col overflow-hidden">
@@ -161,7 +161,7 @@ export default function AdminLayout({
                         <div className="p-1">
                           <button
                             onClick={() => logout()}
-                            className="w-full flex items-center gap-3 px-3 py-2.5 text-[11px] font-bold text-red-600 hover:bg-red-50 rounded-lg transition-all group"
+                            className="w-full flex items-center gap-3 px-3 py-2.5 text-[11px] font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all group"
                           >
                             <LogOut className="w-3.5 h-3.5" />
                             Đăng xuất

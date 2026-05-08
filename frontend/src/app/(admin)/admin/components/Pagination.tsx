@@ -28,14 +28,14 @@ export function Pagination({
     } else {
       pages.push(0);
       if (page > 2) pages.push("...");
-      
+
       const start = Math.max(1, page - 1);
       const end = Math.min(totalPages - 2, page + 1);
-      
+
       for (let i = start; i <= end; i++) {
         if (!pages.includes(i)) pages.push(i);
       }
-      
+
       if (page < totalPages - 3) pages.push("...");
       if (!pages.includes(totalPages - 1)) pages.push(totalPages - 1);
     }
@@ -48,9 +48,13 @@ export function Pagination({
   return (
     <div className="px-5 py-4 bg-zinc-50/50 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-4">
       <p className="text-xs font-semibold text-zinc-500">
-        Hiển thị <span className="text-zinc-950 font-bold">{startIndex}-{endIndex}</span> / <span className="text-zinc-950 font-bold">{totalElements}</span> mục
+        Hiển thị{" "}
+        <span className="text-zinc-950 font-bold">
+          {startIndex}-{endIndex}
+        </span>{" "}
+        / <span className="text-zinc-950 font-bold">{totalElements}</span> mục
       </p>
-      
+
       {totalPages > 1 && (
         <div className="flex items-center gap-1.5">
           <Button
@@ -58,30 +62,35 @@ export function Pagination({
             size="icon"
             disabled={page === 0}
             onClick={() => onPageChange(page - 1)}
-            className="w-8 h-8 rounded-lg border-zinc-200 bg-white shadow-sm disabled:opacity-30 transition-all active:scale-95"
+            className="w-8 h-8 rounded-xl border-zinc-200 bg-white shadow-sm disabled:opacity-30 transition-all active:scale-95"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
           </Button>
 
           <div className="flex items-center gap-1 mx-1">
-            {getPageNumbers().map((p, i) => (
+            {getPageNumbers().map((p, i) =>
               p === "..." ? (
-                <span key={`dots-${i}`} className="w-8 text-center text-zinc-400 font-bold text-xs">...</span>
+                <span
+                  key={`dots-${i}`}
+                  className="w-8 text-center text-zinc-400 font-bold text-xs"
+                >
+                  ...
+                </span>
               ) : (
                 <button
                   key={p}
                   onClick={() => onPageChange(p)}
                   className={cn(
-                    "w-8 h-8 rounded-lg text-xs font-bold transition-all active:scale-95",
-                    page === p 
-                      ? "bg-zinc-950 text-white shadow-md shadow-zinc-200" 
-                      : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950"
+                    "w-8 h-8 rounded-xl text-xs font-bold transition-all active:scale-95",
+                    page === p
+                      ? "bg-zinc-950 text-white shadow-md shadow-zinc-200"
+                      : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950",
                   )}
                 >
                   {p + 1}
                 </button>
-              )
-            ))}
+              ),
+            )}
           </div>
 
           <Button
@@ -89,7 +98,7 @@ export function Pagination({
             size="icon"
             disabled={page >= totalPages - 1}
             onClick={() => onPageChange(page + 1)}
-            className="w-8 h-8 rounded-lg border-zinc-200 bg-white shadow-sm disabled:opacity-30 transition-all active:scale-95"
+            className="w-8 h-8 rounded-xl border-zinc-200 bg-white shadow-sm disabled:opacity-30 transition-all active:scale-95"
           >
             <ChevronRight className="w-3.5 h-3.5" />
           </Button>

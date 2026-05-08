@@ -32,8 +32,8 @@ export function CategoryActionMenu({
         <DropdownMenuTrigger
           className={
             compact
-              ? "inline-flex items-center justify-center h-8 w-8 rounded-lg p-0 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 transition-all duration-200 outline-none"
-              : "inline-flex items-center justify-center h-8 w-8 rounded-lg hover:bg-zinc-100 outline-none"
+              ? "inline-flex items-center justify-center h-8 w-8 rounded-xl p-0 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 transition-all duration-200 outline-none"
+              : "inline-flex items-center justify-center h-8 w-8 rounded-xl hover:bg-zinc-100 outline-none"
           }
         >
           <MoreHorizontal className="w-4 h-4 text-zinc-500" />
@@ -51,14 +51,14 @@ export function CategoryActionMenu({
             {isActive ? (
               <>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
                   onClick={onEdit}
                 >
                   <Edit2 className="w-3.5 h-3.5 text-zinc-400" /> Chỉnh sửa
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50"
+                  className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50"
                   onClick={onDelete}
                 >
                   <Trash2 className="w-3.5 h-3.5" /> Vô hiệu hóa
@@ -67,7 +67,7 @@ export function CategoryActionMenu({
             ) : (
               <>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
+                  className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
                   onClick={onRestore}
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Khôi phục danh mục

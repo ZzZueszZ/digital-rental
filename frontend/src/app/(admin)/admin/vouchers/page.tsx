@@ -98,7 +98,9 @@ export default function VouchersAdminPage() {
           toast.success("Đã kích hoạt voucher");
           setConfirmConfig((prev) => ({ ...prev, open: false }));
         } catch (error) {
-          toast.error(error instanceof Error ? error.message : "Không thể kích hoạt");
+          toast.error(
+            error instanceof Error ? error.message : "Không thể kích hoạt",
+          );
         }
       },
     });
@@ -116,7 +118,9 @@ export default function VouchersAdminPage() {
           toast.success("Đã vô hiệu hóa voucher");
           setConfirmConfig((prev) => ({ ...prev, open: false }));
         } catch (error) {
-          toast.error(error instanceof Error ? error.message : "Không thể vô hiệu hóa");
+          toast.error(
+            error instanceof Error ? error.message : "Không thể vô hiệu hóa",
+          );
         }
       },
     });
@@ -172,7 +176,7 @@ export default function VouchersAdminPage() {
           <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <div className="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
+                <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
                   <Ticket className="w-4.5 h-4.5 text-white" strokeWidth={2} />
                 </div>
                 <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
@@ -218,7 +222,7 @@ export default function VouchersAdminPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                   <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
                     Mã Voucher
                   </th>
                   <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
@@ -313,7 +317,7 @@ export default function VouchersAdminPage() {
       </div>
 
       <VoucherDialog
-        key={isDialogOpen ? (selectedVoucher?.id || "new") : "closed"}
+        key={isDialogOpen ? selectedVoucher?.id || "new" : "closed"}
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         voucher={selectedVoucher}

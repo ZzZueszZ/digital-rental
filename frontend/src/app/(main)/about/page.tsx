@@ -91,10 +91,10 @@ export default function AboutPage() {
       },
       onError: (error: unknown) => {
         console.error("Support submission error:", error);
-        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
-        toast.error(
-          errorMessage || "Đã có lỗi xảy ra, vui lòng thử lại sau.",
-        );
+        const errorMessage = (
+          error as { response?: { data?: { message?: string } } }
+        )?.response?.data?.message;
+        toast.error(errorMessage || "Đã có lỗi xảy ra, vui lòng thử lại sau.");
       },
     });
   };
@@ -146,9 +146,7 @@ export default function AboutPage() {
               <Button className="h-16 px-10 rounded-xl bg-zinc-950 text-white font-black uppercase tracking-widest text-xs hover:bg-zinc-800 hover:text-white transition-all shadow-2xl shadow-zinc-200 active:scale-95 border-none">
                 Khám phá ngay
               </Button>
-              <Button
-                className="h-16 px-10 rounded-xl border-2 border-zinc-200 bg-white text-zinc-950 font-black uppercase tracking-widest text-xs hover:bg-zinc-950 hover:text-white transition-all active:scale-95 shadow-sm"
-              >
+              <Button className="h-16 px-10 rounded-xl border-2 border-zinc-200 bg-white text-zinc-950 font-black uppercase tracking-widest text-xs hover:bg-zinc-950 hover:text-white transition-all active:scale-95 shadow-sm">
                 Liên hệ hợp tác
               </Button>
             </motion.div>
@@ -184,8 +182,8 @@ export default function AboutPage() {
                   </span>
                 </div>
                 <p className="text-sm font-bold text-zinc-700 leading-relaxed italic">
-                  &quot;Bắt đầu từ một Studio nhỏ tại Thủ Đức, chúng tôi hiểu rõ nỗi
-                  lo của các nghệ sĩ về trang thiết bị.&quot;
+                  &quot;Bắt đầu từ một Studio nhỏ tại Thủ Đức, chúng tôi hiểu rõ
+                  nỗi lo của các nghệ sĩ về trang thiết bị.&quot;
                 </p>
               </div>
             </motion.div>
@@ -212,16 +210,17 @@ export default function AboutPage() {
                   không tưởng đối với những người mới bắt đầu.
                 </p>
                 <p>
-                  Với mục tiêu &quot;Dân chủ hóa thiết bị hình ảnh&quot;, chúng tôi đã xây
-                  dựng Digital Rental - không chỉ là một cửa hàng cho thuê, mà
-                  là một cộng đồng nơi mọi ý tưởng đều có cơ hội trở thành hiện
-                  thực với chi phí tối ưu nhất.
+                  Với mục tiêu &quot;Dân chủ hóa thiết bị hình ảnh&quot;, chúng
+                  tôi đã xây dựng Digital Rental - không chỉ là một cửa hàng cho
+                  thuê, mà là một cộng đồng nơi mọi ý tưởng đều có cơ hội trở
+                  thành hiện thực với chi phí tối ưu nhất.
                 </p>
                 <p>
-                  &quot;Studio Visuals không chỉ là nơi cho thuê máy ảnh. Đó là nơi
-                  niềm đam mê được chấp cánh.&quot; Hôm nay, chúng tôi tự hào là đối tác chiến lược của hơn 50
-                  Production House lớn nhỏ và là điểm đến tin cậy của hơn 12,000
-                  nghệ sĩ hình ảnh trên khắp cả nước.
+                  &quot;Studio Visuals không chỉ là nơi cho thuê máy ảnh. Đó là
+                  nơi niềm đam mê được chấp cánh.&quot; Hôm nay, chúng tôi tự
+                  hào là đối tác chiến lược của hơn 50 Production House lớn nhỏ
+                  và là điểm đến tin cậy của hơn 12,000 nghệ sĩ hình ảnh trên
+                  khắp cả nước.
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-8 pt-6">
@@ -364,9 +363,9 @@ export default function AboutPage() {
         <div className="container px-4 mx-auto text-center relative z-10">
           <Quote className="w-16 h-16 text-red-600 mx-auto mb-10 opacity-30" />
           <h2 className="max-w-4xl mx-auto text-2xl md:text-4xl font-bold text-white tracking-tight leading-snug italic mb-12">
-            &quot;Chúng tôi không xem việc cho thuê thiết bị là một giao dịch thương
-            mại. Chúng tôi xem đó là sự đồng hành trong hành trình kiến tạo
-            những tác phẩm nghệ thuật xuất chúng.&quot;
+            &quot;Chúng tôi không xem việc cho thuê thiết bị là một giao dịch
+            thương mại. Chúng tôi xem đó là sự đồng hành trong hành trình kiến
+            tạo những tác phẩm nghệ thuật xuất chúng.&quot;
           </h2>
           <div className="flex flex-col items-center">
             <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-red-600 mb-4 shadow-xl">
@@ -467,7 +466,7 @@ export default function AboutPage() {
                     <Input
                       required
                       placeholder="Nguyễn Văn A"
-                      className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                      className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
@@ -482,7 +481,7 @@ export default function AboutPage() {
                       required
                       type="email"
                       placeholder="email@example.com"
-                      className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                      className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
                       value={formData.email}
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
@@ -499,7 +498,7 @@ export default function AboutPage() {
                     <Input
                       required
                       placeholder="09xx xxx xxx"
-                      className="h-12 bg-white border border-black/5 rounded-lg px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                      className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
                       value={formData.phone}
                       onChange={(e) =>
                         setFormData({ ...formData, phone: e.target.value })
@@ -519,7 +518,7 @@ export default function AboutPage() {
                         })
                       }
                     >
-                      <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-lg px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
+                      <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-xl px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
                         <SelectValue placeholder="Chọn chủ đề" />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-zinc-100 shadow-dash-overlay bg-white p-1 z-[100]">

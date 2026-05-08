@@ -1,21 +1,25 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { 
-  Star, 
-  Image as ImageIcon, 
-  X, 
-  Loader2, 
+import {
+  Star,
+  Image as ImageIcon,
+  X,
+  Loader2,
   MessageSquare,
   Package,
-  CheckCircle2
+  CheckCircle2,
 } from "lucide-react";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useCreateReview, useUpdateReview } from "@/hooks/useReviews";
-import { ReviewCreateRequest, ReviewResponse, ReviewUpdateRequest } from "@/types/review";
+import {
+  ReviewCreateRequest,
+  ReviewResponse,
+  ReviewUpdateRequest,
+} from "@/types/review";
 import { cn, getImageUrl } from "@/lib/utils";
 
 interface ReviewFormDialogProps {
@@ -28,14 +32,14 @@ interface ReviewFormDialogProps {
   initialData?: ReviewResponse;
 }
 
-export function ReviewFormDialog({ 
-  isOpen, 
-  onClose, 
-  productId, 
-  productName, 
-  orderId, 
+export function ReviewFormDialog({
+  isOpen,
+  onClose,
+  productId,
+  productName,
+  orderId,
   orderCode,
-  initialData
+  initialData,
 }: ReviewFormDialogProps) {
   const isEdit = !!initialData;
   const [rating, setRating] = useState(initialData?.rating || 5);
@@ -57,14 +61,14 @@ export function ReviewFormDialog({
     const newImages = [...images, ...files];
     setImages(newImages);
 
-    const newPreviews = files.map(file => URL.createObjectURL(file));
+    const newPreviews = files.map((file) => URL.createObjectURL(file));
     setPreviews([...previews, ...newPreviews]);
   };
 
   const removeImage = (index: number) => {
     const newImages = images.filter((_, i) => i !== index);
     setImages(newImages);
-    
+
     const newPreviews = previews.filter((_, i) => i !== index);
     // Only revoke if it's a blob URL
     if (previews[index].startsWith("blob:")) {
@@ -83,7 +87,7 @@ export function ReviewFormDialog({
       if (isEdit && initialData) {
         const data: ReviewUpdateRequest = {
           rating,
-          content: content.trim()
+          content: content.trim(),
         };
         await updateMutation.mutateAsync({ id: initialData.id, data, images });
         toast.success("Cập nhật đánh giá thành công!");
@@ -92,14 +96,15 @@ export function ReviewFormDialog({
           productId,
           orderId: orderId!,
           rating,
-          content: content.trim()
+          content: content.trim(),
         };
         await createMutation.mutateAsync({ data, images });
         toast.success("Cảm ơn bạn đã đánh giá sản phẩm!");
       }
       handleClose();
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Không thể gửi đánh giá";
+      const message =
+        error instanceof Error ? error.message : "Không thể gửi đánh giá";
       toast.error(message);
     }
   };
@@ -109,7 +114,7 @@ export function ReviewFormDialog({
       setRating(5);
       setContent("");
       setImages([]);
-      previews.forEach(p => {
+      previews.forEach((p) => {
         if (p.startsWith("blob:")) URL.revokeObjectURL(p);
       });
       setPreviews([]);
@@ -125,26 +130,34 @@ export function ReviewFormDialog({
       onOpenChange={handleClose}
       icon={Star}
       title={isEdit ? "Chỉnh sửa đánh giá" : "Đánh giá sản phẩm"}
-      description={isEdit ? `Cập nhật phản hồi cho ${productName}` : `Chia sẻ trải nghiệm của bạn về ${productName}`}
+      description={
+        isEdit
+          ? `Cập nhật phản hồi cho ${productName}`
+          : `Chia sẻ trải nghiệm của bạn về ${productName}`
+      }
       hideFooter
     >
       <div className="space-y-6">
         {/* Order Info */}
         {orderCode && (
           <div className="flex items-center gap-3 p-3 bg-zinc-50 border border-zinc-100 rounded-xl">
-             <div className="w-10 h-10 rounded-lg bg-white border border-zinc-200 flex items-center justify-center">
-                <Package className="w-5 h-5 text-zinc-400" />
-             </div>
-             <div>
-                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Đơn hàng</p>
-                <p className="text-xs font-bold text-zinc-900">{orderCode}</p>
-             </div>
+            <div className="w-10 h-10 rounded-xl bg-white border border-zinc-200 flex items-center justify-center">
+              <Package className="w-5 h-5 text-zinc-400" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                Đơn hàng
+              </p>
+              <p className="text-xs font-bold text-zinc-900">{orderCode}</p>
+            </div>
           </div>
         )}
 
         {/* Rating Stars */}
         <div className="flex flex-col items-center gap-3 py-4">
-          <span className="text-sm font-bold text-zinc-500">Bạn thấy sản phẩm này thế nào?</span>
+          <span className="text-sm font-bold text-zinc-500">
+            Bạn thấy sản phẩm này thế nào?
+          </span>
           <div className="flex items-center gap-2">
             {[1, 2, 3, 4, 5].map((s) => (
               <button
@@ -153,20 +166,36 @@ export function ReviewFormDialog({
                 onClick={() => setRating(s)}
                 className="group relative"
               >
-                <Star 
+                <Star
                   className={cn(
                     "w-10 h-10 transition-all duration-300",
-                    s <= rating ? "fill-amber-400 text-amber-400 scale-110" : "text-zinc-200 group-hover:text-zinc-300"
-                  )} 
+                    s <= rating
+                      ? "fill-amber-400 text-amber-400 scale-110"
+                      : "text-zinc-200 group-hover:text-zinc-300",
+                  )}
                 />
               </button>
             ))}
           </div>
-          <span className={cn(
-            "text-xs font-black uppercase tracking-widest",
-            rating >= 4 ? "text-emerald-600" : rating >= 3 ? "text-amber-500" : "text-red-500"
-          )}>
-            {rating === 5 ? "Rất hài lòng" : rating === 4 ? "Hài lòng" : rating === 3 ? "Bình thường" : rating === 2 ? "Không hài lòng" : "Rất tệ"}
+          <span
+            className={cn(
+              "text-xs font-black uppercase tracking-widest",
+              rating >= 4
+                ? "text-emerald-600"
+                : rating >= 3
+                  ? "text-amber-500"
+                  : "text-red-500",
+            )}
+          >
+            {rating === 5
+              ? "Rất hài lòng"
+              : rating === 4
+                ? "Hài lòng"
+                : rating === 3
+                  ? "Bình thường"
+                  : rating === 2
+                    ? "Không hài lòng"
+                    : "Rất tệ"}
           </span>
         </div>
 
@@ -174,9 +203,11 @@ export function ReviewFormDialog({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <MessageSquare className="w-4 h-4 text-zinc-400" />
-            <span className="text-xs font-bold text-zinc-900">Nội dung đánh giá</span>
+            <span className="text-xs font-bold text-zinc-900">
+              Nội dung đánh giá
+            </span>
           </div>
-          <Textarea 
+          <Textarea
             placeholder="Hãy chia sẻ những điều bạn thích về thiết bị này nhé..."
             className="min-h-[120px] rounded-2xl bg-zinc-50 border-zinc-100 focus:bg-white focus:ring-4 focus:ring-red-50 transition-all duration-300 text-sm"
             value={content}
@@ -187,24 +218,32 @@ export function ReviewFormDialog({
         {/* Image Upload */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-             <div className="flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-zinc-400" />
-                <span className="text-xs font-bold text-zinc-900">Hình ảnh thực tế (Tối đa 5)</span>
-             </div>
-             <button 
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="text-[10px] font-black text-red-600 uppercase tracking-widest hover:underline"
-              >
-                Thêm ảnh
-              </button>
+            <div className="flex items-center gap-2">
+              <ImageIcon className="w-4 h-4 text-zinc-400" />
+              <span className="text-xs font-bold text-zinc-900">
+                Hình ảnh thực tế (Tối đa 5)
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-[10px] font-black text-red-600 uppercase tracking-widest hover:underline"
+            >
+              Thêm ảnh
+            </button>
           </div>
-          
+
           <div className="flex flex-wrap gap-3">
             {previews.map((p, i) => (
-              <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-zinc-100 group animate-in zoom-in-50 duration-300">
-                <img src={getImageUrl(p)} className="w-full h-full object-cover" />
-                <button 
+              <div
+                key={i}
+                className="relative w-20 h-20 rounded-xl overflow-hidden border border-zinc-100 group animate-in zoom-in-50 duration-300"
+              >
+                <img
+                  src={getImageUrl(p)}
+                  className="w-full h-full object-cover"
+                />
+                <button
                   type="button"
                   onClick={() => removeImage(i)}
                   className="absolute top-1 right-1 w-5 h-5 bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
@@ -214,7 +253,7 @@ export function ReviewFormDialog({
               </div>
             ))}
             {previews.length < 5 && (
-              <button 
+              <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className="w-20 h-20 rounded-xl border-2 border-dashed border-zinc-100 flex flex-col items-center justify-center gap-1 hover:border-red-200 hover:bg-red-50/30 transition-all text-zinc-300 hover:text-red-400"
@@ -224,13 +263,13 @@ export function ReviewFormDialog({
               </button>
             )}
           </div>
-          <input 
-            type="file" 
-            ref={fileInputRef} 
-            className="hidden" 
-            accept="image/*" 
-            multiple 
-            onChange={handleImageChange} 
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*"
+            multiple
+            onChange={handleImageChange}
           />
         </div>
 

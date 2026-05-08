@@ -155,7 +155,7 @@ export function SupportTicketList({
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0 border border-zinc-200/50 shadow-sm group-hover:border-red-200 transition-colors">
+                        <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center shrink-0 border border-zinc-200/50 shadow-sm group-hover:border-red-200 transition-colors">
                           <User className="w-4.5 h-4.5 text-zinc-400 group-hover:text-red-600" />
                         </div>
                         <div className="flex flex-col min-w-0">
@@ -172,7 +172,7 @@ export function SupportTicketList({
                       <div className="flex items-center gap-2">
                         <Badge
                           variant="outline"
-                          className="rounded-lg border-zinc-200 font-bold text-[11px] px-2.5 py-1 text-zinc-600 bg-white shadow-sm ring-1 ring-zinc-950/[0.02]"
+                          className="rounded-xl border-zinc-200 font-bold text-[11px] px-2.5 py-1 text-zinc-600 bg-white shadow-sm ring-1 ring-zinc-950/[0.02]"
                         >
                           {SUBJECT_LABELS[ticket.subject]}
                         </Badge>
@@ -213,7 +213,7 @@ export function SupportTicketList({
                       onClick={(e) => e.stopPropagation()}
                     >
                       <DropdownMenu>
-                        <DropdownMenuTrigger className="h-8 w-8 rounded-lg hover:bg-zinc-100 inline-flex items-center justify-center outline-none transition-all duration-200">
+                        <DropdownMenuTrigger className="h-8 w-8 rounded-xl hover:bg-zinc-100 inline-flex items-center justify-center outline-none transition-all duration-200">
                           <MoreHorizontal className="w-4 h-4 text-zinc-400" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
@@ -236,7 +236,7 @@ export function SupportTicketList({
                             <DropdownMenuSeparator className="my-1 bg-zinc-50" />
 
                             <DropdownMenuItem
-                              className="font-bold py-2.5 cursor-pointer text-blue-600 rounded-lg focus:bg-blue-50 focus:text-blue-600"
+                              className="font-bold py-2.5 cursor-pointer text-blue-600 rounded-xl focus:bg-blue-50 focus:text-blue-600"
                               onClick={() =>
                                 updateStatus({
                                   id: ticket.id,
@@ -249,7 +249,7 @@ export function SupportTicketList({
                             </DropdownMenuItem>
 
                             <DropdownMenuItem
-                              className="font-bold py-2.5 cursor-pointer text-emerald-600 rounded-lg focus:bg-emerald-50 focus:text-emerald-600"
+                              className="font-bold py-2.5 cursor-pointer text-emerald-600 rounded-xl focus:bg-emerald-50 focus:text-emerald-600"
                               onClick={() =>
                                 updateStatus({
                                   id: ticket.id,

@@ -1,33 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Plus, 
-  Search, 
-  Tag, 
-  ChevronLeft, 
-  ChevronRight, 
-  Layers, 
-  EyeOff, 
+import {
+  Plus,
+  Search,
+  Tag,
+  ChevronLeft,
+  ChevronRight,
+  Layers,
+  EyeOff,
   TrendingUp,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { 
-  useCategories, 
-  useDeletedCategories, 
-  useCreateCategory, 
-  useUpdateCategory, 
-  useDeleteCategory, 
-  useRestoreCategory 
+import {
+  useCategories,
+  useDeletedCategories,
+  useCreateCategory,
+  useUpdateCategory,
+  useDeleteCategory,
+  useRestoreCategory,
 } from "@/services/category";
 import { CategoryResponse, CategoryCreateRequest } from "@/types/category";
 import { Pagination } from "../components/Pagination";
 import { CategoryDialog } from "./components/CategoryDialog";
-import { CategoryTableRow, CategoryMobileCard } from "./components/CategoryListItems";
+import {
+  CategoryTableRow,
+  CategoryMobileCard,
+} from "./components/CategoryListItems";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EmptyState } from "../users/components/EmptyState";
 import { StatCard } from "../components/StatCard";
@@ -37,7 +40,8 @@ export default function CategoriesAdminPage() {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryResponse | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoryResponse | null>(null);
   const [confirmConfig, setConfirmConfig] = useState<{
     open: boolean;
     title: string;
@@ -51,9 +55,13 @@ export default function CategoriesAdminPage() {
     onConfirm: () => {},
   });
 
-  const activeQuery = useCategories({ keyword: search || undefined, activeOnly: true }, page, 10);
+  const activeQuery = useCategories(
+    { keyword: search || undefined, activeOnly: true },
+    page,
+    10,
+  );
   const deletedQuery = useDeletedCategories(page, 10);
-  
+
   const query = viewMode === "ACTIVE" ? activeQuery : deletedQuery;
   const categories = query.data?.data || [];
   const pagination = query.data?.pagination;
@@ -86,18 +94,20 @@ export default function CategoriesAdminPage() {
     setConfirmConfig({
       open: true,
       title: "Vô hiệu hóa danh mục?",
-      description: "Danh mục này sẽ không hiển thị trên cửa hàng nhưng vẫn được lưu trữ.",
+      description:
+        "Danh mục này sẽ không hiển thị trên cửa hàng nhưng vẫn được lưu trữ.",
       variant: "danger",
       onConfirm: async () => {
         try {
           await deleteMutation.mutateAsync(id);
           toast.success("Vô hiệu hóa danh mục thành công");
-          setConfirmConfig(prev => ({ ...prev, open: false }));
+          setConfirmConfig((prev) => ({ ...prev, open: false }));
         } catch (error: unknown) {
-          const message = error instanceof Error ? error.message : "Không thể vô hiệu hóa";
+          const message =
+            error instanceof Error ? error.message : "Không thể vô hiệu hóa";
           toast.error(message);
         }
-      }
+      },
     });
   };
 
@@ -105,18 +115,20 @@ export default function CategoriesAdminPage() {
     setConfirmConfig({
       open: true,
       title: "Khôi phục danh mục?",
-      description: "Danh mục này sẽ hoạt động trở lại và hiển thị trên cửa hàng.",
+      description:
+        "Danh mục này sẽ hoạt động trở lại và hiển thị trên cửa hàng.",
       variant: "info",
       onConfirm: async () => {
         try {
           await restoreMutation.mutateAsync(id);
           toast.success("Khôi phục danh mục thành công");
-          setConfirmConfig(prev => ({ ...prev, open: false }));
+          setConfirmConfig((prev) => ({ ...prev, open: false }));
         } catch (error: unknown) {
-          const message = error instanceof Error ? error.message : "Không thể khôi phục";
+          const message =
+            error instanceof Error ? error.message : "Không thể khôi phục";
           toast.error(message);
         }
-      }
+      },
     });
   };
 
@@ -163,11 +175,16 @@ export default function CategoriesAdminPage() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-6">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-9 h-9 rounded-lg bg-zinc-950 flex items-center justify-center shadow-lg shadow-zinc-100">
-                    <Layers className="w-4.5 h-4.5 text-white" strokeWidth={2} />
+                  <div className="w-9 h-9 rounded-xl bg-zinc-950 flex items-center justify-center shadow-lg shadow-zinc-100">
+                    <Layers
+                      className="w-4.5 h-4.5 text-white"
+                      strokeWidth={2}
+                    />
                   </div>
                   <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
-                    {viewMode === "ACTIVE" ? "Quản lý danh mục" : "Danh mục lưu trữ"}
+                    {viewMode === "ACTIVE"
+                      ? "Quản lý danh mục"
+                      : "Danh mục lưu trữ"}
                   </h2>
                 </div>
                 <p className="text-[14px] text-zinc-500 font-medium ml-12">
@@ -176,20 +193,23 @@ export default function CategoriesAdminPage() {
               </div>
 
               {/* Tab Toggle */}
-              <div className="flex items-center gap-1 bg-zinc-50/50 border border-zinc-100 p-1 rounded-lg w-fit">
+              <div className="flex items-center gap-1 bg-zinc-50/50 border border-zinc-100 p-1 rounded-xl w-fit">
                 {(["ACTIVE", "DELETED"] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      onClick={() => { setViewMode(mode); setPage(0); }}
-                      className={cn(
-                        "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150",
-                        viewMode === mode
-                          ? "bg-zinc-950 text-white shadow-sm"
-                          : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50"
-                      )}
-                    >
-                      {mode === "ACTIVE" ? "Hoạt động" : "Lưu trữ"}
-                    </button>
+                  <button
+                    key={mode}
+                    onClick={() => {
+                      setViewMode(mode);
+                      setPage(0);
+                    }}
+                    className={cn(
+                      "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150",
+                      viewMode === mode
+                        ? "bg-zinc-950 text-white shadow-sm"
+                        : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50",
+                    )}
+                  >
+                    {mode === "ACTIVE" ? "Hoạt động" : "Lưu trữ"}
+                  </button>
                 ))}
               </div>
             </div>
@@ -202,11 +222,17 @@ export default function CategoriesAdminPage() {
                   placeholder="Tìm tên danh mục..."
                   className="pl-10 h-10 rounded-xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:border-red-500/30 transition-all text-xs font-medium text-zinc-900 placeholder:text-zinc-400"
                   value={search}
-                  onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(0);
+                  }}
                 />
               </div>
               <Button
-                onClick={() => { setSelectedCategory(null); setIsDialogOpen(true); }}
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setIsDialogOpen(true);
+                }}
                 className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-150 font-semibold text-[14px] flex items-center gap-2 shadow-sm whitespace-nowrap"
               >
                 <Plus className="w-4 h-4" />
@@ -223,25 +249,37 @@ export default function CategoriesAdminPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Mã & ID</th>
-                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Tên & Mô tả</th>
-                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Trạng thái</th>
-                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Ngày tạo</th>
-                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400 text-right">Thao tác</th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
+                    Mã & ID
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
+                    Tên & Mô tả
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
+                    Trạng thái
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
+                    Ngày tạo
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400 text-right">
+                    Thao tác
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-50">
                 {query.isLoading ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td colSpan={5} className="px-8 py-6"><div className="h-10 bg-zinc-50 rounded-xl w-full" /></td>
+                      <td colSpan={5} className="px-8 py-6">
+                        <div className="h-10 bg-zinc-50 rounded-xl w-full" />
+                      </td>
                     </tr>
                   ))
                 ) : categories.length === 0 ? (
                   <tr>
                     <td colSpan={5}>
-                      <EmptyState 
-                        title="Không tìm thấy danh mục" 
+                      <EmptyState
+                        title="Không tìm thấy danh mục"
                         description="Hãy thử thay đổi từ khóa tìm kiếm hoặc tạo danh mục mới."
                       />
                     </td>
@@ -251,7 +289,10 @@ export default function CategoriesAdminPage() {
                     <CategoryTableRow
                       key={cat.id}
                       category={cat}
-                      onEdit={(c) => { setSelectedCategory(c); setIsDialogOpen(true); }}
+                      onEdit={(c) => {
+                        setSelectedCategory(c);
+                        setIsDialogOpen(true);
+                      }}
                       onDelete={handleDelete}
                       onRestore={handleRestore}
                     />
@@ -265,7 +306,10 @@ export default function CategoriesAdminPage() {
           <div className="lg:hidden p-4 space-y-4">
             {query.isLoading ? (
               Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="h-32 bg-zinc-50 rounded-2xl animate-pulse" />
+                <div
+                  key={i}
+                  className="h-32 bg-zinc-50 rounded-2xl animate-pulse"
+                />
               ))
             ) : categories.length === 0 ? (
               <EmptyState title="Trống" description="Không có danh mục nào." />
@@ -274,7 +318,10 @@ export default function CategoriesAdminPage() {
                 <CategoryMobileCard
                   key={cat.id}
                   category={cat}
-                  onEdit={(c) => { setSelectedCategory(c); setIsDialogOpen(true); }}
+                  onEdit={(c) => {
+                    setSelectedCategory(c);
+                    setIsDialogOpen(true);
+                  }}
                   onDelete={handleDelete}
                   onRestore={handleRestore}
                 />
@@ -304,7 +351,7 @@ export default function CategoriesAdminPage() {
 
       <ConfirmDialog
         open={confirmConfig.open}
-        onOpenChange={(o) => setConfirmConfig(prev => ({ ...prev, open: o }))}
+        onOpenChange={(o) => setConfirmConfig((prev) => ({ ...prev, open: o }))}
         title={confirmConfig.title}
         description={confirmConfig.description}
         onConfirm={confirmConfig.onConfirm}

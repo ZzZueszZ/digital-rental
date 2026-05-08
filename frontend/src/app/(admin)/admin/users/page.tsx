@@ -233,7 +233,7 @@ export default function UsersAdminPage() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-6">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
+                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
                     <Users className="w-4.5 h-4.5 text-white" strokeWidth={2} />
                   </div>
                   <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
@@ -246,20 +246,20 @@ export default function UsersAdminPage() {
               </div>
 
               {/* Tab Toggle */}
-              <div className="flex items-center gap-1 bg-zinc-50/50 border border-zinc-100 p-1 rounded-lg w-fit">
+              <div className="flex items-center gap-1 bg-zinc-50/50 border border-zinc-100 p-1 rounded-xl w-fit">
                 {(["ACTIVE", "DELETED"] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      onClick={() => handleViewModeChange(mode)}
-                      className={cn(
-                        "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150",
-                        viewMode === mode
-                          ? "bg-zinc-950 text-white shadow-md shadow-zinc-200"
-                          : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50",
-                      )}
-                    >
-                      {mode === "ACTIVE" ? "Hoạt động" : "Thùng rác"}
-                    </button>
+                  <button
+                    key={mode}
+                    onClick={() => handleViewModeChange(mode)}
+                    className={cn(
+                      "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150",
+                      viewMode === mode
+                        ? "bg-zinc-950 text-white shadow-md shadow-zinc-200"
+                        : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50",
+                    )}
+                  >
+                    {mode === "ACTIVE" ? "Hoạt động" : "Thùng rác"}
+                  </button>
                 ))}
               </div>
             </div>
@@ -300,8 +300,9 @@ export default function UsersAdminPage() {
                 <CheckSquare className="w-4 h-4" />
               </button>
               <span className="text-xs font-bold text-white">
-                Đã chọn <span className="text-zinc-400">{selectedIds.size}</span>{" "}
-                tài khoản
+                Đã chọn{" "}
+                <span className="text-zinc-400">{selectedIds.size}</span> tài
+                khoản
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -321,7 +322,7 @@ export default function UsersAdminPage() {
                       `Đã vô hiệu hóa ${selectedIds.size} tài khoản`,
                     )
                   }
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors"
                 >
                   <Trash2Icon className="w-3.5 h-3.5" /> Vô hiệu hóa (
                   {selectedIds.size})
@@ -342,7 +343,7 @@ export default function UsersAdminPage() {
                       `Đã khôi phục ${selectedIds.size} tài khoản`,
                     )
                   }
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors"
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Khôi phục (
                   {selectedIds.size})
@@ -350,7 +351,7 @@ export default function UsersAdminPage() {
               )}
               <button
                 onClick={() => setSelectedIds(new Set())}
-                className="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white text-xs font-bold transition-colors"
+                className="px-3 py-1.5 rounded-xl text-zinc-400 hover:text-white text-xs font-bold transition-colors"
               >
                 Bỏ chọn
               </button>
@@ -438,7 +439,7 @@ export default function UsersAdminPage() {
                   </div>
                   <div onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>
-                      <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-lg hover:bg-zinc-100 outline-none">
+                      <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-xl hover:bg-zinc-100 outline-none">
                         <MoreHorizontal className="w-4 h-4 text-zinc-500" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
@@ -481,7 +482,8 @@ export default function UsersAdminPage() {
                                   )
                                 }
                               >
-                                <RefreshCw className="w-3.5 h-3.5" /> Reset mật khẩu
+                                <RefreshCw className="w-3.5 h-3.5" /> Reset mật
+                                khẩu
                               </DropdownMenuItem>
                               {u.accountNonLocked ? (
                                 <DropdownMenuItem
@@ -496,7 +498,8 @@ export default function UsersAdminPage() {
                                     )
                                   }
                                 >
-                                  <Lock className="w-3.5 h-3.5" /> Khóa tài khoản
+                                  <Lock className="w-3.5 h-3.5" /> Khóa tài
+                                  khoản
                                 </DropdownMenuItem>
                               ) : (
                                 <DropdownMenuItem
@@ -553,7 +556,8 @@ export default function UsersAdminPage() {
                                   )
                                 }
                               >
-                                <RotateCcw className="w-3.5 h-3.5" /> Khôi phục tài khoản
+                                <RotateCcw className="w-3.5 h-3.5" /> Khôi phục
+                                tài khoản
                               </DropdownMenuItem>
                             </>
                           )}
@@ -655,7 +659,7 @@ export default function UsersAdminPage() {
                     </td>
                     {Array.from({ length: 5 }).map((_, j) => (
                       <td key={j} className="px-8 py-4">
-                        <div className="h-4 bg-zinc-50 rounded-lg animate-pulse" />
+                        <div className="h-4 bg-zinc-50 rounded-xl animate-pulse" />
                       </td>
                     ))}
                   </tr>
@@ -714,7 +718,7 @@ export default function UsersAdminPage() {
                       <div className="flex items-center gap-3.5">
                         <div
                           className={cn(
-                            "w-9 h-9 rounded-lg bg-gradient-to-br flex items-center justify-center flex-shrink-0",
+                            "w-9 h-9 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0",
                             "shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md",
                             avatarColor.bg,
                           )}
@@ -798,7 +802,7 @@ export default function UsersAdminPage() {
                       <div className="flex items-center justify-end">
                         <div onClick={(e) => e.stopPropagation()}>
                           <DropdownMenu>
-                            <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-lg p-0 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 transition-all duration-200 outline-none">
+                            <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-xl p-0 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 transition-all duration-200 outline-none">
                               <MoreHorizontal className="w-4 h-4 text-zinc-500" />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
@@ -812,7 +816,7 @@ export default function UsersAdminPage() {
                                 {viewMode === "ACTIVE" ? (
                                   <>
                                     <DropdownMenuItem
-                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
+                                      className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer"
                                       onClick={() =>
                                         router.push(`/admin/users/${u.id}`)
                                       }
@@ -821,7 +825,7 @@ export default function UsersAdminPage() {
                                       Xem chi tiết
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
-                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
+                                      className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer"
                                       onClick={() =>
                                         router.push(`/admin/users/${u.id}/edit`)
                                       }
@@ -831,7 +835,7 @@ export default function UsersAdminPage() {
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                                     <DropdownMenuItem
-                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
+                                      className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer"
                                       onClick={() =>
                                         requestAction(
                                           "Cấp lại mật khẩu",
@@ -856,7 +860,7 @@ export default function UsersAdminPage() {
                                     </DropdownMenuItem>
                                     {u.accountNonLocked ? (
                                       <DropdownMenuItem
-                                        className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-amber-700"
+                                        className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-amber-700"
                                         onClick={() =>
                                           requestAction(
                                             "Khóa tài khoản",
@@ -873,7 +877,7 @@ export default function UsersAdminPage() {
                                       </DropdownMenuItem>
                                     ) : (
                                       <DropdownMenuItem
-                                        className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
+                                        className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
                                         onClick={() =>
                                           requestAction(
                                             "Mở khóa tài khoản",
@@ -891,7 +895,7 @@ export default function UsersAdminPage() {
                                     )}
                                     <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                                     <DropdownMenuItem
-                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600"
+                                      className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600"
                                       onClick={() =>
                                         requestAction(
                                           "Vô hiệu hóa tài khoản",
@@ -910,7 +914,7 @@ export default function UsersAdminPage() {
                                 ) : (
                                   <>
                                     <DropdownMenuItem
-                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer"
+                                      className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer"
                                       onClick={() =>
                                         router.push(`/admin/users/${u.id}`)
                                       }
@@ -920,7 +924,7 @@ export default function UsersAdminPage() {
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                                     <DropdownMenuItem
-                                      className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
+                                      className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
                                       onClick={() =>
                                         requestAction(
                                           "Khôi phục tài khoản",

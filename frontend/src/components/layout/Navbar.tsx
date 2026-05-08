@@ -171,7 +171,7 @@ export function Navbar() {
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       href="/inventory"
-                      className="inline-flex h-10 items-center justify-center rounded-lg bg-transparent px-4 text-[15px] font-bold tracking-tight text-zinc-500 transition-all hover:text-zinc-950 hover:bg-zinc-50"
+                      className="inline-flex h-10 items-center justify-center rounded-xl bg-transparent px-4 text-[15px] font-bold tracking-tight text-zinc-500 transition-all hover:text-zinc-950 hover:bg-zinc-50"
                     >
                       Sản phẩm mới
                     </NavigationMenuLink>
@@ -179,7 +179,7 @@ export function Navbar() {
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       href="/about"
-                      className="inline-flex h-10 items-center justify-center rounded-lg bg-transparent px-4 text-[15px] font-bold tracking-tight text-zinc-500 transition-all hover:text-zinc-950 hover:bg-zinc-50"
+                      className="inline-flex h-10 items-center justify-center rounded-xl bg-transparent px-4 text-[15px] font-bold tracking-tight text-zinc-500 transition-all hover:text-zinc-950 hover:bg-zinc-50"
                     >
                       Về chúng tôi
                     </NavigationMenuLink>
@@ -408,9 +408,7 @@ export function Navbar() {
                 className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
               >
                 <Home className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                <span className="text-[14px] font-bold">
-                  Trang chủ
-                </span>
+                <span className="text-[14px] font-bold">Trang chủ</span>
                 <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
               </Link>
 
@@ -420,9 +418,7 @@ export function Navbar() {
                 className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
               >
                 <Camera className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                <span className="text-[14px] font-bold">
-                  Thiết bị
-                </span>
+                <span className="text-[14px] font-bold">Thiết bị</span>
                 <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
               </Link>
 
@@ -432,9 +428,7 @@ export function Navbar() {
                 className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
               >
                 <Package className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                <span className="text-[14px] font-bold">
-                  Sản phẩm mới
-                </span>
+                <span className="text-[14px] font-bold">Sản phẩm mới</span>
                 <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
               </Link>
 
@@ -444,9 +438,7 @@ export function Navbar() {
                 className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
               >
                 <Info className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                <span className="text-[14px] font-bold">
-                  Về chúng tôi
-                </span>
+                <span className="text-[14px] font-bold">Về chúng tôi</span>
                 <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
               </Link>
             </div>
@@ -478,9 +470,7 @@ export function Navbar() {
                   className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
                 >
                   <User className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                  <span className="text-[14px] font-bold">
-                    Tài khoản
-                  </span>
+                  <span className="text-[14px] font-bold">Tài khoản</span>
                   <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
                 </Link>
 
@@ -490,9 +480,7 @@ export function Navbar() {
                   className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
                 >
                   <Settings className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                  <span className="text-[14px] font-bold">
-                    Cài đặt
-                  </span>
+                  <span className="text-[14px] font-bold">Cài đặt</span>
                   <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
                 </Link>
               </div>

@@ -42,6 +42,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { EmptyState } from "../users/components/EmptyState";
 import { isAxiosError } from "axios";
 
 export default function AdminAddressPage() {
@@ -77,7 +78,7 @@ export default function AdminAddressPage() {
               placeholder="Tìm theo tên hoặc email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-11 h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-lg focus:bg-white focus:border-red-600/30 transition-all duration-200 font-semibold text-[15px] shadow-dash-card"
+              className="pl-11 h-12 bg-zinc-50/50 border border-zinc-950/5 rounded-xl focus:bg-white focus:border-red-600/30 transition-all duration-200 font-semibold text-[15px] shadow-dash-card"
             />
 
             {/* Search Results Dropdown */}
@@ -97,7 +98,7 @@ export default function AdminAddressPage() {
                     className="w-full px-5 py-4 flex items-center justify-between hover:bg-zinc-50 transition-all group/item text-left border-b border-zinc-50 last:border-0"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-400 group-hover/item:bg-red-600 group-hover/item:text-white transition-all">
+                      <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-400 group-hover/item:bg-red-600 group-hover/item:text-white transition-all">
                         <UserIcon className="w-5 h-5" />
                       </div>
                       <div>
@@ -117,9 +118,9 @@ export default function AdminAddressPage() {
           </div>
 
           {selectedUser && (
-            <div className="mt-5 flex items-center justify-between p-3.5 bg-red-50/50 border border-red-100 rounded-lg animate-in zoom-in-95 duration-300">
+            <div className="mt-5 flex items-center justify-between p-3.5 bg-red-50/50 border border-red-100 rounded-xl animate-in zoom-in-95 duration-300">
               <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-lg bg-white border border-red-100 flex items-center justify-center text-red-600 shadow-sm">
+                <div className="w-11 h-11 rounded-xl bg-white border border-red-100 flex items-center justify-center text-red-600 shadow-sm">
                   <UserIcon className="w-5 h-5" />
                 </div>
                 <div>
@@ -136,7 +137,7 @@ export default function AdminAddressPage() {
               </div>
               <button
                 onClick={() => setSelectedUser(null)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:bg-white hover:text-red-600 transition-all"
+                className="w-8 h-8 rounded-xl flex items-center justify-center text-zinc-400 hover:bg-white hover:text-red-600 transition-all"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -149,16 +150,12 @@ export default function AdminAddressPage() {
       {selectedUser ? (
         <AdminAddressManagement userId={selectedUser.id} />
       ) : (
-        <div className="py-24 flex flex-col items-center justify-center text-center bg-white border border-zinc-100 border-dashed rounded-xl opacity-60">
-          <div className="w-14 h-14 rounded-full bg-zinc-50 flex items-center justify-center mb-5">
-            <Search className="w-7 h-7 text-zinc-200" />
-          </div>
-          <h3 className="text-lg font-bold text-zinc-400">
-            Vui lòng chọn một người dùng
-          </h3>
-          <p className="text-xs text-zinc-300 font-medium mt-1">
-            Sử dụng thanh tìm kiếm phía trên để bắt đầu
-          </p>
+        <div className="bg-white border border-zinc-100 border-dashed rounded-xl overflow-hidden">
+          <EmptyState
+            title="Vui lòng chọn một người dùng"
+            description="Sử dụng thanh tìm kiếm phía trên để bắt đầu quản lý địa chỉ."
+            icon={Search}
+          />
         </div>
       )}
     </div>
@@ -204,7 +201,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
         </div>
         <Button
           onClick={() => handleOpenDialog()}
-          className="h-11 px-6 rounded-lg bg-red-600 text-white font-semibold text-[14px] flex items-center gap-2.5 hover:bg-zinc-950 transition-all shadow-lg shadow-red-100"
+          className="h-11 px-6 rounded-xl bg-red-600 text-white font-semibold text-[14px] flex items-center gap-2.5 hover:bg-zinc-950 transition-all shadow-lg shadow-red-100"
         >
           <Plus className="w-4 h-4" /> Thêm địa chỉ mới
         </Button>
@@ -235,13 +232,14 @@ function AdminAddressManagement({ userId }: { userId: number }) {
       />
 
       {addresses.length === 0 ? (
-        <div className="py-20 flex flex-col items-center justify-center text-center bg-white border border-zinc-100 rounded-xl">
-          <div className="w-16 h-16 rounded-full bg-zinc-50 flex items-center justify-center mb-6">
-            <MapPin className="w-8 h-8 text-zinc-200" />
-          </div>
-          <p className="text-sm font-bold text-zinc-400">
-            Người dùng này chưa có địa chỉ nào
-          </p>
+        <div className="bg-white border border-zinc-100 rounded-xl overflow-hidden">
+          <EmptyState
+            title="Chưa có địa chỉ nào"
+            description="Người dùng này hiện chưa có thông tin địa chỉ giao hàng trong hệ thống."
+            icon={MapPin}
+            actionText="Thêm địa chỉ ngay"
+            onAction={() => handleOpenDialog()}
+          />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -259,7 +257,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
                 <div className="flex items-center gap-3">
                   <div
                     className={cn(
-                      "w-10 h-10 rounded-lg flex items-center justify-center transition-all",
+                      "w-10 h-10 rounded-xl flex items-center justify-center transition-all",
                       addr.isDefault
                         ? "bg-red-600 text-white shadow-lg shadow-red-100"
                         : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-950 group-hover:text-white",
@@ -278,7 +276,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleOpenDialog(addr)}
-                    className="h-8 w-8 rounded-lg hover:bg-zinc-100 flex items-center justify-center text-zinc-300 hover:text-zinc-950 transition-colors"
+                    className="h-8 w-8 rounded-xl hover:bg-zinc-100 flex items-center justify-center text-zinc-300 hover:text-zinc-950 transition-colors"
                   >
                     <MoreVertical className="w-4 h-4" />
                   </button>
@@ -423,7 +421,7 @@ function AdminAddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, receiverName: e.target.value })
               }
-              className="h-12 rounded-lg border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
+              className="h-12 rounded-xl border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="Nhập tên người nhận"
             />
           </div>
@@ -436,7 +434,7 @@ function AdminAddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, receiverPhone: e.target.value })
               }
-              className="h-12 rounded-lg border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
+              className="h-12 rounded-xl border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="09xx xxx xxx"
             />
           </div>
@@ -452,7 +450,7 @@ function AdminAddressDialog({
               setFormData({ ...formData, province: v as City })
             }
           >
-            <SelectTrigger className="w-full !h-12 px-4 rounded-lg !border-zinc-950/5 !bg-zinc-50/50 font-semibold text-[15px] focus:!bg-white focus:!border-red-600/30 transition-all duration-200 !shadow-dash-card">
+            <SelectTrigger className="w-full !h-12 px-4 rounded-xl !border-zinc-950/5 !bg-zinc-50/50 font-semibold text-[15px] focus:!bg-white focus:!border-red-600/30 transition-all duration-200 !shadow-dash-card">
               <SelectValue placeholder="Chọn Tỉnh/Thành phố" />
             </SelectTrigger>
             <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay max-h-64 bg-white">
@@ -479,7 +477,7 @@ function AdminAddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, district: e.target.value })
               }
-              className="h-12 rounded-lg border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
+              className="h-12 rounded-xl border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="Nhập quận/huyện"
             />
           </div>
@@ -492,7 +490,7 @@ function AdminAddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, ward: e.target.value })
               }
-              className="h-12 rounded-lg border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
+              className="h-12 rounded-xl border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
               placeholder="Nhập phường/xã"
             />
           </div>
@@ -507,7 +505,7 @@ function AdminAddressDialog({
             onChange={(e) =>
               setFormData({ ...formData, detailAddress: e.target.value })
             }
-            className="h-12 rounded-lg border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
+            className="h-12 rounded-xl border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
             placeholder="Số nhà, tên đường..."
           />
         </div>
@@ -521,7 +519,7 @@ function AdminAddressDialog({
             onChange={(e) =>
               setFormData({ ...formData, fullAddress: e.target.value })
             }
-            className="h-12 rounded-lg border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
+            className="h-12 rounded-xl border border-zinc-950/5 bg-zinc-50/50 font-semibold text-[15px] focus:bg-white focus:border-red-600/30 transition-all duration-200 shadow-dash-card"
             placeholder="VD: 123 Đường ABC, Phường X, Quận Y, Tỉnh Z"
           />
           <p className="text-[11px] text-zinc-400 font-medium italic ml-1">

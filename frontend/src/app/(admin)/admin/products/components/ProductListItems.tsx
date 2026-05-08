@@ -2,7 +2,14 @@
 
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { Package, Calendar, ChevronRight, Check, X as XIcon, ImageIcon } from "lucide-react";
+import {
+  Package,
+  Calendar,
+  ChevronRight,
+  Check,
+  X as XIcon,
+  ImageIcon,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn, getImageUrl } from "@/lib/utils";
 import { ProductResponse } from "@/types/product";
@@ -21,19 +28,28 @@ interface ItemProps {
   isDeleted: boolean;
 }
 
-export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onDelete, onRestore, onHardDelete, onView, isDeleted }: ItemProps) {
-
+export function ProductTableRow({
+  product,
+  onEdit,
+  onUpdatePrice,
+  onGallery,
+  onDelete,
+  onRestore,
+  onHardDelete,
+  onView,
+  isDeleted,
+}: ItemProps) {
   return (
-    <tr 
+    <tr
       onClick={() => onView(product.id)}
       className="group transition-all duration-300 hover:bg-zinc-50/50 cursor-pointer"
     >
       <td className="px-6 py-3.5">
         <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-lg bg-zinc-100 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200/50">
+          <div className="w-11 h-11 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200/50">
             {product.mainImageUrl ? (
-              <Image 
-                src={getImageUrl(product.mainImageUrl)} 
+              <Image
+                src={getImageUrl(product.mainImageUrl)}
                 alt={product.name}
                 width={48}
                 height={48}
@@ -45,8 +61,8 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
             )}
           </div>
           <div>
-            <p 
-              className="text-sm font-semibold text-zinc-950 tracking-tight mb-0.5 max-w-[200px] truncate group-hover:text-red-600 transition-colors duration-300" 
+            <p
+              className="text-sm font-semibold text-zinc-950 tracking-tight mb-0.5 max-w-[200px] truncate group-hover:text-red-600 transition-colors duration-300"
               title={product.name}
             >
               {product.name}
@@ -65,12 +81,37 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
       <td className="px-6 py-3.5">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={cn("text-[10px] font-bold px-1.5 py-0 border-0 shadow-none", product.isForRent ? "bg-amber-100/50 text-amber-700" : "bg-zinc-100 text-zinc-400")}>Thuê</Badge>
-            <span className="text-sm font-semibold text-zinc-900">{product.rentPricePerDay?.toLocaleString('vi-VN')} ₫<span className="text-xs text-zinc-400 font-medium">/ngày</span></span>
+            <Badge
+              variant="outline"
+              className={cn(
+                "text-[10px] font-bold px-1.5 py-0 border-0 shadow-none",
+                product.isForRent
+                  ? "bg-amber-100/50 text-amber-700"
+                  : "bg-zinc-100 text-zinc-400",
+              )}
+            >
+              Thuê
+            </Badge>
+            <span className="text-sm font-semibold text-zinc-900">
+              {product.rentPricePerDay?.toLocaleString("vi-VN")} ₫
+              <span className="text-xs text-zinc-400 font-medium">/ngày</span>
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={cn("text-[10px] font-bold px-1.5 py-0 border-0 shadow-none", product.isForSale ? "bg-blue-100/50 text-blue-700" : "bg-zinc-100 text-zinc-400")}>Bán</Badge>
-            <span className="text-sm font-semibold text-zinc-900">{product.salePrice?.toLocaleString('vi-VN')} ₫</span>
+            <Badge
+              variant="outline"
+              className={cn(
+                "text-[10px] font-bold px-1.5 py-0 border-0 shadow-none",
+                product.isForSale
+                  ? "bg-blue-100/50 text-blue-700"
+                  : "bg-zinc-100 text-zinc-400",
+              )}
+            >
+              Bán
+            </Badge>
+            <span className="text-sm font-semibold text-zinc-900">
+              {product.salePrice?.toLocaleString("vi-VN")} ₫
+            </span>
           </div>
         </div>
       </td>
@@ -79,8 +120,10 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
           className={cn(
             "rounded-md px-2.5 py-1 text-xs font-semibold border-0 ring-0 shadow-none",
             !isDeleted
-              ? (product.active ? "bg-emerald-50 text-emerald-600" : "bg-zinc-100 text-zinc-500")
-              : "bg-red-50 text-red-600"
+              ? product.active
+                ? "bg-emerald-50 text-emerald-600"
+                : "bg-zinc-100 text-zinc-500"
+              : "bg-red-50 text-red-600",
           )}
         >
           {!isDeleted ? (product.active ? "Hoạt động" : "Ẩn") : "Đã xóa"}
@@ -96,7 +139,10 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
           </span>
         </div>
       </td>
-      <td className="px-6 py-3.5 text-right" onClick={(e) => e.stopPropagation()}>
+      <td
+        className="px-6 py-3.5 text-right"
+        onClick={(e) => e.stopPropagation()}
+      >
         <ProductActionMenu
           isActive={product.active}
           isDeleted={isDeleted}
@@ -113,16 +159,25 @@ export function ProductTableRow({ product, onEdit, onUpdatePrice, onGallery, onD
   );
 }
 
-export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, onDelete, onRestore, onHardDelete, onView, isDeleted }: ItemProps) {
-
+export function ProductMobileCard({
+  product,
+  onEdit,
+  onUpdatePrice,
+  onGallery,
+  onDelete,
+  onRestore,
+  onHardDelete,
+  onView,
+  isDeleted,
+}: ItemProps) {
   return (
     <div className="bg-white p-4 rounded-xl border border-zinc-100 shadow-sm space-y-4 group active:scale-[0.98] transition-all duration-150">
       <div className="flex justify-between items-start gap-4">
         <div className="flex gap-3 overflow-hidden">
           <div className="w-14 h-14 rounded-xl bg-zinc-50 flex items-center justify-center shrink-0 overflow-hidden border border-zinc-200/50">
             {product.mainImageUrl ? (
-              <Image 
-                src={getImageUrl(product.mainImageUrl)} 
+              <Image
+                src={getImageUrl(product.mainImageUrl)}
                 alt={product.name}
                 width={56}
                 height={56}
@@ -138,16 +193,20 @@ export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, o
               <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 bg-zinc-100 px-1.5 rounded">
                 #{product.id}
               </span>
-              <Badge className={cn(
-                "rounded-full px-2 py-0 text-[9px] font-black uppercase tracking-widest border-0",
-                !isDeleted
-                  ? (product.active ? "bg-emerald-50 text-emerald-600" : "bg-zinc-100 text-zinc-500")
-                  : "bg-red-50 text-red-600"
-              )}>
+              <Badge
+                className={cn(
+                  "rounded-full px-2 py-0 text-[9px] font-black uppercase tracking-widest border-0",
+                  !isDeleted
+                    ? product.active
+                      ? "bg-emerald-50 text-emerald-600"
+                      : "bg-zinc-100 text-zinc-500"
+                    : "bg-red-50 text-red-600",
+                )}
+              >
                 {!isDeleted ? (product.active ? "Hoạt động" : "Ẩn") : "Đã xóa"}
               </Badge>
             </div>
-            <h3 
+            <h3
               onClick={() => onView(product.id)}
               className="text-sm font-black text-zinc-950 tracking-tight truncate max-w-full cursor-pointer hover:text-indigo-600"
             >
@@ -176,15 +235,31 @@ export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, o
       <div className="grid grid-cols-2 gap-3 p-3 bg-zinc-50 rounded-xl">
         <div className="flex flex-col">
           <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest mb-1 flex items-center gap-1">
-            <div className={cn("w-1.5 h-1.5 rounded-full", product.isForRent ? "bg-amber-500" : "bg-zinc-300")} /> Thuê
+            <div
+              className={cn(
+                "w-1.5 h-1.5 rounded-full",
+                product.isForRent ? "bg-amber-500" : "bg-zinc-300",
+              )}
+            />{" "}
+            Thuê
           </span>
-          <span className="text-sm font-bold text-zinc-950">{product.rentPricePerDay?.toLocaleString('vi-VN')} ₫</span>
+          <span className="text-sm font-bold text-zinc-950">
+            {product.rentPricePerDay?.toLocaleString("vi-VN")} ₫
+          </span>
         </div>
         <div className="flex flex-col pl-3 border-l border-zinc-200">
           <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest mb-1 flex items-center gap-1">
-            <div className={cn("w-1.5 h-1.5 rounded-full", product.isForSale ? "bg-blue-500" : "bg-zinc-300")} /> Bán
+            <div
+              className={cn(
+                "w-1.5 h-1.5 rounded-full",
+                product.isForSale ? "bg-blue-500" : "bg-zinc-300",
+              )}
+            />{" "}
+            Bán
           </span>
-          <span className="text-sm font-bold text-zinc-950">{product.salePrice?.toLocaleString('vi-VN')} ₫</span>
+          <span className="text-sm font-bold text-zinc-950">
+            {product.salePrice?.toLocaleString("vi-VN")} ₫
+          </span>
         </div>
       </div>
 
@@ -196,11 +271,13 @@ export function ProductMobileCard({ product, onEdit, onUpdatePrice, onGallery, o
           </span>
         </div>
         {!isDeleted && (
-          <button 
+          <button
             onClick={() => onView(product.id)}
-            className="p-1.5 rounded-lg bg-zinc-50 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-all flex items-center gap-1 px-3"
+            className="p-1.5 rounded-xl bg-zinc-50 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-all flex items-center gap-1 px-3"
           >
-            <span className="text-[10px] font-bold text-zinc-600">Chi tiết</span>
+            <span className="text-[10px] font-bold text-zinc-600">
+              Chi tiết
+            </span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         )}

@@ -22,7 +22,10 @@ export function BulkActionToolbar({
   return (
     <div className="px-6 py-3 bg-zinc-950 flex items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-200">
       <div className="flex items-center gap-3">
-        <button onClick={onClearSelection} className="text-zinc-400 hover:text-white transition-colors">
+        <button
+          onClick={onClearSelection}
+          className="text-zinc-400 hover:text-white transition-colors"
+        >
           <CheckSquare className="w-4 h-4" />
         </button>
         <span className="text-xs font-bold text-white">
@@ -34,7 +37,7 @@ export function BulkActionToolbar({
         {viewMode === "ACTIVE" ? (
           <button
             onClick={onDeleteMany}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors"
           >
             <Trash2 className="w-3.5 h-3.5" />
             Vô hiệu hóa ({count})
@@ -42,7 +45,7 @@ export function BulkActionToolbar({
         ) : (
           <button
             onClick={onRestoreMany}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Khôi phục ({count})
@@ -50,7 +53,7 @@ export function BulkActionToolbar({
         )}
         <button
           onClick={onClearSelection}
-          className="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white text-xs font-bold transition-colors"
+          className="px-3 py-1.5 rounded-xl text-zinc-400 hover:text-white text-xs font-bold transition-colors"
         >
           Bỏ chọn
         </button>

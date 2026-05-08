@@ -1,6 +1,14 @@
 "use client";
 
-import { Edit2, Trash2, RotateCcw, MoreHorizontal, Image as ImageIcon, DollarSign, Eye } from "lucide-react";
+import {
+  Edit2,
+  Trash2,
+  RotateCcw,
+  MoreHorizontal,
+  Image as ImageIcon,
+  DollarSign,
+  Eye,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,9 +45,7 @@ export function ProductActionMenu({
   return (
     <div onClick={(e) => e.stopPropagation()}>
       <DropdownMenu>
-        <DropdownMenuTrigger
-          className="inline-flex items-center justify-center h-8 w-8 rounded-lg hover:bg-zinc-100 outline-none"
-        >
+        <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-xl hover:bg-zinc-100 outline-none">
           <MoreHorizontal className="w-4 h-4 text-zinc-500" />
         </DropdownMenuTrigger>
 
@@ -54,16 +60,10 @@ export function ProductActionMenu({
 
             {!isDeleted ? (
               <>
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={onView}
-                >
+                <DropdownMenuItem className="cursor-pointer" onClick={onView}>
                   <Eye className="w-3.5 h-3.5" /> Xem chi tiết sản phẩm
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={onEdit}
-                >
+                <DropdownMenuItem className="cursor-pointer" onClick={onEdit}>
                   <Edit2 className="w-3.5 h-3.5" /> Cập nhật thông tin
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -79,10 +79,7 @@ export function ProductActionMenu({
                   <ImageIcon className="w-3.5 h-3.5" /> Quản lý thư viện ảnh
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={onDelete}
-                >
+                <DropdownMenuItem className="cursor-pointer" onClick={onDelete}>
                   <Trash2 className="w-3.5 h-3.5" /> Vô hiệu hóa
                 </DropdownMenuItem>
               </>

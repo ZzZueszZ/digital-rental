@@ -2,13 +2,13 @@
 
 import React from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { 
-  CheckCircle2, 
+import {
+  CheckCircle2,
   ChevronRight,
   FileText,
   Home,
   ShoppingBag,
-  PackageCheck
+  PackageCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -23,40 +23,47 @@ export default function OrderSuccessPage() {
         <div className="bg-white rounded-2xl p-10 border border-black/5 text-center relative overflow-hidden shadow-dash-card">
           {/* Decorative Background */}
           <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full blur-3xl opacity-10 bg-emerald-500" />
-          
+
           <div className="w-20 h-20 rounded-xl mx-auto mb-8 flex items-center justify-center bg-emerald-50 text-emerald-600 shadow-sm border border-emerald-100/50">
             <PackageCheck className="w-10 h-10" />
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-zinc-950 tracking-tight mb-4">Đặt hàng thành công</h1>
-          
+          <h1 className="text-3xl md:text-4xl font-bold text-zinc-950 tracking-tight mb-4">
+            Đặt hàng thành công
+          </h1>
+
           <p className="text-zinc-500 text-[15px] font-medium leading-relaxed mb-8 px-2">
-            Cảm ơn bạn đã tin tưởng LensHub. Đơn hàng của bạn đã được tiếp nhận và đang trong quá trình chuẩn bị.
+            Cảm ơn bạn đã tin tưởng LensHub. Đơn hàng của bạn đã được tiếp nhận
+            và đang trong quá trình chuẩn bị.
           </p>
 
           {orderCode && (
             <div className="bg-zinc-50/50 rounded-xl p-4 mb-8 flex items-center justify-between border border-black/5">
               <div className="flex items-center gap-3">
                 <FileText className="w-4 h-4 text-zinc-400" />
-                <span className="text-xs font-bold text-zinc-400">Mã đơn hàng</span>
+                <span className="text-xs font-bold text-zinc-400">
+                  Mã đơn hàng
+                </span>
               </div>
-              <span className="text-sm font-bold text-zinc-950 tracking-tight">{orderCode}</span>
+              <span className="text-sm font-bold text-zinc-950 tracking-tight">
+                {orderCode}
+              </span>
             </div>
           )}
 
           <div className="space-y-2">
-            <Button 
+            <Button
               onClick={() => router.push("/profile?section=orders")}
-              className="w-full h-12 rounded-lg font-bold text-sm transition-all shadow-dash-card bg-zinc-950 hover:bg-red-600 text-white border-none flex items-center justify-center gap-2"
+              className="w-full h-12 rounded-xl font-bold text-sm transition-all shadow-dash-card bg-zinc-950 hover:bg-red-600 text-white border-none flex items-center justify-center gap-2"
             >
               Quản lý đơn hàng
               <ChevronRight className="w-4 h-4" />
             </Button>
-            
-            <Button 
+
+            <Button
               variant="ghost"
               onClick={() => router.push("/")}
-              className="w-full h-12 rounded-lg bg-white text-zinc-400 font-bold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all flex items-center justify-center gap-2"
+              className="w-full h-12 rounded-xl bg-white text-zinc-400 font-bold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all flex items-center justify-center gap-2"
             >
               <Home className="w-4 h-4" />
               Tiếp tục mua sắm

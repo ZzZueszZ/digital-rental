@@ -3,37 +3,45 @@
 import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  Plus, 
-  Search, 
-  Package, 
-  ChevronLeft, 
-  ChevronRight, 
-  EyeOff, 
+import {
+  Plus,
+  Search,
+  Package,
+  ChevronLeft,
+  ChevronRight,
+  EyeOff,
   TrendingUp,
-  Tag
+  Tag,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { 
-  useProducts, 
-  useTrashedProducts, 
-  useCreateProduct, 
-  useUpdateProductInfo, 
+import {
+  useProducts,
+  useTrashedProducts,
+  useCreateProduct,
+  useUpdateProductInfo,
   useUpdateProductPrice,
-  useDeleteProduct, 
+  useDeleteProduct,
   useRestoreProduct,
   useHardDeleteProduct,
-  PRODUCT_KEYS
+  PRODUCT_KEYS,
 } from "@/services/product";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCategories } from "@/services/category";
-import { ProductResponse, ProductRequest, ProductInfoUpdateRequest, ProductPriceUpdateRequest } from "@/types/product";
+import {
+  ProductResponse,
+  ProductRequest,
+  ProductInfoUpdateRequest,
+  ProductPriceUpdateRequest,
+} from "@/types/product";
 import { ProductDialog } from "./components/ProductDialog";
 import { ProductPriceDialog } from "./components/ProductPriceDialog";
 import { ProductGalleryDialog } from "./components/ProductGalleryDialog";
-import { ProductTableRow, ProductMobileCard } from "./components/ProductListItems";
+import {
+  ProductTableRow,
+  ProductMobileCard,
+} from "./components/ProductListItems";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { Pagination } from "../components/Pagination";
 import { EmptyState } from "../users/components/EmptyState";
@@ -69,13 +77,17 @@ export default function ProductsAdminPage() {
   const categoriesQuery = useCategories({ activeOnly: true }, 0, 100);
   const categories = categoriesQuery.data?.data || [];
 
-  const activeQuery = useProducts({ 
-    name: search || undefined,
-    categories: selectedCategory ? [selectedCategory] : undefined
-  }, page, 10);
-  
+  const activeQuery = useProducts(
+    {
+      name: search || undefined,
+      categories: selectedCategory ? [selectedCategory] : undefined,
+    },
+    page,
+    10,
+  );
+
   const trashedQuery = useTrashedProducts(page, 10);
-  
+
   const query = viewMode === "ACTIVE" ? activeQuery : trashedQuery;
   const products: ProductResponse[] = query.data?.data || [];
   const pagination = query.data?.pagination;
@@ -85,18 +97,27 @@ export default function ProductsAdminPage() {
   // Mutations
   const createMutation = useCreateProduct();
   const updateInfoMutation = useUpdateProductInfo(dialogState.product?.id || 0);
-  const updatePriceMutation = useUpdateProductPrice(dialogState.product?.id || 0);
+  const updatePriceMutation = useUpdateProductPrice(
+    dialogState.product?.id || 0,
+  );
   const deleteMutation = useDeleteProduct();
   const restoreMutation = useRestoreProduct();
   const hardDeleteMutation = useHardDeleteProduct();
 
-  const handleCreateOrUpdateInfo = async (data: { request: ProductRequest | ProductInfoUpdateRequest; image: File | null }) => {
+  const handleCreateOrUpdateInfo = async (data: {
+    request: ProductRequest | ProductInfoUpdateRequest;
+    image: File | null;
+  }) => {
     try {
       if (dialogState.product) {
-        await updateInfoMutation.mutateAsync(data as { request: ProductInfoUpdateRequest; image: File | null });
+        await updateInfoMutation.mutateAsync(
+          data as { request: ProductInfoUpdateRequest; image: File | null },
+        );
         toast.success("Cập nhật thông tin sản phẩm thành công");
       } else {
-        await createMutation.mutateAsync(data as { request: ProductRequest; image: File | null });
+        await createMutation.mutateAsync(
+          data as { request: ProductRequest; image: File | null },
+        );
         toast.success("Thêm sản phẩm mới thành công");
       }
       setDialogState({ type: "NONE", product: null });
@@ -128,11 +149,11 @@ export default function ProductsAdminPage() {
           await deleteMutation.mutateAsync(id);
           await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
           toast.success("Đã chuyển sản phẩm vào thùng rác");
-          setConfirmConfig(prev => ({ ...prev, open: false }));
+          setConfirmConfig((prev) => ({ ...prev, open: false }));
         } catch (error: unknown) {
           toast.error("Không thể xóa sản phẩm");
         }
-      }
+      },
     });
   };
 
@@ -147,11 +168,11 @@ export default function ProductsAdminPage() {
           await restoreMutation.mutateAsync(id);
           await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
           toast.success("Đã khôi phục sản phẩm");
-          setConfirmConfig(prev => ({ ...prev, open: false }));
+          setConfirmConfig((prev) => ({ ...prev, open: false }));
         } catch (error: unknown) {
           toast.error("Không thể khôi phục sản phẩm");
         }
-      }
+      },
     });
   };
 
@@ -159,18 +180,19 @@ export default function ProductsAdminPage() {
     setConfirmConfig({
       open: true,
       title: "Xác nhận xóa vĩnh viễn?",
-      description: "Hành động này sẽ xóa sạch dữ liệu sản phẩm, hình ảnh và lịch sử giá. Không thể hoàn tác!",
+      description:
+        "Hành động này sẽ xóa sạch dữ liệu sản phẩm, hình ảnh và lịch sử giá. Không thể hoàn tác!",
       variant: "danger",
       onConfirm: async () => {
         try {
           await hardDeleteMutation.mutateAsync(id);
           await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
           toast.success("Đã xóa vĩnh viễn sản phẩm");
-          setConfirmConfig(prev => ({ ...prev, open: false }));
+          setConfirmConfig((prev) => ({ ...prev, open: false }));
         } catch (error: unknown) {
           toast.error("Không thể xóa vĩnh viễn");
         }
-      }
+      },
     });
   };
 
@@ -221,8 +243,11 @@ export default function ProductsAdminPage() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-6">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
-                    <Package className="w-4.5 h-4.5 text-white" strokeWidth={2} />
+                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
+                    <Package
+                      className="w-4.5 h-4.5 text-white"
+                      strokeWidth={2}
+                    />
                   </div>
                   <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
                     {viewMode === "ACTIVE" ? "Quản lý thiết bị" : "Kho lưu trữ"}
@@ -234,20 +259,23 @@ export default function ProductsAdminPage() {
               </div>
 
               {/* Tab Toggle */}
-              <div className="flex items-center gap-1 bg-zinc-50/50 border border-zinc-100 p-1 rounded-lg w-fit">
+              <div className="flex items-center gap-1 bg-zinc-50/50 border border-zinc-100 p-1 rounded-xl w-fit">
                 {(["ACTIVE", "DELETED"] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      onClick={() => { setViewMode(mode); setPage(0); }}
-                      className={cn(
-                        "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150",
-                        viewMode === mode
-                          ? "bg-zinc-950 text-white shadow-sm"
-                          : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50"
-                      )}
-                    >
-                      {mode === "ACTIVE" ? "Hoạt động" : "Lưu trữ"}
-                    </button>
+                  <button
+                    key={mode}
+                    onClick={() => {
+                      setViewMode(mode);
+                      setPage(0);
+                    }}
+                    className={cn(
+                      "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150",
+                      viewMode === mode
+                        ? "bg-zinc-950 text-white shadow-sm"
+                        : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50",
+                    )}
+                  >
+                    {mode === "ACTIVE" ? "Hoạt động" : "Lưu trữ"}
+                  </button>
                 ))}
               </div>
             </div>
@@ -260,18 +288,26 @@ export default function ProductsAdminPage() {
                   placeholder="Tìm tên thiết bị..."
                   className="pl-10 h-10 rounded-xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:border-red-500/30 transition-all text-xs font-medium text-zinc-900 placeholder:text-zinc-400"
                   value={search}
-                  onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(0);
+                  }}
                 />
               </div>
-              
+
               <select
                 value={selectedCategory}
-                onChange={(e) => { setSelectedCategory(e.target.value); setPage(0); }}
+                onChange={(e) => {
+                  setSelectedCategory(e.target.value);
+                  setPage(0);
+                }}
                 className="h-10 px-4 rounded-xl border border-zinc-100 bg-zinc-50/50 text-[14px] font-medium text-zinc-700 outline-none focus:bg-white transition-all min-w-[140px]"
               >
                 <option value="">Tất cả danh mục</option>
-                {categories.map(c => (
-                  <option key={c.id} value={c.name}>{c.name}</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.name}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
 
@@ -293,28 +329,55 @@ export default function ProductsAdminPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Thiết bị</th>
-                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Giá Niêm Yết</th>
-                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Trạng thái</th>
-                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Tồn kho</th>
-                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400 text-right">Thao tác</th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
+                    Thiết bị
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
+                    Giá Niêm Yết
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
+                    Trạng thái
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
+                    Tồn kho
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400 text-right">
+                    Thao tác
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-50">
                 {query.isLoading ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td colSpan={5} className="px-8 py-6"><div className="h-12 bg-zinc-50 rounded-xl w-full" /></td>
+                      <td colSpan={5} className="px-8 py-6">
+                        <div className="h-12 bg-zinc-50 rounded-xl w-full" />
+                      </td>
                     </tr>
                   ))
                 ) : products.length === 0 ? (
                   <tr>
                     <td colSpan={5}>
-                      <EmptyState 
-                        title="Trống" 
-                        description={viewMode === "DELETED" ? "Không có sản phẩm nào trong thùng rác." : "Hãy thử thay đổi bộ lọc hoặc thêm thiết bị mới."}
-                        actionText={viewMode === "DELETED" ? "Quay lại danh sách" : undefined}
-                        onAction={viewMode === "DELETED" ? () => { setViewMode("ACTIVE"); setPage(0); } : undefined}
+                      <EmptyState
+                        title="Trống"
+                        description={
+                          viewMode === "DELETED"
+                            ? "Không có sản phẩm nào trong thùng rác."
+                            : "Hãy thử thay đổi bộ lọc hoặc thêm thiết bị mới."
+                        }
+                        actionText={
+                          viewMode === "DELETED"
+                            ? "Quay lại danh sách"
+                            : undefined
+                        }
+                        onAction={
+                          viewMode === "DELETED"
+                            ? () => {
+                                setViewMode("ACTIVE");
+                                setPage(0);
+                              }
+                            : undefined
+                        }
                       />
                     </td>
                   </tr>
@@ -325,9 +388,15 @@ export default function ProductsAdminPage() {
                       product={p}
                       isDeleted={viewMode === "DELETED"}
                       onView={handleView}
-                      onEdit={(p) => setDialogState({ type: "INFO", product: p })}
-                      onUpdatePrice={(p) => setDialogState({ type: "PRICE", product: p })}
-                      onGallery={(p) => setDialogState({ type: "GALLERY", product: p })}
+                      onEdit={(p) =>
+                        setDialogState({ type: "INFO", product: p })
+                      }
+                      onUpdatePrice={(p) =>
+                        setDialogState({ type: "PRICE", product: p })
+                      }
+                      onGallery={(p) =>
+                        setDialogState({ type: "GALLERY", product: p })
+                      }
                       onDelete={handleDelete}
                       onRestore={handleRestore}
                       onHardDelete={handleHardDelete}
@@ -342,14 +411,30 @@ export default function ProductsAdminPage() {
           <div className="md:hidden p-4 space-y-4">
             {query.isLoading ? (
               Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="h-32 bg-zinc-50 rounded-2xl animate-pulse" />
+                <div
+                  key={i}
+                  className="h-32 bg-zinc-50 rounded-2xl animate-pulse"
+                />
               ))
             ) : products.length === 0 ? (
-              <EmptyState 
-                title="Trống" 
-                description={viewMode === "DELETED" ? "Không có sản phẩm nào trong thùng rác." : "Không có sản phẩm nào."}
-                actionText={viewMode === "DELETED" ? "Quay lại danh sách" : undefined}
-                onAction={viewMode === "DELETED" ? () => { setViewMode("ACTIVE"); setPage(0); } : undefined}
+              <EmptyState
+                title="Trống"
+                description={
+                  viewMode === "DELETED"
+                    ? "Không có sản phẩm nào trong thùng rác."
+                    : "Không có sản phẩm nào."
+                }
+                actionText={
+                  viewMode === "DELETED" ? "Quay lại danh sách" : undefined
+                }
+                onAction={
+                  viewMode === "DELETED"
+                    ? () => {
+                        setViewMode("ACTIVE");
+                        setPage(0);
+                      }
+                    : undefined
+                }
               />
             ) : (
               products.map((p) => (
@@ -359,8 +444,12 @@ export default function ProductsAdminPage() {
                   isDeleted={viewMode === "DELETED"}
                   onView={handleView}
                   onEdit={(p) => setDialogState({ type: "INFO", product: p })}
-                  onUpdatePrice={(p) => setDialogState({ type: "PRICE", product: p })}
-                  onGallery={(p) => setDialogState({ type: "GALLERY", product: p })}
+                  onUpdatePrice={(p) =>
+                    setDialogState({ type: "PRICE", product: p })
+                  }
+                  onGallery={(p) =>
+                    setDialogState({ type: "GALLERY", product: p })
+                  }
                   onDelete={handleDelete}
                   onRestore={handleRestore}
                   onHardDelete={handleHardDelete}
@@ -382,9 +471,15 @@ export default function ProductsAdminPage() {
 
       {/* Dialogs */}
       <ProductDialog
-        key={dialogState.type === "INFO" ? (dialogState.product?.id || "new") : "closed"}
+        key={
+          dialogState.type === "INFO"
+            ? dialogState.product?.id || "new"
+            : "closed"
+        }
         open={dialogState.type === "INFO"}
-        onOpenChange={(o) => !o && setDialogState({ type: "NONE", product: null })}
+        onOpenChange={(o) =>
+          !o && setDialogState({ type: "NONE", product: null })
+        }
         product={dialogState.product}
         categories={categories}
         onSubmit={handleCreateOrUpdateInfo}
@@ -393,7 +488,9 @@ export default function ProductsAdminPage() {
 
       <ProductPriceDialog
         open={dialogState.type === "PRICE"}
-        onOpenChange={(o) => !o && setDialogState({ type: "NONE", product: null })}
+        onOpenChange={(o) =>
+          !o && setDialogState({ type: "NONE", product: null })
+        }
         product={dialogState.product}
         onSubmit={handleUpdatePrice}
         isPending={updatePriceMutation.isPending}
@@ -401,18 +498,24 @@ export default function ProductsAdminPage() {
 
       <ProductGalleryDialog
         open={dialogState.type === "GALLERY"}
-        onOpenChange={(o) => !o && setDialogState({ type: "NONE", product: null })}
+        onOpenChange={(o) =>
+          !o && setDialogState({ type: "NONE", product: null })
+        }
         product={dialogState.product}
       />
 
       <ConfirmDialog
         open={confirmConfig.open}
-        onOpenChange={(o) => setConfirmConfig(prev => ({ ...prev, open: o }))}
+        onOpenChange={(o) => setConfirmConfig((prev) => ({ ...prev, open: o }))}
         title={confirmConfig.title}
         description={confirmConfig.description}
         onConfirm={confirmConfig.onConfirm}
         variant={confirmConfig.variant}
-        isLoading={deleteMutation.isPending || restoreMutation.isPending || hardDeleteMutation.isPending}
+        isLoading={
+          deleteMutation.isPending ||
+          restoreMutation.isPending ||
+          hardDeleteMutation.isPending
+        }
       />
     </div>
   );

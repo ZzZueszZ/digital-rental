@@ -15,28 +15,40 @@ interface ItemProps {
   onRestore: (id: number) => void;
 }
 
-export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: ItemProps) {
+export function CategoryTableRow({
+  category,
+  onEdit,
+  onDelete,
+  onRestore,
+}: ItemProps) {
   return (
-    <tr 
+    <tr
       onClick={() => onEdit(category)}
       className="group transition-all duration-300 hover:bg-zinc-50/50 cursor-pointer"
     >
       <td className="px-6 py-3">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-400 group-hover:scale-105 group-hover:bg-zinc-950 group-hover:text-white transition-all duration-150">
+          <div className="w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-400 group-hover:scale-105 group-hover:bg-zinc-950 group-hover:text-white transition-all duration-150">
             <Tag className="w-4 h-4" />
           </div>
           <div>
             <p className="text-sm font-semibold text-zinc-900 tracking-tight mb-0.5">
               {category.code}
             </p>
-            <p className="text-xs font-medium text-zinc-400">ID: #{category.id}</p>
+            <p className="text-xs font-medium text-zinc-400">
+              ID: #{category.id}
+            </p>
           </div>
         </div>
       </td>
       <td className="px-6 py-3">
-        <p className="text-sm font-semibold text-zinc-900 group-hover:text-red-600 transition-colors duration-300">{category.name}</p>
-        <p className="text-xs text-zinc-500 line-clamp-1 max-w-xs" title={category.description}>
+        <p className="text-sm font-semibold text-zinc-900 group-hover:text-red-600 transition-colors duration-300">
+          {category.name}
+        </p>
+        <p
+          className="text-xs text-zinc-500 line-clamp-1 max-w-xs"
+          title={category.description}
+        >
           {category.description || "Chưa có mô tả"}
         </p>
       </td>
@@ -46,7 +58,7 @@ export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: Item
             "rounded-md px-2.5 py-1 text-xs font-semibold border-0 ring-0 shadow-none",
             category.isActive
               ? "bg-emerald-50 text-emerald-600"
-              : "bg-zinc-900 text-white"
+              : "bg-zinc-900 text-white",
           )}
         >
           {category.isActive ? "Hoạt động" : "Vô hiệu"}
@@ -74,12 +86,17 @@ export function CategoryTableRow({ category, onEdit, onDelete, onRestore }: Item
   );
 }
 
-export function CategoryMobileCard({ category, onEdit, onDelete, onRestore }: ItemProps) {
+export function CategoryMobileCard({
+  category,
+  onEdit,
+  onDelete,
+  onRestore,
+}: ItemProps) {
   return (
     <div className="bg-white p-4 rounded-xl border border-zinc-100 shadow-sm space-y-4 group active:scale-[0.98] transition-all duration-150">
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-zinc-50 flex items-center justify-center text-zinc-950">
+          <div className="w-9 h-9 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-950">
             <Tag className="w-4 h-4" />
           </div>
           <div>
@@ -92,7 +109,7 @@ export function CategoryMobileCard({ category, onEdit, onDelete, onRestore }: It
                   "rounded-md px-1.5 py-0 text-[8px] font-black uppercase border-0 ring-0",
                   category.isActive
                     ? "bg-emerald-50 text-emerald-600"
-                    : "bg-zinc-900 text-white"
+                    : "bg-zinc-900 text-white",
                 )}
               >
                 {category.isActive ? "HĐ" : "Vô hiệu"}
@@ -122,9 +139,9 @@ export function CategoryMobileCard({ category, onEdit, onDelete, onRestore }: It
             {format(new Date(category.createdAt), "dd/MM/yyyy", { locale: vi })}
           </span>
         </div>
-        <button 
+        <button
           onClick={() => onEdit(category)}
-          className="p-1.5 rounded-lg bg-zinc-50 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-all"
+          className="p-1.5 rounded-xl bg-zinc-50 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-all"
         >
           <ChevronRight className="w-4 h-4" />
         </button>

@@ -46,12 +46,12 @@ interface UserProfileCardProps {
 }
 
 const AVATAR_COLORS = [
-  "from-red-500 to-rose-600",
-  "from-blue-500 to-indigo-600",
+  "from-blue-400 to-cyan-500", // The bright blue from screenshot
+  "from-indigo-500 to-purple-600",
   "from-emerald-500 to-teal-600",
-  "from-violet-500 to-purple-600",
+  "from-rose-500 to-red-600",
   "from-amber-500 to-orange-600",
-  "from-pink-500 to-fuchsia-600",
+  "from-fuchsia-500 to-pink-600",
 ];
 
 const GENDERS = [
@@ -169,7 +169,7 @@ export function UserProfileCard({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm">
+    <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
       {/* Accent line */}
       <div
         className={cn(
@@ -186,12 +186,12 @@ export function UserProfileCard({
             <img
               src={getAvatarUrl(profile.avatarUrl)}
               alt={displayName}
-              className="w-24 h-24 rounded-full object-cover shadow-sm border border-zinc-100"
+              className="w-24 h-24 rounded-full object-cover shadow-inner border-4 border-zinc-50 bg-white"
             />
           ) : (
             <div
               className={cn(
-                "w-24 h-24 rounded-full bg-gradient-to-br flex items-center justify-center shadow-sm",
+                "w-24 h-24 rounded-full bg-gradient-to-br flex items-center justify-center shadow-inner border-4 border-zinc-50",
                 avatarGradient,
               )}
             >
@@ -256,15 +256,15 @@ export function UserProfileCard({
                   type="button"
                   onClick={() => toggleRole(role)}
                   className={cn(
-                    "text-[11px] font-bold px-2 py-1 rounded-md border transition-all",
+                    "text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-tight border transition-all",
                     roles.includes(role)
-                      ? "bg-red-50 text-red-600 border-red-200"
-                      : "bg-zinc-50 text-zinc-400 border-zinc-200 hover:border-zinc-300",
+                      ? "bg-zinc-950 text-white border-zinc-950"
+                      : "bg-white text-zinc-400 border-zinc-200 hover:border-zinc-300",
                   )}
                 >
                   {role}
                   {roles.includes(role) && (
-                    <CheckCircle2 className="w-2.5 h-2.5 inline-block ml-0.5" />
+                    <CheckCircle2 className="w-2.5 h-2.5 inline-block ml-1" />
                   )}
                 </button>
               ))
@@ -272,10 +272,7 @@ export function UserProfileCard({
                 <span
                   key={role}
                   className={cn(
-                    "text-[11px] font-bold px-2 py-0.5 rounded-md border",
-                    role === "ADMIN" || role === "SUPER_ADMIN"
-                      ? "bg-red-50 text-red-600 border-red-200"
-                      : "bg-zinc-50 text-zinc-600 border-zinc-200",
+                    "text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-tight border bg-white text-zinc-500 border-zinc-200",
                   )}
                 >
                   {role}
@@ -292,10 +289,10 @@ export function UserProfileCard({
             <Mail className="w-3.5 h-3.5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[12px] font-medium text-zinc-400 mb-0.5">
+            <p className="text-[12px] font-medium text-zinc-400 mb-0.5 ml-0.5">
               Email
             </p>
-            <p className="text-[14px] font-semibold text-zinc-900 truncate">
+            <p className="text-[15px] font-semibold text-zinc-950 truncate">
               {user.email}
             </p>
           </div>
@@ -312,7 +309,7 @@ export function UserProfileCard({
             <Phone className="w-3.5 h-3.5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[12px] font-medium text-zinc-400 mb-0.5">
+            <p className="text-[12px] font-medium text-zinc-400 mb-0.5 ml-0.5">
               Số điện thoại
             </p>
             {isEditing ? (
@@ -320,10 +317,10 @@ export function UserProfileCard({
                 value={phone}
                 onChange={(e) => onPhoneChange(e.target.value)}
                 placeholder="Nhập số điện thoại"
-                className="h-8 mt-0.5 text-sm text-zinc-900 bg-zinc-50 border-zinc-200 focus-visible:ring-1 focus-visible:ring-red-600 px-2 rounded-xl"
+                className="h-10 mt-0.5 text-sm font-semibold text-zinc-900 bg-zinc-50/50 border-zinc-100 focus-visible:ring-1 focus-visible:ring-red-600/20 px-3 rounded-xl"
               />
             ) : (
-              <p className="text-[14px] font-semibold text-zinc-900">
+              <p className="text-[15px] font-semibold text-zinc-950">
                 {user.phone || "Trống"}
               </p>
             )}
@@ -357,14 +354,14 @@ export function UserProfileCard({
                   size="sm"
                   onClick={handleProfileSave}
                   disabled={updateMutation.isPending}
-                  className="h-6 px-2.5 text-[10px] rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-bold transition-all"
+                  className="h-8 px-3 text-[12px] rounded-lg bg-zinc-950 hover:bg-red-600 text-white font-semibold transition-all flex items-center gap-1.5 shadow-md shadow-zinc-200"
                 >
                   {updateMutation.isPending ? (
-                    <Loader2 className="w-3 h-3 animate-spin" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   ) : (
-                    <Save className="w-3 h-3" />
+                    <Save className="w-3.5 h-3.5" />
                   )}
-                  <span className="ml-1">Lưu</span>
+                  Lưu
                 </Button>
               </div>
             ) : (
@@ -393,7 +390,7 @@ export function UserProfileCard({
                     setForm((p) => ({ ...p, lastName: e.target.value }))
                   }
                   placeholder="Nguyễn"
-                  className="h-8 rounded-xl border-zinc-200 bg-zinc-50 text-sm"
+                  className="h-12 rounded-xl border-black/5 bg-white text-[15px] font-semibold shadow-dash-card"
                 />
               </ProfileField>
               <ProfileField label="Tên">
@@ -403,7 +400,7 @@ export function UserProfileCard({
                     setForm((p) => ({ ...p, firstName: e.target.value }))
                   }
                   placeholder="Văn A"
-                  className="h-8 rounded-xl border-zinc-200 bg-zinc-50 text-sm"
+                  className="h-12 rounded-xl border-black/5 bg-white text-[15px] font-semibold shadow-dash-card"
                 />
               </ProfileField>
             </div>
@@ -414,11 +411,11 @@ export function UserProfileCard({
                   setForm((p) => ({ ...p, fullName: e.target.value }))
                 }
                 placeholder="Nguyễn Văn A"
-                className="h-8 rounded-xl border-zinc-200 bg-zinc-50 text-sm"
+                className="h-12 rounded-xl border-black/5 bg-white text-[15px] font-semibold shadow-dash-card"
               />
             </ProfileField>
             <ProfileField label="Giới tính">
-              <div className="flex gap-1.5">
+              <div className="flex gap-2">
                 {GENDERS.map((g) => (
                   <button
                     key={g.value}
@@ -430,10 +427,10 @@ export function UserProfileCard({
                       }))
                     }
                     className={cn(
-                      "flex-1 h-8 rounded-xl text-[11px] font-bold border transition-all",
+                      "flex-1 h-12 rounded-xl text-[13px] font-semibold border transition-all",
                       form.gender === g.value
-                        ? "bg-zinc-950 text-white border-zinc-950"
-                        : "bg-zinc-50 text-zinc-500 border-zinc-200 hover:border-zinc-400",
+                        ? "bg-zinc-950 text-white border-zinc-950 shadow-lg shadow-zinc-200"
+                        : "bg-white text-zinc-500 border-black/5 hover:border-zinc-300 shadow-dash-card",
                     )}
                   >
                     {g.label}
@@ -448,7 +445,7 @@ export function UserProfileCard({
                 onChange={(e) =>
                   setForm((p) => ({ ...p, dateOfBirth: e.target.value }))
                 }
-                className="h-8 rounded-xl border-zinc-200 bg-zinc-50 text-sm"
+                className="h-12 rounded-xl border-black/5 bg-white text-[15px] font-semibold shadow-dash-card"
               />
             </ProfileField>
             <ProfileField label="Nghề nghiệp">
@@ -458,7 +455,7 @@ export function UserProfileCard({
                   setForm((p) => ({ ...p, occupation: e.target.value }))
                 }
                 placeholder="Nhiếp ảnh gia"
-                className="h-8 rounded-xl border-zinc-200 bg-zinc-50 text-sm"
+                className="h-12 rounded-xl border-black/5 bg-white text-[15px] font-semibold shadow-dash-card"
               />
             </ProfileField>
             <ProfileField label="Công ty">
@@ -468,7 +465,7 @@ export function UserProfileCard({
                   setForm((p) => ({ ...p, companyName: e.target.value }))
                 }
                 placeholder="Studio ABC"
-                className="h-8 rounded-xl border-zinc-200 bg-zinc-50 text-sm"
+                className="h-12 rounded-xl border-black/5 bg-white text-[15px] font-semibold shadow-dash-card"
               />
             </ProfileField>
           </div>
@@ -549,10 +546,10 @@ function ProfileRow({
     <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-zinc-50/80 border border-zinc-100">
       <span className="text-zinc-400 shrink-0">{icon}</span>
       <div className="min-w-0 flex-1 flex items-center justify-between gap-2">
-        <span className="text-[12px] font-medium text-zinc-400 shrink-0">
+        <span className="text-[13px] font-medium text-zinc-400 shrink-0">
           {label}
         </span>
-        <span className="text-[13px] font-semibold text-zinc-700 truncate">
+        <span className="text-[14px] font-semibold text-zinc-700 truncate">
           {value}
         </span>
       </div>

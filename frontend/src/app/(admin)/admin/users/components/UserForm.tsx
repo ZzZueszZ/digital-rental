@@ -153,7 +153,9 @@ export function UserForm({
               {isEditing ? (
                 <>
                   Cập nhật thông tin cho tài khoản{" "}
-                  <span className="font-semibold text-zinc-900">{user.email}</span>
+                  <span className="font-semibold text-zinc-900">
+                    {user.email}
+                  </span>
                 </>
               ) : (
                 `Chi tiết tài khoản và lịch sử hệ thống của ID #${user.id}`
@@ -176,7 +178,7 @@ export function UserForm({
               <Button
                 onClick={handleSubmit}
                 disabled={isPending}
-                className="h-12 px-8 rounded-xl bg-zinc-950 text-white font-semibold text-[15px] hover:bg-zinc-800 transition-all shadow-md active:scale-95 flex items-center gap-2"
+                className="h-12 px-8 rounded-xl bg-zinc-950 text-white font-semibold text-[15px] shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 flex items-center gap-2 border-none"
               >
                 {isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -189,7 +191,7 @@ export function UserForm({
           ) : (
             <Button
               onClick={() => router.push(`/admin/users/${userId}/edit`)}
-              className="h-12 px-6 rounded-xl bg-zinc-950 text-white font-semibold text-[15px] hover:bg-zinc-800 transition-all shadow-md active:scale-95 flex items-center gap-2"
+              className="h-12 px-6 rounded-xl bg-zinc-950 text-white font-semibold text-[15px] shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 flex items-center gap-2 border-none"
             >
               <Edit2 className="w-4 h-4" />
               Chỉnh sửa
@@ -220,10 +222,10 @@ export function UserForm({
         <div className="md:col-span-2 space-y-6">
           <Card
             className={cn(
-              "rounded-2xl border bg-white shadow-sm overflow-hidden relative group transition-all duration-500",
+              "rounded-2xl border bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] overflow-hidden relative group transition-all duration-500",
               isEditing
                 ? "border-zinc-300 ring-1 ring-zinc-100"
-                : "border-zinc-200 hover:shadow-2xl",
+                : "border-zinc-100 hover:shadow-2xl",
             )}
           >
             <div
@@ -264,7 +266,7 @@ export function UserForm({
                         }))
                       }
                     >
-                      <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-[14px] font-semibold text-zinc-900 focus:ring-1 focus:ring-red-600">
+                      <SelectTrigger className="!h-12 rounded-xl !border-black/5 !bg-white text-[15px] font-semibold text-zinc-900 focus:!border-red-600/30 transition-all duration-200 shadow-dash-card outline-none">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
@@ -381,7 +383,7 @@ export function UserForm({
                         }))
                       }
                     >
-                      <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-[14px] font-semibold text-zinc-900 focus:ring-1 focus:ring-red-600">
+                      <SelectTrigger className="!h-12 rounded-xl !border-black/5 !bg-white text-[15px] font-semibold text-zinc-900 focus:!border-red-600/30 transition-all duration-200 shadow-dash-card outline-none">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
@@ -453,7 +455,7 @@ export function UserForm({
                         }))
                       }
                     >
-                      <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-[14px] font-semibold text-zinc-900 focus:ring-1 focus:ring-red-600">
+                      <SelectTrigger className="!h-12 rounded-xl !border-black/5 !bg-white text-[15px] font-semibold text-zinc-900 focus:!border-red-600/30 transition-all duration-200 shadow-dash-card outline-none">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
@@ -509,10 +511,10 @@ export function UserForm({
 
           <Card
             className={cn(
-              "rounded-2xl border bg-white shadow-sm overflow-hidden relative group transition-all duration-500",
+              "rounded-2xl border bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] overflow-hidden relative group transition-all duration-500",
               isEditing
                 ? "opacity-50 pointer-events-none border-zinc-200"
-                : "border-zinc-200 hover:shadow-2xl",
+                : "border-zinc-100 hover:shadow-2xl",
             )}
           >
             <div

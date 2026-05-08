@@ -53,7 +53,7 @@ export default function OrderSuccessPage() {
 
           <div className="space-y-2">
             <Button
-              onClick={() => router.push("/profile?section=orders")}
+              onClick={() => router.push("/profile/orders")}
               className="w-full h-12 rounded-xl font-bold text-sm transition-all shadow-dash-card bg-zinc-950 hover:bg-red-600 text-white border-none flex items-center justify-center gap-2"
             >
               Quản lý đơn hàng

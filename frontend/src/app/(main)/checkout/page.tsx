@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { isAxiosError } from "axios";
 import {
   MapPin,
   CreditCard,
@@ -46,6 +47,19 @@ interface VoucherApplyResponse {
   cartTotal: number;
   discountAmount: number;
   finalPayable: number;
+}
+
+interface CheckoutDisplayItem {
+  id: number;
+  productId: number;
+  productName: string;
+  productImage: string | null;
+  quantity: number;
+  salePrice: number;
+  rentPricePerDay: number;
+  brand?: string;
+  categoryName?: string;
+  description?: string;
 }
 
 enum CheckoutStep {
@@ -131,7 +145,7 @@ export default function CheckoutPage() {
     }
   }, [addresses, selectedAddressId]);
 
-  const subtotal = itemsToDisplay.reduce((acc, item: any) => {
+  const subtotal = itemsToDisplay.reduce((acc, item: CheckoutDisplayItem) => {
     const price = item.salePrice || item.rentPricePerDay || 0;
     return acc + price * item.quantity;
   }, 0);
@@ -152,16 +166,21 @@ export default function CheckoutPage() {
           cartTotal: subtotal,
         },
       );
-      if (res.data.data.valid) {
-        setVoucherData(res.data.data);
+      
+      const responseData = res.data.data;
+      if (responseData && responseData.valid) {
+        setVoucherData(responseData);
         setVoucherCode(code.trim());
         toast.success("Áp dụng mã giảm giá thành công!");
       } else {
-        toast.error(res.data.data.message || "Mã giảm giá không hợp lệ");
+        toast.error(responseData?.message || "Mã giảm giá không hợp lệ");
         setVoucherData(null);
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Lỗi khi áp dụng voucher");
+    } catch (error: unknown) {
+      const message = isAxiosError(error)
+        ? error.response?.data?.message
+        : "Lỗi khi áp dụng voucher";
+      toast.error(message);
       setVoucherData(null);
     } finally {
       setIsApplyingVoucher(false);
@@ -198,11 +217,12 @@ export default function CheckoutPage() {
         });
       }
 
-      if (res.data) {
+      const orderData = res.data;
+      if (orderData) {
         toast.success("Đặt hàng thành công!");
         if (paymentMethod === PaymentMethod.ONLINE) {
           try {
-            const payRes = await orderService.createVnPayUrl(res.data.id);
+            const payRes = await orderService.createVnPayUrl(orderData.id);
             if (payRes.data) {
               window.location.href = payRes.data;
               return;
@@ -211,14 +231,17 @@ export default function CheckoutPage() {
             toast.error(
               "Lỗi tạo link thanh toán, vui lòng thử lại trong lịch sử đơn hàng",
             );
-            router.push("/profile?section=orders");
+            router.push("/profile/orders");
           }
         } else {
-          router.push(`/checkout/success?code=${res.data.code}`);
+          router.push(`/checkout/success?code=${orderData.code}`);
         }
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Lỗi khi đặt hàng");
+    } catch (error: unknown) {
+      const message = isAxiosError(error)
+        ? error.response?.data?.message
+        : "Lỗi khi đặt hàng";
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -367,7 +390,7 @@ export default function CheckoutPage() {
 
           {/* Product Cards Grid - More Compact */}
           <div className="space-y-3">
-            {itemsToDisplay.map((item: any) => (
+            {itemsToDisplay.map((item: CheckoutDisplayItem) => (
               <div
                 key={item.id}
                 className="bg-white rounded-2xl border border-zinc-100 p-5 hover:border-zinc-200 transition-all group"
@@ -406,10 +429,10 @@ export default function CheckoutPage() {
                       {item.productName}
                     </h3>
                     <p className="text-zinc-400 text-xs font-medium italic line-clamp-1 mb-3">
-                      "
+                      &ldquo;
                       {item.description ||
                         "Siêu phẩm máy ảnh chuyên nghiệp cho mọi tác vụ sáng tạo."}
-                      "
+                      &rdquo;
                     </p>
                     <div className="flex flex-wrap gap-3">
                       <div className="flex items-center gap-1.5 bg-zinc-50 px-2.5 py-1 rounded-xl border border-zinc-100">
@@ -855,8 +878,8 @@ export default function CheckoutPage() {
                 <div className="p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex gap-4 items-center">
                   <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                   <p className="text-[11px] text-emerald-600 font-bold uppercase tracking-wider leading-relaxed">
-                    "Dữ liệu của bạn được mã hóa an toàn qua cổng thanh toán
-                    LensHub."
+                    &ldquo;Dữ liệu của bạn được mã hóa an toàn qua cổng thanh toán
+                    LensHub.&rdquo;
                   </p>
                 </div>
               </div>

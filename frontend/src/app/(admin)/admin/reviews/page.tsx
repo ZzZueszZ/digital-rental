@@ -104,9 +104,9 @@ export default function ReviewsAdminPage() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="flex-1 space-y-4 lg:space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Stats Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Tổng phản hồi"
           value={totalElements} 
@@ -208,14 +208,14 @@ export default function ReviewsAdminPage() {
             <>
               {/* Desktop View */}
               <div className="hidden md:block overflow-x-auto">
-                <table className="w-full text-left">
+                <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                      <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Người dùng</th>
-                      <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Nội dung & Đánh giá</th>
-                      <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Ngày đăng</th>
-                      <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Trạng thái</th>
-                      <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400 text-right">Thao tác</th>
+                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400">Người dùng</th>
+                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400">Nội dung & Đánh giá</th>
+                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400 text-center">Ngày đăng</th>
+                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400 text-center">Trạng thái</th>
+                      <th className="px-6 py-4 text-[13px] font-medium text-zinc-400 text-right">Thao tác</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-50">

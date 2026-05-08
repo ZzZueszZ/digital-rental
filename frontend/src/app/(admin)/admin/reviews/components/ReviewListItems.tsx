@@ -37,7 +37,7 @@ export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: R
       onClick={() => onView(review)}
       className="group transition-all duration-300 hover:bg-zinc-50/50 cursor-pointer"
     >
-      <td className="px-6 py-3.5">
+      <td className="px-6 py-4">
         <div className="flex items-center gap-4">
           <div className="w-11 h-11 rounded-lg bg-zinc-100 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200/50 group-hover:scale-105 transition-transform duration-150">
             {review.userAvatar ? (
@@ -81,8 +81,8 @@ export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: R
           )}
         </div>
       </td>
-      <td className="px-6 py-4">
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-zinc-100 bg-zinc-50/50 w-fit">
+      <td className="px-6 py-4 text-center">
+        <div className="flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-lg border border-zinc-100 bg-zinc-50/50 w-fit mx-auto">
           <Clock className="w-3.5 h-3.5 text-zinc-400" />
           <span className="text-[11px] font-bold text-zinc-600">
             {new Date(review.createdAt).toLocaleDateString("vi-VN")}
@@ -90,9 +90,9 @@ export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: R
         </div>
       </td>
       <td className="px-6 py-4">
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col items-center gap-1.5">
           <div className={cn(
-            "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest w-fit",
+            "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold w-fit",
             review.hidden 
               ? "bg-zinc-100 text-zinc-500 border border-zinc-200" 
               : "bg-emerald-50 text-emerald-600 border border-emerald-100"
@@ -104,7 +104,7 @@ export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: R
             )}
           </div>
           {review.reporterCount > 0 && (
-            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-100 text-[10px] font-black uppercase tracking-widest w-fit animate-pulse">
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-100 text-[10px] font-bold w-fit animate-pulse">
               <Flag className="w-2.5 h-2.5" /> {review.reporterCount} Báo cáo
             </div>
           )}
@@ -112,12 +112,12 @@ export function ReviewTableRow({ review, onView, onHide, onUnhide, onDelete }: R
       </td>
       <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
         <DropdownMenu>
-          <DropdownMenuTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 hover:bg-zinc-100 rounded-lg outline-none")}>
-            <MoreHorizontal className="h-4 w-4 text-zinc-500" />
+          <DropdownMenuTrigger className="h-8 w-8 rounded-lg hover:bg-zinc-100 inline-flex items-center justify-center outline-none transition-all duration-200">
+            <MoreHorizontal className="h-4 w-4 text-zinc-400" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52 p-1.5 rounded-xl shadow-xl border-zinc-100 bg-white animate-in zoom-in-95 duration-200">
             <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-[10px] font-bold text-zinc-500 px-2 py-1.5 uppercase tracking-widest">
+              <DropdownMenuLabel className="text-[10px] font-bold text-zinc-500 px-2 py-1.5">
                 Quản lý đánh giá
               </DropdownMenuLabel>
               <DropdownMenuItem 
@@ -187,7 +187,7 @@ export function ReviewMobileCard({ review, onView, onHide, onUnhide, onDelete }:
           </div>
         </div>
         <div className={cn(
-          "px-2.5 py-1 rounded-lg border text-[10px] font-black uppercase tracking-widest",
+          "px-2.5 py-1 rounded-lg border text-[10px] font-bold",
           review.hidden ? "bg-zinc-50 text-zinc-400 border-zinc-100" : "bg-emerald-50 text-emerald-600 border-emerald-100"
         )}>
           {review.hidden ? "Đã ẩn" : "Hiển thị"}

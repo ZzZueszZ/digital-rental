@@ -155,7 +155,7 @@ export function SupportTicketList({
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center shrink-0 border border-zinc-200/50 shadow-sm group-hover:border-red-200 transition-colors">
+                        <div className="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0 border border-zinc-200/50 shadow-sm group-hover:border-red-200 transition-colors">
                           <User className="w-4.5 h-4.5 text-zinc-400 group-hover:text-red-600" />
                         </div>
                         <div className="flex flex-col min-w-0">
@@ -185,9 +185,7 @@ export function SupportTicketList({
                           statusCfg.color,
                         )}
                       >
-                        <StatusIcon
-                          className="w-3 h-3"
-                        />
+                        <StatusIcon className="w-3 h-3" />
                         {statusCfg.label}
                       </div>
                     </td>
@@ -215,7 +213,7 @@ export function SupportTicketList({
                       onClick={(e) => e.stopPropagation()}
                     >
                       <DropdownMenu>
-                        <DropdownMenuTrigger className="h-9 w-9 rounded-xl hover:bg-zinc-100 inline-flex items-center justify-center outline-none transition-colors duration-200 border border-transparent hover:border-zinc-200">
+                        <DropdownMenuTrigger className="h-8 w-8 rounded-lg hover:bg-zinc-100 inline-flex items-center justify-center outline-none transition-all duration-200">
                           <MoreHorizontal className="w-4 h-4 text-zinc-400" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
@@ -228,7 +226,7 @@ export function SupportTicketList({
                             </DropdownMenuLabel>
 
                             <DropdownMenuItem
-                              className="font-bold py-2.5 cursor-pointer rounded-lg text-zinc-700"
+                              className="font-bold py-2.5 cursor-pointer rounded-xl text-zinc-700"
                               onClick={() => handleOpenTicket(ticket.id)}
                             >
                               <Eye className="w-4 h-4 mr-2.5 text-zinc-400" />{" "}
@@ -284,7 +282,7 @@ export function SupportTicketList({
       />
 
       {selectedTicketId !== null && (
-        <SupportTicketDialog 
+        <SupportTicketDialog
           key={selectedTicketId}
           ticketId={selectedTicketId}
           isOpen={isDialogOpen}

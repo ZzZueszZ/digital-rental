@@ -338,7 +338,7 @@ export function UserProfileCard({
       {/* ── PROFILE DETAILS ─────────────────────────────────────── */}
       <div className="px-6 py-4">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-[13px] font-semibold text-zinc-900">
+          <p className="text-[18px] font-bold text-zinc-950 tracking-tight">
             Hồ sơ cá nhân
           </p>
           {!isEditing &&

@@ -237,7 +237,7 @@ export function UserForm({
               )}
             />
             <CardHeader className="px-6 pt-6 pb-4">
-              <CardTitle className="text-[16px] font-semibold text-zinc-950 flex items-center gap-2">
+              <CardTitle className="text-[18px] font-bold text-zinc-950 flex items-center gap-2 tracking-tight">
                 <ShieldCheck className="w-5 h-5 text-red-600" />
                 Trạng thái bảo mật
               </CardTitle>
@@ -526,7 +526,7 @@ export function UserForm({
               )}
             />
             <CardHeader className="px-6 pt-6 pb-4">
-              <CardTitle className="text-[16px] font-semibold text-zinc-950 flex items-center gap-2">
+              <CardTitle className="text-[18px] font-bold text-zinc-950 flex items-center gap-2 tracking-tight">
                 <Clock className="w-5 h-5 text-zinc-400" />
                 Lịch sử hoạt động
               </CardTitle>

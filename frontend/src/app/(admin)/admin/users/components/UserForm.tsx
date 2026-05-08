@@ -145,15 +145,15 @@ export function UserForm({
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <div className="space-y-1">
-            <h1 className="text-3xl font-black tracking-tight text-zinc-950">
+          <div className="space-y-0.5">
+            <h1 className="leading-tight">
               {isEditing ? "Chỉnh sửa hồ sơ" : "Hồ sơ người dùng"}
             </h1>
-            <p className="text-sm font-medium text-zinc-500">
+            <p className="text-[14px] font-medium text-zinc-500">
               {isEditing ? (
                 <>
                   Cập nhật thông tin cho tài khoản{" "}
-                  <span className="font-bold text-zinc-900">{user.email}</span>
+                  <span className="font-semibold text-zinc-900">{user.email}</span>
                 </>
               ) : (
                 `Chi tiết tài khoản và lịch sử hệ thống của ID #${user.id}`
@@ -169,14 +169,14 @@ export function UserForm({
                 variant="outline"
                 onClick={() => router.push(`/admin/users/${userId}`)}
                 disabled={isPending}
-                className="h-12 px-6 rounded-full font-bold transition-all text-zinc-900 bg-white border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950"
+                className="h-12 px-6 rounded-xl font-semibold text-[15px] transition-all text-zinc-900 bg-white border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950"
               >
                 Hủy
               </Button>
               <Button
                 onClick={handleSubmit}
                 disabled={isPending}
-                className="h-12 px-8 rounded-full bg-zinc-950 text-white font-bold hover:bg-zinc-800 transition-all shadow-md active:scale-95 flex items-center gap-2"
+                className="h-12 px-8 rounded-xl bg-zinc-950 text-white font-semibold text-[15px] hover:bg-zinc-800 transition-all shadow-md active:scale-95 flex items-center gap-2"
               >
                 {isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -189,7 +189,7 @@ export function UserForm({
           ) : (
             <Button
               onClick={() => router.push(`/admin/users/${userId}/edit`)}
-              className="h-12 px-6 rounded-full bg-zinc-950 text-white font-bold hover:bg-zinc-800 transition-all shadow-md active:scale-95 flex items-center gap-2"
+              className="h-12 px-6 rounded-xl bg-zinc-950 text-white font-semibold text-[15px] hover:bg-zinc-800 transition-all shadow-md active:scale-95 flex items-center gap-2"
             >
               <Edit2 className="w-4 h-4" />
               Chỉnh sửa
@@ -235,7 +235,7 @@ export function UserForm({
               )}
             />
             <CardHeader className="px-6 pt-6 pb-4">
-              <CardTitle className="text-sm font-bold text-zinc-950 flex items-center gap-2">
+              <CardTitle className="text-[16px] font-semibold text-zinc-950 flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-red-600" />
                 Trạng thái bảo mật
               </CardTitle>
@@ -251,7 +251,7 @@ export function UserForm({
                       : "bg-zinc-50/50 border-zinc-100",
                   )}
                 >
-                  <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-2">
+                  <p className="text-[12px] font-medium text-zinc-400 mb-2 ml-1">
                     Tình trạng tài khoản
                   </p>
                   {isEditing ? (
@@ -264,7 +264,7 @@ export function UserForm({
                         }))
                       }
                     >
-                      <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-sm font-bold text-zinc-900 focus:ring-1 focus:ring-red-600">
+                      <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-[14px] font-semibold text-zinc-900 focus:ring-1 focus:ring-red-600">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
@@ -303,7 +303,7 @@ export function UserForm({
                   ) : (
                     <span
                       className={cn(
-                        "inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full",
+                        "inline-flex items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-full",
                         statusConfig.badge,
                       )}
                     >
@@ -329,17 +329,17 @@ export function UserForm({
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-1">
+                      <p className="text-[12px] font-medium text-zinc-400 mb-1.5 ml-1">
                         Trạng thái khóa
                       </p>
                       {!isEditing &&
                         (user.accountNonLocked ? (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                             <Unlock className="w-3.5 h-3.5" />
                             Không bị khóa
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">
+                          <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">
                             <Lock className="w-3.5 h-3.5" />
                             Đang bị khóa
                           </span>
@@ -368,7 +368,7 @@ export function UserForm({
                       : "bg-zinc-50/50 border-zinc-100",
                   )}
                 >
-                  <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-2">
+                  <p className="text-[12px] font-medium text-zinc-400 mb-2 ml-1">
                     Xác minh danh tính (KYC)
                   </p>
                   {isEditing ? (
@@ -381,7 +381,7 @@ export function UserForm({
                         }))
                       }
                     >
-                      <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-sm font-bold text-zinc-900 focus:ring-1 focus:ring-red-600">
+                      <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-[14px] font-semibold text-zinc-900 focus:ring-1 focus:ring-red-600">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
@@ -414,7 +414,7 @@ export function UserForm({
                   ) : (
                     <span
                       className={cn(
-                        "inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md border",
+                        "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-md border",
                         user.kycStatus === KycStatus.VERIFIED
                           ? "bg-emerald-50 border-emerald-200 text-emerald-700"
                           : user.kycStatus === KycStatus.PENDING
@@ -440,7 +440,7 @@ export function UserForm({
                       : "bg-zinc-50/50 border-zinc-100",
                   )}
                 >
-                  <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-2">
+                  <p className="text-[12px] font-medium text-zinc-400 mb-2 ml-1">
                     Cấp độ tin cậy
                   </p>
                   {isEditing ? (
@@ -453,7 +453,7 @@ export function UserForm({
                         }))
                       }
                     >
-                      <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-sm font-bold text-zinc-900 focus:ring-1 focus:ring-red-600">
+                      <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-[14px] font-semibold text-zinc-900 focus:ring-1 focus:ring-red-600">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
@@ -478,7 +478,7 @@ export function UserForm({
                       </SelectContent>
                     </Select>
                   ) : (
-                    <span className="inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-md bg-zinc-950 text-white tracking-widest uppercase">
+                    <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-md bg-zinc-950 text-white">
                       {user.trustLevel}
                     </span>
                   )}
@@ -524,7 +524,7 @@ export function UserForm({
               )}
             />
             <CardHeader className="px-6 pt-6 pb-4">
-              <CardTitle className="text-sm font-bold text-zinc-950 flex items-center gap-2">
+              <CardTitle className="text-[16px] font-semibold text-zinc-950 flex items-center gap-2">
                 <Clock className="w-5 h-5 text-zinc-400" />
                 Lịch sử hoạt động
               </CardTitle>
@@ -536,10 +536,10 @@ export function UserForm({
                     <UserIcon className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">
+                    <p className="text-[12px] font-medium text-zinc-400 mb-1.5 ml-1">
                       Ngày gia nhập
                     </p>
-                    <p className="text-sm font-black tracking-tight text-zinc-950 tabular-nums">
+                    <p className="text-[14px] font-semibold tracking-tight text-zinc-950 tabular-nums">
                       {new Date(user.createdAt).toLocaleString("vi-VN")}
                     </p>
                   </div>
@@ -550,10 +550,10 @@ export function UserForm({
                     <Calendar className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">
+                    <p className="text-[12px] font-medium text-zinc-400 mb-1.5 ml-1">
                       Cập nhật cuối
                     </p>
-                    <p className="text-sm font-black tracking-tight text-zinc-950 tabular-nums">
+                    <p className="text-[14px] font-semibold tracking-tight text-zinc-950 tabular-nums">
                       {new Date(user.updatedAt).toLocaleString("vi-VN")}
                     </p>
                   </div>

@@ -195,7 +195,7 @@ export function UserProfileCard({
                 avatarGradient,
               )}
             >
-              <span className="text-white font-black text-4xl">
+              <span className="text-white font-bold text-4xl">
                 {user.email.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -236,14 +236,14 @@ export function UserProfileCard({
 
         {/* Name */}
         {!isLoading && displayName !== "—" && (
-          <h2 className="text-lg font-black text-zinc-950 tracking-tight mb-0.5">
+          <h2 className="text-[20px] font-semibold text-zinc-950 tracking-tight mb-0.5">
             {displayName}
           </h2>
         )}
         <p className="text-xs text-zinc-400 font-medium truncate max-w-full px-2">
           {user.email}
         </p>
-        <p className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest mt-1 mb-3">
+        <p className="text-[12px] font-medium text-zinc-400 mt-1 mb-3">
           Người dùng nền tảng
         </p>
 
@@ -256,7 +256,7 @@ export function UserProfileCard({
                   type="button"
                   onClick={() => toggleRole(role)}
                   className={cn(
-                    "text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-widest border transition-all",
+                    "text-[11px] font-bold px-2 py-1 rounded-md border transition-all",
                     roles.includes(role)
                       ? "bg-red-50 text-red-600 border-red-200"
                       : "bg-zinc-50 text-zinc-400 border-zinc-200 hover:border-zinc-300",
@@ -272,7 +272,7 @@ export function UserProfileCard({
                 <span
                   key={role}
                   className={cn(
-                    "text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-widest border",
+                    "text-[11px] font-bold px-2 py-0.5 rounded-md border",
                     role === "ADMIN" || role === "SUPER_ADMIN"
                       ? "bg-red-50 text-red-600 border-red-200"
                       : "bg-zinc-50 text-zinc-600 border-zinc-200",
@@ -292,10 +292,10 @@ export function UserProfileCard({
             <Mail className="w-3.5 h-3.5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">
+            <p className="text-[12px] font-medium text-zinc-400 mb-0.5">
               Email
             </p>
-            <p className="text-sm font-bold text-zinc-900 truncate">
+            <p className="text-[14px] font-semibold text-zinc-900 truncate">
               {user.email}
             </p>
           </div>
@@ -312,8 +312,8 @@ export function UserProfileCard({
             <Phone className="w-3.5 h-3.5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">
-              SĐT
+            <p className="text-[12px] font-medium text-zinc-400 mb-0.5">
+              Số điện thoại
             </p>
             {isEditing ? (
               <Input
@@ -323,7 +323,7 @@ export function UserProfileCard({
                 className="h-8 mt-0.5 text-sm text-zinc-900 bg-zinc-50 border-zinc-200 focus-visible:ring-1 focus-visible:ring-red-600 px-2 rounded-xl"
               />
             ) : (
-              <p className="text-sm font-bold text-zinc-900">
+              <p className="text-[14px] font-semibold text-zinc-900">
                 {user.phone || "Trống"}
               </p>
             )}
@@ -341,7 +341,7 @@ export function UserProfileCard({
       {/* ── PROFILE DETAILS ─────────────────────────────────────── */}
       <div className="px-6 py-4">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">
+          <p className="text-[13px] font-semibold text-zinc-900">
             Hồ sơ cá nhân
           </p>
           {!isEditing &&
@@ -528,7 +528,7 @@ function ProfileField({
 }) {
   return (
     <div>
-      <p className="text-[9px] font-black uppercase text-zinc-400 tracking-widest mb-1">
+      <p className="text-[12px] font-medium text-zinc-400 mb-1.5 ml-1">
         {label}
       </p>
       {children}
@@ -549,10 +549,10 @@ function ProfileRow({
     <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-zinc-50/80 border border-zinc-100">
       <span className="text-zinc-400 shrink-0">{icon}</span>
       <div className="min-w-0 flex-1 flex items-center justify-between gap-2">
-        <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest shrink-0">
+        <span className="text-[12px] font-medium text-zinc-400 shrink-0">
           {label}
         </span>
-        <span className="text-xs font-semibold text-zinc-700 truncate">
+        <span className="text-[13px] font-semibold text-zinc-700 truncate">
           {value}
         </span>
       </div>

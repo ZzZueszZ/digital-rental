@@ -20,7 +20,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       <div className="flex-1 flex items-center justify-center p-20">
         <div className="animate-pulse flex flex-col items-center gap-4">
           <div className="w-10 h-10 rounded-full border-4 border-red-200 border-t-red-600 animate-spin" />
-          <p className="text-zinc-500 font-bold text-sm uppercase tracking-widest">Đang tải dữ liệu...</p>
+          <p className="text-zinc-500 font-semibold text-sm">Đang tải dữ liệu...</p>
         </div>
       </div>
     );

@@ -101,7 +101,6 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
-    font-family: var(--font-sans);
     font-size: 16px;
     line-height: 1.6;
     letter-spacing: -0.01em;
@@ -138,12 +137,33 @@
     @apply ring-2 ring-red-600/20 ring-offset-2;
   }
 
-  /* Premium Typography Scale (Apple/Sony Style) */
-  h1 {
+  /* Typography Utilities for Special Cases */
+  .text-product-name {
+    @apply font-semibold tracking-tight text-zinc-950;
+    font-size: clamp(1.125rem, 2.5vw, 1.375rem); /* 18px - 22px */
+    line-height: 1.3;
+  }
+
+  .text-price-tag {
     @apply font-bold tracking-tighter text-zinc-950;
+    font-size: clamp(1.25rem, 3vw, 1.5rem); /* 20px - 24px */
+    line-height: 1;
+  }
+
+  .nav-menu-item {
+    @apply font-medium text-[14px] sm:text-[15px] lg:text-[16px] tracking-tight;
+    line-height: 1.5;
+  }
+
+  .btn-text {
+    @apply font-semibold tracking-tight;
+    font-size: clamp(0.875rem, 1.5vw, 1rem); /* 14px - 16px */
+  }
+  h1 {
+    @apply font-bold text-zinc-950;
     font-size: clamp(2.25rem, 5vw, 2.75rem); /* 36px - 44px */
     line-height: 1.2;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.03em;
   }
 
   h2 {
@@ -153,7 +173,7 @@
   }
 
   h3 {
-    @apply font-semibold tracking-tight text-zinc-900;
+    @apply font-medium sm:font-semibold tracking-tight text-zinc-900;
     font-size: clamp(1.375rem, 3vw, 1.5rem); /* 22px - 24px */
     line-height: 1.3;
   }

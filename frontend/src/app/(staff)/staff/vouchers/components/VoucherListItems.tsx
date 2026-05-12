@@ -74,8 +74,7 @@ export function VoucherTableRow({
 
   return (
     <tr
-      onClick={() => onEdit(voucher)}
-      className="group transition-all duration-300 hover:bg-zinc-50/50 cursor-pointer"
+      className="group transition-all duration-300 hover:bg-zinc-50/50"
     >
       <td className="px-6 py-3.5">
         <div className="flex items-center gap-4">
@@ -194,6 +193,7 @@ export function VoucherTableRow({
                   <PowerOff className="w-3.5 h-3.5" /> Tạm dừng Voucher
                 </DropdownMenuItem>
               )}
+
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

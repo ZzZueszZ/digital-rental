@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { CreateUserDialog } from "./components/CreateUserDialog";
+import { UserActionMenu } from "./components/UserActionMenu";
 import {
   Users,
   Search,
@@ -437,134 +438,53 @@ export default function UsersAdminPage() {
                       #{u.id.toString().padStart(5, "0")}
                     </p>
                   </div>
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-xl hover:bg-zinc-100 outline-none">
-                        <MoreHorizontal className="w-4 h-4 text-zinc-500" />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="w-52 p-1.5 rounded-xl border border-zinc-100 shadow-dash-overlay bg-white"
-                      >
-                        <DropdownMenuGroup>
-                          <DropdownMenuLabel className="text-[10px] font-black uppercase text-zinc-500 px-3 py-1.5 tracking-widest">
-                            Tác vụ quản trị
-                          </DropdownMenuLabel>
-                          {viewMode === "ACTIVE" ? (
-                            <>
-                              <DropdownMenuItem
-                                className="cursor-pointer"
-                                onClick={() =>
-                                  router.push(`/admin/users/${u.id}`)
-                                }
-                              >
-                                <Eye className="w-3.5 h-3.5" /> Xem chi tiết
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                className="cursor-pointer"
-                                onClick={() =>
-                                  router.push(`/admin/users/${u.id}/edit`)
-                                }
-                              >
-                                <Edit2 className="w-3.5 h-3.5" /> Chỉnh sửa
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                              <DropdownMenuItem
-                                className="cursor-pointer"
-                                onClick={() =>
-                                  requestAction(
-                                    "Cấp lại mật khẩu",
-                                    `Cấp lại mật khẩu cho ${u.email}?`,
-                                    "warning",
-                                    () =>
-                                      resetPasswordMutation.mutateAsync(u.id),
-                                    "Đã cấp mật khẩu mới",
-                                  )
-                                }
-                              >
-                                <RefreshCw className="w-3.5 h-3.5" /> Reset mật
-                                khẩu
-                              </DropdownMenuItem>
-                              {u.accountNonLocked ? (
-                                <DropdownMenuItem
-                                  className="cursor-pointer text-amber-600"
-                                  onClick={() =>
-                                    requestAction(
-                                      "Khóa tài khoản",
-                                      `Khóa tài khoản ${u.email}?`,
-                                      "danger",
-                                      () => lockMutation.mutateAsync(u.id),
-                                      "Tài khoản đã bị khóa",
-                                    )
-                                  }
-                                >
-                                  <Lock className="w-3.5 h-3.5" /> Khóa tài
-                                  khoản
-                                </DropdownMenuItem>
-                              ) : (
-                                <DropdownMenuItem
-                                  className="cursor-pointer text-emerald-600"
-                                  onClick={() =>
-                                    requestAction(
-                                      "Mở khóa tài khoản",
-                                      `Mở khóa tài khoản ${u.email}?`,
-                                      "info",
-                                      () => unlockMutation.mutateAsync(u.id),
-                                      "Tài khoản đã được mở khóa",
-                                    )
-                                  }
-                                >
-                                  <Unlock className="w-3.5 h-3.5" /> Mở khóa
-                                </DropdownMenuItem>
-                              )}
-                              <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                              <DropdownMenuItem
-                                className="cursor-pointer text-red-600"
-                                onClick={() =>
-                                  requestAction(
-                                    "Vô hiệu hóa",
-                                    `Vô hiệu hóa tài khoản ${u.email}?`,
-                                    "danger",
-                                    () => deleteMutation.mutateAsync(u.id),
-                                    "Đã vô hiệu hóa",
-                                  )
-                                }
-                              >
-                                <Trash2 className="w-3.5 h-3.5" /> Vô hiệu hóa
-                              </DropdownMenuItem>
-                            </>
-                          ) : (
-                            <>
-                              <DropdownMenuItem
-                                className="cursor-pointer"
-                                onClick={() =>
-                                  router.push(`/admin/users/${u.id}`)
-                                }
-                              >
-                                <Eye className="w-3.5 h-3.5" /> Xem chi tiết
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                              <DropdownMenuItem
-                                className="cursor-pointer text-emerald-700"
-                                onClick={() =>
-                                  requestAction(
-                                    "Khôi phục",
-                                    `Khôi phục tài khoản ${u.email}?`,
-                                    "info",
-                                    () => restoreMutation.mutateAsync(u.id),
-                                    "Đã khôi phục tài khoản",
-                                  )
-                                }
-                              >
-                                <RotateCcw className="w-3.5 h-3.5" /> Khôi phục
-                                tài khoản
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                  <UserActionMenu
+                    userId={u.id}
+                    viewMode={viewMode}
+                    accountNonLocked={u.accountNonLocked}
+                    callbacks={{
+                      onResetPassword: () =>
+                        requestAction(
+                          "Cấp lại mật khẩu",
+                          `Cấp lại mật khẩu cho ${u.email}?`,
+                          "warning",
+                          () => resetPasswordMutation.mutateAsync(u.id),
+                          "Đã cấp mật khẩu mới"
+                        ),
+                      onLock: () =>
+                        requestAction(
+                          "Khóa tài khoản",
+                          `Khóa tài khoản ${u.email}?`,
+                          "danger",
+                          () => lockMutation.mutateAsync(u.id),
+                          "Tài khoản đã bị khóa"
+                        ),
+                      onUnlock: () =>
+                        requestAction(
+                          "Mở khóa tài khoản",
+                          `Mở khóa tài khoản ${u.email}?`,
+                          "info",
+                          () => unlockMutation.mutateAsync(u.id),
+                          "Tài khoản đã được mở khóa"
+                        ),
+                      onDelete: () =>
+                        requestAction(
+                          "Vô hiệu hóa",
+                          `Vô hiệu hóa tài khoản ${u.email}?`,
+                          "danger",
+                          () => deleteMutation.mutateAsync(u.id),
+                          "Đã vô hiệu hóa"
+                        ),
+                      onRestore: () =>
+                        requestAction(
+                          "Khôi phục",
+                          `Khôi phục tài khoản ${u.email}?`,
+                          "info",
+                          () => restoreMutation.mutateAsync(u.id),
+                          "Đã khôi phục tài khoản"
+                        ),
+                    }}
+                  />
                 </div>
 
                 <div className="mt-3 flex flex-wrap items-center gap-2 pl-13">
@@ -800,151 +720,54 @@ export default function UsersAdminPage() {
                     {/* Actions */}
                     <td className="px-8 py-4">
                       <div className="flex items-center justify-end">
-                        <div onClick={(e) => e.stopPropagation()}>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-xl p-0 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 transition-all duration-200 outline-none">
-                              <MoreHorizontal className="w-4 h-4 text-zinc-500" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                              align="end"
-                              className="w-52 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
-                            >
-                              <DropdownMenuGroup>
-                                <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">
-                                  Tác vụ quản trị
-                                </DropdownMenuLabel>
-                                {viewMode === "ACTIVE" ? (
-                                  <>
-                                    <DropdownMenuItem
-                                      className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer"
-                                      onClick={() =>
-                                        router.push(`/admin/users/${u.id}`)
-                                      }
-                                    >
-                                      <Eye className="w-3.5 h-3.5 text-zinc-400" />
-                                      Xem chi tiết
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                      className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer"
-                                      onClick={() =>
-                                        router.push(`/admin/users/${u.id}/edit`)
-                                      }
-                                    >
-                                      <Edit2 className="w-3.5 h-3.5 text-zinc-400" />
-                                      Chỉnh sửa
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                                    <DropdownMenuItem
-                                      className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer"
-                                      onClick={() =>
-                                        requestAction(
-                                          "Cấp lại mật khẩu",
-                                          `Bạn có chắc chắn muốn cấp lại mật khẩu cho tài khoản ${u.email}? Mật khẩu mới sẽ được gửi về email của người dùng.`,
-                                          "warning",
-                                          () =>
-                                            resetPasswordMutation.mutateAsync(
-                                              u.id,
-                                            ),
-                                          "Đã cấp mật khẩu mới",
-                                        )
-                                      }
-                                    >
-                                      <RefreshCw
-                                        className={cn(
-                                          "w-3.5 h-3.5 text-zinc-400",
-                                          resetPasswordMutation.isPending &&
-                                            "animate-spin",
-                                        )}
-                                      />
-                                      Reset mật khẩu
-                                    </DropdownMenuItem>
-                                    {u.accountNonLocked ? (
-                                      <DropdownMenuItem
-                                        className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-amber-700"
-                                        onClick={() =>
-                                          requestAction(
-                                            "Khóa tài khoản",
-                                            `Bạn có chắc chắn muốn khóa tài khoản ${u.email}? Người dùng sẽ không thể đăng nhập hoặc thực hiện giao dịch.`,
-                                            "danger",
-                                            () =>
-                                              lockMutation.mutateAsync(u.id),
-                                            "Tài khoản đã bị khóa",
-                                          )
-                                        }
-                                      >
-                                        <Lock className="w-3.5 h-3.5 text-amber-500" />
-                                        Khóa tài khoản
-                                      </DropdownMenuItem>
-                                    ) : (
-                                      <DropdownMenuItem
-                                        className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
-                                        onClick={() =>
-                                          requestAction(
-                                            "Mở khóa tài khoản",
-                                            `Bạn có chắc chắn muốn mở khóa tài khoản ${u.email}? Người dùng sẽ có thể truy cập hệ thống bình thường.`,
-                                            "info",
-                                            () =>
-                                              unlockMutation.mutateAsync(u.id),
-                                            "Tài khoản đã được mở khóa",
-                                          )
-                                        }
-                                      >
-                                        <Unlock className="w-3.5 h-3.5 text-emerald-500" />
-                                        Mở khóa
-                                      </DropdownMenuItem>
-                                    )}
-                                    <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                                    <DropdownMenuItem
-                                      className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600"
-                                      onClick={() =>
-                                        requestAction(
-                                          "Vô hiệu hóa tài khoản",
-                                          `Bạn có chắc chắn muốn vô hiệu hóa tài khoản ${u.email}? Tài khoản sẽ được chuyển vào thùng rác.`,
-                                          "danger",
-                                          () =>
-                                            deleteMutation.mutateAsync(u.id),
-                                          "Đã vô hiệu hóa",
-                                        )
-                                      }
-                                    >
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                      Vô hiệu hóa
-                                    </DropdownMenuItem>
-                                  </>
-                                ) : (
-                                  <>
-                                    <DropdownMenuItem
-                                      className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer"
-                                      onClick={() =>
-                                        router.push(`/admin/users/${u.id}`)
-                                      }
-                                    >
-                                      <Eye className="w-3.5 h-3.5 text-zinc-400" />
-                                      Xem chi tiết
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-                                    <DropdownMenuItem
-                                      className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700"
-                                      onClick={() =>
-                                        requestAction(
-                                          "Khôi phục tài khoản",
-                                          `Bạn có chắc chắn muốn khôi phục tài khoản ${u.email}? Tài khoản sẽ hoạt động lại bình thường.`,
-                                          "info",
-                                          () =>
-                                            restoreMutation.mutateAsync(u.id),
-                                          "Đã khôi phục tài khoản",
-                                        )
-                                      }
-                                    >
-                                      <RotateCcw className="w-3.5 h-3.5" />
-                                      Khôi phục tài khoản
-                                    </DropdownMenuItem>
-                                  </>
-                                )}
-                              </DropdownMenuGroup>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
+                        <UserActionMenu
+                          compact
+                          userId={u.id}
+                          viewMode={viewMode}
+                          accountNonLocked={u.accountNonLocked}
+                          callbacks={{
+                            onResetPassword: () =>
+                              requestAction(
+                                "Cấp lại mật khẩu",
+                                `Bạn có chắc chắn muốn cấp lại mật khẩu cho tài khoản ${u.email}? Mật khẩu mới sẽ được gửi về email của người dùng.`,
+                                "warning",
+                                () => resetPasswordMutation.mutateAsync(u.id),
+                                "Đã cấp mật khẩu mới",
+                              ),
+                            onLock: () =>
+                              requestAction(
+                                "Khóa tài khoản",
+                                `Bạn có chắc chắn muốn khóa tài khoản ${u.email}? Người dùng sẽ không thể đăng nhập hoặc thực hiện giao dịch.`,
+                                "danger",
+                                () => lockMutation.mutateAsync(u.id),
+                                "Tài khoản đã bị khóa",
+                              ),
+                            onUnlock: () =>
+                              requestAction(
+                                "Mở khóa tài khoản",
+                                `Bạn có chắc chắn muốn mở khóa tài khoản ${u.email}? Người dùng sẽ có thể truy cập hệ thống bình thường.`,
+                                "info",
+                                () => unlockMutation.mutateAsync(u.id),
+                                "Tài khoản đã được mở khóa",
+                              ),
+                            onDelete: () =>
+                              requestAction(
+                                "Vô hiệu hóa tài khoản",
+                                `Bạn có chắc chắn muốn vô hiệu hóa tài khoản ${u.email}? Tài khoản sẽ được chuyển vào thùng rác.`,
+                                "danger",
+                                () => deleteMutation.mutateAsync(u.id),
+                                "Đã vô hiệu hóa",
+                              ),
+                            onRestore: () =>
+                              requestAction(
+                                "Khôi phục tài khoản",
+                                `Bạn có chắc chắn muốn khôi phục tài khoản ${u.email}? Tài khoản sẽ hoạt động lại bình thường.`,
+                                "info",
+                                () => restoreMutation.mutateAsync(u.id),
+                                "Đã khôi phục tài khoản",
+                              ),
+                          }}
+                        />
                       </div>
                     </td>
                   </tr>

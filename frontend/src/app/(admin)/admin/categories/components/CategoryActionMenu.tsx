@@ -60,7 +60,7 @@ export function CategoryActionMenu({
             ) : (
               <>
                 <DropdownMenuItem
-                  className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
+                  className="cursor-pointer"
                   onClick={onRestore}
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Khôi phục danh mục

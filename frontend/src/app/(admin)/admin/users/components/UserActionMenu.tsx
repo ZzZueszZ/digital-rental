@@ -92,7 +92,7 @@ export function UserActionMenu({
                 </DropdownMenuItem>
                 {accountNonLocked ? (
                   <DropdownMenuItem
-                    className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-amber-50 text-zinc-700"
+                    className="cursor-pointer"
                     onClick={callbacks.onLock}
                   >
                     <Lock className="w-3.5 h-3.5 text-amber-500" /> Khóa tài
@@ -100,7 +100,7 @@ export function UserActionMenu({
                   </DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem
-                    className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-emerald-50 text-zinc-700"
+                    className="cursor-pointer"
                     onClick={callbacks.onUnlock}
                   >
                     <Unlock className="w-3.5 h-3.5 text-emerald-500" /> Mở khóa
@@ -108,7 +108,7 @@ export function UserActionMenu({
                 )}
                 <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                 <DropdownMenuItem
-                  className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50"
+                  className="cursor-pointer"
                   onClick={callbacks.onDelete}
                 >
                   <Trash2 className="w-3.5 h-3.5" /> Vô hiệu hóa

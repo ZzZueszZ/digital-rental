@@ -243,31 +243,6 @@ export default function ProductDetailPage({
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          {!isDeleted ? (
-            <>
-              <Button
-                onClick={() => setIsEditDialogOpen(true)}
-                className="flex-1 sm:flex-none h-12 rounded-lg bg-white border border-black/5 hover:border-red-600 hover:bg-red-50 text-zinc-950 hover:text-red-600 font-bold px-8 transition-all duration-200 gap-2 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-px"
-              >
-                <Edit2 className="w-4 h-4" /> Chỉnh sửa
-              </Button>
-              <Button
-                onClick={handleDelete}
-                variant="ghost"
-                className="flex-1 sm:flex-none h-12 rounded-lg bg-white border border-red-100 text-red-600 hover:bg-red-600 hover:text-white font-bold px-6 transition-all duration-200 gap-2 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-px"
-              >
-                <Trash2 className="w-4 h-4" /> Vô hiệu hóa
-              </Button>
-            </>
-          ) : (
-            <Button
-              onClick={handleRestore}
-              variant="ghost"
-              className="flex-1 sm:flex-none h-12 rounded-lg bg-white border border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white font-bold px-8 transition-all duration-200 gap-2 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-px"
-            >
-              <RotateCcw className="w-4 h-4" /> Khôi phục
-            </Button>
-          )}
         </div>
       </div>
 
@@ -352,12 +327,7 @@ export default function ProductDetailPage({
                   </span>
                 </span>
 
-                <button
-                  onClick={() => setIsStockDialogOpen(true)}
-                  className="mt-3 px-3 py-1 bg-white border border-emerald-200 rounded-lg text-[9px] font-black uppercase text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
-                >
-                  Điều chỉnh
-                </button>
+
               </div>
               <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 flex flex-col items-center text-center">
                 <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center mb-3">
@@ -382,12 +352,7 @@ export default function ProductDetailPage({
                     <span className="text-xs font-black text-zinc-900 uppercase tracking-tight">
                       Giá thuê mỗi ngày
                     </span>
-                    <button
-                      onClick={() => setIsPriceDialogOpen(true)}
-                      className="text-[9px] font-black text-amber-600 uppercase tracking-widest hover:underline text-left"
-                    >
-                      Điều chỉnh
-                    </button>
+
                   </div>
                 </div>
                 <div className="text-right">
@@ -409,12 +374,7 @@ export default function ProductDetailPage({
                     <span className="text-xs font-black text-zinc-900 uppercase tracking-tight">
                       Giá bán thanh lý
                     </span>
-                    <button
-                      onClick={() => setIsPriceDialogOpen(true)}
-                      className="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:underline text-left"
-                    >
-                      Điều chỉnh
-                    </button>
+
                   </div>
                 </div>
                 <div className="text-right">
@@ -513,44 +473,7 @@ export default function ProductDetailPage({
         </div>
       </div>
 
-      <ConfirmDialog
-        open={confirmConfig.open}
-        onOpenChange={(o) => setConfirmConfig((prev) => ({ ...prev, open: o }))}
-        title={confirmConfig.title}
-        description={confirmConfig.description}
-        onConfirm={confirmConfig.onConfirm}
-        variant={confirmConfig.variant}
-        isLoading={deleteMutation.isPending || restoreMutation.isPending}
-      />
-      <ProductDialog
-        open={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-        product={product || null}
-        categories={categories}
-        onSubmit={handleUpdateInfo}
-        isPending={updateInfoMutation.isPending}
-      />
-      <StockAdjustmentDialog
-        open={isStockDialogOpen}
-        onOpenChange={setIsStockDialogOpen}
-        product={product || null}
-      />
-      <ProductPriceDialog
-        open={isPriceDialogOpen}
-        onOpenChange={setIsPriceDialogOpen}
-        product={product || null}
-        onSubmit={async (data) => {
-          try {
-            await updatePriceMutation.mutateAsync(data);
-            toast.success("Cập nhật giá thành công");
-            setIsPriceDialogOpen(false);
-          } catch (error: unknown) {
-            const err = error as { response?: { data?: { message?: string } } };
-            toast.error(err.response?.data?.message || "Lỗi khi cập nhật giá");
-          }
-        }}
-        isPending={updatePriceMutation.isPending}
-      />
+
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 mb-12">
         {/* Price History Section */}

@@ -65,27 +65,26 @@ export function UserActionMenu({
           className="w-52 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
         >
           <DropdownMenuGroup>
-            <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">
+            <DropdownMenuLabel className="text-[10px] font-bold text-zinc-400 px-2 py-1.5 tracking-widest">
               Tác vụ quản trị
             </DropdownMenuLabel>
 
             {viewMode === "ACTIVE" ? (
               <>
                 <DropdownMenuItem
-                  className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="cursor-pointer"
                   onClick={() => router.push(`/admin/users/${userId}`)}
                 >
                   <Eye className="w-3.5 h-3.5 text-zinc-400" /> Xem chi tiết
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="cursor-pointer"
                   onClick={() => router.push(`/admin/users/${userId}/edit`)}
                 >
                   <Edit2 className="w-3.5 h-3.5 text-zinc-400" /> Chỉnh sửa
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                 <DropdownMenuItem
-                  className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="cursor-pointer"
                   onClick={callbacks.onResetPassword}
                 >
                   <RefreshCw className="w-3.5 h-3.5 text-zinc-400" /> Reset mật
@@ -118,14 +117,14 @@ export function UserActionMenu({
             ) : (
               <>
                 <DropdownMenuItem
-                  className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="cursor-pointer"
                   onClick={() => router.push(`/admin/users/${userId}`)}
                 >
                   <Eye className="w-3.5 h-3.5 text-zinc-400" /> Xem chi tiết
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                 <DropdownMenuItem
-                  className="rounded-xl h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
+                  className="cursor-pointer"
                   onClick={callbacks.onRestore}
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Khôi phục tài khoản

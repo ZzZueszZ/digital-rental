@@ -107,12 +107,12 @@ export function OrderTableRow({
             className="w-56 p-1.5 rounded-xl shadow-xl border-zinc-100 bg-white animate-in zoom-in-95 duration-200"
           >
             <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-[10px] font-bold text-zinc-400 px-2 py-1.5 uppercase tracking-widest">
+              <DropdownMenuLabel className="text-[10px] font-bold text-zinc-400 px-2 py-1.5 tracking-widest">
                 Thao tác đơn hàng
               </DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() => onView(order.id)}
-                className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm font-bold text-zinc-600 hover:text-zinc-950 hover:bg-zinc-50 transition-colors cursor-pointer"
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm text-zinc-600 hover:text-zinc-950 hover:bg-zinc-50 transition-colors cursor-pointer"
               >
                 <Eye className="w-4 h-4" />
                 Xem chi tiết

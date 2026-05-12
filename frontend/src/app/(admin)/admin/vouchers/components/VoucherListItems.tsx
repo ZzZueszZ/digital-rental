@@ -175,7 +175,7 @@ export function VoucherTableRow({
             className="w-56 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
           >
             <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-500 px-3 py-1.5 tracking-widest">
+              <DropdownMenuLabel className="text-[10px] font-bold text-zinc-500 px-3 py-1.5">
                 Tác vụ Voucher
               </DropdownMenuLabel>
               <DropdownMenuItem
@@ -184,7 +184,6 @@ export function VoucherTableRow({
               >
                 <Edit2 className="w-3.5 h-3.5" /> Chỉnh sửa thông tin
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="my-1 bg-zinc-50" />
               {voucher.status !== "ACTIVE" && (
                 <DropdownMenuItem
                   onClick={() => onActivate(voucher.id)}

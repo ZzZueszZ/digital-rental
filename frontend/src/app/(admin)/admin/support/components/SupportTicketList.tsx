@@ -226,17 +226,15 @@ export function SupportTicketList({
                             </DropdownMenuLabel>
 
                             <DropdownMenuItem
-                              className="font-bold py-2.5 cursor-pointer rounded-xl text-zinc-700"
+                              className="py-2.5 cursor-pointer rounded-xl text-zinc-700"
                               onClick={() => handleOpenTicket(ticket.id)}
                             >
                               <Eye className="w-4 h-4 mr-2.5 text-zinc-400" />{" "}
                               Xem & Phản hồi
                             </DropdownMenuItem>
 
-                            <DropdownMenuSeparator className="my-1 bg-zinc-50" />
-
                             <DropdownMenuItem
-                              className="font-bold py-2.5 cursor-pointer text-blue-600 rounded-xl focus:bg-blue-50 focus:text-blue-600"
+                              className="py-2.5 cursor-pointer text-blue-600 rounded-xl focus:bg-blue-50 focus:text-blue-600"
                               onClick={() =>
                                 updateStatus({
                                   id: ticket.id,
@@ -249,7 +247,7 @@ export function SupportTicketList({
                             </DropdownMenuItem>
 
                             <DropdownMenuItem
-                              className="font-bold py-2.5 cursor-pointer text-emerald-600 rounded-xl focus:bg-emerald-50 focus:text-emerald-600"
+                              className="py-2.5 cursor-pointer text-emerald-600 rounded-xl focus:bg-emerald-50 focus:text-emerald-600"
                               onClick={() =>
                                 updateStatus({
                                   id: ticket.id,

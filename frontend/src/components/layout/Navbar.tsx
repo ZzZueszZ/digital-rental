@@ -171,7 +171,7 @@ export function Navbar() {
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       href="/inventory"
-                      className="inline-flex h-10 items-center justify-center rounded-xl bg-transparent px-4 text-[15px] font-bold tracking-tight text-zinc-500 transition-all hover:text-zinc-950 hover:bg-zinc-50"
+                      className="inline-flex h-10 items-center justify-center rounded-xl bg-transparent px-4 text-[15px] font-bold tracking-tight text-zinc-500 transition-all hover:text-zinc-950 hover:bg-zinc-50 focus:!bg-zinc-950 focus:!text-white data-active:!bg-zinc-950 data-active:!text-white outline-none"
                     >
                       Sản phẩm mới
                     </NavigationMenuLink>
@@ -179,7 +179,7 @@ export function Navbar() {
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       href="/about"
-                      className="inline-flex h-10 items-center justify-center rounded-xl bg-transparent px-4 text-[15px] font-bold tracking-tight text-zinc-500 transition-all hover:text-zinc-950 hover:bg-zinc-50"
+                      className="inline-flex h-10 items-center justify-center rounded-xl bg-transparent px-4 text-[15px] font-bold tracking-tight text-zinc-500 transition-all hover:text-zinc-950 hover:bg-zinc-50 focus:!bg-zinc-950 focus:!text-white data-active:!bg-zinc-950 data-active:!text-white outline-none"
                     >
                       Về chúng tôi
                     </NavigationMenuLink>

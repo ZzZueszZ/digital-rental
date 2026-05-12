@@ -94,12 +94,7 @@ export function OrderTableRow({
       </td>
       <td className="px-6 py-4 text-right">
         <DropdownMenu>
-          <DropdownMenuTrigger
-            className={cn(
-              buttonVariants({ variant: "ghost", size: "icon" }),
-              "h-8 w-8 hover:bg-zinc-100 rounded-xl cursor-pointer outline-none",
-            )}
-          >
+          <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-xl hover:bg-zinc-100 outline-none cursor-pointer">
             <MoreHorizontal className="h-4 w-4 text-zinc-500" />
           </DropdownMenuTrigger>
           <DropdownMenuContent

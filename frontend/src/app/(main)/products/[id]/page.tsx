@@ -53,6 +53,8 @@ import { useMyAddresses } from "@/services/address";
 import { useAuthStore } from "@/store/auth";
 import { toast } from "sonner";
 import { cn, getImageUrl, formatVND } from "@/lib/utils";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 interface ProductImage {
   id: number;
@@ -225,38 +227,48 @@ export default function ProductDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white pt-24 px-6 container mx-auto flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-12 h-12 text-red-600 animate-spin" />
-          <p className="text-xs font-semibold text-zinc-400">
-            Đang khởi tạo studio...
-          </p>
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-white pt-24 px-6 container mx-auto flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="w-12 h-12 text-red-600 animate-spin" />
+            <p className="text-xs font-semibold text-zinc-400">
+              Đang khởi tạo studio...
+            </p>
+          </div>
         </div>
-      </div>
+        <Footer />
+      </>
     );
   }
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-white pt-32 px-6 container mx-auto text-center">
-        <h1 className="text-4xl font-bold text-zinc-950 tracking-tight mb-4">
-          404: Không tìm thấy
-        </h1>
-        <p className="text-zinc-500 font-medium mb-12">
-          Sản phẩm này không còn tồn tại.
-        </p>
-        <Button
-          onClick={() => router.push("/")}
-          className="h-12 px-10 rounded-xl bg-zinc-950 text-white font-bold text-sm shadow-dash-card"
-        >
-          Quay lại trang chủ
-        </Button>
-      </div>
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-white pt-32 px-6 container mx-auto text-center">
+          <h1 className="text-4xl font-bold text-zinc-950 tracking-tight mb-4">
+            404: Không tìm thấy
+          </h1>
+          <p className="text-zinc-500 font-medium mb-12">
+            Sản phẩm này không còn tồn tại.
+          </p>
+          <Button
+            onClick={() => router.push("/")}
+            className="h-12 px-10 rounded-xl bg-zinc-950 text-white font-bold text-sm shadow-dash-card"
+          >
+            Quay lại trang chủ
+          </Button>
+        </div>
+        <Footer />
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white pb-24 selection:bg-red-50">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-white pb-24 selection:bg-red-50">
       <div className="container mx-auto px-4 lg:px-8 max-w-[1600px] pt-10">
         {/* Header Actions */}
         <div className="flex items-center justify-between mb-8">
@@ -736,6 +748,8 @@ export default function ProductDetailPage() {
         variant="danger"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 }

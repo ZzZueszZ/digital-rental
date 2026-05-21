@@ -37,6 +37,8 @@ import { useSubmitTicket } from "@/services/support";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 const SUBJECT_OPTIONS = [
   { value: SupportSubject.PRODUCT_INQUIRY, label: "Thông tin sản phẩm" },
@@ -100,7 +102,9 @@ export default function AboutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white selection:bg-red-600/10">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-white selection:bg-red-600/10">
       {/* Hero Section - Light & Airy */}
       <section className="relative pt-32 pb-20 overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-red-50/50 rounded-full blur-[120px] -z-10 opacity-60" />
@@ -595,5 +599,7 @@ export default function AboutPage() {
         </div>
       </section>
     </div>
+    <Footer />
+  </>
   );
 }

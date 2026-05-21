@@ -59,11 +59,8 @@ export function Navbar() {
 
   const getDashboardLink = () => {
     if (!user?.roles) return null;
-    if (
-      user.roles.includes(Role.SUPER_ADMIN) ||
-      user.roles.includes(Role.ADMIN)
-    )
-      return Routers.ADMIN;
+    if (user.roles.includes(Role.SUPER_ADMIN)) return Routers.SUPER_ADMIN;
+    if (user.roles.includes(Role.ADMIN)) return Routers.ADMIN;
     if (user.roles.includes(Role.STAFF)) return Routers.STAFF;
     return null;
   };

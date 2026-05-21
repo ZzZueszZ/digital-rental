@@ -261,13 +261,14 @@ export default function VouchersAdminPage() {
                       }}
                       onActivate={handleActivate}
                       onDeactivate={handleDeactivate}
+                      onDelete={handleDeactivate}
                     />
                   ))
                 )}
               </tbody>
             </table>
           </div>
-
+ 
           {/* Mobile */}
           <div className="lg:hidden p-4 space-y-4">
             {isLoading ? (
@@ -290,6 +291,7 @@ export default function VouchersAdminPage() {
                   }}
                   onActivate={handleActivate}
                   onDeactivate={handleDeactivate}
+                  onDelete={handleDeactivate}
                 />
               ))
             )}

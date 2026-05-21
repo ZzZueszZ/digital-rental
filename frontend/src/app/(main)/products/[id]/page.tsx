@@ -52,7 +52,7 @@ import { useAddToCart } from "@/services/cart";
 import { useMyAddresses } from "@/services/address";
 import { useAuthStore } from "@/store/auth";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn, getImageUrl, formatVND } from "@/lib/utils";
 
 interface ProductImage {
   id: number;
@@ -191,19 +191,7 @@ export default function ProductDetailPage() {
 
     fetchData();
   }, [id]);
-
-  const formatVND = (amount: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(amount);
-  };
-
-  const getImageUrlLocal = (url: string | null) => {
-    if (!url) return "";
-    if (url.startsWith("http") || url.startsWith("blob:")) return url;
-    return `http://localhost:8080${url}`;
-  };
+  const getImageUrlLocal = (url: string | null) => getImageUrl(url);
 
   const handleReportReview = async (reviewId: number) => {
     if (!accessToken) {

@@ -55,6 +55,8 @@ import { toast } from "sonner";
 import { cn, getImageUrl, formatVND } from "@/lib/utils";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { identityService } from "@/services/identity";
+import { http } from "@/lib/http";
 
 interface ProductImage {
   id: number;
@@ -115,9 +117,130 @@ export default function ProductDetailPage() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [deletingReviewId, setDeletingReviewId] = useState<number | null>(null);
 
+  // Rental configuration states
+  const [rentalStartDate, setRentalStartDate] = useState("");
+  const [rentalEndDate, setRentalEndDate] = useState("");
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
+  const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
+  const [availabilityChecked, setAvailabilityChecked] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"COD" | "ONLINE">("COD");
+  const [isSubmittingRental, setIsSubmittingRental] = useState(false);
+  const [showKycDialog, setShowKycDialog] = useState(false);
+  const [kycStatus, setKycStatus] = useState<string | null>(null);
+
   const { accessToken } = useAuthStore();
   const { data: profileRes } = useMyProfile();
   const currentUser = profileRes?.data;
+
+  // Calculate rental duration in days
+  const calculateDays = () => {
+    if (!rentalStartDate || !rentalEndDate) return 0;
+    const start = new Date(rentalStartDate);
+    const end = new Date(rentalEndDate);
+    const diffTime = end.getTime() - start.getTime();
+    if (diffTime < 0) return 0;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    return diffDays;
+  };
+
+  const days = calculateDays();
+
+  // Check device availability dynamically
+  const checkAvailability = async (start: string, end: string) => {
+    if (!start || !end) return;
+    try {
+      setIsCheckingAvailability(true);
+      const res = await http.get(`/rentals/products/${id}/availability`, {
+        params: {
+          startDate: `${start}T00:00:00`,
+          endDate: `${end}T00:00:00`,
+          quantity: quantity
+        }
+      });
+      setIsAvailable(res.data.data);
+      setAvailabilityChecked(true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsCheckingAvailability(false);
+    }
+  };
+
+  useEffect(() => {
+    if (rentalStartDate && rentalEndDate) {
+      checkAvailability(rentalStartDate, rentalEndDate);
+    } else {
+      setIsAvailable(null);
+      setAvailabilityChecked(false);
+    }
+  }, [rentalStartDate, rentalEndDate, quantity]);
+
+  const handleRentalSubmit = async () => {
+    if (!accessToken) {
+      toast.error("Vui lòng đăng nhập để thuê thiết bị");
+      router.push("/login");
+      return;
+    }
+
+    if (!rentalStartDate || !rentalEndDate) {
+      toast.error("Vui lòng chọn ngày nhận và ngày trả");
+      return;
+    }
+
+    if (days <= 0) {
+      toast.error("Thời gian thuê không hợp lệ");
+      return;
+    }
+
+    if (!isAvailable) {
+      toast.error("Thiết bị không sẵn sàng trong khoảng thời gian này");
+      return;
+    }
+
+    try {
+      setIsSubmittingRental(true);
+
+      // Check KYC status
+      const kyc = await identityService.getKycStatus();
+      if (kyc.status !== "APPROVED") {
+        setKycStatus(kyc.status);
+        setShowKycDialog(true);
+        return;
+      }
+
+      // Resolve address ID
+      const addressId = selectedAddressId || defaultAddress?.id;
+      if (!addressId) {
+        toast.error("Vui lòng thêm địa chỉ nhận hàng trong hồ sơ trước khi thuê");
+        router.push("/profile/address");
+        return;
+      }
+
+      const res = await http.post("/rentals/checkout", {
+        items: [
+          {
+            productId: Number(id),
+            quantity: quantity,
+          },
+        ],
+        startDate: `${rentalStartDate}T00:00:00`,
+        endDate: `${rentalEndDate}T00:00:00`,
+        shippingAddressId: addressId,
+        paymentMethod: paymentMethod,
+      });
+
+      if (res.data?.success) {
+        toast.success("Gửi yêu cầu đặt thuê thành công!");
+        router.push("/profile/orders");
+      }
+    } catch (err: any) {
+      const msg = err.response?.data?.message || "Không thể gửi yêu cầu thuê";
+      toast.error(msg);
+    } finally {
+      setIsSubmittingRental(false);
+    }
+  };
 
   const { data: reviewsRes, isLoading: isReviewsLoading } = useProductReviews(
     Number(id),
@@ -512,21 +635,183 @@ export default function ProductDetailPage() {
                 {product.forRent && (
                   <div className="bg-zinc-50/50 rounded-2xl p-8 border border-black/5 border-dashed relative overflow-hidden group">
                     <p className="text-[10px] font-bold text-zinc-400 mb-6 uppercase tracking-widest">
-                      Giá thuê mỗi ngày
+                      Thông tin đặt thuê thiết bị
                     </p>
+                    
+                    {/* Price and Badges */}
                     <div className="flex items-end justify-between mb-6">
                       <p className="text-3xl font-bold tracking-tight text-amber-600 leading-none">
                         {formatVND(product.rentPricePerDay).replace("₫", "")}
                         <span className="text-lg ml-1 text-zinc-400 font-bold">
-                          ₫
+                          ₫/ngày
                         </span>
                       </p>
                       <span className="text-xs font-semibold text-zinc-400">
                         Bảo hiểm trọn gói
                       </span>
                     </div>
-                    <Button className="w-full h-12 rounded-xl bg-white border border-black/5 text-zinc-950 font-bold text-sm hover:bg-zinc-950 hover:text-white transition-all shadow-dash-card">
-                      <Calendar className="w-4 h-4 mr-2" /> Đặt lịch thuê
+
+                    {/* Date Pickers */}
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-2">
+                          Ngày nhận máy
+                        </label>
+                        <input
+                          type="date"
+                          min={new Date().toISOString().split("T")[0]}
+                          value={rentalStartDate}
+                          onChange={(e) => setRentalStartDate(e.target.value)}
+                          className="w-full h-11 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 transition-all"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-2">
+                          Ngày trả máy
+                        </label>
+                        <input
+                          type="date"
+                          min={rentalStartDate || new Date().toISOString().split("T")[0]}
+                          value={rentalEndDate}
+                          onChange={(e) => setRentalEndDate(e.target.value)}
+                          className="w-full h-11 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Dynamic Availability Status Indicator */}
+                    {rentalStartDate && rentalEndDate && (
+                      <div className="mb-4">
+                        {isCheckingAvailability ? (
+                          <div className="flex items-center gap-2 text-xs font-semibold text-zinc-400">
+                            <Loader2 className="w-4 h-4 animate-spin" /> Đang kiểm tra lịch trống...
+                          </div>
+                        ) : isAvailable === true ? (
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-100">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Thiết bị có sẵn để thuê
+                          </div>
+                        ) : isAvailable === false ? (
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold border border-red-100">
+                            Hết thiết bị trong khoảng thời gian này
+                          </div>
+                        ) : null}
+                      </div>
+                    )}
+
+                    {/* Address Selection */}
+                    {isAvailable === true && (
+                      <>
+                        {addressesRes?.data && addressesRes.data.length > 0 ? (
+                          <div className="mb-4">
+                            <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-2">
+                              Địa chỉ nhận hàng
+                            </label>
+                            <select
+                              value={selectedAddressId || defaultAddress?.id || ""}
+                              onChange={(e) => setSelectedAddressId(Number(e.target.value))}
+                              className="w-full h-11 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 transition-all"
+                            >
+                              {addressesRes.data.map((addr) => (
+                                <option key={addr.id} value={addr.id}>
+                                  {addr.receiverName} - {addr.receiverPhone} ({addr.fullAddress})
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        ) : (
+                          accessToken && (
+                            <div className="mb-4 p-3 bg-amber-50 border border-amber-100 rounded-xl">
+                              <p className="text-xs text-amber-700 font-semibold mb-1">
+                                Chưa có địa chỉ giao hàng
+                              </p>
+                              <button
+                                type="button"
+                                onClick={() => router.push("/profile/address")}
+                                className="text-[11px] font-bold text-red-600 hover:underline text-left"
+                              >
+                                Thêm địa chỉ nhận máy trong hồ sơ &rarr;
+                              </button>
+                            </div>
+                          )
+                        )}
+
+                        {/* Payment Method Selector */}
+                        <div className="mb-4">
+                          <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-2">
+                            Phương thức đặt cọc / thanh toán
+                          </label>
+                          <div className="grid grid-cols-2 gap-3">
+                            <button
+                              type="button"
+                              onClick={() => setPaymentMethod("COD")}
+                              className={cn(
+                                "h-11 rounded-xl border font-bold text-xs flex items-center justify-center transition-all",
+                                paymentMethod === "COD"
+                                  ? "border-zinc-950 bg-zinc-950 text-white shadow-sm"
+                                  : "border-black/5 bg-white text-zinc-800 hover:bg-zinc-50"
+                              )}
+                            >
+                              Tiền mặt / COD
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setPaymentMethod("ONLINE")}
+                              className={cn(
+                                "h-11 rounded-xl border font-bold text-xs flex items-center justify-center transition-all",
+                                paymentMethod === "ONLINE"
+                                  ? "border-zinc-950 bg-zinc-950 text-white shadow-sm"
+                                  : "border-black/5 bg-white text-zinc-800 hover:bg-zinc-50"
+                              )}
+                            >
+                              Thanh toán VNPay
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Price Calculations */}
+                        {days > 0 && (
+                          <div className="mt-6 pt-4 border-t border-black/5 space-y-2.5">
+                            <div className="flex justify-between text-xs font-semibold text-zinc-500">
+                              <span>Số ngày thuê:</span>
+                              <span className="text-zinc-950">{days} ngày</span>
+                            </div>
+                            <div className="flex justify-between text-xs font-semibold text-zinc-500">
+                              <span>Tổng phí thuê (tạm tính):</span>
+                              <span className="font-bold text-zinc-950">
+                                {formatVND(product.rentPricePerDay * days * quantity)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-xs font-semibold text-zinc-500">
+                              <span>Tiền cọc thiết bị (20%):</span>
+                              <span className="font-bold text-amber-600">
+                                {formatVND(product.salePrice * 0.2 * quantity)}
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-zinc-400 font-medium leading-relaxed pt-1">
+                              * Tiền đặt cọc thực tế sẽ được nhân viên xác nhận và hoàn duyệt sau khi thẩm định hồ sơ eKYC.
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {/* Booking/Checkout Action Button */}
+                    <Button
+                      onClick={handleRentalSubmit}
+                      disabled={isSubmittingRental || (rentalStartDate !== "" && rentalEndDate !== "" && isAvailable !== true)}
+                      className="w-full h-12 mt-4 rounded-xl bg-red-600 hover:bg-zinc-950 text-white font-bold text-sm transition-all shadow-dash-card disabled:opacity-50"
+                    >
+                      {isSubmittingRental ? (
+                        <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                      ) : !rentalStartDate || !rentalEndDate ? (
+                        <>Chọn ngày nhận & trả máy</>
+                      ) : isAvailable === false ? (
+                        <>Thiết bị không có sẵn</>
+                      ) : (
+                        <>
+                          <Calendar className="w-4 h-4 mr-2" /> Đặt lịch thuê ({days} ngày)
+                        </>
+                      )}
                     </Button>
                   </div>
                 )}
@@ -748,6 +1033,39 @@ export default function ProductDetailPage() {
         variant="danger"
         isLoading={deleteMutation.isPending}
       />
+
+      {/* KYC Alert Dialog */}
+      {showKycDialog && (
+        <div className="fixed inset-0 bg-zinc-950/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-white rounded-2xl max-w-md w-full p-8 border border-black/5 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mb-6">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-bold text-zinc-950 mb-2">Yêu cầu xác thực eKYC</h3>
+            <p className="text-sm text-zinc-500 font-medium leading-relaxed mb-6">
+              Bạn cần hoàn tất xác minh danh tính eKYC bằng Căn cước công dân trước khi có thể gửi yêu cầu thuê thiết bị nhiếp ảnh.
+            </p>
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowKycDialog(false)}
+                className="flex-1 h-11 rounded-xl border-zinc-200 text-zinc-700 font-semibold text-xs"
+              >
+                Hủy bỏ
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowKycDialog(false);
+                  router.push("/profile/ekyc");
+                }}
+                className="flex-1 h-11 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-zinc-950 transition-all border-none"
+              >
+                Định danh ngay
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
       <Footer />
     </>

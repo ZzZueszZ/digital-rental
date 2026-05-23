@@ -1,0 +1,728 @@
+"use client";
+
+import { useState } from "react";
+import {
+  Calendar,
+  Search,
+  Filter,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  Truck,
+  Loader2,
+  AlertTriangle,
+  User,
+  ShieldCheck,
+  ArrowRight,
+  ClipboardList
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { cn, formatVND, formatDate } from "@/lib/utils";
+import { Pagination } from "@/app/(staff)/staff/components/Pagination";
+import { EmptyState } from "@/app/(staff)/staff/users/components/EmptyState";
+import { StatCard } from "@/app/(staff)/staff/components/StatCard";
+import {
+  RentalOrderStatus,
+  useAllRentalsForAdmin,
+  useApproveRental,
+  useRejectRental,
+  usePayDeposit,
+  useHandoverDevices,
+  useReturnDevices,
+  useSettleAndComplete,
+  rentalService,
+  DeviceResponse
+} from "@/services/rental";
+import { AdminFormDialog } from "@/components/common/AdminFormDialog";
+
+export function RentalManageView({ portalType }: { portalType: "admin" | "staff" | "super-admin" }) {
+  const [page, setPage] = useState(0);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<RentalOrderStatus | "ALL">("ALL");
+
+  const { data: rentalsRes, isLoading, refetch } = useAllRentalsForAdmin({
+    page,
+    size: 10,
+    status: statusFilter === "ALL" ? undefined : statusFilter
+  });
+
+  const approveMutation = useApproveRental();
+  const rejectMutation = useRejectRental();
+  const payDepositMutation = usePayDeposit();
+  const handoverMutation = useHandoverDevices();
+  const returnMutation = useReturnDevices();
+  const settleMutation = useSettleAndComplete();
+
+  const rentals = rentalsRes?.data || [];
+  const pagination = rentalsRes?.meta; // page/size/total info if present, otherwise default
+  const totalPages = rentalsRes?.meta?.totalPages || 1;
+  const totalElements = rentalsRes?.meta?.totalElements || rentals.length;
+
+  const [selectedRental, setSelectedRental] = useState<any>(null);
+  
+  // Modals state
+  const [isApproveOpen, setIsApproveOpen] = useState(false);
+  const [isRejectOpen, setIsRejectOpen] = useState(false);
+  const [isHandoverOpen, setIsHandoverOpen] = useState(false);
+  const [isReturnOpen, setIsReturnOpen] = useState(false);
+
+  // Form values
+  const [rejectReason, setRejectReason] = useState("");
+  const [depositAmount, setDepositAmount] = useState<number>(0);
+  const [deviceAssignments, setDeviceAssignments] = useState<Record<number, number>>({}); // itemId -> deviceId
+  const [availableDevicesMap, setAvailableDevicesMap] = useState<Record<number, DeviceResponse[]>>({});
+  const [loadingDevices, setLoadingDevices] = useState(false);
+
+  const [inspectorName, setInspectorName] = useState("");
+  const [itemConditions, setItemConditions] = useState<Record<number, string>>({});
+  const [damageFee, setDamageFee] = useState<number>(0);
+
+  const handleOpenApprove = async (rental: any) => {
+    setSelectedRental(rental);
+    setDepositAmount(rental.depositAmount || 0);
+    setDeviceAssignments({});
+    setAvailableDevicesMap({});
+    setIsApproveOpen(true);
+    setLoadingDevices(true);
+
+    try {
+      const map: Record<number, DeviceResponse[]> = {};
+      for (const item of rental.items) {
+        const res = await rentalService.getAvailableDevices(item.productId);
+        map[item.productId] = res.data || [];
+      }
+      setAvailableDevicesMap(map);
+    } catch (err) {
+      toast.error("Lỗi khi tải danh sách thiết bị sẵn sàng");
+    } finally {
+      setLoadingDevices(false);
+    }
+  };
+
+  const handleApproveSubmit = async () => {
+    // Validate assignments
+    for (const item of selectedRental.items) {
+      if (!deviceAssignments[item.id]) {
+        toast.error(`Vui lòng chọn thiết bị cho sản phẩm: ${item.productName}`);
+        return;
+      }
+    }
+
+    try {
+      await approveMutation.mutateAsync({
+        id: selectedRental.id,
+        req: {
+          depositAmount,
+          itemDeviceAssignments: deviceAssignments
+        }
+      });
+      toast.success("Duyệt đơn thuê và gán thiết bị thành công!");
+      setIsApproveOpen(false);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Lỗi phê duyệt");
+    }
+  };
+
+  const handleOpenReject = (rental: any) => {
+    setSelectedRental(rental);
+    setRejectReason("");
+    setIsRejectOpen(true);
+  };
+
+  const handleRejectSubmit = async () => {
+    if (!rejectReason.trim()) {
+      toast.error("Vui lòng nhập lý do từ chối");
+      return;
+    }
+    try {
+      await rejectMutation.mutateAsync({
+        id: selectedRental.id,
+        reason: rejectReason
+      });
+      toast.success("Đã từ chối đơn thuê");
+      setIsRejectOpen(false);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Lỗi từ chối");
+    }
+  };
+
+  const handlePayDeposit = async (id: number) => {
+    try {
+      await payDepositMutation.mutateAsync(id);
+      toast.success("Xác nhận đóng tiền cọc thành công!");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Lỗi thanh toán cọc");
+    }
+  };
+
+  const handleOpenHandover = (rental: any) => {
+    setSelectedRental(rental);
+    setInspectorName("");
+    const initConditions: Record<number, string> = {};
+    rental.items.forEach((item: any) => {
+      initConditions[item.id] = "Bình thường";
+    });
+    setItemConditions(initConditions);
+    setIsHandoverOpen(true);
+  };
+
+  const handleHandoverSubmit = async () => {
+    if (!inspectorName.trim()) {
+      toast.error("Vui lòng nhập tên nhân viên bàn giao");
+      return;
+    }
+    try {
+      await handoverMutation.mutateAsync({
+        id: selectedRental.id,
+        req: {
+          inspectorName,
+          itemConditions
+        }
+      });
+      toast.success("Bàn giao thiết bị thành công!");
+      setIsHandoverOpen(false);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Lỗi bàn giao");
+    }
+  };
+
+  const handleOpenReturn = (rental: any) => {
+    setSelectedRental(rental);
+    setInspectorName("");
+    setDamageFee(0);
+    const initConditions: Record<number, string> = {};
+    rental.items.forEach((item: any) => {
+      initConditions[item.id] = "Bình thường";
+    });
+    setItemConditions(initConditions);
+    setIsReturnOpen(true);
+  };
+
+  const handleReturnSubmit = async () => {
+    if (!inspectorName.trim()) {
+      toast.error("Vui lòng nhập tên nhân viên nhận trả");
+      return;
+    }
+    try {
+      await returnMutation.mutateAsync({
+        id: selectedRental.id,
+        req: {
+          inspectorName,
+          damageFee,
+          itemConditions
+        }
+      });
+      toast.success("Nhận trả thiết bị thành công!");
+      setIsReturnOpen(false);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Lỗi trả thiết bị");
+    }
+  };
+
+  const handleSettle = async (id: number) => {
+    try {
+      await settleMutation.mutateAsync(id);
+      toast.success("Quyết toán đơn thuê và hoàn cọc thành công!");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Lỗi quyết toán");
+    }
+  };
+
+  const getStatusColor = (status: RentalOrderStatus) => {
+    switch (status) {
+      case RentalOrderStatus.PENDING_APPROVAL:
+        return "bg-amber-50 text-amber-600 border-amber-100";
+      case RentalOrderStatus.REJECTED:
+        return "bg-red-50 text-red-600 border-red-100";
+      case RentalOrderStatus.PENDING_PAYMENT:
+        return "bg-amber-100 text-amber-800 border-amber-200";
+      case RentalOrderStatus.PAID_DEPOSIT:
+        return "bg-blue-50 text-blue-600 border-blue-100";
+      case RentalOrderStatus.CONTRACT_SIGNED:
+        return "bg-indigo-50 text-indigo-600 border-indigo-100";
+      case RentalOrderStatus.DEVICE_HANDED_OVER:
+        return "bg-purple-50 text-purple-600 border-purple-100";
+      case RentalOrderStatus.RETURNED:
+        return "bg-zinc-100 text-zinc-600 border-zinc-200";
+      case RentalOrderStatus.COMPLETED:
+        return "bg-emerald-600 text-white border-emerald-600";
+      case RentalOrderStatus.CANCELED:
+        return "bg-red-50 text-red-600 border-red-100";
+      default:
+        return "bg-zinc-50 text-zinc-500 border-zinc-100";
+    }
+  };
+
+  const getStatusLabel = (status: RentalOrderStatus) => {
+    switch (status) {
+      case RentalOrderStatus.PENDING_APPROVAL:
+        return "Chờ duyệt thuê";
+      case RentalOrderStatus.REJECTED:
+        return "Từ chối thuê";
+      case RentalOrderStatus.PENDING_PAYMENT:
+        return "Chờ cọc";
+      case RentalOrderStatus.PAID_DEPOSIT:
+        return "Đã cọc - Chờ ký HĐ";
+      case RentalOrderStatus.CONTRACT_SIGNED:
+        return "Đã ký HĐ - Chờ nhận máy";
+      case RentalOrderStatus.DEVICE_HANDED_OVER:
+        return "Đang thuê";
+      case RentalOrderStatus.RETURNED:
+        return "Đã trả máy - Quyết toán";
+      case RentalOrderStatus.COMPLETED:
+        return "Hoàn tất";
+      case RentalOrderStatus.CANCELED:
+        return "Đã hủy";
+      default:
+        return status;
+    }
+  };
+
+  const filteredRentals = rentals.filter(
+    (r) =>
+      r.code.toLowerCase().includes(search.toLowerCase()) ||
+      r.userEmail.toLowerCase().includes(search.toLowerCase()) ||
+      r.shippingName.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="flex-1 space-y-4 lg:space-y-6">
+      {/* KPI Stats */}
+      <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          title="Tổng yêu cầu thuê"
+          value={totalElements}
+          trend={8}
+          icon={Calendar}
+          accent="bg-red-600"
+        />
+        <StatCard
+          title="Chờ duyệt"
+          value={rentals.filter((r) => r.status === RentalOrderStatus.PENDING_APPROVAL).length}
+          icon={Clock}
+          accent="bg-amber-500"
+        />
+        <StatCard
+          title="Đang thuê máy"
+          value={rentals.filter((r) => r.status === RentalOrderStatus.DEVICE_HANDED_OVER).length}
+          icon={Truck}
+          accent="bg-indigo-500"
+        />
+        <StatCard
+          title="Chờ quyết toán"
+          value={rentals.filter((r) => r.status === RentalOrderStatus.RETURNED).length}
+          icon={CheckCircle2}
+          accent="bg-emerald-500"
+        />
+      </div>
+
+      {/* Main Table Card */}
+      <div className="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden">
+        {/* Header */}
+        <div className="px-5 py-4 sm:py-5 border-b border-zinc-50">
+          <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
+            <div>
+              <div className="flex items-center gap-3 mb-1">
+                <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
+                  <Calendar className="w-4.5 h-4.5 text-white" strokeWidth={2} />
+                </div>
+                <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
+                  Quản lý thuê máy ảnh
+                </h2>
+              </div>
+              <p className="text-[14px] text-zinc-500 font-medium ml-12">
+                Duyệt hồ sơ, bàn giao/nhận trả thiết bị vật lý và ký kết hợp đồng điện tử
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              {/* Status Selector */}
+              <select
+                value={statusFilter}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value as any);
+                  setPage(0);
+                }}
+                className="h-10 px-3 rounded-xl border border-zinc-200 text-xs font-bold text-zinc-600 bg-white outline-none focus:border-red-600"
+              >
+                <option value="ALL">Tất cả trạng thái</option>
+                <option value={RentalOrderStatus.PENDING_APPROVAL}>Chờ duyệt thuê</option>
+                <option value={RentalOrderStatus.REJECTED}>Từ chối thuê</option>
+                <option value={RentalOrderStatus.PENDING_PAYMENT}>Chờ thanh toán cọc</option>
+                <option value={RentalOrderStatus.PAID_DEPOSIT}>Đã cọc - Chờ ký HĐ</option>
+                <option value={RentalOrderStatus.CONTRACT_SIGNED}>Đã ký HĐ - Chờ giao máy</option>
+                <option value={RentalOrderStatus.DEVICE_HANDED_OVER}>Đang cho thuê</option>
+                <option value={RentalOrderStatus.RETURNED}>Đã trả - Chờ quyết toán</option>
+                <option value={RentalOrderStatus.COMPLETED}>Hoàn thành / Hoàn cọc</option>
+              </select>
+
+              <div className="relative flex-1 xl:w-80 group">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors duration-200" />
+                <Input
+                  placeholder="Tìm theo mã đơn, email, người nhận..."
+                  className="pl-10 h-10 rounded-xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:border-red-500/30 transition-all text-xs font-medium text-zinc-900"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Table List */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-zinc-50/50 border-b border-zinc-100">
+                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">Đơn thuê</th>
+                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">Khách hàng</th>
+                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">Thời hạn thuê</th>
+                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">Phí thuê & Cọc</th>
+                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">Trạng thái</th>
+                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-50">
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td colSpan={6} className="px-8 py-6">
+                      <div className="h-12 bg-zinc-50 rounded-xl w-full" />
+                    </td>
+                  </tr>
+                ))
+              ) : filteredRentals.length === 0 ? (
+                <tr>
+                  <td colSpan={6}>
+                    <EmptyState
+                      title="Không tìm thấy đơn thuê nào"
+                      description="Hãy đổi bộ lọc hoặc từ khóa tìm kiếm."
+                    />
+                  </td>
+                </tr>
+              ) : (
+                filteredRentals.map((rental) => (
+                  <tr key={rental.id} className="hover:bg-zinc-50/30 transition-all duration-200">
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-zinc-950">#{rental.code}</span>
+                        <span className="text-[10px] text-zinc-400 font-semibold mt-1">
+                          {rental.items.length} thiết bị
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-zinc-950">{rental.shippingName}</span>
+                        <span className="text-[11px] text-zinc-400 mt-0.5">{rental.userEmail}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-600">
+                        <span>{rental.startDate.split("T")[0]}</span>
+                        <ArrowRight className="w-3 h-3 text-zinc-300" />
+                        <span>{rental.endDate.split("T")[0]}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-red-600">{formatVND(rental.rentalFee)}</span>
+                        <span className="text-[10px] text-amber-600 font-semibold mt-0.5">
+                          Cọc: {formatVND(rental.depositAmount)}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={cn(
+                        "px-2.5 py-1 rounded-xl text-[11px] font-bold border",
+                        getStatusColor(rental.status)
+                      )}>
+                        {getStatusLabel(rental.status)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex gap-2 justify-end">
+                        {/* Approve/Reject Buttons */}
+                        {rental.status === RentalOrderStatus.PENDING_APPROVAL && (
+                          <>
+                            <Button
+                              onClick={() => handleOpenApprove(rental)}
+                              className="h-8 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold border-none"
+                            >
+                              Duyệt thuê
+                            </Button>
+                            <Button
+                              onClick={() => handleOpenReject(rental)}
+                              className="h-8 px-3 rounded-lg bg-zinc-100 hover:bg-red-50 text-zinc-600 hover:text-red-600 text-xs font-bold border border-zinc-100"
+                            >
+                              Từ chối
+                            </Button>
+                          </>
+                        )}
+
+                        {/* Pay Deposit Button */}
+                        {rental.status === RentalOrderStatus.PENDING_PAYMENT && (
+                          <Button
+                            onClick={() => handlePayDeposit(rental.id)}
+                            className="h-8 px-3 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold border-none"
+                          >
+                            Xác nhận cọc
+                          </Button>
+                        )}
+
+                        {/* Handover Button */}
+                        {rental.status === RentalOrderStatus.CONTRACT_SIGNED && (
+                          <Button
+                            onClick={() => handleOpenHandover(rental)}
+                            className="h-8 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold border-none"
+                          >
+                            Bàn giao máy
+                          </Button>
+                        )}
+
+                        {/* Return Button */}
+                        {rental.status === RentalOrderStatus.DEVICE_HANDED_OVER && (
+                          <Button
+                            onClick={() => handleOpenReturn(rental)}
+                            className="h-8 px-3 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold border-none"
+                          >
+                            Nhận trả máy
+                          </Button>
+                        )}
+
+                        {/* Settle Button */}
+                        {rental.status === RentalOrderStatus.RETURNED && (
+                          <Button
+                            onClick={() => handleSettle(rental.id)}
+                            className="h-8 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold border-none"
+                          >
+                            Quyết toán & Hoàn cọc
+                          </Button>
+                        )}
+
+                        <span className="text-xs text-zinc-400 font-bold self-center">---</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          totalElements={totalElements}
+          size={10}
+          onPageChange={setPage}
+        />
+      </div>
+
+      {/* Approve Modal */}
+      {selectedRental && (
+        <AdminFormDialog
+          open={isApproveOpen}
+          onOpenChange={setIsApproveOpen}
+          title="Duyệt đơn đặt thuê"
+          description="Thiết lập số tiền đặt cọc và gán thiết bị vật lý cụ thể trong kho"
+          icon={CheckCircle2}
+          onSubmit={handleApproveSubmit}
+          isPending={approveMutation.isPending}
+          submitText="Xác nhận duyệt"
+        >
+          {loadingDevices ? (
+            <div className="py-10 flex flex-col items-center">
+              <Loader2 className="w-8 h-8 text-red-600 animate-spin mb-4" />
+              <p className="text-xs text-zinc-400 font-bold">Đang tải danh sách thiết bị vật lý...</p>
+            </div>
+          ) : (
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                  Cập nhật số tiền đặt cọc (VND)
+                </label>
+                <input
+                  type="number"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(Number(e.target.value))}
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                  Gán thiết bị vật lý cụ thể (Theo số Serial)
+                </label>
+                {selectedRental.items.map((item: any) => {
+                  const devs = availableDevicesMap[item.productId] || [];
+                  return (
+                    <div key={item.id} className="p-3 bg-zinc-50 border border-zinc-100 rounded-xl space-y-2">
+                      <div className="text-xs font-bold text-zinc-900">{item.productName}</div>
+                      <select
+                        value={deviceAssignments[item.id] || ""}
+                        onChange={(e) => setDeviceAssignments({ ...deviceAssignments, [item.id]: Number(e.target.value) })}
+                        className="w-full h-9 rounded-lg border border-zinc-200 bg-white text-xs font-semibold px-2 outline-none"
+                      >
+                        <option value="">-- Chọn số Serial thiết bị trống --</option>
+                        {devs.map((d) => (
+                          <option key={d.id} value={d.id}>
+                            {d.serialNumber} ({d.conditionDetails || "Bình thường"})
+                          </option>
+                        ))}
+                      </select>
+                      {devs.length === 0 && (
+                        <p className="text-[10px] text-red-500 font-bold flex items-center gap-1">
+                          <AlertTriangle className="w-3 h-3" /> Hết thiết bị sẵn sàng trong kho!
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </AdminFormDialog>
+      )}
+
+      {/* Reject Modal */}
+      {selectedRental && (
+        <AdminFormDialog
+          open={isRejectOpen}
+          onOpenChange={setIsRejectOpen}
+          title="Từ chối đơn đặt thuê"
+          description="Nêu rõ lý do từ chối yêu cầu thuê máy ảnh của khách hàng"
+          icon={XCircle}
+          onSubmit={handleRejectSubmit}
+          isPending={rejectMutation.isPending}
+          submitText="Từ chối đơn"
+        >
+          <div className="space-y-3">
+            <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+              Lý do từ chối
+            </label>
+            <textarea
+              rows={4}
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Nhập lý do từ chối..."
+              className="w-full p-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 text-xs font-semibold"
+            />
+          </div>
+        </AdminFormDialog>
+      )}
+
+      {/* Handover Modal */}
+      {selectedRental && (
+        <AdminFormDialog
+          open={isHandoverOpen}
+          onOpenChange={setIsHandoverOpen}
+          title="Bàn giao thiết bị vật lý"
+          description="Ghi nhận biên bản kiểm tra trước khi khách hàng mang thiết bị đi"
+          icon={ClipboardList}
+          onSubmit={handleHandoverSubmit}
+          isPending={handoverMutation.isPending}
+          submitText="Xác nhận bàn giao"
+        >
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                Tên nhân viên kiểm tra bàn giao
+              </label>
+              <input
+                type="text"
+                value={inspectorName}
+                onChange={(e) => setInspectorName(e.target.value)}
+                placeholder="Ví dụ: Nguyễn Văn A"
+                className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 text-xs font-semibold"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                Ghi nhận tình trạng thiết bị
+              </label>
+              {selectedRental.items.map((item: any) => (
+                <div key={item.id} className="p-3 bg-zinc-50 rounded-xl space-y-2 border border-zinc-100">
+                  <div className="text-xs font-bold text-zinc-900">
+                    {item.productName} ({item.deviceSerialNumber})
+                  </div>
+                  <input
+                    type="text"
+                    value={itemConditions[item.id] || ""}
+                    onChange={(e) => setItemConditions({ ...itemConditions, [item.id]: e.target.value })}
+                    className="w-full h-9 px-3 rounded-lg border border-zinc-200 bg-white text-xs font-medium"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </AdminFormDialog>
+      )}
+
+      {/* Return Modal */}
+      {selectedRental && (
+        <AdminFormDialog
+          open={isReturnOpen}
+          onOpenChange={setIsReturnOpen}
+          title="Nhận trả thiết bị vật lý"
+          description="Ghi nhận biên bản kiểm tra tình trạng sau khi hoàn trả và tính phí phát sinh"
+          icon={ClipboardList}
+          onSubmit={handleReturnSubmit}
+          isPending={returnMutation.isPending}
+          submitText="Xác nhận trả máy"
+        >
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                Tên nhân viên kiểm tra nhận trả
+              </label>
+              <input
+                type="text"
+                value={inspectorName}
+                onChange={(e) => setInspectorName(e.target.value)}
+                placeholder="Ví dụ: Nguyễn Văn B"
+                className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 text-xs font-semibold"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                Phí phạt hỏng hóc phát sinh (VND)
+              </label>
+              <input
+                type="number"
+                value={damageFee}
+                onChange={(e) => setDamageFee(Number(e.target.value))}
+                className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm text-red-600"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                Ghi nhận tình trạng thiết bị
+              </label>
+              {selectedRental.items.map((item: any) => (
+                <div key={item.id} className="p-3 bg-zinc-50 rounded-xl space-y-2 border border-zinc-100">
+                  <div className="text-xs font-bold text-zinc-900">
+                    {item.productName} ({item.deviceSerialNumber})
+                  </div>
+                  <input
+                    type="text"
+                    value={itemConditions[item.id] || ""}
+                    onChange={(e) => setItemConditions({ ...itemConditions, [item.id]: e.target.value })}
+                    className="w-full h-9 px-3 rounded-lg border border-zinc-200 bg-white text-xs font-medium"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </AdminFormDialog>
+      )}
+    </div>
+  );
+}

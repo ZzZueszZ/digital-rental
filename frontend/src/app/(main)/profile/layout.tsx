@@ -60,6 +60,8 @@ export default function ProfileLayout({
       return { title: "Tổng quan", subtitle: "Trung tâm điều khiển của bạn" };
     if (pathname.includes("/profile/info"))
       return { title: "Hồ sơ cá nhân", subtitle: "Quản lý thông tin định danh" };
+    if (pathname.includes("/profile/ekyc"))
+      return { title: "Xác thực eKYC", subtitle: "Bảo mật định danh & Điều kiện thuê máy" };
     if (pathname.includes("/profile/address"))
       return { title: "Sổ địa chỉ", subtitle: "Các điểm giao nhận hàng" };
     if (pathname.includes("/profile/orders"))
@@ -136,6 +138,12 @@ export default function ProfileLayout({
                 label="Hồ sơ cá nhân"
                 active={pathname.includes("/profile/info")}
                 href="/profile/info"
+              />
+              <SidebarItem
+                icon={<ShieldCheck className="w-4 h-4" />}
+                label="Định danh eKYC"
+                active={pathname.includes("/profile/ekyc")}
+                href="/profile/ekyc"
               />
               <SidebarItem
                 icon={<MapPin className="w-4 h-4" />}

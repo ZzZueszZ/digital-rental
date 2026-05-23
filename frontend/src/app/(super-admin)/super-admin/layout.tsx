@@ -43,6 +43,8 @@ export default function SuperAdminLayout({
       return { title: "Kho hàng", subtitle: "Quản lý thiết bị" };
     if (pathname.includes("/orders"))
       return { title: "Đơn hàng", subtitle: "Quản lý giao dịch" };
+    if (pathname.includes("/rentals"))
+      return { title: "Thuê thiết bị", subtitle: "Quản lý thuê máy ảnh" };
     if (pathname.includes("/vouchers"))
       return { title: "Vouchers", subtitle: "Mã giảm giá" };
     if (pathname.includes("/reviews"))

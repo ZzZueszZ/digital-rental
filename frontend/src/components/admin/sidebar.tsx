@@ -21,6 +21,7 @@ import {
   MessageSquare,
   ShieldAlert,
   Key,
+  Calendar,
 } from "lucide-react";
 import { useAuthSession } from "@/components/auth/Guards";
 import { Role } from "@/constants/enum/role";
@@ -70,7 +71,13 @@ export function AdminSidebar({
     {
       href: "/admin/orders",
       icon: ShoppingCart,
-      label: "Đơn hàng",
+      label: "Đơn mua",
+      roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
+    },
+    {
+      href: "/admin/rentals",
+      icon: Calendar,
+      label: "Đơn thuê",
       roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
     },
     {
@@ -228,7 +235,13 @@ export function StaffSidebar({
     {
       href: "/staff/orders",
       icon: ShoppingCart,
-      label: "Đơn hàng",
+      label: "Đơn mua",
+      roles: [Role.STAFF],
+    },
+    {
+      href: "/staff/rentals",
+      icon: Calendar,
+      label: "Đơn thuê",
       roles: [Role.STAFF],
     },
     {
@@ -392,7 +405,13 @@ export function SuperAdminSidebar({
     {
       href: "/super-admin/orders",
       icon: ShoppingCart,
-      label: "Đơn hàng",
+      label: "Đơn mua",
+      roles: [Role.SUPER_ADMIN],
+    },
+    {
+      href: "/super-admin/rentals",
+      icon: Calendar,
+      label: "Đơn thuê",
       roles: [Role.SUPER_ADMIN],
     },
     {

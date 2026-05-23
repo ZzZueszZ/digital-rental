@@ -26,6 +26,7 @@ public class ProductMapper {
                 .mainImageUrl(product.getMainImageUrl())
                 .brand(product.getBrand())
                 .quantity(product.getQuantity())
+                .rentalQuantity(product.getRentalQuantity())
                 .isActive(product.isActive())
                 .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
                 .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)

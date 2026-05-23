@@ -80,6 +80,7 @@ interface Product {
   categoryId: number;
   categoryName: string;
   quantity: number;
+  rentalQuantity: number;
   active: boolean;
   forRent: boolean;
   forSale: boolean;
@@ -543,12 +544,22 @@ export default function ProductDetailPage() {
 
               {/* Status Pills */}
               <div className="flex flex-wrap gap-2 mb-8">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-50 border border-black/5">
-                  <Box className="w-3.5 h-3.5 text-zinc-400" />
-                  <span className="text-[11px] font-bold text-zinc-950">
-                    Còn lại: {product.quantity}
-                  </span>
-                </div>
+                {product.forSale && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-50 border border-black/5">
+                    <Box className="w-3.5 h-3.5 text-zinc-400" />
+                    <span className="text-[11px] font-bold text-zinc-950">
+                      Tồn kho bán: {product.quantity}
+                    </span>
+                  </div>
+                )}
+                {product.forRent && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-50 border border-black/5">
+                    <Box className="w-3.5 h-3.5 text-zinc-400" />
+                    <span className="text-[11px] font-bold text-zinc-950">
+                      Tồn kho thuê: {product.rentalQuantity ?? 0}
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-50 border border-black/5">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                   <span className="text-[11px] font-bold text-zinc-950">

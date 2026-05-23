@@ -52,7 +52,7 @@ public class RentalServiceImpl implements RentalService {
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy sản phẩm"));
 
         long rentedCount = rentalOrderRepository.countRentedUnitsInPeriod(productId, startDate, endDate);
-        int availableQty = product.getQuantity() - (int) rentedCount;
+        int availableQty = product.getRentalQuantity() - (int) rentedCount;
         return availableQty >= requestedQty;
     }
 

@@ -334,6 +334,9 @@ export default function ProductsAdminPage() {
                   <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
                     Tồn kho
                   </th>
+                  <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
+                    Ngày tạo
+                  </th>
                   <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400 text-right">
                     Thao tác
                   </th>
@@ -343,14 +346,14 @@ export default function ProductsAdminPage() {
                 {query.isLoading ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td colSpan={5} className="px-8 py-6">
+                      <td colSpan={6} className="px-8 py-6">
                         <div className="h-12 bg-zinc-50 rounded-xl w-full" />
                       </td>
                     </tr>
                   ))
                 ) : products.length === 0 ? (
                   <tr>
-                    <td colSpan={5}>
+                    <td colSpan={6}>
                       <EmptyState
                         title="Trống"
                         description={

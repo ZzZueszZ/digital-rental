@@ -130,6 +130,25 @@ export function ProductTableRow({
         </Badge>
       </td>
       <td className="px-6 py-3.5">
+        <div className="flex flex-col gap-1.5">
+          {product.isForSale && (
+            <span className="text-xs font-medium text-zinc-600 flex items-center gap-1.5">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Bán: <span className="font-semibold text-zinc-900">{product.quantity}</span>
+            </span>
+          )}
+          {product.isForRent && (
+            <span className="text-xs font-medium text-zinc-600 flex items-center gap-1.5">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" />
+              Thuê: <span className="font-semibold text-zinc-900">{product.rentalQuantity ?? 0}</span>
+            </span>
+          )}
+          {!product.isForSale && !product.isForRent && (
+            <span className="text-xs text-zinc-400 font-medium">Không cấu hình</span>
+          )}
+        </div>
+      </td>
+      <td className="px-6 py-3.5">
         <div className="flex flex-col">
           <span className="text-xs font-semibold text-zinc-900">
             {format(new Date(product.createdAt), "dd/MM/yyyy", { locale: vi })}
@@ -241,7 +260,7 @@ export function ProductMobileCard({
                 product.isForRent ? "bg-amber-500" : "bg-zinc-300",
               )}
             />{" "}
-            Thuê
+            Thuê ({product.rentalQuantity ?? 0})
           </span>
           <span className="text-sm font-bold text-zinc-950">
             {product.rentPricePerDay?.toLocaleString("vi-VN")} ₫
@@ -255,7 +274,7 @@ export function ProductMobileCard({
                 product.isForSale ? "bg-blue-500" : "bg-zinc-300",
               )}
             />{" "}
-            Bán
+            Bán ({product.quantity})
           </span>
           <span className="text-sm font-bold text-zinc-950">
             {product.salePrice?.toLocaleString("vi-VN")} ₫

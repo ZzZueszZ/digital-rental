@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Package, Plus, Minus, Send, Info } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,9 +23,20 @@ export function StockAdjustmentDialog({
 }: StockAdjustmentDialogProps) {
   const [quantity, setQuantity] = useState<string>("0");
   const [type, setType] = useState<"IMPORT" | "EXPORT">("IMPORT");
+  const [stockType, setStockType] = useState<"SALE" | "RENTAL">("SALE");
   const [reason, setReason] = useState("");
 
   const adjustStockMutation = useAdjustStock(product?.id || 0);
+
+  useEffect(() => {
+    if (product) {
+      if (product.isForSale) {
+        setStockType("SALE");
+      } else if (product.isForRent) {
+        setStockType("RENTAL");
+      }
+    }
+  }, [product]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,9 +47,11 @@ export function StockAdjustmentDialog({
       return;
     }
 
-    if (type === "EXPORT" && product && product.quantity < qtyNum) {
+    const currentStock = stockType === "RENTAL" ? (product?.rentalQuantity ?? 0) : (product?.quantity ?? 0);
+
+    if (type === "EXPORT" && qtyNum > currentStock) {
       toast.error(
-        `Số lượng xuất vượt quá tồn kho (Hiện có: ${product.quantity})`,
+        `Số lượng xuất vượt quá tồn kho (Hiện có: ${currentStock})`,
       );
       return;
     }
@@ -46,6 +59,7 @@ export function StockAdjustmentDialog({
     try {
       await adjustStockMutation.mutateAsync({
         quantityChange: type === "IMPORT" ? qtyNum : -qtyNum,
+        type: stockType,
         reason: reason.trim() || undefined,
       });
       toast.success("Cập nhật tồn kho thành công");
@@ -59,6 +73,8 @@ export function StockAdjustmentDialog({
   };
 
   if (!product) return null;
+
+  const currentStock = stockType === "RENTAL" ? (product.rentalQuantity ?? 0) : product.quantity;
 
   return (
     <AdminFormDialog
@@ -75,6 +91,41 @@ export function StockAdjustmentDialog({
       maxWidth="max-w-md"
     >
       <div className="space-y-6">
+        {/* Stock Type Selection (only if both isForSale and isForRent are true) */}
+        {product.isForSale && product.isForRent && (
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-1">
+              Loại kho điều chỉnh
+            </label>
+            <div className="grid grid-cols-2 gap-2 p-1 bg-zinc-100 rounded-xl">
+              <button
+                type="button"
+                onClick={() => setStockType("SALE")}
+                className={cn(
+                  "flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all",
+                  stockType === "SALE"
+                    ? "bg-white text-zinc-950 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
+                    : "text-zinc-500 hover:text-zinc-700",
+                )}
+              >
+                Kho bán lẻ
+              </button>
+              <button
+                type="button"
+                onClick={() => setStockType("RENTAL")}
+                className={cn(
+                  "flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all",
+                  stockType === "RENTAL"
+                    ? "bg-white text-zinc-950 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
+                    : "text-zinc-500 hover:text-zinc-700",
+                )}
+              >
+                Kho cho thuê
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Current Stock Indicator */}
         <div className="bg-zinc-50 rounded-xl p-4 flex items-center justify-between border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
           <div className="flex items-center gap-3">
@@ -83,10 +134,10 @@ export function StockAdjustmentDialog({
             </div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                Tồn kho hiện tại
+                Tồn kho hiện tại ({stockType === "SALE" ? "Bán lẻ" : "Cho thuê"})
               </p>
               <p className="text-xl font-black text-zinc-950">
-                {product.quantity}{" "}
+                {currentStock}{" "}
                 <span className="text-[10px] uppercase text-zinc-400 ml-1">
                   Sản phẩm
                 </span>
@@ -101,10 +152,10 @@ export function StockAdjustmentDialog({
             <p
               className={cn(
                 "text-xs font-black uppercase",
-                product.quantity > 5 ? "text-emerald-600" : "text-red-600",
+                currentStock > 5 ? "text-emerald-600" : "text-red-600",
               )}
             >
-              {product.quantity > 5 ? "Sẵn sàng" : "Sắp hết hàng"}
+              {currentStock > 5 ? "Sẵn sàng" : "Sắp hết hàng"}
             </p>
           </div>
         </div>

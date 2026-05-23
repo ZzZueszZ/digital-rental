@@ -25,6 +25,7 @@ public class ProductResponse {
     private List<ProductSpecificationResponse> specifications;
     
     private int quantity;
+    private int rentalQuantity;
     private boolean isActive;
     
     private Long categoryId;

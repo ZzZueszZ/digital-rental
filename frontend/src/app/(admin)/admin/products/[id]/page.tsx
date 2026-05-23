@@ -337,29 +337,59 @@ export default function ProductDetailPage({
         <div className="xl:col-span-5 space-y-8">
           {/* Status & Inventory Card */}
           <div className="bg-white p-8 rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)] space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-100 flex flex-col items-center text-center relative group/stock">
-                <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center mb-3 group-hover/stock:scale-110 transition-transform">
-                  <Package className="w-5 h-5 text-emerald-600" />
-                </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600/60 mb-1">
-                  Số lượng kho
-                </span>
-                <span className="text-xl font-black text-emerald-950">
-                  {product.quantity}{" "}
-                  <span className="text-xs font-bold text-emerald-600/50">
-                    máy
+            <div className={cn(
+              "grid gap-4",
+              product.isForSale && product.isForRent ? "grid-cols-3" : "grid-cols-2"
+            )}>
+              {product.isForSale && (
+                <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-100 flex flex-col items-center text-center relative group/stock">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center mb-3 group-hover/stock:scale-110 transition-transform">
+                    <Package className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600/60 mb-1">
+                    Kho bán lẻ
                   </span>
-                </span>
+                  <span className="text-xl font-black text-emerald-950">
+                    {product.quantity}{" "}
+                    <span className="text-xs font-bold text-emerald-600/50">
+                      máy
+                    </span>
+                  </span>
 
-                <button
-                  onClick={() => setIsStockDialogOpen(true)}
-                  className="mt-3 px-3 py-1 bg-white border border-emerald-200 rounded-lg text-[9px] font-black uppercase text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
-                >
-                  Điều chỉnh
-                </button>
-              </div>
-              <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 flex flex-col items-center text-center">
+                  <button
+                    onClick={() => setIsStockDialogOpen(true)}
+                    className="mt-3 px-3 py-1 bg-white border border-emerald-200 rounded-lg text-[9px] font-black uppercase text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                  >
+                    Điều chỉnh
+                  </button>
+                </div>
+              )}
+
+              {product.isForRent && (
+                <div className="p-4 rounded-xl bg-amber-50/50 border border-amber-100 flex flex-col items-center text-center relative group/rental-stock">
+                  <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center mb-3 group-hover/rental-stock:scale-110 transition-transform">
+                    <Package className="w-5 h-5 text-amber-600" />
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-amber-600/60 mb-1">
+                    Kho cho thuê
+                  </span>
+                  <span className="text-xl font-black text-zinc-950">
+                    {product.rentalQuantity ?? 0}{" "}
+                    <span className="text-xs font-bold text-amber-600/50">
+                      máy
+                    </span>
+                  </span>
+
+                  <button
+                    onClick={() => setIsStockDialogOpen(true)}
+                    className="mt-3 px-3 py-1 bg-white border border-amber-200 rounded-lg text-[9px] font-black uppercase text-amber-600 hover:bg-amber-600 hover:text-white transition-all shadow-sm"
+                  >
+                    Điều chỉnh
+                  </button>
+                </div>
+              )}
+
+              <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 flex flex-col items-center text-center justify-center">
                 <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center mb-3">
                   <CheckCircle2 className="w-5 h-5 text-indigo-600" />
                 </div>
@@ -367,7 +397,7 @@ export default function ProductDetailPage({
                   Trạng thái
                 </span>
                 <span className="text-sm font-black text-indigo-950 uppercase tracking-tighter">
-                  Sẵn sàng thuê
+                  {(!product.isForRent && product.isForSale) ? "Sẵn sàng bán" : "Sẵn sàng thuê"}
                 </span>
               </div>
             </div>

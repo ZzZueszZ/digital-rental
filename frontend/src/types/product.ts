@@ -37,6 +37,7 @@ export interface ProductResponse {
   brand: string;
   specifications: ProductSpecificationResponse[];
   quantity: number;
+  rentalQuantity: number;
   active: boolean;
   categoryId: number;
   categoryName: string;

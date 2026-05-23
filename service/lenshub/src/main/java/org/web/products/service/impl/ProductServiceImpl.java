@@ -151,6 +151,7 @@ public class ProductServiceImpl implements ProductService {
                 .isForSale(request.getIsForSale() != null ? request.getIsForSale() : false)
                 .brand(request.getBrand())
                 .quantity(0)
+                .rentalQuantity(0)
                 .mainImageUrl(mainImageUrl)
                 .category(category)
                 .isActive(true)

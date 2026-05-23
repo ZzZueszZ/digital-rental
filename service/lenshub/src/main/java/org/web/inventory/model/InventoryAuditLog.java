@@ -33,6 +33,10 @@ public class InventoryAuditLog extends BaseAuditEntity {
     @Column(name = "new_stock", nullable = false)
     private int newStock;
 
+    @Column(name = "stock_type", nullable = false)
+    @Builder.Default
+    private String stockType = "SALE";
+
     @Column(columnDefinition = "TEXT")
     private String reason;
 }

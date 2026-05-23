@@ -50,7 +50,12 @@ public class InventoryServiceImpl implements InventoryService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy sản phẩm"));
 
-        int oldStock = product.getQuantity();
+        String stockType = request.getType() != null ? request.getType().toUpperCase() : "SALE";
+        if (!stockType.equals("RENTAL") && !stockType.equals("SALE")) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Loại tồn kho không hợp lệ. Phải là SALE hoặc RENTAL.");
+        }
+
+        int oldStock = stockType.equals("RENTAL") ? product.getRentalQuantity() : product.getQuantity();
         int delta = request.getQuantityChange();
         int newStock = oldStock + delta;
 
@@ -58,7 +63,11 @@ public class InventoryServiceImpl implements InventoryService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Tồn kho không thể âm");
         }
 
-        product.setQuantity(newStock);
+        if (stockType.equals("RENTAL")) {
+            product.setRentalQuantity(newStock);
+        } else {
+            product.setQuantity(newStock);
+        }
         productRepository.save(product);
 
         User changedBy = getCurrentUser();
@@ -67,6 +76,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .product(product)
                 .oldStock(oldStock)
                 .newStock(newStock)
+                .stockType(stockType)
                 .reason(request.getReason())
                 .changedBy(changedBy)
                 .build();
@@ -108,6 +118,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .productName(log.getProduct().getName())
                 .oldStock(log.getOldStock())
                 .newStock(log.getNewStock())
+                .stockType(log.getStockType())
                 .reason(log.getReason())
                 .changedByEmail(log.getChangedBy() != null ? log.getChangedBy().getEmail() : "Unknown")
                 .changedAt(log.getCreatedAt())

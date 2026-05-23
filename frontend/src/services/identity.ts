@@ -64,7 +64,7 @@ export const identityService = {
   },
 
   getPendingKycSessions: async (page = 0, size = 10) => {
-    const res = await http.get<{ success: boolean; data: KycSessionResponse[]; meta?: any }>(
+    const res = await http.get<IBackendRes<KycSessionResponse[]>>(
       `/admin/ekyc/pending?page=${page}&size=${size}`
     );
     return res.data;

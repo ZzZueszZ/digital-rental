@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { identityService, KycSessionResponse } from "@/services/identity";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,8 +16,6 @@ import {
   RefreshCw,
   Fingerprint,
   Upload,
-  UserCheck,
-  FileCheck
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -42,7 +40,6 @@ function base64ToFile(base64String: string, filename: string): File {
 }
 
 export default function EkycPage() {
-  const router = useRouter();
   const { refetch: refetchProfile } = useMyProfile();
 
   const [kycSession, setKycSession] = useState<KycSessionResponse | null>(null);
@@ -194,7 +191,7 @@ export default function EkycPage() {
       setFrontImage(null);
       setBackImage(null);
       setSelfieImage(null);
-    } catch (err) {
+    } catch {
       toast.error("Không thể khởi tạo phiên xác thực");
     } finally {
       setLoading(false);
@@ -259,8 +256,15 @@ export default function EkycPage() {
       }
       await refetchProfile();
       await fetchKycStatus();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Gửi thông tin xác thực thất bại");
+    } catch (err: unknown) {
+      const message =
+        typeof err === "object" &&
+        err !== null &&
+        "response" in err &&
+        typeof (err as { response?: { data?: { message?: unknown } } }).response?.data?.message === "string"
+          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+          : "Gửi thông tin xác thực thất bại";
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
@@ -268,7 +272,7 @@ export default function EkycPage() {
 
   if (loading) {
     return (
-      <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-[0_2px_6px_rgba(0,0,0,0.04)] flex items-center justify-center min-h-[400px] animate-in fade-in slide-in-from-right-4 duration-500">
+      <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm flex items-center justify-center min-h-[400px] animate-in fade-in slide-in-from-right-4 duration-500">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 text-red-600 animate-spin" />
           <p className="text-xs font-semibold text-zinc-400">Đang kiểm tra hồ sơ định danh của bạn...</p>
@@ -280,7 +284,7 @@ export default function EkycPage() {
   // State 1: Verification Approved
   if (kycSession?.status === "APPROVED") {
     return (
-      <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-[0_2px_6px_rgba(0,0,0,0.04)] animate-in fade-in slide-in-from-right-4 duration-500">
+      <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm animate-in fade-in slide-in-from-right-4 duration-500">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12 pb-8 border-b border-zinc-100">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
@@ -394,7 +398,14 @@ export default function EkycPage() {
                 <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block text-center md:text-left">Mặt trước CCCD</span>
                 <div className="aspect-[1.6/1] rounded-2xl overflow-hidden border border-zinc-200/80 bg-zinc-50/50 flex items-center justify-center shadow-sm p-2">
                   {kycSession.frontImageUrl && (
-                    <img src={getImageUrl(kycSession.frontImageUrl)} className="w-full h-full object-contain rounded-xl" alt="Front CCCD" />
+                    <Image
+                      src={getImageUrl(kycSession.frontImageUrl)}
+                      alt="Front CCCD"
+                      width={1200}
+                      height={750}
+                      unoptimized
+                      className="w-full h-full object-contain rounded-xl"
+                    />
                   )}
                 </div>
               </div>
@@ -402,7 +413,14 @@ export default function EkycPage() {
                 <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block text-center md:text-left">Mặt sau CCCD</span>
                 <div className="aspect-[1.6/1] rounded-2xl overflow-hidden border border-zinc-200/80 bg-zinc-50/50 flex items-center justify-center shadow-sm p-2">
                   {kycSession.backImageUrl && (
-                    <img src={getImageUrl(kycSession.backImageUrl)} className="w-full h-full object-contain rounded-xl" alt="Back CCCD" />
+                    <Image
+                      src={getImageUrl(kycSession.backImageUrl)}
+                      alt="Back CCCD"
+                      width={1200}
+                      height={750}
+                      unoptimized
+                      className="w-full h-full object-contain rounded-xl"
+                    />
                   )}
                 </div>
               </div>
@@ -410,7 +428,14 @@ export default function EkycPage() {
                 <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block mb-2">Ảnh chân dung</span>
                 <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-zinc-200 bg-zinc-50/50 flex items-center justify-center shadow-md">
                   {kycSession.selfieImageUrl && (
-                    <img src={getImageUrl(kycSession.selfieImageUrl)} className="w-full h-full object-cover" alt="Selfie" />
+                    <Image
+                      src={getImageUrl(kycSession.selfieImageUrl)}
+                      alt="Selfie"
+                      width={600}
+                      height={600}
+                      unoptimized
+                      className="w-full h-full object-cover"
+                    />
                   )}
                 </div>
               </div>
@@ -424,7 +449,7 @@ export default function EkycPage() {
   // State 2: Under Review / Pending Review
   if (kycSession?.status === "PENDING_REVIEW") {
     return (
-      <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-[0_2px_6px_rgba(0,0,0,0.04)] animate-in fade-in slide-in-from-right-4 duration-500">
+      <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm animate-in fade-in slide-in-from-right-4 duration-500">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12 pb-8 border-b border-zinc-100">
           <div>
             <h1 className="text-[28px] font-semibold text-zinc-950 tracking-tight leading-tight">
@@ -474,7 +499,7 @@ export default function EkycPage() {
   // State 3: Rejected
   if (kycSession?.status === "REJECTED") {
     return (
-      <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-[0_2px_6px_rgba(0,0,0,0.04)] animate-in fade-in slide-in-from-right-4 duration-500">
+      <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm animate-in fade-in slide-in-from-right-4 duration-500">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12 pb-8 border-b border-zinc-100">
           <div>
             <h1 className="text-[28px] font-semibold text-zinc-950 tracking-tight leading-tight">
@@ -512,7 +537,7 @@ export default function EkycPage() {
 
   // Wizard Flow (NOT_STARTED, STARTED, CREATED)
   return (
-    <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-[0_2px_6px_rgba(0,0,0,0.04)] animate-in fade-in slide-in-from-right-4 duration-500">
+    <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 pb-8 border-b border-zinc-100">
         <div>
           <h1 className="text-[28px] font-semibold text-zinc-950 tracking-tight leading-tight">
@@ -588,27 +613,27 @@ export default function EkycPage() {
                 value={formData.gender}
                 onValueChange={(v) => setFormData({ ...formData, gender: v || "MALE" })}
               >
-                <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-xl px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
+                <SelectTrigger className="w-full h-12! bg-white! border-black/5! rounded-xl px-5 font-semibold text-[15px] focus:border-red-600/30! transition-all duration-200 text-left shadow-dash-card outline-none">
                   <span className={cn(formData.gender ? "text-zinc-900" : "text-zinc-400")}>
                     {formData.gender === "MALE" ? "Nam" : formData.gender === "FEMALE" ? "Nữ" : "Khác"}
                   </span>
                 </SelectTrigger>
-                <SelectContent className="rounded-xl shadow-dash-overlay border-black/5 p-1 bg-white z-[100]">
+                <SelectContent className="rounded-xl shadow-dash-overlay border-black/5 p-1 bg-white z-100">
                   <SelectItem
                     value="MALE"
-                    className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
+                    className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-highlighted:bg-red-600 data-highlighted:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
                   >
                     Nam
                   </SelectItem>
                   <SelectItem
                     value="FEMALE"
-                    className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
+                    className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-highlighted:bg-red-600 data-highlighted:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
                   >
                     Nữ
                   </SelectItem>
                   <SelectItem
                     value="OTHER"
-                    className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
+                    className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-highlighted:bg-red-600 data-highlighted:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
                   >
                     Khác
                   </SelectItem>
@@ -707,7 +732,14 @@ export default function EkycPage() {
             <div className="max-w-xl mx-auto">
               {frontImage ? (
                 <div className="relative aspect-[1.6/1] w-full rounded-2xl border border-zinc-200 bg-zinc-50 flex items-center justify-center p-4">
-                  <img src={getImageUrl(frontImage)} className="w-full h-full object-contain rounded-lg" alt="front cccd" />
+                  <Image
+                    src={getImageUrl(frontImage)}
+                    alt="front cccd"
+                    width={1200}
+                    height={750}
+                    unoptimized
+                    className="w-full h-full object-contain rounded-lg"
+                  />
                   <button
                     onClick={() => setFrontImage(null)}
                     className="absolute top-3 right-3 bg-zinc-900/80 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold hover:bg-red-600 transition-colors shadow"
@@ -797,7 +829,14 @@ export default function EkycPage() {
             <div className="max-w-xl mx-auto">
               {backImage ? (
                 <div className="relative aspect-[1.6/1] w-full rounded-2xl border border-zinc-200 bg-zinc-50 flex items-center justify-center p-4">
-                  <img src={getImageUrl(backImage)} className="w-full h-full object-contain rounded-lg" alt="back cccd" />
+                  <Image
+                    src={getImageUrl(backImage)}
+                    alt="back cccd"
+                    width={1200}
+                    height={750}
+                    unoptimized
+                    className="w-full h-full object-contain rounded-lg"
+                  />
                   <button
                     onClick={() => setBackImage(null)}
                     className="absolute top-3 right-3 bg-zinc-900/80 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold hover:bg-red-600 transition-colors shadow"
@@ -887,7 +926,14 @@ export default function EkycPage() {
             <div className="max-w-md mx-auto">
               {selfieImage ? (
                 <div className="relative aspect-square w-full rounded-2xl border border-zinc-200 bg-zinc-50 flex items-center justify-center p-4 animate-in zoom-in-95 duration-200">
-                  <img src={getImageUrl(selfieImage)} className="w-full h-full object-cover rounded-xl" alt="selfie selfie" />
+                  <Image
+                    src={getImageUrl(selfieImage)}
+                    alt="selfie selfie"
+                    width={800}
+                    height={800}
+                    unoptimized
+                    className="w-full h-full object-cover rounded-xl"
+                  />
                   <button
                     onClick={() => setSelfieImage(null)}
                     className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-zinc-900/80 text-white rounded-xl px-4 py-2 text-xs font-bold hover:bg-red-600 transition-colors shadow-md"
@@ -987,19 +1033,46 @@ export default function EkycPage() {
                 <div className="space-y-2">
                   <span className="text-[10px] font-bold text-zinc-400 uppercase block text-center">Mặt trước CCCD</span>
                   <div className="aspect-[1.6/1] rounded-xl overflow-hidden border border-zinc-100 bg-zinc-50/50 flex items-center justify-center shadow-sm p-1">
-                    {frontImage && <img src={getImageUrl(frontImage)} className="w-full h-full object-contain rounded-lg" alt="front preview" />}
+                    {frontImage && (
+                      <Image
+                        src={getImageUrl(frontImage)}
+                        alt="front preview"
+                        width={1200}
+                        height={750}
+                        unoptimized
+                        className="w-full h-full object-contain rounded-lg"
+                      />
+                    )}
                   </div>
                 </div>
                 <div className="space-y-2">
                   <span className="text-[10px] font-bold text-zinc-400 uppercase block text-center">Mặt sau CCCD</span>
                   <div className="aspect-[1.6/1] rounded-xl overflow-hidden border border-zinc-100 bg-zinc-50/50 flex items-center justify-center shadow-sm p-1">
-                    {backImage && <img src={getImageUrl(backImage)} className="w-full h-full object-contain rounded-lg" alt="back preview" />}
+                    {backImage && (
+                      <Image
+                        src={getImageUrl(backImage)}
+                        alt="back preview"
+                        width={1200}
+                        height={750}
+                        unoptimized
+                        className="w-full h-full object-contain rounded-lg"
+                      />
+                    )}
                   </div>
                 </div>
                 <div className="space-y-2 col-span-2 flex flex-col items-center">
                   <span className="text-[10px] font-bold text-zinc-400 uppercase block mb-1">Ảnh chụp selfie</span>
                   <div className="w-20 h-20 rounded-full overflow-hidden border border-zinc-100 bg-zinc-50/50 flex items-center justify-center shadow-sm">
-                    {selfieImage && <img src={getImageUrl(selfieImage)} className="w-full h-full object-cover" alt="selfie preview" />}
+                    {selfieImage && (
+                      <Image
+                        src={getImageUrl(selfieImage)}
+                        alt="selfie preview"
+                        width={400}
+                        height={400}
+                        unoptimized
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -1042,15 +1115,6 @@ export default function EkycPage() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function InfoRow({ label, value }: { label: string; value?: string }) {
-  return (
-    <div className="flex items-center justify-between py-3 border-b border-zinc-100/50 last:border-b-0">
-      <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">{label}</span>
-      <span className="text-xs font-semibold text-zinc-800 text-right max-w-[70%] truncate">{value || "---"}</span>
     </div>
   );
 }

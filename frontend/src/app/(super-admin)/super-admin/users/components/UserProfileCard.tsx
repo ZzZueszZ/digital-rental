@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
@@ -439,13 +440,11 @@ export function UserProfileCard({
               </div>
             </ProfileField>
             <ProfileField label="Ngày sinh">
-              <Input
-                type="date"
+              <DateInput
                 value={form.dateOfBirth || ""}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, dateOfBirth: e.target.value }))
+                onChange={(v) =>
+                  setForm((p) => ({ ...p, dateOfBirth: v }))
                 }
-                className="h-12 rounded-xl border-black/5 bg-white text-[15px] font-semibold shadow-dash-card"
               />
             </ProfileField>
             <ProfileField label="Nghề nghiệp">

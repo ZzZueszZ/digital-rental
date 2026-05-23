@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { identityService, KycSessionResponse } from "@/services/identity";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
 import {
   ShieldCheck,
   ShieldAlert,
@@ -575,12 +576,10 @@ export default function EkycPage() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-zinc-500 ml-1">Ngày sinh *</label>
-              <Input
+              <DateInput
                 required
-                type="date"
                 value={formData.dateOfBirth}
-                onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                onChange={(v) => setFormData({ ...formData, dateOfBirth: v })}
               />
             </div>
             <div className="space-y-2">
@@ -648,22 +647,18 @@ export default function EkycPage() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-zinc-500 ml-1">Ngày cấp *</label>
-              <Input
+              <DateInput
                 required
-                type="date"
                 value={formData.issuedDate}
-                onChange={(e) => setFormData({ ...formData, issuedDate: e.target.value })}
-                className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                onChange={(v) => setFormData({ ...formData, issuedDate: v })}
               />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-zinc-500 ml-1">Ngày hết hạn *</label>
-              <Input
+              <DateInput
                 required
-                type="date"
                 value={formData.expiryDate}
-                onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-                className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                onChange={(v) => setFormData({ ...formData, expiryDate: v })}
               />
             </div>
           </div>

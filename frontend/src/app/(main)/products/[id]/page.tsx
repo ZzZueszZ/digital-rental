@@ -32,6 +32,7 @@ import {
   Image as ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DateInput } from "@/components/ui/date-input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -668,11 +669,10 @@ export default function ProductDetailPage() {
                         <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-2">
                           Ngày nhận máy
                         </label>
-                        <input
-                          type="date"
+                        <DateInput
                           min={new Date().toISOString().split("T")[0]}
                           value={rentalStartDate}
-                          onChange={(e) => setRentalStartDate(e.target.value)}
+                          onChange={(v) => setRentalStartDate(v)}
                           className="w-full h-11 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 transition-all"
                         />
                       </div>
@@ -680,11 +680,10 @@ export default function ProductDetailPage() {
                         <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-2">
                           Ngày trả máy
                         </label>
-                        <input
-                          type="date"
+                        <DateInput
                           min={rentalStartDate || new Date().toISOString().split("T")[0]}
                           value={rentalEndDate}
-                          onChange={(e) => setRentalEndDate(e.target.value)}
+                          onChange={(v) => setRentalEndDate(v)}
                           className="w-full h-11 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 transition-all"
                         />
                       </div>

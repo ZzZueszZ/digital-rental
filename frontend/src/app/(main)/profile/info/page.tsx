@@ -8,6 +8,7 @@ import {
 } from "@/services/profile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Camera, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -175,13 +176,11 @@ export default function InfoPage() {
             <label className="text-sm font-medium text-zinc-500 ml-1">
               Ngày sinh nhật
             </label>
-            <Input
-              type="date"
+            <DateInput
               value={formData.dateOfBirth}
-              onChange={(e) =>
-                setFormData({ ...formData, dateOfBirth: e.target.value })
+              onChange={(v) =>
+                setFormData({ ...formData, dateOfBirth: v })
               }
-              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
           <div className="space-y-2">

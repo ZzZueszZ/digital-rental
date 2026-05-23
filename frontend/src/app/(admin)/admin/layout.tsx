@@ -31,6 +31,8 @@ export default function AdminLayout({
       return { title: "Tổng quan", subtitle: "Hệ thống quản trị" };
     if (pathname.includes("/users"))
       return { title: "Người dùng", subtitle: "Quản lý thành viên" };
+    if (pathname.includes("/ekyc"))
+      return { title: "Duyệt eKYC", subtitle: "Phê duyệt định danh" };
     if (pathname.includes("/categories"))
       return { title: "Danh mục", subtitle: "Phân loại sản phẩm" };
     if (pathname.includes("/address"))

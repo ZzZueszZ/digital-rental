@@ -188,6 +188,40 @@ export default function UsersAdminPage() {
     );
   };
 
+  const getKycBadge = (status: KycStatus) => {
+    switch (status) {
+      case KycStatus.VERIFIED:
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            Đã xác minh
+          </span>
+        );
+      case KycStatus.PENDING:
+      case KycStatus.MANUAL_REVIEW:
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+            <Clock className="w-3.5 h-3.5 animate-pulse" />
+            Chờ duyệt
+          </span>
+        );
+      case KycStatus.REJECTED:
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">
+            <AlertCircle className="w-3.5 h-3.5" />
+            Từ chối
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-zinc-50 text-zinc-500 border border-zinc-200">
+            <AlertCircle className="w-3.5 h-3.5" strokeWidth={2} />
+            Chưa eKYC
+          </span>
+        );
+    }
+  };
+
   const totalPages = pagination?.totalPages || 1;
   const totalElements = pagination?.totalElements || 0;
 
@@ -397,11 +431,7 @@ export default function UsersAdminPage() {
                     />
                     {statusCfg.label}
                   </span>
-                  {u.kycStatus === KycStatus.VERIFIED ? (
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                      <ShieldCheck className="w-3 h-3" /> KYC
-                    </span>
-                  ) : null}
+                  {getKycBadge(u.kycStatus)}
                   {u.roles.map((role: string) => (
                     <span
                       key={role}
@@ -538,19 +568,8 @@ export default function UsersAdminPage() {
                       {getStatusBadge(u.accountStatus)}
                     </td>
 
-                    {/* KYC */}
                     <td className="px-6 py-3">
-                      {u.kycStatus === KycStatus.VERIFIED ? (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                          <ShieldCheck className="w-3 h-3" />
-                          Đã xác minh
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                          <Clock className="w-3 h-3" />
-                          Chờ duyệt
-                        </span>
-                      )}
+                      {getKycBadge(u.kycStatus)}
                     </td>
 
                     {/* Roles */}

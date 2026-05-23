@@ -8,6 +8,8 @@ export enum KycStatus {
   PENDING = 'PENDING',
   VERIFIED = 'VERIFIED',
   REJECTED = 'REJECTED',
+  MANUAL_REVIEW = 'MANUAL_REVIEW',
+  EXPIRED = 'EXPIRED',
 }
 
 export enum TrustLevel {

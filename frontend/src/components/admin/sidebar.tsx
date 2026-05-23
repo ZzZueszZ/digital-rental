@@ -51,6 +51,12 @@ export function AdminSidebar({
       roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
     },
     {
+      href: "/admin/ekyc",
+      icon: ShieldAlert,
+      label: "Duyệt eKYC",
+      roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
+    },
+    {
       href: "/admin/categories",
       icon: Layers,
       label: "Danh mục",
@@ -212,6 +218,12 @@ export function StaffSidebar({
       href: "/staff/users",
       icon: Users,
       label: "Người dùng",
+      roles: [Role.STAFF],
+    },
+    {
+      href: "/staff/ekyc",
+      icon: ShieldAlert,
+      label: "Duyệt eKYC",
       roles: [Role.STAFF],
     },
     {
@@ -382,6 +394,12 @@ export function SuperAdminSidebar({
       href: "/super-admin/users",
       icon: Users,
       label: "Người dùng",
+      roles: [Role.SUPER_ADMIN],
+    },
+    {
+      href: "/super-admin/ekyc",
+      icon: ShieldAlert,
+      label: "Duyệt eKYC",
       roles: [Role.SUPER_ADMIN],
     },
     {

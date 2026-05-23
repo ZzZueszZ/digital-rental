@@ -31,6 +31,8 @@ export default function StaffLayout({
       return { title: "Tổng quan", subtitle: "Nhân viên hỗ trợ" };
     if (pathname.includes("/users"))
       return { title: "Người dùng", subtitle: "Tra cứu thành viên" };
+    if (pathname.includes("/ekyc"))
+      return { title: "Duyệt eKYC", subtitle: "Phê duyệt định danh" };
     if (pathname.includes("/categories"))
       return { title: "Danh mục", subtitle: "Phân loại sản phẩm" };
     if (pathname.includes("/address"))

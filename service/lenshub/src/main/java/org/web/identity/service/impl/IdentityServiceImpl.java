@@ -136,26 +136,13 @@ public class IdentityServiceImpl implements IdentityService {
                 .build();
         riskAssessmentRepository.save(risk);
 
-        // 3. Update status based on AI score threshold (0.90)
-        if (ocrPassed && faceMatchPassed) {
-            session.setStatus(VerificationSessionStatus.APPROVED);
-            session.setCompletedAt(LocalDateTime.now());
-            verificationSessionRepository.save(session);
+        // 3. Always set to PENDING_REVIEW for manual review by Admin/Staff (purely manual flow)
+        session.setStatus(VerificationSessionStatus.PENDING_REVIEW);
+        verificationSessionRepository.save(session);
 
-            // Update user status
-            user.setKycStatus(KycStatus.VERIFIED);
-            userRepository.save(user);
-
-            // Save UserIdentity record
-            saveUserIdentity(user, request);
-        } else {
-            // Low confidence -> fallback to manual review
-            session.setStatus(VerificationSessionStatus.PENDING_REVIEW);
-            verificationSessionRepository.save(session);
-
-            user.setKycStatus(KycStatus.MANUAL_REVIEW);
-            userRepository.save(user);
-        }
+        // Update user status to PENDING (waiting for manual approval)
+        user.setKycStatus(KycStatus.PENDING);
+        userRepository.save(user);
 
         return mapToResponse(session);
     }

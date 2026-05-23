@@ -39,7 +39,11 @@ import {
   usePriceHistory,
   useUpdateProductPrice,
 } from "@/services/product";
-import { useInventoryLogs } from "@/services/inventory";
+import {
+  useInventoryLogs,
+  useUpdateRentalStock,
+  useUpdateSaleStock,
+} from "@/services/inventory";
 import { useCategories } from "@/services/category";
 import {
   ProductInfoUpdateRequest,
@@ -107,6 +111,12 @@ export default function ProductDetailPage({
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isStockDialogOpen, setIsStockDialogOpen] = useState(false);
   const [isPriceDialogOpen, setIsPriceDialogOpen] = useState(false);
+  const [showStockForm, setShowStockForm] = useState(false);
+  const [saleStockInput, setSaleStockInput] = useState("");
+  const [rentalStockInput, setRentalStockInput] = useState("");
+  const [stockReason, setStockReason] = useState("");
+  const updateSaleStockMutation = useUpdateSaleStock(productId);
+  const updateRentalStockMutation = useUpdateRentalStock(productId);
 
   const handleBack = () => router.push("/super-admin/products");
 
@@ -163,6 +173,46 @@ export default function ProductDetailPage({
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
       toast.error(err.response?.data?.message || "Lỗi khi cập nhật");
+    }
+  };
+
+  const handleUpdateStock = async () => {
+    if (!product) return;
+    const saleStock = Number(saleStockInput);
+    const rentalStock = Number(rentalStockInput);
+    if (!Number.isInteger(saleStock) || saleStock < 0) {
+      toast.error("Tồn kho bán phải là số nguyên >= 0");
+      return;
+    }
+    if (!Number.isInteger(rentalStock) || rentalStock < 0) {
+      toast.error("Tồn kho thuê phải là số nguyên >= 0");
+      return;
+    }
+
+    if (saleStock === product.quantity && rentalStock === (product.rentalQuantity ?? 0)) {
+      toast.info("Không có thay đổi tồn kho");
+      return;
+    }
+
+    try {
+      if (saleStock !== product.quantity) {
+        await updateSaleStockMutation.mutateAsync({
+          quantity: saleStock,
+          reason: stockReason || "Cập nhật tồn kho bán từ trang chi tiết",
+        });
+      }
+      if (rentalStock !== (product.rentalQuantity ?? 0)) {
+        await updateRentalStockMutation.mutateAsync({
+          quantity: rentalStock,
+          reason: stockReason || "Cập nhật tồn kho thuê từ trang chi tiết",
+        });
+      }
+      toast.success("Cập nhật tồn kho thành công");
+      setShowStockForm(false);
+      setStockReason("");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Không thể cập nhật tồn kho");
     }
   };
 
@@ -346,7 +396,7 @@ export default function ProductDetailPage({
                   <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center mb-3 group-hover/stock:scale-110 transition-transform">
                     <Package className="w-5 h-5 text-emerald-600" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600/60 mb-1">
+                  <span className="text-[10px] font-black tracking-normal text-emerald-600/80 mb-1">
                     Kho bán lẻ
                   </span>
                   <span className="text-xl font-black text-emerald-950">
@@ -358,7 +408,7 @@ export default function ProductDetailPage({
 
                   <button
                     onClick={() => setIsStockDialogOpen(true)}
-                    className="mt-3 px-3 py-1 bg-white border border-emerald-200 rounded-lg text-[9px] font-black uppercase text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                    className="mt-3 px-3 py-1 bg-white border border-emerald-200 rounded-lg text-[11px] font-semibold text-emerald-700 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
                   >
                     Điều chỉnh
                   </button>
@@ -370,7 +420,7 @@ export default function ProductDetailPage({
                   <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center mb-3 group-hover/rental-stock:scale-110 transition-transform">
                     <Package className="w-5 h-5 text-amber-600" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-amber-600/60 mb-1">
+                  <span className="text-[10px] font-black tracking-normal text-amber-700/80 mb-1">
                     Kho cho thuê
                   </span>
                   <span className="text-xl font-black text-zinc-950">
@@ -382,7 +432,7 @@ export default function ProductDetailPage({
 
                   <button
                     onClick={() => setIsStockDialogOpen(true)}
-                    className="mt-3 px-3 py-1 bg-white border border-amber-200 rounded-lg text-[9px] font-black uppercase text-amber-600 hover:bg-amber-600 hover:text-white transition-all shadow-sm"
+                    className="mt-3 px-3 py-1 bg-white border border-amber-200 rounded-lg text-[11px] font-semibold text-amber-700 hover:bg-amber-600 hover:text-white transition-all shadow-sm"
                   >
                     Điều chỉnh
                   </button>
@@ -400,6 +450,78 @@ export default function ProductDetailPage({
                   {(!product.isForRent && product.isForSale) ? "Sẵn sàng bán" : "Sẵn sàng thuê"}
                 </span>
               </div>
+            </div>
+
+            <div className="space-y-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowStockForm((prev) => !prev);
+                  setSaleStockInput(String(product.quantity));
+                  setRentalStockInput(String(product.rentalQuantity ?? 0));
+                }}
+                className="w-full h-10 rounded-lg border-zinc-200 text-sm font-semibold"
+              >
+                {showStockForm ? "Ẩn form chỉnh tồn kho" : "Chỉnh tồn kho trực tiếp"}
+              </Button>
+
+              {showStockForm && (
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50/40 p-4 space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <label className="space-y-1">
+                      <span className="text-xs font-semibold text-zinc-700">
+                        Tồn kho bán
+                      </span>
+                      <input
+                        type="number"
+                        min={0}
+                        value={saleStockInput}
+                        onChange={(e) => setSaleStockInput(e.target.value)}
+                        className="w-full h-10 px-3 rounded-lg border border-zinc-200 bg-white text-sm"
+                      />
+                    </label>
+                    <label className="space-y-1">
+                      <span className="text-xs font-semibold text-zinc-700">
+                        Tồn kho thuê
+                      </span>
+                      <input
+                        type="number"
+                        min={0}
+                        value={rentalStockInput}
+                        onChange={(e) => setRentalStockInput(e.target.value)}
+                        className="w-full h-10 px-3 rounded-lg border border-zinc-200 bg-white text-sm"
+                      />
+                    </label>
+                  </div>
+                  <label className="space-y-1 block">
+                    <span className="text-xs font-semibold text-zinc-700">
+                      Lý do điều chỉnh
+                    </span>
+                    <input
+                      type="text"
+                      value={stockReason}
+                      onChange={(e) => setStockReason(e.target.value)}
+                      placeholder="Ví dụ: kiểm kê kho"
+                      className="w-full h-10 px-3 rounded-lg border border-zinc-200 bg-white text-sm"
+                    />
+                  </label>
+                  <Button
+                    type="button"
+                    onClick={handleUpdateStock}
+                    disabled={
+                      updateSaleStockMutation.isPending ||
+                      updateRentalStockMutation.isPending
+                    }
+                    className="w-full h-10 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-semibold"
+                  >
+                    {updateSaleStockMutation.isPending ||
+                    updateRentalStockMutation.isPending
+                      ? "Đang cập nhật..."
+                      : "Lưu tồn kho"}
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className="space-y-4 pt-4 border-t border-black/5">

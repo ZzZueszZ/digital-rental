@@ -1,7 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { http } from "@/lib/http";
 import { IBackendRes } from "@/types/global.d";
-import { InventoryAuditResponse, AdjustStockRequest } from "@/types/inventory";
+import {
+  InventoryAuditResponse,
+  AdjustStockRequest,
+  UpdateStockQuantityRequest,
+} from "@/types/inventory";
 
 export const INVENTORY_KEYS = {
   all: ["inventory"] as const,
@@ -30,6 +34,40 @@ export const useAdjustStock = (productId: number) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: INVENTORY_KEYS.all });
       queryClient.invalidateQueries({ queryKey: ["products"] }); // Also invalidate product detail to update quantity
+    },
+  });
+};
+
+export const useUpdateSaleStock = (productId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (request: UpdateStockQuantityRequest) => {
+      const { data } = await http.put<IBackendRes<InventoryAuditResponse>>(
+        `/inventory/products/${productId}/stock/sale`,
+        request,
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: INVENTORY_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+};
+
+export const useUpdateRentalStock = (productId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (request: UpdateStockQuantityRequest) => {
+      const { data } = await http.put<IBackendRes<InventoryAuditResponse>>(
+        `/inventory/products/${productId}/stock/rental`,
+        request,
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: INVENTORY_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 };

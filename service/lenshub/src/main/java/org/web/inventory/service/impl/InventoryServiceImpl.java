@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.web.common.exceptions.ApplicationException;
 import org.web.inventory.dto.request.AdjustStockRequest;
+import org.web.inventory.dto.request.UpdateStockQuantityRequest;
 import org.web.inventory.dto.response.InventoryAuditResponse;
 import org.web.inventory.model.InventoryAuditLog;
 import org.web.inventory.repository.InventoryAuditLogRepository;
@@ -87,6 +88,18 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    @Transactional
+    public InventoryAuditResponse updateSaleStock(Long productId, UpdateStockQuantityRequest request) {
+        return updateStockByTargetQuantity(productId, request, "SALE");
+    }
+
+    @Override
+    @Transactional
+    public InventoryAuditResponse updateRentalStock(Long productId, UpdateStockQuantityRequest request) {
+        return updateStockByTargetQuantity(productId, request, "RENTAL");
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Page<InventoryAuditResponse> getInventoryLogs(Long productId, LocalDate fromDate, LocalDate toDate, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -123,5 +136,37 @@ public class InventoryServiceImpl implements InventoryService {
                 .changedByEmail(log.getChangedBy() != null ? log.getChangedBy().getEmail() : "Unknown")
                 .changedAt(log.getCreatedAt())
                 .build();
+    }
+
+    private InventoryAuditResponse updateStockByTargetQuantity(Long productId, UpdateStockQuantityRequest request, String stockType) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy sản phẩm"));
+
+        int oldStock = stockType.equals("RENTAL") ? product.getRentalQuantity() : product.getQuantity();
+        int newStock = request.getQuantity();
+
+        if (newStock < 0) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Tồn kho không thể âm");
+        }
+
+        if (stockType.equals("RENTAL")) {
+            product.setRentalQuantity(newStock);
+        } else {
+            product.setQuantity(newStock);
+        }
+        productRepository.save(product);
+
+        User changedBy = getCurrentUser();
+        InventoryAuditLog log = InventoryAuditLog.builder()
+                .product(product)
+                .oldStock(oldStock)
+                .newStock(newStock)
+                .stockType(stockType)
+                .reason(request.getReason())
+                .changedBy(changedBy)
+                .build();
+
+        log = auditLogRepository.save(log);
+        return mapToResponse(log);
     }
 }

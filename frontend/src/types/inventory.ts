@@ -15,3 +15,8 @@ export interface AdjustStockRequest {
   type?: "SALE" | "RENTAL";
   reason?: string;
 }
+
+export interface UpdateStockQuantityRequest {
+  quantity: number;
+  reason?: string;
+}

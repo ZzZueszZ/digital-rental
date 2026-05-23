@@ -139,7 +139,11 @@ export function UserForm({
             variant="ghost"
             size="icon"
             onClick={() =>
-              router.push(isEditing ? `/super-admin/users/${userId}` : "/super-admin/users")
+              router.push(
+                isEditing
+                  ? `/super-admin/users/${userId}`
+                  : "/super-admin/users",
+              )
             }
             className="h-12 w-12 rounded-xl bg-white border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-sm shrink-0"
           >
@@ -266,7 +270,7 @@ export function UserForm({
                         }))
                       }
                     >
-                      <SelectTrigger className="!h-12 rounded-xl !border-black/5 !bg-white text-[15px] font-semibold text-zinc-900 focus:!border-red-600/30 transition-all duration-200 shadow-dash-card outline-none">
+                      <SelectTrigger className="w-full! !h-12 rounded-xl !border-black/5 !bg-white text-[15px] font-semibold text-zinc-900 focus:!border-red-600/30 transition-all duration-200 shadow-dash-card outline-none">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
@@ -362,128 +366,30 @@ export function UserForm({
                 </div>
 
                 {/* KYC Status */}
-                <div
-                  className={cn(
-                    "rounded-xl p-4 border",
-                    isEditing
-                      ? "bg-white border-zinc-200"
-                      : "bg-zinc-50/50 border-zinc-100",
-                  )}
-                >
+                <div className="rounded-xl p-4 border bg-zinc-50/50 border-zinc-100">
                   <p className="text-[12px] font-medium text-zinc-400 mb-2 ml-1">
                     Xác minh danh tính (KYC)
                   </p>
-                  {isEditing ? (
-                    <Select
-                      value={formData.kycStatus}
-                      onValueChange={(val) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          kycStatus: val as KycStatus,
-                        }))
-                      }
-                    >
-                      <SelectTrigger className="!h-12 rounded-xl !border-black/5 !bg-white text-[15px] font-semibold text-zinc-900 focus:!border-red-600/30 transition-all duration-200 shadow-dash-card outline-none">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
-                        <SelectItem
-                          className="rounded-xl px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
-                          value={KycStatus.NOT_STARTED}
-                        >
-                          Chưa bắt đầu
-                        </SelectItem>
-                        <SelectItem
-                          className="rounded-xl px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
-                          value={KycStatus.PENDING}
-                        >
-                          Chờ duyệt
-                        </SelectItem>
-                        <SelectItem
-                          className="rounded-xl px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
-                          value={KycStatus.VERIFIED}
-                        >
-                          Đã xác minh
-                        </SelectItem>
-                        <SelectItem
-                          className="rounded-xl px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
-                          value={KycStatus.REJECTED}
-                        >
-                          Bị từ chối
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-xl border",
-                        user.kycStatus === KycStatus.VERIFIED
-                          ? "bg-emerald-50 border-emerald-200 text-emerald-700"
-                          : user.kycStatus === KycStatus.PENDING
-                            ? "bg-amber-50 border-amber-200 text-amber-700"
-                            : "bg-zinc-100 border-zinc-200 text-zinc-600",
-                      )}
-                    >
-                      {user.kycStatus === KycStatus.VERIFIED
-                        ? "Đã xác minh"
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-xl border",
+                      user.kycStatus === KycStatus.VERIFIED
+                        ? "bg-emerald-50 border-emerald-200 text-emerald-700"
                         : user.kycStatus === KycStatus.PENDING
-                          ? "Chờ duyệt"
+                          ? "bg-amber-50 border-amber-200 text-amber-700"
+                          : user.kycStatus === KycStatus.REJECTED
+                            ? "bg-red-50 border-red-200 text-red-700"
+                            : "bg-zinc-100 border-zinc-200 text-zinc-600",
+                    )}
+                  >
+                    {user.kycStatus === KycStatus.VERIFIED
+                      ? "Đã xác minh"
+                      : user.kycStatus === KycStatus.PENDING
+                        ? "Chờ duyệt"
+                        : user.kycStatus === KycStatus.REJECTED
+                          ? "Bị từ chối"
                           : "Chưa xác minh"}
-                    </span>
-                  )}
-                </div>
-
-                {/* Trust Level */}
-                <div
-                  className={cn(
-                    "rounded-xl p-4 border",
-                    isEditing
-                      ? "bg-white border-zinc-200"
-                      : "bg-zinc-50/50 border-zinc-100",
-                  )}
-                >
-                  <p className="text-[12px] font-medium text-zinc-400 mb-2 ml-1">
-                    Cấp độ tin cậy
-                  </p>
-                  {isEditing ? (
-                    <Select
-                      value={formData.trustLevel}
-                      onValueChange={(val) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          trustLevel: val as TrustLevel,
-                        }))
-                      }
-                    >
-                      <SelectTrigger className="!h-12 rounded-xl !border-black/5 !bg-white text-[15px] font-semibold text-zinc-900 focus:!border-red-600/30 transition-all duration-200 shadow-dash-card outline-none">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
-                        <SelectItem
-                          className="rounded-xl px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
-                          value={TrustLevel.BASIC}
-                        >
-                          BASIC
-                        </SelectItem>
-                        <SelectItem
-                          className="rounded-xl px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
-                          value={TrustLevel.VERIFIED}
-                        >
-                          VERIFIED
-                        </SelectItem>
-                        <SelectItem
-                          className="rounded-xl px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
-                          value={TrustLevel.ELITE}
-                        >
-                          ELITE
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-xl bg-zinc-950 text-white">
-                      {user.trustLevel}
-                    </span>
-                  )}
+                  </span>
                 </div>
 
                 {/* Enabled Status (Only in Edit) */}

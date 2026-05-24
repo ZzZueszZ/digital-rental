@@ -4,8 +4,7 @@ import { use } from "react";
 import {
   ArrowLeft,
   Package,
-  Calendar,
-  Tag,
+    Tag,
   Edit2,
   Trash2,
   RotateCcw,
@@ -133,7 +132,7 @@ export default function ProductDetailPage({
           await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
           toast.success("Vô hiệu hóa thành công");
           setConfirmConfig((prev) => ({ ...prev, open: false }));
-        } catch (err) {
+        } catch {
           toast.error("Không thể vô hiệu hóa sản phẩm");
         }
       },
@@ -152,7 +151,7 @@ export default function ProductDetailPage({
           await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
           toast.success("Khôi phục thành công");
           setConfirmConfig((prev) => ({ ...prev, open: false }));
-        } catch (err) {
+        } catch {
           toast.error("Không thể khôi phục sản phẩm");
         }
       },
@@ -220,7 +219,7 @@ export default function ProductDetailPage({
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-20 gap-4">
         <div className="w-12 h-12 border-4 border-zinc-100 border-t-zinc-950 rounded-full animate-spin" />
-        <p className="text-xs font-black uppercase tracking-widest text-zinc-400">
+        <p className="text-sm font-medium text-zinc-500">
           Đang tải dữ liệu...
         </p>
       </div>
@@ -233,7 +232,7 @@ export default function ProductDetailPage({
           <XCircle className="w-10 h-10 text-red-500" />
         </div>
         <div className="text-center">
-          <h2 className="text-2xl font-black text-zinc-950 tracking-tight">
+          <h2 className="text-2xl font-semibold text-zinc-950 tracking-tight">
             Không tìm thấy sản phẩm
           </h2>
           <p className="text-sm font-medium text-zinc-500 mt-2">
@@ -243,7 +242,7 @@ export default function ProductDetailPage({
         <Button
           onClick={handleBack}
           variant="outline"
-          className="rounded-xl px-8 h-12 font-bold gap-2"
+          className="rounded-xl px-8 h-12 font-semibold gap-2"
         >
           <ArrowLeft className="w-4 h-4" /> Quay lại danh sách
         </Button>
@@ -258,35 +257,36 @@ export default function ProductDetailPage({
   const isDeleted = !!product.deletedAt;
 
   return (
-    <div className="flex-1 space-y-8 animate-in fade-in duration-700">
+    <div className="flex-1 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Top Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mb-8">
-        <div className="flex items-center gap-6">
+      <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm p-5 sm:p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
+        <div className="flex items-center gap-4 min-w-0">
           <Button
             onClick={handleBack}
             variant="ghost"
             size="icon"
-            className="h-12 w-12 rounded-lg bg-white border border-black/5 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-[0_2px_6px_rgba(0,0,0,0.04)] shrink-0"
+            className="h-11 w-11 rounded-xl border border-zinc-100 bg-zinc-50 text-zinc-600 hover:bg-zinc-950 hover:text-white transition-colors shrink-0"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
-            <div className="flex items-center gap-3 mb-1">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded">
-                ID: #{product.id}
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="text-xs font-medium text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-lg">
+                Mã sản phẩm #{product.id}
               </span>
               <Badge
                 className={cn(
-                  "rounded-lg px-3 py-0.5 text-[10px] font-black uppercase tracking-widest border-0 shadow-none",
+                  "rounded-full px-3 py-1 text-xs font-semibold border-0 shadow-none inline-flex items-center gap-1.5",
                   !isDeleted
                     ? "bg-emerald-50 text-emerald-600"
                     : "bg-red-50 text-red-600",
                 )}
               >
+                <span className={cn("h-1.5 w-1.5 rounded-full", !isDeleted ? "bg-emerald-500" : "bg-red-500")} />
                 {!isDeleted ? "Hoạt động" : "Đã xóa"}
               </Badge>
             </div>
-            <h1 className="text-3xl font-black text-zinc-950 tracking-tighter leading-none">
+            <h1 className="text-[28px] sm:text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight truncate">
               {product.name}
             </h1>
           </div>
@@ -297,14 +297,14 @@ export default function ProductDetailPage({
             <>
               <Button
                 onClick={() => setIsEditDialogOpen(true)}
-                className="flex-1 sm:flex-none h-12 rounded-lg bg-white border border-black/5 hover:border-red-600 hover:bg-red-50 text-zinc-950 hover:text-red-600 font-bold px-8 transition-all duration-200 gap-2 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-px"
+                className="flex-1 sm:flex-none h-11 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold px-6 transition-colors gap-2"
               >
                 <Edit2 className="w-4 h-4" /> Chỉnh sửa
               </Button>
               <Button
                 onClick={handleDelete}
                 variant="ghost"
-                className="flex-1 sm:flex-none h-12 rounded-lg bg-white border border-red-100 text-red-600 hover:bg-red-600 hover:text-white font-bold px-6 transition-all duration-200 gap-2 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-px"
+                className="flex-1 sm:flex-none h-11 rounded-xl bg-white border border-red-100 text-red-600 hover:bg-red-600 hover:text-white font-semibold px-6 transition-colors gap-2"
               >
                 <Trash2 className="w-4 h-4" /> Vô hiệu hóa
               </Button>
@@ -313,7 +313,7 @@ export default function ProductDetailPage({
             <Button
               onClick={handleRestore}
               variant="ghost"
-              className="flex-1 sm:flex-none h-12 rounded-lg bg-white border border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white font-bold px-8 transition-all duration-200 gap-2 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-px"
+              className="flex-1 sm:flex-none h-11 rounded-xl bg-white border border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white font-semibold px-6 transition-colors gap-2"
             >
               <RotateCcw className="w-4 h-4" /> Khôi phục
             </Button>
@@ -321,10 +321,10 @@ export default function ProductDetailPage({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
         {/* Left Column: Gallery & Visuals */}
         <div className="xl:col-span-7 space-y-6">
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-50 border border-black/5 shadow-[0_8px_24px_rgba(0,0,0,0.08)] group">
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-50 border border-zinc-100 shadow-sm group">
             <Image
               src={getImageUrl(currentImage)}
               alt={product.name}
@@ -336,7 +336,7 @@ export default function ProductDetailPage({
             <div className="absolute top-6 left-6 flex flex-col gap-2">
               <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-xl shadow-lg border border-black/5 flex items-center gap-2">
                 <Tag className="w-4 h-4 text-indigo-600" />
-                <span className="text-[11px] font-black uppercase text-zinc-900 tracking-widest">
+                <span className="text-xs font-semibold text-zinc-900">
                   {product.brand}
                 </span>
               </div>
@@ -349,10 +349,10 @@ export default function ProductDetailPage({
                 key={idx}
                 onClick={() => setActiveImage(img)}
                 className={cn(
-                  "relative w-24 h-24 rounded-lg flex-shrink-0 transition-all duration-200 overflow-hidden",
+                  "relative w-24 h-24 rounded-xl flex-shrink-0 transition-all duration-200 overflow-hidden border border-zinc-100 bg-zinc-50",
                   currentImage === img
-                    ? "ring-2 ring-red-600 ring-offset-2 scale-105 shadow-[0_4px_12px_rgba(0,0,0,0.06)] z-10"
-                    : "opacity-50 grayscale hover:opacity-100 hover:grayscale-0",
+                    ? "ring-2 ring-red-600 ring-offset-2 shadow-sm z-10"
+                    : "opacity-70 hover:opacity-100",
                 )}
               >
                 <Image
@@ -367,16 +367,16 @@ export default function ProductDetailPage({
           </div>
 
           {/* Description Card */}
-          <div className="bg-white p-8 rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] transition-all duration-200 group">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-zinc-100 shadow-sm group">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-zinc-50 flex items-center justify-center border border-black/5 group-hover:bg-white transition-colors">
                 <Info className="w-5 h-5 text-zinc-400" />
               </div>
-              <h3 className="text-sm font-black uppercase tracking-widest text-zinc-400">
+              <h3 className="text-base font-semibold text-zinc-950">
                 Mô tả sản phẩm
               </h3>
             </div>
-            <p className="text-zinc-600 leading-relaxed font-medium">
+            <p className="mt-4 text-sm text-zinc-600 leading-6">
               {product.description ||
                 "Chưa có mô tả chi tiết cho sản phẩm này."}
             </p>
@@ -384,9 +384,9 @@ export default function ProductDetailPage({
         </div>
 
         {/* Right Column: Key Info & Actions */}
-        <div className="xl:col-span-5 space-y-8">
+        <div className="xl:col-span-5 space-y-6">
           {/* Status & Inventory Card */}
-          <div className="bg-white p-8 rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)] space-y-6">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-zinc-100 shadow-sm space-y-6">
             <div className={cn(
               "grid gap-4",
               product.isForSale && product.isForRent ? "grid-cols-3" : "grid-cols-2"
@@ -396,19 +396,19 @@ export default function ProductDetailPage({
                   <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center mb-3 group-hover/stock:scale-110 transition-transform">
                     <Package className="w-5 h-5 text-emerald-600" />
                   </div>
-                  <span className="text-[10px] font-black tracking-normal text-emerald-600/80 mb-1">
+                  <span className="text-xs font-medium text-emerald-700/80 mb-1">
                     Kho bán lẻ
                   </span>
-                  <span className="text-xl font-black text-emerald-950">
+                  <span className="text-2xl font-semibold text-emerald-950">
                     {product.quantity}{" "}
-                    <span className="text-xs font-bold text-emerald-600/50">
+                    <span className="text-xs font-medium text-emerald-600/60">
                       máy
                     </span>
                   </span>
 
                   <button
                     onClick={() => setIsStockDialogOpen(true)}
-                    className="mt-3 px-3 py-1 bg-white border border-emerald-200 rounded-lg text-[11px] font-semibold text-emerald-700 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                    className="mt-3 px-3 py-1.5 bg-white border border-emerald-200 rounded-lg text-xs font-medium text-emerald-700 hover:bg-emerald-600 hover:text-white transition-colors shadow-sm"
                   >
                     Điều chỉnh
                   </button>
@@ -420,19 +420,19 @@ export default function ProductDetailPage({
                   <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center mb-3 group-hover/rental-stock:scale-110 transition-transform">
                     <Package className="w-5 h-5 text-amber-600" />
                   </div>
-                  <span className="text-[10px] font-black tracking-normal text-amber-700/80 mb-1">
+                  <span className="text-xs font-medium text-amber-700/80 mb-1">
                     Kho cho thuê
                   </span>
-                  <span className="text-xl font-black text-zinc-950">
+                  <span className="text-2xl font-semibold text-zinc-950">
                     {product.rentalQuantity ?? 0}{" "}
-                    <span className="text-xs font-bold text-amber-600/50">
+                    <span className="text-xs font-medium text-amber-600/60">
                       máy
                     </span>
                   </span>
 
                   <button
                     onClick={() => setIsStockDialogOpen(true)}
-                    className="mt-3 px-3 py-1 bg-white border border-amber-200 rounded-lg text-[11px] font-semibold text-amber-700 hover:bg-amber-600 hover:text-white transition-all shadow-sm"
+                    className="mt-3 px-3 py-1.5 bg-white border border-amber-200 rounded-lg text-xs font-medium text-amber-700 hover:bg-amber-600 hover:text-white transition-colors shadow-sm"
                   >
                     Điều chỉnh
                   </button>
@@ -443,10 +443,10 @@ export default function ProductDetailPage({
                 <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center mb-3">
                   <CheckCircle2 className="w-5 h-5 text-indigo-600" />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600/60 mb-1">
+                <span className="text-xs font-medium text-indigo-700/70 mb-1">
                   Trạng thái
                 </span>
-                <span className="text-sm font-black text-indigo-950 uppercase tracking-tighter">
+                <span className="text-sm font-semibold text-indigo-950">
                   {(!product.isForRent && product.isForSale) ? "Sẵn sàng bán" : "Sẵn sàng thuê"}
                 </span>
               </div>
@@ -531,23 +531,23 @@ export default function ProductDetailPage({
                     <Truck className="w-5 h-5 text-amber-600" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-black text-zinc-900 uppercase tracking-tight">
+                    <span className="text-sm font-semibold text-zinc-900">
                       Giá thuê mỗi ngày
                     </span>
                     <button
                       onClick={() => setIsPriceDialogOpen(true)}
-                      className="text-[9px] font-black text-amber-600 uppercase tracking-widest hover:underline text-left"
+                      className="text-xs font-medium text-amber-600 hover:underline text-left"
                     >
                       Điều chỉnh
                     </button>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-xl font-black text-zinc-950 leading-none mb-1">
+                  <p className="text-xl font-semibold text-zinc-950 leading-none mb-1">
                     {product.rentPricePerDay?.toLocaleString("vi-VN")} ₫
                   </p>
-                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-                    VND / Ngày
+                  <p className="text-xs font-medium text-zinc-400">
+                    VND / ngày
                   </p>
                 </div>
               </div>
@@ -558,22 +558,22 @@ export default function ProductDetailPage({
                     <Zap className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-black text-zinc-900 uppercase tracking-tight">
+                    <span className="text-sm font-semibold text-zinc-900">
                       Giá bán thanh lý
                     </span>
                     <button
                       onClick={() => setIsPriceDialogOpen(true)}
-                      className="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:underline text-left"
+                      className="text-xs font-medium text-blue-600 hover:underline text-left"
                     >
                       Điều chỉnh
                     </button>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-xl font-black text-zinc-950 leading-none mb-1">
+                  <p className="text-xl font-semibold text-zinc-950 leading-none mb-1">
                     {product.salePrice?.toLocaleString("vi-VN")} ₫
                   </p>
-                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                  <p className="text-xs font-medium text-zinc-400">
                     Thanh toán 1 lần
                   </p>
                 </div>
@@ -582,21 +582,21 @@ export default function ProductDetailPage({
           </div>
 
           {/* Specifications Table */}
-          <div className="bg-white p-8 rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)] space-y-6">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-zinc-100 shadow-sm space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-zinc-50 border border-black/5 flex items-center justify-center">
                   <ShieldCheck className="w-5 h-5 text-red-600" />
                 </div>
-                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950">
+                <h3 className="text-base font-semibold text-zinc-950">
                   Thông số kỹ thuật
                 </h3>
               </div>
               <Badge
                 variant="outline"
-                className="bg-red-50 border-red-100 text-red-600 font-bold text-[9px] uppercase tracking-widest rounded-lg"
+                className="bg-red-50 border-red-100 text-red-600 font-semibold text-xs rounded-lg"
               >
-                Pro Specs
+                Chi tiết
               </Badge>
             </div>
 
@@ -606,18 +606,18 @@ export default function ProductDetailPage({
                   key={idx}
                   className="flex items-center justify-between group"
                 >
-                  <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider group-hover:text-zinc-600 transition-colors">
+                  <span className="text-sm font-medium text-zinc-500 group-hover:text-zinc-700 transition-colors">
                     {spec.specKey}
                   </span>
                   <div className="flex-1 mx-4 border-b border-zinc-100 border-dashed" />
-                  <span className="text-xs font-black text-zinc-900">
+                  <span className="text-sm font-semibold text-zinc-900">
                     {spec.specValue}
                   </span>
                 </div>
               ))}
               {(!product.specifications ||
                 product.specifications.length === 0) && (
-                <p className="text-[11px] font-bold text-zinc-500 text-center py-4">
+                <p className="text-sm font-medium text-zinc-500 text-center py-4">
                   Chưa có thông số kỹ thuật.
                 </p>
               )}
@@ -625,18 +625,18 @@ export default function ProductDetailPage({
           </div>
 
           {/* Timeline & Audit Card */}
-          <div className="bg-white p-8 rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-6">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-zinc-100 shadow-sm">
+            <h3 className="text-base font-semibold text-zinc-950 mb-6">
               Lịch sử hệ thống
             </h3>
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="mt-1 w-2 h-2 rounded-full bg-emerald-500 ring-4 ring-emerald-50" />
                 <div>
-                  <p className="text-[11px] font-black text-zinc-950 uppercase tracking-tight">
+                  <p className="text-sm font-semibold text-zinc-950">
                     Khởi tạo sản phẩm
                   </p>
-                  <p className="text-[11px] font-medium text-zinc-400">
+                  <p className="text-xs font-medium text-zinc-500 mt-1">
                     {format(
                       new Date(product.createdAt),
                       "HH:mm, 'Ngày' dd 'tháng' MM, yyyy",
@@ -648,10 +648,10 @@ export default function ProductDetailPage({
               <div className="flex items-start gap-4">
                 <div className="mt-1 w-2 h-2 rounded-full bg-indigo-500 ring-4 ring-indigo-50" />
                 <div>
-                  <p className="text-[11px] font-black text-zinc-950 uppercase tracking-tight">
+                  <p className="text-sm font-semibold text-zinc-950">
                     Cập nhật gần nhất
                   </p>
-                  <p className="text-[11px] font-medium text-zinc-400">
+                  <p className="text-xs font-medium text-zinc-500 mt-1">
                     {format(
                       new Date(product.updatedAt),
                       "HH:mm, 'Ngày' dd 'tháng' MM, yyyy",
@@ -704,24 +704,24 @@ export default function ProductDetailPage({
         isPending={updatePriceMutation.isPending}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 mb-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 mb-12">
         {/* Price History Section */}
-        <div className="bg-white rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col">
-          <div className="px-8 py-6 border-b border-black/5 bg-zinc-50/30 flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-5 sm:px-6 py-5 border-b border-zinc-100 bg-white flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-white shadow-sm border border-black/5 flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-red-600" />
               </div>
               <div>
-                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950">
+                <h3 className="text-base font-semibold text-zinc-950">
                   Lịch sử thay đổi giá
                 </h3>
-                <p className="text-[10px] font-bold text-zinc-400 uppercase mt-0.5 tracking-tighter">
+                <p className="text-sm text-zinc-500 mt-0.5">
                   Biến động giá trị
                 </p>
               </div>
             </div>
-            <Badge className="bg-zinc-950 text-white text-[10px] font-black uppercase px-3 py-1 rounded-lg">
+            <Badge className="bg-zinc-950 text-white text-xs font-semibold px-3 py-1 rounded-lg">
               {pricePagination?.totalElements || 0}
             </Badge>
           </div>
@@ -730,13 +730,13 @@ export default function ProductDetailPage({
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-white">
-                  <th className="px-6 py-4 text-left text-[9px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-zinc-500 border-b border-zinc-50">
                     Giá mới
                   </th>
-                  <th className="px-6 py-4 text-left text-[9px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-zinc-500 border-b border-zinc-50">
                     Biến động
                   </th>
-                  <th className="px-6 py-4 text-right text-[9px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">
+                  <th className="px-6 py-4 text-right text-xs font-medium text-zinc-500 border-b border-zinc-50">
                     Thời gian
                   </th>
                 </tr>
@@ -749,10 +749,10 @@ export default function ProductDetailPage({
                   >
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="text-[11px] font-black text-zinc-950">
+                        <span className="text-sm font-semibold text-zinc-950">
                           {history.newPrice.toLocaleString()} đ
                         </span>
-                        <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-tighter">
+                        <span className="text-xs font-medium text-zinc-500">
                           {history.priceType === "RENT"
                             ? "Giá thuê"
                             : "Giá bán"}
@@ -761,23 +761,23 @@ export default function ProductDetailPage({
                     </td>
                     <td className="px-6 py-4">
                       {history.changeType === "INCREASE" && (
-                        <span className="text-[10px] font-black text-red-600">
+                        <span className="text-sm font-semibold text-red-600">
                           +{history.percentChange.toFixed(1)}%
                         </span>
                       )}
                       {history.changeType === "DECREASE" && (
-                        <span className="text-[10px] font-black text-emerald-600">
+                        <span className="text-sm font-semibold text-emerald-600">
                           -{history.percentChange.toFixed(1)}%
                         </span>
                       )}
                       {history.changeType === "NONE" && (
-                        <span className="text-[10px] font-bold text-zinc-300 uppercase">
+                        <span className="text-xs font-medium text-zinc-400">
                           Khởi tạo
                         </span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-[10px] font-bold text-zinc-400">
+                      <span className="text-xs font-medium text-zinc-500">
                         {format(new Date(history.createdAt), "dd/MM/yy", {
                           locale: vi,
                         })}
@@ -789,9 +789,9 @@ export default function ProductDetailPage({
                   <tr>
                     <td
                       colSpan={3}
-                      className="px-6 py-10 text-center text-[10px] font-bold text-zinc-400 uppercase tracking-widest"
+                      className="px-6 py-10 text-center text-sm font-medium text-zinc-400"
                     >
-                      Trống
+                      Chưa có lịch sử giá
                     </td>
                   </tr>
                 )}
@@ -802,7 +802,7 @@ export default function ProductDetailPage({
           {/* Pagination Controls */}
           {pricePagination && pricePagination.totalPages > 1 && (
             <div className="px-6 py-4 bg-zinc-50/50 border-t border-black/5 flex items-center justify-between">
-              <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">
+              <span className="text-xs font-medium text-zinc-500">
                 Trang {priceHistoryPage + 1} / {pricePagination.totalPages}
               </span>
               <div className="flex items-center gap-1">
@@ -830,22 +830,22 @@ export default function ProductDetailPage({
         </div>
 
         {/* Inventory History Section */}
-        <div className="bg-white rounded-xl border border-black/5 shadow-[0_2px_6px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col">
-          <div className="px-8 py-6 border-b border-black/5 bg-zinc-50/30 flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-5 sm:px-6 py-5 border-b border-zinc-100 bg-white flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-white shadow-sm border border-black/5 flex items-center justify-center">
                 <Package className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
-                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950">
+                <h3 className="text-base font-semibold text-zinc-950">
                   Lịch sử kho
                 </h3>
-                <p className="text-[10px] font-bold text-zinc-400 uppercase mt-0.5 tracking-tighter">
+                <p className="text-sm text-zinc-500 mt-0.5">
                   Nhập xuất thiết bị
                 </p>
               </div>
             </div>
-            <Badge className="bg-emerald-600 text-white text-[10px] font-black uppercase px-3 py-1 rounded-lg">
+            <Badge className="bg-emerald-600 text-white text-xs font-semibold px-3 py-1 rounded-lg">
               {inventoryPagination?.totalElements || 0}
             </Badge>
           </div>
@@ -854,13 +854,13 @@ export default function ProductDetailPage({
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-white">
-                  <th className="px-6 py-4 text-left text-[9px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-zinc-500 border-b border-zinc-50">
                     Thay đổi
                   </th>
-                  <th className="px-6 py-4 text-left text-[9px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-zinc-500 border-b border-zinc-50">
                     Lý do
                   </th>
-                  <th className="px-6 py-4 text-right text-[9px] font-black text-zinc-400 uppercase tracking-widest border-b border-zinc-50">
+                  <th className="px-6 py-4 text-right text-xs font-medium text-zinc-500 border-b border-zinc-50">
                     Thời gian
                   </th>
                 </tr>
@@ -877,27 +877,27 @@ export default function ProductDetailPage({
                         <div className="flex flex-col">
                           <span
                             className={cn(
-                              "text-[11px] font-black",
+                              "text-sm font-semibold",
                               diff > 0 ? "text-emerald-600" : "text-red-600",
                             )}
                           >
                             {diff > 0 ? `+${diff}` : diff}
                           </span>
-                          <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-tighter">
+                          <span className="text-xs font-medium text-zinc-500">
                             Tồn: {log.newStock}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <p
-                          className="text-[11px] font-medium text-zinc-600 truncate max-w-[120px]"
+                          className="text-sm font-medium text-zinc-600 truncate max-w-[160px]"
                           title={log.reason}
                         >
                           {log.reason || "Không có lý do"}
                         </p>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <span className="text-[10px] font-bold text-zinc-400">
+                        <span className="text-xs font-medium text-zinc-500">
                           {format(new Date(log.changedAt), "dd/MM/yy", {
                             locale: vi,
                           })}
@@ -910,9 +910,9 @@ export default function ProductDetailPage({
                   <tr>
                     <td
                       colSpan={3}
-                      className="px-6 py-10 text-center text-[10px] font-bold text-zinc-400 uppercase tracking-widest"
+                      className="px-6 py-10 text-center text-sm font-medium text-zinc-400"
                     >
-                      Trống
+                      Chưa có lịch sử kho
                     </td>
                   </tr>
                 )}
@@ -923,7 +923,7 @@ export default function ProductDetailPage({
           {/* Pagination Controls */}
           {inventoryPagination && inventoryPagination.totalPages > 1 && (
             <div className="px-6 py-4 bg-zinc-50/50 border-t border-black/5 flex items-center justify-between">
-              <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">
+              <span className="text-xs font-medium text-zinc-500">
                 Trang {inventoryPage + 1} / {inventoryPagination.totalPages}
               </span>
               <div className="flex items-center gap-1">

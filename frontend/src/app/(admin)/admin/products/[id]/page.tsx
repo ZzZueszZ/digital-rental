@@ -38,11 +38,7 @@ import {
   usePriceHistory,
   useUpdateProductPrice,
 } from "@/services/product";
-import {
-  useInventoryLogs,
-  useUpdateRentalStock,
-  useUpdateSaleStock,
-} from "@/services/inventory";
+import { useAdjustStock, useInventoryLogs } from "@/services/inventory";
 import { useCategories } from "@/services/category";
 import {
   ProductInfoUpdateRequest,
@@ -113,9 +109,11 @@ export default function ProductDetailPage({
   const [showStockForm, setShowStockForm] = useState(false);
   const [saleStockInput, setSaleStockInput] = useState("");
   const [rentalStockInput, setRentalStockInput] = useState("");
-  const [stockReason, setStockReason] = useState("");
-  const updateSaleStockMutation = useUpdateSaleStock(productId);
-  const updateRentalStockMutation = useUpdateRentalStock(productId);
+  const [saleStockReason, setSaleStockReason] = useState("");
+  const [rentalStockReason, setRentalStockReason] = useState("");
+  const [saleStockAction, setSaleStockAction] = useState<"IMPORT" | "EXPORT">("IMPORT");
+  const [rentalStockAction, setRentalStockAction] = useState<"IMPORT" | "EXPORT">("IMPORT");
+  const adjustStockMutation = useAdjustStock(productId);
 
   const handleBack = () => router.push("/admin/products");
 
@@ -175,43 +173,62 @@ export default function ProductDetailPage({
     }
   };
 
-  const handleUpdateStock = async () => {
+  const handleAdjustSaleStock = async () => {
     if (!product) return;
-    const saleStock = Number(saleStockInput);
-    const rentalStock = Number(rentalStockInput);
-    if (!Number.isInteger(saleStock) || saleStock < 0) {
-      toast.error("Tồn kho bán phải là số nguyên >= 0");
-      return;
-    }
-    if (!Number.isInteger(rentalStock) || rentalStock < 0) {
-      toast.error("Tồn kho thuê phải là số nguyên >= 0");
+    const quantity = Number(saleStockInput);
+
+    if (!Number.isInteger(quantity) || quantity <= 0) {
+      toast.error("Số lượng kho bán phải là số nguyên lớn hơn 0");
       return;
     }
 
-    if (saleStock === product.quantity && rentalStock === (product.rentalQuantity ?? 0)) {
-      toast.info("Không có thay đổi tồn kho");
+    if (saleStockAction === "EXPORT" && quantity > product.quantity) {
+      toast.error(`Số lượng xuất vượt quá kho bán hiện có (${product.quantity})`);
       return;
     }
 
     try {
-      if (saleStock !== product.quantity) {
-        await updateSaleStockMutation.mutateAsync({
-          quantity: saleStock,
-          reason: stockReason || "Cập nhật tồn kho bán từ trang chi tiết",
-        });
-      }
-      if (rentalStock !== (product.rentalQuantity ?? 0)) {
-        await updateRentalStockMutation.mutateAsync({
-          quantity: rentalStock,
-          reason: stockReason || "Cập nhật tồn kho thuê từ trang chi tiết",
-        });
-      }
-      toast.success("Cập nhật tồn kho thành công");
-      setShowStockForm(false);
-      setStockReason("");
+      await adjustStockMutation.mutateAsync({
+        quantityChange: saleStockAction === "IMPORT" ? quantity : -quantity,
+        type: "SALE",
+        reason: saleStockReason.trim() || undefined,
+      });
+      toast.success(`${saleStockAction === "IMPORT" ? "Nhập" : "Xuất"} kho bán thành công`);
+      setSaleStockInput("");
+      setSaleStockReason("");
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
-      toast.error(err.response?.data?.message || "Không thể cập nhật tồn kho");
+      toast.error(err.response?.data?.message || "Không thể điều chỉnh kho bán");
+    }
+  };
+
+  const handleAdjustRentalStock = async () => {
+    if (!product) return;
+    const quantity = Number(rentalStockInput);
+    const currentRentalStock = product.rentalQuantity ?? 0;
+
+    if (!Number.isInteger(quantity) || quantity <= 0) {
+      toast.error("Số lượng kho thuê phải là số nguyên lớn hơn 0");
+      return;
+    }
+
+    if (rentalStockAction === "EXPORT" && quantity > currentRentalStock) {
+      toast.error(`Số lượng xuất vượt quá kho thuê hiện có (${currentRentalStock})`);
+      return;
+    }
+
+    try {
+      await adjustStockMutation.mutateAsync({
+        quantityChange: rentalStockAction === "IMPORT" ? quantity : -quantity,
+        type: "RENTAL",
+        reason: rentalStockReason.trim() || undefined,
+      });
+      toast.success(`${rentalStockAction === "IMPORT" ? "Nhập" : "Xuất"} kho thuê thành công`);
+      setRentalStockInput("");
+      setRentalStockReason("");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Không thể điều chỉnh kho thuê");
     }
   };
 
@@ -276,7 +293,7 @@ export default function ProductDetailPage({
               </span>
               <Badge
                 className={cn(
-                  "rounded-full px-3 py-1 text-xs font-semibold border-0 shadow-none inline-flex items-center gap-1.5",
+                  "rounded-dash-sm px-3 py-1 text-xs font-semibold border-0 shadow-none inline-flex items-center gap-1.5",
                   !isDeleted
                     ? "bg-emerald-50 text-emerald-600"
                     : "bg-red-50 text-red-600",
@@ -456,70 +473,167 @@ export default function ProductDetailPage({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => {
-                  setShowStockForm((prev) => !prev);
-                  setSaleStockInput(String(product.quantity));
-                  setRentalStockInput(String(product.rentalQuantity ?? 0));
-                }}
-                className="w-full h-10 rounded-lg border-zinc-200 text-sm font-semibold"
+                onClick={() => setShowStockForm((prev) => !prev)}
+                className="w-full h-11 rounded-dash-sm bg-zinc-950 text-white border-0 text-sm font-semibold shadow-dash-sm hover:bg-zinc-800 hover:shadow-dash-md transition-all duration-200 ease-in-out"
               >
                 {showStockForm ? "Ẩn form chỉnh tồn kho" : "Chỉnh tồn kho trực tiếp"}
               </Button>
 
               {showStockForm && (
-                <div className="rounded-xl border border-zinc-200 bg-zinc-50/40 p-4 space-y-3">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <label className="space-y-1">
+                <div className="grid gap-3">
+                  <div className="rounded-dash-md border border-emerald-100 bg-emerald-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <h4 className="text-sm font-bold text-emerald-950">kho bán</h4>
+                        <p className="text-xs font-medium text-emerald-700/70">
+                          Nhập số lượng cần cộng thêm hoặc trừ bớt.
+                        </p>
+                      </div>
+                      <span className="text-xs font-semibold text-emerald-700 bg-white border border-emerald-100 rounded-dash-sm px-3 py-1">
+                        hiện có {product.quantity}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 rounded-dash-sm border border-emerald-100 bg-white p-1">
+                      <button
+                        type="button"
+                        onClick={() => setSaleStockAction("IMPORT")}
+                        disabled={adjustStockMutation.isPending}
+                        className={cn(
+                          "h-9 rounded-dash-sm text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
+                          saleStockAction === "IMPORT"
+                            ? "bg-emerald-600 text-white"
+                            : "text-zinc-500 hover:bg-emerald-50 hover:text-emerald-700",
+                        )}
+                      >
+                        nhập thêm
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSaleStockAction("EXPORT")}
+                        disabled={adjustStockMutation.isPending}
+                        className={cn(
+                          "h-9 rounded-dash-sm text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
+                          saleStockAction === "EXPORT"
+                            ? "bg-red-600 text-white"
+                            : "text-zinc-500 hover:bg-red-50 hover:text-red-600",
+                        )}
+                      >
+                        trừ bớt
+                      </button>
+                    </div>
+
+                    <label className="space-y-1 block">
                       <span className="text-xs font-semibold text-zinc-700">
-                        Tồn kho bán
+                        số lượng {saleStockAction === "IMPORT" ? "nhập thêm" : "trừ bớt"}
                       </span>
                       <input
                         type="number"
-                        min={0}
+                        min={1}
                         value={saleStockInput}
                         onChange={(e) => setSaleStockInput(e.target.value)}
-                        className="w-full h-10 px-3 rounded-lg border border-zinc-200 bg-white text-sm"
+                        placeholder="Ví dụ: 10"
+                        className="w-full h-10 px-3 rounded-dash-sm border border-emerald-100 bg-white text-sm font-semibold"
                       />
                     </label>
-                    <label className="space-y-1">
+                    <label className="space-y-1 block">
+                      <span className="text-xs font-semibold text-zinc-700">lý do chỉnh kho bán</span>
+                      <input
+                        type="text"
+                        value={saleStockReason}
+                        onChange={(e) => setSaleStockReason(e.target.value)}
+                        placeholder="Ví dụ: nhập hàng mới, hàng lỗi trả hãng"
+                        className="w-full h-10 px-3 rounded-dash-sm border border-emerald-100 bg-white text-sm"
+                      />
+                    </label>
+                    <Button
+                      type="button"
+                      onClick={handleAdjustSaleStock}
+                      disabled={adjustStockMutation.isPending}
+                      className="w-full h-10 rounded-dash-sm bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-dash-sm hover:shadow-dash-md transition-all duration-200 ease-in-out"
+                    >
+                      {adjustStockMutation.isPending
+                        ? "Đang cập nhật..."
+                        : `${saleStockAction === "IMPORT" ? "Nhập thêm" : "Trừ bớt"} kho bán`}
+                    </Button>
+                  </div>
+
+                  <div className="rounded-dash-md border border-amber-100 bg-amber-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <h4 className="text-sm font-bold text-amber-950">kho cho thuê</h4>
+                        <p className="text-xs font-medium text-amber-700/70">
+                          Nhập số lượng cần cộng thêm hoặc trừ bớt.
+                        </p>
+                      </div>
+                      <span className="text-xs font-semibold text-amber-700 bg-white border border-amber-100 rounded-dash-sm px-3 py-1">
+                        hiện có {product.rentalQuantity ?? 0}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 rounded-dash-sm border border-amber-100 bg-white p-1">
+                      <button
+                        type="button"
+                        onClick={() => setRentalStockAction("IMPORT")}
+                        disabled={adjustStockMutation.isPending}
+                        className={cn(
+                          "h-9 rounded-dash-sm text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
+                          rentalStockAction === "IMPORT"
+                            ? "bg-amber-600 text-white"
+                            : "text-zinc-500 hover:bg-amber-50 hover:text-amber-700",
+                        )}
+                      >
+                        nhập thêm
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setRentalStockAction("EXPORT")}
+                        disabled={adjustStockMutation.isPending}
+                        className={cn(
+                          "h-9 rounded-dash-sm text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
+                          rentalStockAction === "EXPORT"
+                            ? "bg-red-600 text-white"
+                            : "text-zinc-500 hover:bg-red-50 hover:text-red-600",
+                        )}
+                      >
+                        trừ bớt
+                      </button>
+                    </div>
+
+                    <label className="space-y-1 block">
                       <span className="text-xs font-semibold text-zinc-700">
-                        Tồn kho thuê
+                        số lượng {rentalStockAction === "IMPORT" ? "nhập thêm" : "trừ bớt"}
                       </span>
                       <input
                         type="number"
-                        min={0}
+                        min={1}
                         value={rentalStockInput}
                         onChange={(e) => setRentalStockInput(e.target.value)}
-                        className="w-full h-10 px-3 rounded-lg border border-zinc-200 bg-white text-sm"
+                        placeholder="Ví dụ: 2"
+                        className="w-full h-10 px-3 rounded-dash-sm border border-amber-100 bg-white text-sm font-semibold"
                       />
                     </label>
+                    <label className="space-y-1 block">
+                      <span className="text-xs font-semibold text-zinc-700">lý do chỉnh kho thuê</span>
+                      <input
+                        type="text"
+                        value={rentalStockReason}
+                        onChange={(e) => setRentalStockReason(e.target.value)}
+                        placeholder="Ví dụ: hàng lỗi, trả hàng về nhà máy"
+                        className="w-full h-10 px-3 rounded-dash-sm border border-amber-100 bg-white text-sm"
+                      />
+                    </label>
+                    <Button
+                      type="button"
+                      onClick={handleAdjustRentalStock}
+                      disabled={adjustStockMutation.isPending}
+                      className="w-full h-10 rounded-dash-sm bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-dash-sm hover:shadow-dash-md transition-all duration-200 ease-in-out"
+                    >
+                      {adjustStockMutation.isPending
+                        ? "Đang cập nhật..."
+                        : `${rentalStockAction === "IMPORT" ? "Nhập thêm" : "Trừ bớt"} kho thuê`}
+                    </Button>
                   </div>
-                  <label className="space-y-1 block">
-                    <span className="text-xs font-semibold text-zinc-700">
-                      Lý do điều chỉnh
-                    </span>
-                    <input
-                      type="text"
-                      value={stockReason}
-                      onChange={(e) => setStockReason(e.target.value)}
-                      placeholder="Ví dụ: kiểm kê kho"
-                      className="w-full h-10 px-3 rounded-lg border border-zinc-200 bg-white text-sm"
-                    />
-                  </label>
-                  <Button
-                    type="button"
-                    onClick={handleUpdateStock}
-                    disabled={
-                      updateSaleStockMutation.isPending ||
-                      updateRentalStockMutation.isPending
-                    }
-                    className="w-full h-10 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-semibold"
-                  >
-                    {updateSaleStockMutation.isPending ||
-                    updateRentalStockMutation.isPending
-                      ? "Đang cập nhật..."
-                      : "Lưu tồn kho"}
-                  </Button>
                 </div>
               )}
             </div>

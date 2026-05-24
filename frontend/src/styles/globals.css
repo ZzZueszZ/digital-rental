@@ -32,7 +32,7 @@
   --radius-md: 12px;
   --radius-sm: 8px;
 
-  /* Dashboard Specific Tokens (Consistent Scale) */
+  /* Dashboard Radius & Shadow Tokens */
   --spacing-dash-gap: 1.25rem; /* 20px */
   --spacing-dash-card-p: 1rem; /* 16px */
   --spacing-dash-card-p-lg: 1.25rem; /* 20px */
@@ -42,6 +42,9 @@
   --shadow-dash-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
   --shadow-dash-md: 0 4px 12px rgba(0, 0, 0, 0.06);
   --shadow-dash-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-dash-card: var(--shadow-dash-sm);
+  --shadow-dash-hover: var(--shadow-dash-md);
+  --shadow-dash-overlay: var(--shadow-dash-lg);
 
   /* Sidebar/Navbar Dimensions */
   --dash-sidebar-w: 240px;
@@ -214,11 +217,11 @@
   }
 
   .admin-sidebar-item {
-    @apply h-11 px-3.5 rounded-xl flex items-center gap-3 text-sm font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950 transition-all cursor-pointer mb-1;
+    @apply h-11 px-3.5 rounded-dash-sm flex items-center gap-3 text-sm font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950 transition-all duration-200 ease-in-out cursor-pointer mb-1;
   }
 
   .admin-sidebar-item.active {
-    @apply bg-red-600 text-white shadow-lg shadow-red-100;
+    @apply bg-red-600 text-white shadow-dash-sm;
   }
 
   .admin-navbar {
@@ -231,13 +234,11 @@
   }
 
   .admin-card {
-    @apply bg-white border border-zinc-100 rounded-xl p-4 transition-all duration-200 ease-in-out;
-    box-shadow: var(--shadow-dash-card);
+    @apply bg-white border border-black/5 rounded-dash-md p-4 shadow-dash-sm transition-all duration-200 ease-in-out;
   }
 
   .admin-card:hover {
-    @apply -translate-y-0.5 border-zinc-200;
-    box-shadow: var(--shadow-dash-hover);
+    @apply -translate-y-0.5 border-zinc-200 shadow-dash-md;
   }
 
   .admin-card-header {
@@ -258,7 +259,7 @@
 
   /* Admin Tables */
   .admin-table-container {
-    @apply bg-white border border-zinc-100 rounded-xl overflow-hidden;
+    @apply bg-white border border-black/5 rounded-dash-md shadow-dash-sm overflow-hidden;
   }
 
   .admin-table-row {
@@ -271,10 +272,10 @@
 
   /* Admin Buttons */
   .btn-admin-sm {
-    @apply px-3 py-1.5 text-xs font-bold rounded-xl;
+    @apply px-3 py-1.5 text-xs font-bold rounded-dash-sm transition-all duration-200 ease-in-out;
   }
   .btn-admin-md {
-    @apply px-4 py-2 text-sm font-bold rounded-xl;
+    @apply px-4 py-2 text-sm font-bold rounded-dash-sm transition-all duration-200 ease-in-out;
   }
 
   /* Admin Forms */
@@ -282,7 +283,7 @@
     @apply space-y-4;
   }
   .admin-input {
-    @apply h-10 px-3 rounded-xl border-zinc-200 text-sm focus-visible:ring-zinc-950/10;
+    @apply h-10 px-3 rounded-dash-sm border-zinc-200 text-sm focus-visible:ring-zinc-950/10;
   }
 
   /* =========================================

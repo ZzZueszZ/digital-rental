@@ -71,12 +71,12 @@ export function OrderTableRow({
           <span
             className={cn(
               "text-[10px] font-bold mt-1",
-              order.paymentStatus === PaymentStatus.PAID
+              order.paymentStatus === PaymentStatus.SUCCESS
                 ? "text-emerald-600"
                 : "text-red-500",
             )}
           >
-            {order.paymentStatus === PaymentStatus.PAID
+            {order.paymentStatus === PaymentStatus.SUCCESS
               ? "Đã thanh toán"
               : "Chưa thanh toán"}
           </span>

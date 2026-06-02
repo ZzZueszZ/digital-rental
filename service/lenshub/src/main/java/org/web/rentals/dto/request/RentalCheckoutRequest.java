@@ -30,6 +30,8 @@ public class RentalCheckoutRequest {
 
     private Long shippingAddressId;
 
+    private String pickupTimeSlot;
+
     @NotNull(message = "Payment method is required")
     private PaymentMethod paymentMethod;
 }

@@ -60,4 +60,42 @@ public class VnPayPaymentController {
             response.sendRedirect(redirectUrl);
         }
     }
+
+    @PostMapping("/rental-fee/create")
+    public ResponseEntity<ApiResponse<String>> createRentalPayment(
+            @RequestParam Long rentalOrderId,
+            HttpServletRequest request
+    ) {
+        String url = vnPayService.createRentalPaymentUrl(rentalOrderId, request);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Tạo URL thanh toán phí thuê VNPay thành công!", url));
+    }
+
+    @GetMapping("/rental-fee/return")
+    public void handleRentalReturn(HttpServletRequest req, HttpServletResponse response) throws IOException {
+        Map<String, String[]> raw = req.getParameterMap();
+        Map<String, String> vnpParams = new HashMap<>();
+        raw.forEach((k, v) -> {
+            if (k.startsWith("vnp_") && v.length > 0) {
+                vnpParams.put(k, v[0]);
+            }
+        });
+
+        try {
+            VnPayReturnResponse data = vnPayService.handleRentalReturn(vnpParams);
+            
+            // Redirect về Frontend page cho Rental Payment Return
+            String frontendUrl = "http://localhost:3000/rentals/payment-return";
+            String redirectUrl = frontendUrl + 
+                "?status=" + (data.getMessage().contains("thành công") ? "success" : "error") +
+                "&message=" + URLEncoder.encode(data.getMessage(), StandardCharsets.UTF_8) +
+                "&orderCode=" + data.getOrderCode();
+                
+            response.sendRedirect(redirectUrl);
+
+        } catch (Exception e) {
+            String feUrl = "http://localhost:3000/rentals/payment-return";
+            String redirectUrl = feUrl + "?status=error&message=" + URLEncoder.encode(e.getMessage() != null ? e.getMessage() : "Unknown error", StandardCharsets.UTF_8);
+            response.sendRedirect(redirectUrl);
+        }
+    }
 }

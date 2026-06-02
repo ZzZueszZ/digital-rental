@@ -125,10 +125,8 @@ export default function ProductDetailPage() {
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [availabilityChecked, setAvailabilityChecked] = useState(false);
-  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
-    null,
-  );
-  const [paymentMethod, setPaymentMethod] = useState<"COD" | "ONLINE">("COD");
+  const [pickupTimeSlot, setPickupTimeSlot] = useState<string>("08:00 - 12:00");
+  const [paymentMethod, setPaymentMethod] = useState<"ONLINE">("ONLINE");
   const [isSubmittingRental, setIsSubmittingRental] = useState(false);
   const [showKycDialog, setShowKycDialog] = useState(false);
   const [kycStatus, setKycStatus] = useState<string | null>(null);
@@ -213,15 +211,7 @@ export default function ProductDetailPage() {
         return;
       }
 
-      // Resolve address ID
-      const addressId = selectedAddressId || defaultAddress?.id;
-      if (!addressId) {
-        toast.error(
-          "Vui lòng thêm địa chỉ nhận hàng trong hồ sơ trước khi thuê",
-        );
-        router.push("/profile/address");
-        return;
-      }
+      // Removed shippingAddress check as user picks up at branch
 
       const res = await http.post("/rentals/checkout", {
         items: [
@@ -232,12 +222,25 @@ export default function ProductDetailPage() {
         ],
         startDate: `${rentalStartDate}T00:00:00`,
         endDate: `${rentalEndDate}T00:00:00`,
-        shippingAddressId: addressId,
+        pickupTimeSlot: pickupTimeSlot,
         paymentMethod: paymentMethod,
       });
 
       if (res.data?.success) {
-        toast.success("Gửi yêu cầu đặt thuê thành công!");
+        toast.success("Gửi yêu cầu đặt thuê thành công! Đang chuyển hướng thanh toán...");
+        
+        // Redirect to VNPay
+        const orderId = res.data.data.id;
+        try {
+          const vnpayRes = await http.post(`/payments/vnpay/rental-fee/create?rentalOrderId=${orderId}`);
+          if (vnpayRes.data?.success && vnpayRes.data.data) {
+            window.location.href = vnpayRes.data.data;
+            return;
+          }
+        } catch (e) {
+          toast.error("Không thể khởi tạo thanh toán VNPay. Vui lòng thanh toán sau trong trang cá nhân.");
+        }
+        
         router.push("/profile/orders");
       }
     } catch (err: any) {
@@ -408,7 +411,7 @@ export default function ProductDetailPage() {
               <div className="w-9 h-9 rounded-xl border border-black/5 flex items-center justify-center group-hover:bg-zinc-50 transition-all shadow-dash-card">
                 <ArrowLeft className="w-3.5 h-3.5" />
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em]">
+              <span className="text-[10px] font-bold tracking-[0.2em]">
                 Quay lại
               </span>
             </button>
@@ -584,7 +587,7 @@ export default function ProductDetailPage() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between p-6 bg-zinc-50/50 rounded-2xl border border-black/5 border-dashed">
                   <div>
-                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">
+                    <p className="text-[10px] font-bold text-zinc-400 tracking-widest mb-1">
                       Số lượng thiết bị
                     </p>
                     <p className="text-sm font-bold text-zinc-950">
@@ -614,7 +617,7 @@ export default function ProductDetailPage() {
                 <div className="grid grid-cols-1 gap-5">
                   {product.forSale && (
                     <div className="bg-white rounded-2xl p-8 border border-black/5 shadow-dash-card relative overflow-hidden group">
-                      <p className="text-[10px] font-bold text-zinc-400 mb-6 uppercase tracking-widest">
+                      <p className="text-[10px] font-bold text-zinc-400 mb-6 tracking-widest">
                         Giá bán niêm yết
                       </p>
                       <div className="mb-8">
@@ -649,8 +652,8 @@ export default function ProductDetailPage() {
                   )}
 
                   {product.forRent && (
-                    <div className="bg-zinc-50/50 rounded-2xl p-8 border border-black/5 border-dashed relative overflow-hidden group">
-                      <p className="text-[10px] font-bold text-zinc-400 mb-6 uppercase tracking-widest">
+                    <div className="bg-zinc-50/50 rounded-2xl p-8 border border-black/5 border-dashed relative group">
+                      <p className="text-[10px] font-bold text-zinc-400 mb-6 tracking-widest">
                         Thông tin đặt thuê thiết bị
                       </p>
 
@@ -670,7 +673,7 @@ export default function ProductDetailPage() {
                       {/* Date Pickers */}
                       <div className="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                          <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-2">
+                          <label className="text-[10px] font-bold text-zinc-400 tracking-widest block mb-2">
                             Ngày nhận máy
                           </label>
                           <DateInput
@@ -681,7 +684,7 @@ export default function ProductDetailPage() {
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-2">
+                          <label className="text-[10px] font-bold text-zinc-400 tracking-widest block mb-2">
                             Ngày trả máy
                           </label>
                           <DateInput
@@ -717,80 +720,35 @@ export default function ProductDetailPage() {
                         </div>
                       )}
 
-                      {/* Address Selection */}
+                      {/* Pickup Branch & Time Slot Selection */}
                       {isAvailable === true && (
                         <>
-                          {addressesRes?.data &&
-                          addressesRes.data.length > 0 ? (
-                            <div className="mb-4">
-                              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-2">
-                                Địa chỉ nhận hàng
-                              </label>
-                              <select
-                                value={
-                                  selectedAddressId || defaultAddress?.id || ""
-                                }
-                                onChange={(e) =>
-                                  setSelectedAddressId(Number(e.target.value))
-                                }
-                                className="w-full h-11 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 transition-all"
-                              >
-                                {addressesRes.data.map((addr) => (
-                                  <option key={addr.id} value={addr.id}>
-                                    {addr.receiverName} - {addr.receiverPhone} (
-                                    {addr.fullAddress})
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                          ) : (
-                            accessToken && (
-                              <div className="mb-4 p-3 bg-amber-50 border border-amber-100 rounded-xl">
-                                <p className="text-xs text-amber-700 font-semibold mb-1">
-                                  Chưa có địa chỉ giao hàng
-                                </p>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    router.push("/profile/address")
-                                  }
-                                  className="text-[11px] font-bold text-red-600 hover:underline text-left"
-                                >
-                                  Thêm địa chỉ nhận máy trong hồ sơ &rarr;
-                                </button>
-                              </div>
-                            )
-                          )}
+                          <div className="mb-4">
+                            <label className="text-[10px] font-bold text-zinc-400 tracking-widest block mb-2">
+                              Khung giờ nhận máy tại cửa hàng
+                            </label>
+                            <select
+                              value={pickupTimeSlot}
+                              onChange={(e) => setPickupTimeSlot(e.target.value)}
+                              className="w-full h-11 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 transition-all"
+                            >
+                              <option value="08:00 - 12:00">08:00 - 12:00 (Sáng)</option>
+                              <option value="13:00 - 17:00">13:00 - 17:00 (Chiều)</option>
+                              <option value="18:00 - 21:00">18:00 - 21:00 (Tối)</option>
+                            </select>
+                          </div>
 
                           {/* Payment Method Selector */}
                           <div className="mb-4">
-                            <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-2">
-                              Phương thức đặt cọc / thanh toán
+                            <label className="text-[10px] font-bold text-zinc-400 tracking-widest block mb-2">
+                              Phương thức thanh toán (Tiền cọc thu tại cửa hàng)
                             </label>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 gap-3">
                               <button
                                 type="button"
-                                onClick={() => setPaymentMethod("COD")}
-                                className={cn(
-                                  "h-11 rounded-xl border font-bold text-xs flex items-center justify-center transition-all",
-                                  paymentMethod === "COD"
-                                    ? "border-zinc-950 bg-zinc-950 text-white shadow-sm"
-                                    : "border-black/5 bg-white text-zinc-800 hover:bg-zinc-50",
-                                )}
+                                className="h-11 rounded-xl border border-zinc-950 bg-zinc-950 text-white shadow-sm font-bold text-xs flex items-center justify-center cursor-default"
                               >
-                                Tiền mặt / COD
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setPaymentMethod("ONLINE")}
-                                className={cn(
-                                  "h-11 rounded-xl border font-bold text-xs flex items-center justify-center transition-all",
-                                  paymentMethod === "ONLINE"
-                                    ? "border-zinc-950 bg-zinc-950 text-white shadow-sm"
-                                    : "border-black/5 bg-white text-zinc-800 hover:bg-zinc-50",
-                                )}
-                              >
-                                Thanh toán VNPay
+                                Thanh toán phí thuê VNPay
                               </button>
                             </div>
                           </div>
@@ -860,7 +818,7 @@ export default function ProductDetailPage() {
 
               {/* Technical Details */}
               <div className="pt-10 border-t border-zinc-100">
-                <h4 className="text-xs font-bold text-zinc-400 mb-6 uppercase tracking-wider">
+                <h4 className="text-xs font-bold text-zinc-400 mb-6 tracking-wider">
                   Thông số kỹ thuật
                 </h4>
                 <div className="grid grid-cols-1 gap-3">
@@ -918,7 +876,7 @@ export default function ProductDetailPage() {
                     <p className="text-2xl font-bold text-zinc-950 leading-none mb-2">
                       {reviewMeta.totalReviews}
                     </p>
-                    <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+                    <p className="text-xs font-semibold text-zinc-400 tracking-wider">
                       Đánh giá
                     </p>
                   </div>
@@ -951,7 +909,7 @@ export default function ProductDetailPage() {
                           <p className="font-bold text-zinc-950 text-[15px] line-clamp-1">
                             {r.userName}
                           </p>
-                          <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">
+                          <p className="text-[10px] font-semibold text-zinc-400 tracking-widest">
                             {new Date(r.createdAt).toLocaleDateString("vi-VN", {
                               day: "numeric",
                               month: "long",

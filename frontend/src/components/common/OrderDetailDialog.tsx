@@ -196,7 +196,7 @@ export function OrderDetailDialog({
                   <span
                     className={cn(
                       "text-[11px] font-bold px-2 py-0.5 rounded tracking-tighter",
-                      order.paymentStatus === PaymentStatus.PAID
+                      order.paymentStatus === PaymentStatus.SUCCESS
                         ? "bg-emerald-50 text-emerald-600"
                         : "bg-red-50 text-red-600",
                     )}

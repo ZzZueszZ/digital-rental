@@ -100,32 +100,21 @@ public class RentalServiceImpl implements RentalService {
             }
         }
 
-        String shippingName = request.getShippingName();
-        String shippingPhone = request.getShippingPhone();
-        String shippingAddress = request.getShippingAddress();
-
-        if (request.getShippingAddressId() != null) {
-            ShippingAddress savedAddress = shippingAddressRepository.findByIdAndUser(request.getShippingAddressId(), user)
-                    .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Địa chỉ nhận hàng không tồn tại"));
-            shippingName = savedAddress.getReceiverName();
-            shippingPhone = savedAddress.getReceiverPhone();
-            shippingAddress = savedAddress.getFullAddress();
-        }
-
-        if (!StringUtils.hasText(shippingName) || !StringUtils.hasText(shippingPhone) || !StringUtils.hasText(shippingAddress)) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Thiếu thông tin nhận hàng");
-        }
+        String shippingName = user.getEmail();
+        String shippingPhone = user.getPhone() != null ? user.getPhone() : "Chưa cập nhật";
+        String pickupTime = StringUtils.hasText(request.getPickupTimeSlot()) ? request.getPickupTimeSlot() : "Giờ hành chính";
+        String shippingAddress = "Nhận tại cửa hàng. Khung giờ: " + pickupTime;
 
         RentalOrder order = RentalOrder.builder()
                 .code("RNT-" + System.currentTimeMillis())
                 .user(user)
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
-                .status(RentalOrderStatus.PENDING_APPROVAL)
+                .status(RentalOrderStatus.PENDING_PAYMENT)
                 .rentalFee(totalRentalFee)
                 .depositAmount(BigDecimal.ZERO) // Will be set by Staff upon approval
                 .paymentMethod(request.getPaymentMethod())
-                .paymentStatus(PaymentStatus.UNPAID)
+                .paymentStatus(PaymentStatus.PENDING)
                 .shippingName(shippingName)
                 .shippingPhone(shippingPhone)
                 .shippingAddress(shippingAddress)
@@ -189,7 +178,7 @@ public class RentalServiceImpl implements RentalService {
             throw new ApplicationException(HttpStatus.FORBIDDEN, "Bạn không có quyền ký hợp đồng này");
         }
 
-        if (order.getStatus() != RentalOrderStatus.PAID_DEPOSIT) {
+        if (order.getStatus() != RentalOrderStatus.PAID_RENTAL_FEE) {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái đã đóng tiền cọc (PAID_DEPOSIT) để thực hiện ký hợp đồng.");
         }
 
@@ -207,7 +196,7 @@ public class RentalServiceImpl implements RentalService {
         contract.setLocked(true);
         rentalContractRepository.save(contract);
 
-        order.setStatus(RentalOrderStatus.CONTRACT_SIGNED);
+        order.setStatus(RentalOrderStatus.WAITING_PICKUP);
         RentalOrder saved = rentalOrderRepository.save(order);
 
         return mapToResponse(saved);
@@ -223,8 +212,8 @@ public class RentalServiceImpl implements RentalService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn thuê không ở trạng thái chờ thanh toán cọc.");
         }
 
-        order.setPaymentStatus(PaymentStatus.PAID);
-        order.setStatus(RentalOrderStatus.PAID_DEPOSIT);
+        order.setPaymentStatus(PaymentStatus.SUCCESS);
+        order.setStatus(RentalOrderStatus.PAID_RENTAL_FEE);
 
         // Generate contract automatically
         RentalContract contract = RentalContract.builder()
@@ -264,7 +253,7 @@ public class RentalServiceImpl implements RentalService {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn đặt thuê"));
 
-        if (order.getStatus() != RentalOrderStatus.PENDING_APPROVAL) {
+        if (order.getStatus() != RentalOrderStatus.PENDING_PAYMENT) {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng không ở trạng thái chờ duyệt.");
         }
 
@@ -298,11 +287,11 @@ public class RentalServiceImpl implements RentalService {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn đặt thuê"));
 
-        if (order.getStatus() != RentalOrderStatus.PENDING_APPROVAL) {
+        if (order.getStatus() != RentalOrderStatus.PENDING_PAYMENT) {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Chỉ có thể từ chối đơn thuê ở trạng thái chờ duyệt.");
         }
 
-        order.setStatus(RentalOrderStatus.REJECTED);
+        order.setStatus(RentalOrderStatus.CANCELLED);
         RentalOrder saved = rentalOrderRepository.save(order);
         return mapToResponse(saved);
     }
@@ -313,7 +302,7 @@ public class RentalServiceImpl implements RentalService {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn thuê"));
 
-        if (order.getStatus() != RentalOrderStatus.CONTRACT_SIGNED) {
+        if (order.getStatus() != RentalOrderStatus.WAITING_PICKUP) {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Hợp đồng phải được ký trước khi bàn giao thiết bị.");
         }
 
@@ -344,7 +333,7 @@ public class RentalServiceImpl implements RentalService {
         }
 
         order.setHandedOverAt(LocalDateTime.now());
-        order.setStatus(RentalOrderStatus.DEVICE_HANDED_OVER);
+        order.setStatus(RentalOrderStatus.RENTING);
         RentalOrder saved = rentalOrderRepository.save(order);
 
         return mapToResponse(saved);
@@ -356,7 +345,7 @@ public class RentalServiceImpl implements RentalService {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn thuê"));
 
-        if (order.getStatus() != RentalOrderStatus.DEVICE_HANDED_OVER) {
+        if (order.getStatus() != RentalOrderStatus.RENTING) {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái đang được thuê để thực hiện trả máy.");
         }
 
@@ -439,7 +428,7 @@ public class RentalServiceImpl implements RentalService {
 
         order.setStatus(RentalOrderStatus.COMPLETED);
         order.setCompletedAt(LocalDateTime.now());
-        order.setRefundStatus(PaymentStatus.PAID); // Completed deposit refund process
+        order.setRefundStatus(PaymentStatus.SUCCESS); // Completed deposit refund process
 
         RentalOrder saved = rentalOrderRepository.save(order);
         return mapToResponse(saved);

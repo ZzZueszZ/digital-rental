@@ -26,13 +26,14 @@ public class VnPayService {
     private final VnPayConfig config;
     private final OrderRepository orderRepository;
     private final PaymentTransactionLogRepository paymentTransactionLogRepository;
+    private final org.web.rentals.repository.RentalOrderRepository rentalOrderRepository;
 
     public String createPaymentUrl(Long orderId, HttpServletRequest request) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn hàng"));
 
-        if (order.getPaymentStatus() == PaymentStatus.PAID) {
+        if (order.getPaymentStatus() == PaymentStatus.SUCCESS) {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng đã được thanh toán");
         }
 
@@ -111,7 +112,7 @@ public class VnPayService {
         }
 
         orderRepository.save(order);
-        savePaymentLog(order, success ? PaymentStatus.PAID : PaymentStatus.FAILED, paidAmount, transactionNo, rspCode, vnpParams.toString());
+        savePaymentLog(order, success ? PaymentStatus.SUCCESS : PaymentStatus.FAILED, paidAmount, transactionNo, rspCode, vnpParams.toString());
 
         return VnPayReturnResponse.builder()
                 .orderCode(order.getCode())
@@ -137,9 +138,91 @@ public class VnPayService {
                 .orderCode(order.getCode())
                 .responseCode(responseCode)
                 .rawPayload(rawPayload)
-                .note(status == PaymentStatus.PAID ? "Success recorded" : "Payment processing failed")
+                .note(status == PaymentStatus.SUCCESS ? "Success recorded" : "Payment processing failed")
                 .build();
 
         paymentTransactionLogRepository.save(logEntry);
+    }
+
+    public String createRentalPaymentUrl(Long rentalOrderId, HttpServletRequest request) {
+        org.web.rentals.model.RentalOrder order = rentalOrderRepository.findById(rentalOrderId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn thuê"));
+
+        if (order.getPaymentStatus() == PaymentStatus.SUCCESS) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Phí thuê đã được thanh toán");
+        }
+
+        if (order.getPaymentMethod() != PaymentMethod.ONLINE) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Phương thức thanh toán khoản này không phải ONLINE (VNPay)");
+        }
+
+        long amount = order.getRentalFee()
+                .multiply(BigDecimal.valueOf(100))
+                .longValue();
+
+        Map<String, String> params = config.baseParams();
+        params.put("vnp_Amount", String.valueOf(amount));
+        params.put("vnp_TxnRef", order.getCode());
+        params.put("vnp_OrderInfo", "Thanh toan don thue " + order.getCode());
+        params.put("vnp_IpAddr", request.getRemoteAddr());
+        // Use a different return URL for rentals to differentiate
+        params.put("vnp_ReturnUrl", "http://localhost:8080/api/payments/vnpay/rental-fee/return");
+
+        String hashData = VnPayUtil.generateQuery(params, false);
+        String secureHash = VnPayUtil.hmacSHA512(config.getHashSecret(), hashData);
+        String queryUrl = VnPayUtil.generateQuery(params, true) + "&vnp_SecureHash=" + secureHash;
+        log.info("VnPay Rental Query URL: {}", queryUrl);
+        return config.getPayUrl() + "?" + queryUrl;
+    }
+
+    public VnPayReturnResponse handleRentalReturn(Map<String, String> vnpParams) {
+        boolean valid = validateSignature(new HashMap<>(vnpParams));
+        if (!valid) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Chữ ký VNPAY không hợp lệ");
+        }
+
+        String txnRef = vnpParams.get("vnp_TxnRef");
+        String rspCode = vnpParams.get("vnp_ResponseCode");
+        String transactionStatus = vnpParams.get("vnp_TransactionStatus");
+        String transactionNo = vnpParams.get("vnp_TransactionNo");
+        String bankCode = vnpParams.get("vnp_BankCode");
+        String amountStr = vnpParams.get("vnp_Amount");
+        String payDateStr = vnpParams.get("vnp_PayDate");
+
+        org.web.rentals.model.RentalOrder order = rentalOrderRepository.findByCode(txnRef)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Order not found with VNPAY transaction code"));
+
+        BigDecimal paidAmount = null;
+        if (amountStr != null) {
+            paidAmount = BigDecimal.valueOf(Long.parseLong(amountStr)).divide(BigDecimal.valueOf(100));
+        }
+
+        boolean success = "00".equals(rspCode) && "00".equals(transactionStatus);
+
+        if (success) {
+            order.setPaymentStatus(PaymentStatus.SUCCESS);
+            order.setStatus(org.web.common.enums.RentalOrderStatus.PAID_RENTAL_FEE);
+            order.setPaymentTransactionNo(transactionNo);
+            order.setPaymentResponseCode(rspCode);
+            order.setPaymentRawPayload(vnpParams.toString());
+            rentalOrderRepository.save(order);
+        } else {
+            order.setPaymentStatus(PaymentStatus.FAILED);
+            order.setPaymentResponseCode(rspCode);
+            order.setPaymentRawPayload(vnpParams.toString());
+            rentalOrderRepository.save(order);
+        }
+
+        return VnPayReturnResponse.builder()
+                .orderCode(order.getCode())
+                .paymentStatus(order.getPaymentStatus())
+                .vnpResponseCode(rspCode)
+                .vnpTransactionStatus(transactionStatus)
+                .vnpTransactionNo(transactionNo)
+                .vnpBankCode(bankCode)
+                .vnpAmount(amountStr)
+                .vnpPayDate(payDateStr)
+                .message(success ? "Thanh toán phí thuê thành công" : "Thanh toán phí thuê thất bại")
+                .build();
     }
 }

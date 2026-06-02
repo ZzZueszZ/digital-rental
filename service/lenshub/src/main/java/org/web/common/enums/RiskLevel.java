@@ -1,8 +1,7 @@
 package org.web.common.enums;
 
 public enum RiskLevel {
-    LOW,
-    MEDIUM,
-    HIGH,
-    CRITICAL
+    LOW_RISK,
+    MEDIUM_RISK,
+    HIGH_RISK
 }

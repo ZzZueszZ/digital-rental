@@ -15,8 +15,8 @@ export enum PaymentMethod {
 }
 
 export enum PaymentStatus {
-  UNPAID = "UNPAID",
-  PAID = "PAID",
+  PENDING = "PENDING",
+  SUCCESS = "SUCCESS",
   FAILED = "FAILED",
 }
 

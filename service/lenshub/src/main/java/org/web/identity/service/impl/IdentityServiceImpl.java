@@ -128,7 +128,7 @@ public class IdentityServiceImpl implements IdentityService {
         RiskAssessment risk = RiskAssessment.builder()
                 .verificationSession(session)
                 .riskScore(isFailureCase ? 85.0 : 5.0)
-                .riskLevel(isFailureCase ? RiskLevel.HIGH : RiskLevel.LOW)
+                .riskLevel(isFailureCase ? RiskLevel.HIGH_RISK : RiskLevel.LOW_RISK)
                 .deviceFingerprintMatch(true)
                 .ipRiskFlag(false)
                 .blacklistHit(false)

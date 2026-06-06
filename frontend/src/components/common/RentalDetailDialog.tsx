@@ -584,8 +584,9 @@ export function RentalDetailDialog({
       toast.success("Đã ký hợp đồng điện tử thành công!");
       setShowSignForm(false);
       setSignatureText("");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Lỗi ký hợp đồng");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Lỗi ký hợp đồng");
     }
   };
 

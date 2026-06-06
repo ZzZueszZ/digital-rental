@@ -39,7 +39,7 @@ import {
   useUpdateProductPrice,
 } from "@/services/product";
 import { useAdjustStock, useInventoryLogs } from "@/services/inventory";
-import { useGetDevicesByProduct, useCreateDevice, useUpdateDevice } from "@/services/rental";
+import { useGetDevicesByProduct, useCreateDevice, useUpdateDevice, DeviceResponse } from "@/services/rental";
 import { useCategories } from "@/services/category";
 import {
   ProductInfoUpdateRequest,
@@ -227,14 +227,15 @@ export default function ProductDetailPage({
       setDeviceSerial("");
       setDeviceCondition("");
       setShowDeviceForm(false);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Không thể thêm thiết bị");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Không thể thêm thiết bị");
     }
   };
   
   const handleUpdateDeviceStatus = async (deviceId: number, currentStatus: string) => {
-    const nextStatus = currentStatus === "AVAILABLE" ? "MAINTENANCE" : (currentStatus === "MAINTENANCE" ? "AVAILABLE" : currentStatus);
-    if (nextStatus === currentStatus) return;
+    if (currentStatus !== "AVAILABLE" && currentStatus !== "MAINTENANCE") return;
+    const nextStatus = currentStatus === "AVAILABLE" ? "MAINTENANCE" : "AVAILABLE";
     try {
       await updateDeviceMutation.mutateAsync({ id: deviceId, req: { status: nextStatus, conditionDetails: "" } });
       toast.success("Cập nhật trạng thái thành công");
@@ -617,7 +618,7 @@ export default function ProductDetailPage({
                       {devices.length === 0 ? (
                         <div className="text-xs text-center py-4 text-amber-600/70">Chưa có thiết bị nào.</div>
                       ) : (
-                        devices.map((d: any) => (
+                        devices.map((d: DeviceResponse) => (
                           <div key={d.id} className="flex items-center justify-between bg-white border border-amber-100 rounded-dash-sm p-2 text-sm">
                             <div className="flex flex-col">
                               <span className="font-semibold text-zinc-900">SN: {d.serialNumber}</span>

@@ -36,7 +36,8 @@ import {
   useCompleteRental,
   rentalService,
   DeviceResponse,
-  RiskLevel
+  RiskLevel,
+  RentalOrderResponse
 } from "@/services/rental";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 
@@ -63,7 +64,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   const totalPages = rentalsRes?.meta?.totalPages || 1;
   const totalElements = rentalsRes?.meta?.totalElements || rentals.length;
 
-  const [selectedRental, setSelectedRental] = useState<any>(null);
+  const [selectedRental, setSelectedRental] = useState<RentalOrderResponse | null>(null);
   
   // Modals state
   const [isApproveOpen, setIsApproveOpen] = useState(false);
@@ -90,7 +91,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   const [itemConditions, setItemConditions] = useState<Record<number, string>>({});
   const [damageFee, setDamageFee] = useState<number>(0);
 
-  const handleOpenApprove = async (rental: any) => {
+  const handleOpenApprove = async (rental: RentalOrderResponse) => {
     setSelectedRental(rental);
     setDepositAmount(rental.estimatedDepositAmount || 0);
     setRiskLevel(rental.riskLevel || RiskLevel.LOW_RISK);
@@ -114,6 +115,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   };
 
   const handleApproveSubmit = async () => {
+    if (!selectedRental) return;
     // Validate assignments
     for (const item of selectedRental.items) {
       if (!deviceAssignments[item.id]) {
@@ -133,8 +135,9 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
       });
       toast.success("Duyệt đơn thuê và gán thiết bị thành công!");
       setIsApproveOpen(false);
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Lỗi phê duyệt");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Lỗi phê duyệt");
     }
   };
 
@@ -150,16 +153,17 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
         }
       });
       toast.success("Xác nhận thu tiền cọc offline thành công!");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Lỗi thanh toán cọc");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Lỗi thanh toán cọc");
     }
   };
 
-  const handleOpenHandover = (rental: any) => {
+  const handleOpenHandover = (rental: RentalOrderResponse) => {
     setSelectedRental(rental);
     setInspectorName("");
     const initConditions: Record<number, string> = {};
-    rental.items.forEach((item: any) => {
+    rental.items.forEach((item) => {
       initConditions[item.id] = "Bình thường";
     });
     setItemConditions(initConditions);
@@ -167,6 +171,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   };
 
   const handleHandoverSubmit = async () => {
+    if (!selectedRental) return;
     if (!inspectorName.trim()) {
       toast.error("Vui lòng nhập tên nhân viên bàn giao");
       return;
@@ -188,17 +193,18 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
       });
       toast.success("Đã tạo biên bản bàn giao thành công!");
       setIsHandoverOpen(false);
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Lỗi bàn giao");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Lỗi bàn giao");
     }
   };
 
-  const handleOpenReturn = (rental: any) => {
+  const handleOpenReturn = (rental: RentalOrderResponse) => {
     setSelectedRental(rental);
     setInspectorName("");
     setDamageFee(0);
     const initConditions: Record<number, string> = {};
-    rental.items.forEach((item: any) => {
+    rental.items.forEach((item) => {
       initConditions[item.id] = item.conditionBeforeHandover || "Bình thường";
     });
     setItemConditions(initConditions);
@@ -206,6 +212,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   };
 
   const handleReturnSubmit = async () => {
+    if (!selectedRental) return;
     if (!inspectorName.trim()) {
       toast.error("Vui lòng nhập tên nhân viên nhận trả");
       return;
@@ -229,8 +236,9 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
       });
       toast.success("Nhận trả thiết bị thành công!");
       setIsReturnOpen(false);
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Lỗi trả thiết bị");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Lỗi trả thiết bị");
     }
   };
 
@@ -244,8 +252,9 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
         }
       });
       toast.success("Quyết toán đơn thuê và hoàn cọc thành công!");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Lỗi quyết toán");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Lỗi quyết toán");
     }
   };
 
@@ -254,8 +263,9 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
     try {
       await handoverMutation.mutateAsync({ id });
       toast.success("Đã thực hiện bàn giao thiết bị thành công!");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Lỗi bàn giao thiết bị");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Lỗi bàn giao thiết bị");
     }
   };
 
@@ -364,7 +374,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
               <select
                 value={statusFilter}
                 onChange={(e) => {
-                  setStatusFilter(e.target.value as any);
+                  setStatusFilter(e.target.value as RentalOrderStatus | "ALL");
                   setPage(0);
                 }}
                 className="h-10 px-3 rounded-xl border border-zinc-200 text-xs font-bold text-zinc-600 bg-white outline-none focus:border-red-600"
@@ -614,7 +624,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
                   Gán thiết bị vật lý cụ thể (Theo số Serial)
                 </label>
-                {selectedRental.items.map((item: any) => {
+                {selectedRental.items.map((item) => {
                   const devs = availableDevicesMap[item.productId] || [];
                   return (
                     <div key={item.id} className="p-3 bg-zinc-50 border border-zinc-100 rounded-xl space-y-2">
@@ -677,7 +687,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
               <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
                 Ghi nhận tình trạng thiết bị
               </label>
-              {selectedRental.items.map((item: any) => (
+              {selectedRental.items.map((item) => (
                 <div key={item.id} className="p-3 bg-zinc-50 rounded-xl space-y-2 border border-zinc-100">
                   <div className="text-xs font-bold text-zinc-900">
                     {item.productName} ({item.deviceSerialNumber})
@@ -737,7 +747,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
               <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
                 Ghi nhận tình trạng thiết bị
               </label>
-              {selectedRental.items.map((item: any) => (
+              {selectedRental.items.map((item) => (
                 <div key={item.id} className="p-3 bg-zinc-50 rounded-xl space-y-2 border border-zinc-100">
                   <div className="text-xs font-bold text-zinc-900">
                     {item.productName} ({item.deviceSerialNumber})

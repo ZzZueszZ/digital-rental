@@ -249,8 +249,9 @@ export default function ProductDetailPage() {
 
         router.push("/profile/orders");
       }
-    } catch (err: any) {
-      const msg = err.response?.data?.message || "Không thể gửi yêu cầu thuê";
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      const msg = error.response?.data?.message || "Không thể gửi yêu cầu thuê";
       toast.error(msg);
     } finally {
       setIsSubmittingRental(false);

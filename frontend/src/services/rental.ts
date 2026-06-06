@@ -40,6 +40,12 @@ export enum RiskLevel {
   MEDIUM_RISK = "MEDIUM_RISK",
   HIGH_RISK = "HIGH_RISK"
 }
+export interface PaginationMeta {
+  totalPages: number;
+  totalElements: number;
+  pageNumber: number;
+  pageSize: number;
+}
 
 export interface RentalOrderItemResponse {
   id: number;
@@ -215,8 +221,8 @@ export const rentalService = {
     return response.data;
   },
 
-  getMyRentals: async (params: { page?: number; size?: number; status?: RentalOrderStatus }): Promise<{ success: boolean; data: RentalOrderResponse[]; meta?: any }> => {
-    const response = await axios.get<{ success: boolean; data: RentalOrderResponse[]; meta?: any }>("/rentals/my", { params });
+  getMyRentals: async (params: { page?: number; size?: number; status?: RentalOrderStatus }): Promise<{ success: boolean; data: RentalOrderResponse[]; meta?: PaginationMeta }> => {
+    const response = await axios.get<{ success: boolean; data: RentalOrderResponse[]; meta?: PaginationMeta }>("/rentals/my", { params });
     return response.data;
   },
 
@@ -238,8 +244,8 @@ export const rentalService = {
   },
 
   // STAFF
-  getStaffRentals: async (params: { page?: number; size?: number; status?: RentalOrderStatus }): Promise<{ success: boolean; data: RentalOrderResponse[]; meta?: any }> => {
-    const response = await axios.get<{ success: boolean; data: RentalOrderResponse[]; meta?: any }>("/rentals/staff", { params });
+  getStaffRentals: async (params: { page?: number; size?: number; status?: RentalOrderStatus }): Promise<{ success: boolean; data: RentalOrderResponse[]; meta?: PaginationMeta }> => {
+    const response = await axios.get<{ success: boolean; data: RentalOrderResponse[]; meta?: PaginationMeta }>("/rentals/staff", { params });
     return response.data;
   },
 
@@ -414,7 +420,7 @@ export const useCreateDevice = () => {
 export const useUpdateDevice = (productId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, req }: { id: number; req: any }) => rentalService.updateDevice(id, req),
+    mutationFn: ({ id, req }: { id: number; req: Parameters<typeof rentalService.updateDevice>[1] }) => rentalService.updateDevice(id, req),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["devices", productId] });
       queryClient.invalidateQueries({ queryKey: ["products"] });

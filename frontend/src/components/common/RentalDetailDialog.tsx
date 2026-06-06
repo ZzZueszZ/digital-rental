@@ -21,8 +21,7 @@ import { cn, formatVND, formatDate } from "@/lib/utils";
 import {
   RentalOrderStatus,
   useRentalDetail,
-  useSignContract,
-  usePayDeposit
+  useSignContract
 } from "@/services/rental";
 
 interface RentalDetailDialogProps {
@@ -38,21 +37,9 @@ export function RentalDetailDialog({
 }: RentalDetailDialogProps) {
   const { data: rentalRes, isLoading } = useRentalDetail(rentalId);
   const { mutateAsync: signContract, isPending: isSigning } = useSignContract();
-  const { mutateAsync: payDeposit, isPending: isPaying } = usePayDeposit();
-
-  const [signatureText, setSignatureText] = useState("");
-  const [showSignForm, setShowSignForm] = useState(false);
-
   const rental = rentalRes?.data;
-
-  const handlePayDeposit = async () => {
-    try {
-      await payDeposit(rentalId);
-      toast.success("Thanh toán tiền đặt cọc thành công!");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Lỗi thanh toán");
-    }
-  };
+  const [showSignForm, setShowSignForm] = useState(false);
+  const [signatureText, setSignatureText] = useState("");
 
   const handleSignContract = async () => {
     if (!signatureText.trim()) {
@@ -71,23 +58,19 @@ export function RentalDetailDialog({
 
   const getStatusColor = (status: RentalOrderStatus) => {
     switch (status) {
-      case RentalOrderStatus.PENDING_APPROVAL:
-        return "bg-amber-50 text-amber-600 border-amber-100";
-      case RentalOrderStatus.REJECTED:
-        return "bg-red-50 text-red-600 border-red-100";
       case RentalOrderStatus.PENDING_PAYMENT:
         return "bg-amber-100 text-amber-700 border-amber-200";
-      case RentalOrderStatus.PAID_DEPOSIT:
+      case RentalOrderStatus.PAID_RENTAL_FEE:
         return "bg-blue-50 text-blue-600 border-blue-100";
-      case RentalOrderStatus.CONTRACT_SIGNED:
+      case RentalOrderStatus.WAITING_PICKUP:
         return "bg-indigo-50 text-indigo-600 border-indigo-100";
-      case RentalOrderStatus.DEVICE_HANDED_OVER:
+      case RentalOrderStatus.RENTING:
         return "bg-purple-50 text-purple-600 border-purple-100";
       case RentalOrderStatus.RETURNED:
         return "bg-zinc-100 text-zinc-600 border-zinc-200";
       case RentalOrderStatus.COMPLETED:
         return "bg-emerald-600 text-white border-emerald-600";
-      case RentalOrderStatus.CANCELED:
+      case RentalOrderStatus.CANCELLED:
         return "bg-red-50 text-red-600 border-red-100";
       default:
         return "bg-zinc-50 text-zinc-500 border-zinc-100";
@@ -96,23 +79,19 @@ export function RentalDetailDialog({
 
   const getStatusLabel = (status: RentalOrderStatus) => {
     switch (status) {
-      case RentalOrderStatus.PENDING_APPROVAL:
-        return "Chờ duyệt thuê";
-      case RentalOrderStatus.REJECTED:
-        return "Từ chối thuê";
       case RentalOrderStatus.PENDING_PAYMENT:
-        return "Chờ thanh toán cọc";
-      case RentalOrderStatus.PAID_DEPOSIT:
-        return "Đã cọc - Chờ ký HĐ";
-      case RentalOrderStatus.CONTRACT_SIGNED:
-        return "Đã ký HĐ - Chờ nhận máy";
-      case RentalOrderStatus.DEVICE_HANDED_OVER:
+        return "Chờ thanh toán phí thuê";
+      case RentalOrderStatus.PAID_RENTAL_FEE:
+        return "Đã TT phí thuê";
+      case RentalOrderStatus.WAITING_PICKUP:
+        return "Chờ nhận máy (ký HĐ/cọc)";
+      case RentalOrderStatus.RENTING:
         return "Đang thuê";
       case RentalOrderStatus.RETURNED:
         return "Đã trả máy - Quyết toán";
       case RentalOrderStatus.COMPLETED:
         return "Hoàn tất";
-      case RentalOrderStatus.CANCELED:
+      case RentalOrderStatus.CANCELLED:
         return "Đã hủy";
       default:
         return status;
@@ -272,12 +251,12 @@ export function RentalDetailDialog({
                   <span
                     className={cn(
                       "text-[10px] font-bold px-2 py-0.5 rounded uppercase border",
-                      rental.paymentStatus === "PAID"
+                    rental.depositStatus === "PAID" || rental.depositStatus === "PARTIALLY_DEDUCTED" || rental.depositStatus === "FULLY_DEDUCTED" || rental.depositStatus === "REFUNDED"
                         ? "bg-emerald-50 text-emerald-600 border-emerald-100"
                         : "bg-amber-50 text-amber-600 border-amber-100"
                     )}
                   >
-                    {rental.paymentStatus === "PAID" ? "Đã đặt cọc" : "Chưa cọc"}
+                    {rental.depositStatus !== "NOT_COLLECTED" && rental.depositStatus !== undefined ? "Đã đặt cọc" : "Chưa cọc"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-zinc-200/50">
@@ -285,12 +264,12 @@ export function RentalDetailDialog({
                   <span
                     className={cn(
                       "text-[10px] font-bold px-2 py-0.5 rounded uppercase border",
-                      rental.refundStatus === "PAID"
+                      rental.refundStatus === "SUCCESS"
                         ? "bg-emerald-50 text-emerald-600 border-emerald-100"
                         : "bg-zinc-50 text-zinc-500 border-zinc-100"
                     )}
                   >
-                    {rental.refundStatus === "PAID" ? "Đã hoàn trả" : "Chưa hoàn"}
+                    {rental.refundStatus === "SUCCESS" ? "Đã hoàn trả" : "Chưa hoàn"}
                   </span>
                 </div>
               </div>
@@ -315,9 +294,9 @@ export function RentalDetailDialog({
                 </div>
               )}
               <div className="flex justify-between text-xs font-semibold text-zinc-400">
-                <span>Tiền cọc thiết bị (đã đóng):</span>
+                <span>Tiền cọc thiết bị (dự kiến/đã đóng):</span>
                 <span className="text-amber-600 font-bold">
-                  {formatVND(rental.depositAmount)}
+                  {formatVND(rental.finalDepositAmount ?? rental.estimatedDepositAmount ?? 0)}
                 </span>
               </div>
             </div>
@@ -365,7 +344,7 @@ export function RentalDetailDialog({
               {rental.contract.isLocked ? (
                 <div className="flex justify-between items-center text-xs font-semibold text-zinc-500 pt-2">
                   <span>Chữ ký bên thuê:</span>
-                  <span className="font-bold text-zinc-950 font-mono italic underline">{rental.contract.customerSignature}</span>
+                  <span className="font-bold text-zinc-950 font-mono italic underline">{rental.contract.contractHash}</span>
                 </div>
               ) : (
                 !showSignForm && (
@@ -411,26 +390,7 @@ export function RentalDetailDialog({
             </div>
           )}
 
-          {/* Action buttons */}
-          {rental.status === RentalOrderStatus.PENDING_PAYMENT && (
-            <div className="pt-2">
-              <Button
-                onClick={handlePayDeposit}
-                disabled={isPaying}
-                className="w-full h-12 rounded-2xl bg-amber-600 hover:bg-zinc-950 text-white font-black text-xs uppercase transition-all shadow-lg border-none"
-              >
-                {isPaying ? (
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                ) : (
-                  <CreditCard className="w-4 h-4 mr-2" />
-                )}
-                Thanh toán tiền đặt cọc ({formatVND(rental.depositAmount)})
-              </Button>
-              <p className="text-[10px] text-center text-zinc-400 font-bold mt-3 uppercase tracking-widest leading-relaxed">
-                * Đây là môi trường thử nghiệm. Tiền cọc sẽ được chuyển trạng thái PAID ngay lập tức.
-              </p>
-            </div>
-          )}
+          {/* Action buttons removed */}
         </div>
       ) : null}
     </AdminFormDialog>

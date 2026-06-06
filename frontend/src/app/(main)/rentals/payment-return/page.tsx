@@ -91,7 +91,7 @@ export default function RentalPaymentReturnPage() {
 
           <div className="space-y-2">
             <Button
-              onClick={() => router.push("/profile/orders")}
+              onClick={() => router.push("/profile/rentals")}
               className={cn(
                 "w-full h-12 rounded-xl font-bold text-sm transition-all shadow-dash-card border-none flex items-center justify-center gap-2",
                 status === "success"

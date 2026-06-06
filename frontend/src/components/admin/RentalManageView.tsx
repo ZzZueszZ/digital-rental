@@ -25,15 +25,16 @@ import { EmptyState } from "@/app/(staff)/staff/users/components/EmptyState";
 import { StatCard } from "@/app/(staff)/staff/components/StatCard";
 import {
   RentalOrderStatus,
-  useAllRentalsForAdmin,
-  useApproveRental,
-  useRejectRental,
-  usePayDeposit,
+  useStaffRentals,
+  usePrepareRental,
+  useCreateHandoverReport,
+  useCollectDeposit,
   useHandoverDevices,
-  useReturnDevices,
-  useSettleAndComplete,
+  useCreateReturnReport,
+  useCompleteRental,
   rentalService,
-  DeviceResponse
+  DeviceResponse,
+  RiskLevel
 } from "@/services/rental";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 
@@ -42,18 +43,18 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<RentalOrderStatus | "ALL">("ALL");
 
-  const { data: rentalsRes, isLoading, refetch } = useAllRentalsForAdmin({
+  const { data: rentalsRes, isLoading, refetch } = useStaffRentals({
     page,
     size: 10,
     status: statusFilter === "ALL" ? undefined : statusFilter
   });
 
-  const approveMutation = useApproveRental();
-  const rejectMutation = useRejectRental();
-  const payDepositMutation = usePayDeposit();
+  const prepareMutation = usePrepareRental();
+  const handoverReportMutation = useCreateHandoverReport();
+  const collectDepositMutation = useCollectDeposit();
   const handoverMutation = useHandoverDevices();
-  const returnMutation = useReturnDevices();
-  const settleMutation = useSettleAndComplete();
+  const returnReportMutation = useCreateReturnReport();
+  const completeMutation = useCompleteRental();
 
   const rentals = rentalsRes?.data || [];
   const pagination = rentalsRes?.meta; // page/size/total info if present, otherwise default
@@ -111,10 +112,9 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
     }
 
     try {
-      await approveMutation.mutateAsync({
+      await prepareMutation.mutateAsync({
         id: selectedRental.id,
         req: {
-          depositAmount,
           itemDeviceAssignments: deviceAssignments
         }
       });
@@ -125,33 +125,18 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
     }
   };
 
-  const handleOpenReject = (rental: any) => {
-    setSelectedRental(rental);
-    setRejectReason("");
-    setIsRejectOpen(true);
-  };
-
-  const handleRejectSubmit = async () => {
-    if (!rejectReason.trim()) {
-      toast.error("Vui lòng nhập lý do từ chối");
-      return;
-    }
-    try {
-      await rejectMutation.mutateAsync({
-        id: selectedRental.id,
-        reason: rejectReason
-      });
-      toast.success("Đã từ chối đơn thuê");
-      setIsRejectOpen(false);
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Lỗi từ chối");
-    }
-  };
+  // handleOpenReject and handleRejectSubmit removed because reject logic was removed
 
   const handlePayDeposit = async (id: number) => {
     try {
-      await payDepositMutation.mutateAsync(id);
-      toast.success("Xác nhận đóng tiền cọc thành công!");
+      await collectDepositMutation.mutateAsync({
+        id: id,
+        req: {
+          amount: selectedRental?.finalDepositAmount || 0,
+          paymentMethod: "CASH"
+        }
+      });
+      toast.success("Xác nhận thu tiền cọc offline thành công!");
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Lỗi thanh toán cọc");
     }
@@ -174,14 +159,20 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
       return;
     }
     try {
-      await handoverMutation.mutateAsync({
+      await handoverReportMutation.mutateAsync({
         id: selectedRental.id,
         req: {
-          inspectorName,
-          itemConditions
+          serialNumber: "HR-" + Date.now(),
+          bodyCondition: "Bình thường",
+          lensCondition: "Bình thường",
+          batteryCondition: "Bình thường",
+          accessoryCondition: "Bình thường",
+          riskLevel: RiskLevel.LOW_RISK,
+          finalDepositAmount: selectedRental.finalDepositAmount || 0,
+          note: "Không có ghi chú"
         }
       });
-      toast.success("Bàn giao thiết bị thành công!");
+      toast.success("Đã tạo biên bản bàn giao thành công!");
       setIsHandoverOpen(false);
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Lỗi bàn giao");
@@ -206,12 +197,19 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
       return;
     }
     try {
-      await returnMutation.mutateAsync({
+      await returnReportMutation.mutateAsync({
         id: selectedRental.id,
         req: {
-          inspectorName,
-          damageFee,
-          itemConditions
+          returnDate: new Date().toISOString(),
+          bodyConditionAfter: "Bình thường",
+          lensConditionAfter: "Bình thường",
+          batteryConditionAfter: "Bình thường",
+          accessoryConditionAfter: "Bình thường",
+          lateDays: 0,
+          lateFee: 0,
+          damageFee: damageFee,
+          missingAccessoryFee: 0,
+          note: "Trả đúng hạn"
         }
       });
       toast.success("Nhận trả thiết bị thành công!");
@@ -223,7 +221,13 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
 
   const handleSettle = async (id: number) => {
     try {
-      await settleMutation.mutateAsync(id);
+      await completeMutation.mutateAsync({
+        id: id,
+        req: {
+          refundMethod: "CASH",
+          note: "Hoàn tất hợp đồng"
+        }
+      });
       toast.success("Quyết toán đơn thuê và hoàn cọc thành công!");
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Lỗi quyết toán");
@@ -232,23 +236,19 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
 
   const getStatusColor = (status: RentalOrderStatus) => {
     switch (status) {
-      case RentalOrderStatus.PENDING_APPROVAL:
-        return "bg-amber-50 text-amber-600 border-amber-100";
-      case RentalOrderStatus.REJECTED:
-        return "bg-red-50 text-red-600 border-red-100";
       case RentalOrderStatus.PENDING_PAYMENT:
         return "bg-amber-100 text-amber-800 border-amber-200";
-      case RentalOrderStatus.PAID_DEPOSIT:
+      case RentalOrderStatus.PAID_RENTAL_FEE:
         return "bg-blue-50 text-blue-600 border-blue-100";
-      case RentalOrderStatus.CONTRACT_SIGNED:
+      case RentalOrderStatus.WAITING_PICKUP:
         return "bg-indigo-50 text-indigo-600 border-indigo-100";
-      case RentalOrderStatus.DEVICE_HANDED_OVER:
+      case RentalOrderStatus.RENTING:
         return "bg-purple-50 text-purple-600 border-purple-100";
       case RentalOrderStatus.RETURNED:
         return "bg-zinc-100 text-zinc-600 border-zinc-200";
       case RentalOrderStatus.COMPLETED:
         return "bg-emerald-600 text-white border-emerald-600";
-      case RentalOrderStatus.CANCELED:
+      case RentalOrderStatus.CANCELLED:
         return "bg-red-50 text-red-600 border-red-100";
       default:
         return "bg-zinc-50 text-zinc-500 border-zinc-100";
@@ -257,23 +257,19 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
 
   const getStatusLabel = (status: RentalOrderStatus) => {
     switch (status) {
-      case RentalOrderStatus.PENDING_APPROVAL:
-        return "Chờ duyệt thuê";
-      case RentalOrderStatus.REJECTED:
-        return "Từ chối thuê";
       case RentalOrderStatus.PENDING_PAYMENT:
-        return "Chờ cọc";
-      case RentalOrderStatus.PAID_DEPOSIT:
-        return "Đã cọc - Chờ ký HĐ";
-      case RentalOrderStatus.CONTRACT_SIGNED:
-        return "Đã ký HĐ - Chờ nhận máy";
-      case RentalOrderStatus.DEVICE_HANDED_OVER:
+        return "Chờ TT phí";
+      case RentalOrderStatus.PAID_RENTAL_FEE:
+        return "Đã TT phí";
+      case RentalOrderStatus.WAITING_PICKUP:
+        return "Chờ nhận máy/Ký HĐ";
+      case RentalOrderStatus.RENTING:
         return "Đang thuê";
       case RentalOrderStatus.RETURNED:
         return "Đã trả máy - Quyết toán";
       case RentalOrderStatus.COMPLETED:
         return "Hoàn tất";
-      case RentalOrderStatus.CANCELED:
+      case RentalOrderStatus.CANCELLED:
         return "Đã hủy";
       default:
         return status;
@@ -299,14 +295,14 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
           accent="bg-red-600"
         />
         <StatCard
-          title="Chờ duyệt"
-          value={rentals.filter((r) => r.status === RentalOrderStatus.PENDING_APPROVAL).length}
+          title="Chờ chuẩn bị"
+          value={rentals.filter((r) => r.status === RentalOrderStatus.PAID_RENTAL_FEE).length}
           icon={Clock}
           accent="bg-amber-500"
         />
         <StatCard
           title="Đang thuê máy"
-          value={rentals.filter((r) => r.status === RentalOrderStatus.DEVICE_HANDED_OVER).length}
+          value={rentals.filter((r) => r.status === RentalOrderStatus.RENTING).length}
           icon={Truck}
           accent="bg-indigo-500"
         />
@@ -349,12 +345,10 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                 className="h-10 px-3 rounded-xl border border-zinc-200 text-xs font-bold text-zinc-600 bg-white outline-none focus:border-red-600"
               >
                 <option value="ALL">Tất cả trạng thái</option>
-                <option value={RentalOrderStatus.PENDING_APPROVAL}>Chờ duyệt thuê</option>
-                <option value={RentalOrderStatus.REJECTED}>Từ chối thuê</option>
-                <option value={RentalOrderStatus.PENDING_PAYMENT}>Chờ thanh toán cọc</option>
-                <option value={RentalOrderStatus.PAID_DEPOSIT}>Đã cọc - Chờ ký HĐ</option>
-                <option value={RentalOrderStatus.CONTRACT_SIGNED}>Đã ký HĐ - Chờ giao máy</option>
-                <option value={RentalOrderStatus.DEVICE_HANDED_OVER}>Đang cho thuê</option>
+                <option value={RentalOrderStatus.PENDING_PAYMENT}>Chờ thanh toán phí</option>
+                <option value={RentalOrderStatus.PAID_RENTAL_FEE}>Đã TT phí - Chờ chuẩn bị</option>
+                <option value={RentalOrderStatus.WAITING_PICKUP}>Chờ nhận máy</option>
+                <option value={RentalOrderStatus.RENTING}>Đang cho thuê</option>
                 <option value={RentalOrderStatus.RETURNED}>Đã trả - Chờ quyết toán</option>
                 <option value={RentalOrderStatus.COMPLETED}>Hoàn thành / Hoàn cọc</option>
               </select>
@@ -431,7 +425,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                       <div className="flex flex-col">
                         <span className="text-xs font-bold text-red-600">{formatVND(rental.rentalFee)}</span>
                         <span className="text-[10px] text-amber-600 font-semibold mt-0.5">
-                          Cọc: {formatVND(rental.depositAmount)}
+                          Cọc: {formatVND(rental.finalDepositAmount ?? rental.estimatedDepositAmount ?? 0)}
                         </span>
                       </div>
                     </td>
@@ -445,65 +439,16 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex gap-2 justify-end">
-                        {/* Approve/Reject Buttons */}
-                        {rental.status === RentalOrderStatus.PENDING_APPROVAL && (
-                          <>
-                            <Button
-                              onClick={() => handleOpenApprove(rental)}
-                              className="h-8 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold border-none"
-                            >
-                              Duyệt thuê
-                            </Button>
-                            <Button
-                              onClick={() => handleOpenReject(rental)}
-                              className="h-8 px-3 rounded-lg bg-zinc-100 hover:bg-red-50 text-zinc-600 hover:text-red-600 text-xs font-bold border border-zinc-100"
-                            >
-                              Từ chối
-                            </Button>
-                          </>
-                        )}
-
-                        {/* Pay Deposit Button */}
-                        {rental.status === RentalOrderStatus.PENDING_PAYMENT && (
+                        {/* Prepare Rental Button */}
+                        {rental.status === RentalOrderStatus.PAID_RENTAL_FEE && (
                           <Button
-                            onClick={() => handlePayDeposit(rental.id)}
-                            className="h-8 px-3 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold border-none"
-                          >
-                            Xác nhận cọc
-                          </Button>
-                        )}
-
-                        {/* Handover Button */}
-                        {rental.status === RentalOrderStatus.CONTRACT_SIGNED && (
-                          <Button
-                            onClick={() => handleOpenHandover(rental)}
-                            className="h-8 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold border-none"
-                          >
-                            Bàn giao máy
-                          </Button>
-                        )}
-
-                        {/* Return Button */}
-                        {rental.status === RentalOrderStatus.DEVICE_HANDED_OVER && (
-                          <Button
-                            onClick={() => handleOpenReturn(rental)}
-                            className="h-8 px-3 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold border-none"
-                          >
-                            Nhận trả máy
-                          </Button>
-                        )}
-
-                        {/* Settle Button */}
-                        {rental.status === RentalOrderStatus.RETURNED && (
-                          <Button
-                            onClick={() => handleSettle(rental.id)}
+                            onClick={() => handleOpenApprove(rental)}
                             className="h-8 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold border-none"
                           >
-                            Quyết toán & Hoàn cọc
+                            Chuẩn bị thiết bị
                           </Button>
                         )}
-
-                        <span className="text-xs text-zinc-400 font-bold self-center">---</span>
+                        <span className="text-xs text-zinc-400 font-bold self-center">...</span>
                       </div>
                     </td>
                   </tr>
@@ -532,8 +477,8 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
           description="Thiết lập số tiền đặt cọc và gán thiết bị vật lý cụ thể trong kho"
           icon={CheckCircle2}
           onSubmit={handleApproveSubmit}
-          isPending={approveMutation.isPending}
-          submitText="Xác nhận duyệt"
+          isPending={prepareMutation.isPending}
+          submitText="Chuẩn bị & Tạo Hợp đồng nháp"
         >
           {loadingDevices ? (
             <div className="py-10 flex flex-col items-center">
@@ -589,32 +534,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
         </AdminFormDialog>
       )}
 
-      {/* Reject Modal */}
-      {selectedRental && (
-        <AdminFormDialog
-          open={isRejectOpen}
-          onOpenChange={setIsRejectOpen}
-          title="Từ chối đơn đặt thuê"
-          description="Nêu rõ lý do từ chối yêu cầu thuê máy ảnh của khách hàng"
-          icon={XCircle}
-          onSubmit={handleRejectSubmit}
-          isPending={rejectMutation.isPending}
-          submitText="Từ chối đơn"
-        >
-          <div className="space-y-3">
-            <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
-              Lý do từ chối
-            </label>
-            <textarea
-              rows={4}
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-              placeholder="Nhập lý do từ chối..."
-              className="w-full p-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 text-xs font-semibold"
-            />
-          </div>
-        </AdminFormDialog>
-      )}
+          {/* Reject modal removed */}
 
       {/* Handover Modal */}
       {selectedRental && (
@@ -625,8 +545,8 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
           description="Ghi nhận biên bản kiểm tra trước khi khách hàng mang thiết bị đi"
           icon={ClipboardList}
           onSubmit={handleHandoverSubmit}
-          isPending={handoverMutation.isPending}
-          submitText="Xác nhận bàn giao"
+          isPending={handoverReportMutation.isPending}
+          submitText="Lập biên bản bàn giao"
         >
           <div className="space-y-4">
             <div className="space-y-2">
@@ -673,8 +593,8 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
           description="Ghi nhận biên bản kiểm tra tình trạng sau khi hoàn trả và tính phí phát sinh"
           icon={ClipboardList}
           onSubmit={handleReturnSubmit}
-          isPending={returnMutation.isPending}
-          submitText="Xác nhận trả máy"
+          isPending={returnReportMutation.isPending}
+          submitText="Lập biên bản trả"
         >
           <div className="space-y-4">
             <div className="space-y-2">

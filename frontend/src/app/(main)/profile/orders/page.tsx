@@ -123,23 +123,19 @@ export default function OrdersPage() {
 
   const getRentalStatusColor = (status: RentalOrderStatus) => {
     switch (status) {
-      case RentalOrderStatus.PENDING_APPROVAL:
-        return "bg-amber-50 text-amber-600 border-amber-100";
-      case RentalOrderStatus.REJECTED:
-        return "bg-red-50 text-red-600 border-red-100";
       case RentalOrderStatus.PENDING_PAYMENT:
         return "bg-amber-100 text-amber-800 border-amber-200";
-      case RentalOrderStatus.PAID_DEPOSIT:
+      case RentalOrderStatus.PAID_RENTAL_FEE:
         return "bg-blue-50 text-blue-600 border-blue-100";
-      case RentalOrderStatus.CONTRACT_SIGNED:
+      case RentalOrderStatus.WAITING_PICKUP:
         return "bg-indigo-50 text-indigo-600 border-indigo-100";
-      case RentalOrderStatus.DEVICE_HANDED_OVER:
+      case RentalOrderStatus.RENTING:
         return "bg-purple-50 text-purple-600 border-purple-100";
       case RentalOrderStatus.RETURNED:
         return "bg-zinc-100 text-zinc-600 border-zinc-200";
       case RentalOrderStatus.COMPLETED:
         return "bg-emerald-600 text-white border-emerald-600";
-      case RentalOrderStatus.CANCELED:
+      case RentalOrderStatus.CANCELLED:
         return "bg-red-50 text-red-600 border-red-100";
       default:
         return "bg-zinc-50 text-zinc-500 border-zinc-100";
@@ -148,23 +144,19 @@ export default function OrdersPage() {
 
   const getRentalStatusLabel = (status: RentalOrderStatus) => {
     switch (status) {
-      case RentalOrderStatus.PENDING_APPROVAL:
-        return "Chờ duyệt thuê";
-      case RentalOrderStatus.REJECTED:
-        return "Từ chối thuê";
       case RentalOrderStatus.PENDING_PAYMENT:
-        return "Chờ cọc (VNPay/COD)";
-      case RentalOrderStatus.PAID_DEPOSIT:
-        return "Đã cọc - Chờ ký HĐ";
-      case RentalOrderStatus.CONTRACT_SIGNED:
-        return "Đã ký HĐ - Chờ nhận máy";
-      case RentalOrderStatus.DEVICE_HANDED_OVER:
-        return "Đang thuê (Đã giao máy)";
+        return "Chờ TT phí thuê";
+      case RentalOrderStatus.PAID_RENTAL_FEE:
+        return "Đã TT phí thuê";
+      case RentalOrderStatus.WAITING_PICKUP:
+        return "Chờ nhận máy/Ký HĐ";
+      case RentalOrderStatus.RENTING:
+        return "Đang thuê";
       case RentalOrderStatus.RETURNED:
         return "Đã trả máy - Quyết toán";
       case RentalOrderStatus.COMPLETED:
-        return "Đã hoàn cọc / Hoàn thành";
-      case RentalOrderStatus.CANCELED:
+        return "Hoàn tất";
+      case RentalOrderStatus.CANCELLED:
         return "Đã hủy";
       default:
         return status;
@@ -183,14 +175,13 @@ export default function OrdersPage() {
 
   const rentalTabs: { label: string; value: RentalOrderStatus | "ALL" }[] = [
     { label: "Tất cả", value: "ALL" },
-    { label: "Chờ duyệt", value: RentalOrderStatus.PENDING_APPROVAL },
-    { label: "Từ chối", value: RentalOrderStatus.REJECTED },
-    { label: "Chờ cọc", value: RentalOrderStatus.PENDING_PAYMENT },
-    { label: "Đã cọc", value: RentalOrderStatus.PAID_DEPOSIT },
-    { label: "Đã ký HĐ", value: RentalOrderStatus.CONTRACT_SIGNED },
-    { label: "Đang thuê", value: RentalOrderStatus.DEVICE_HANDED_OVER },
-    { label: "Đã trả máy", value: RentalOrderStatus.RETURNED },
+    { label: "Chờ TT", value: RentalOrderStatus.PENDING_PAYMENT },
+    { label: "Đã TT phí", value: RentalOrderStatus.PAID_RENTAL_FEE },
+    { label: "Chờ nhận", value: RentalOrderStatus.WAITING_PICKUP },
+    { label: "Đang thuê", value: RentalOrderStatus.RENTING },
+    { label: "Đã trả", value: RentalOrderStatus.RETURNED },
     { label: "Hoàn tất", value: RentalOrderStatus.COMPLETED },
+    { label: "Đã hủy", value: RentalOrderStatus.CANCELLED },
   ];
 
   const isLoading = orderType === "BUY" ? isOrdersLoading : isRentalsLoading;
@@ -506,7 +497,7 @@ export default function OrdersPage() {
                     {formatVND(rental.rentalFee)}
                   </span>
                   <span className="text-xs text-zinc-400 font-semibold">
-                    (Cọc: {formatVND(rental.depositAmount)})
+                    (Cọc dự kiến: {formatVND(rental.finalDepositAmount ?? rental.estimatedDepositAmount ?? 0)})
                   </span>
                 </div>
                 <div className="flex gap-3">

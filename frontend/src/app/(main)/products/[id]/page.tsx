@@ -205,7 +205,7 @@ export default function ProductDetailPage() {
 
       // Check KYC status
       const kyc = await identityService.getKycStatus();
-      if (kyc.status !== "APPROVED") {
+      if (kyc.status !== "APPROVED" && (kyc.status as string) !== "VERIFIED") {
         setKycStatus(kyc.status);
         setShowKycDialog(true);
         return;
@@ -241,7 +241,7 @@ export default function ProductDetailPage() {
           toast.error("Không thể khởi tạo thanh toán VNPay. Vui lòng thanh toán sau trong trang cá nhân.");
         }
         
-        router.push("/profile/orders");
+        router.push("/profile/rentals");
       }
     } catch (err: any) {
       const msg = err.response?.data?.message || "Không thể gửi yêu cầu thuê";

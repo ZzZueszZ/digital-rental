@@ -82,7 +82,7 @@ export interface RentalOrderResponse {
   additionalFee: number;
   depositStatus?: DepositStatus;
   riskLevel?: RiskLevel;
-  paymentMethod: "COD" | "ONLINE";
+  paymentMethod: "COD" | "ONLINE" | "CASH" | "BANK_TRANSFER" | "POS";
   paymentStatus: "PENDING" | "SUCCESS" | "FAILED";
   refundStatus?: "PENDING" | "SUCCESS" | "FAILED";
   shippingName: string;

@@ -46,8 +46,19 @@ public class RentalOrder extends BaseAuditEntity {
     @Column(name = "rental_fee", nullable = false, precision = 12, scale = 2)
     private BigDecimal rentalFee;
 
-    @Column(name = "deposit_amount", nullable = false, precision = 12, scale = 2)
-    private BigDecimal depositAmount;
+    @Column(name = "estimated_deposit_amount", precision = 12, scale = 2)
+    private BigDecimal estimatedDepositAmount;
+
+    @Column(name = "final_deposit_amount", precision = 12, scale = 2)
+    private BigDecimal finalDepositAmount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "deposit_status", length = 30)
+    private org.web.common.enums.DepositStatus depositStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "risk_level", length = 30)
+    private org.web.common.enums.RiskLevel riskLevel;
 
     @Column(name = "additional_fee", precision = 12, scale = 2)
     @Builder.Default

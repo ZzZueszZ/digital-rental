@@ -13,7 +13,11 @@ public class RentalContractResponse {
     private Long id;
     private String contractNumber;
     private String termsAndConditions;
-    private String customerSignature;
+    private int contractVersion;
+    private String contractHash;
+    private Long signerUserId;
+    private String signerIp;
+    private org.web.common.enums.ContractStatus status;
     private LocalDateTime signedAt;
     private boolean isLocked;
 }

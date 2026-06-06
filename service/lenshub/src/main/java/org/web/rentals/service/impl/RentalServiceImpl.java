@@ -10,6 +10,7 @@ import org.web.addresses.model.ShippingAddress;
 import org.web.addresses.repository.ShippingAddressRepository;
 import org.web.common.enums.DeviceStatus;
 import org.web.common.enums.KycStatus;
+import org.web.common.enums.PaymentMethod;
 import org.web.common.enums.PaymentStatus;
 import org.web.common.enums.RentalOrderStatus;
 import org.web.common.enums.ReportType;
@@ -44,6 +45,10 @@ public class RentalServiceImpl implements RentalService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final ShippingAddressRepository shippingAddressRepository;
+    private final RentalHandoverReportRepository rentalHandoverReportRepository;
+    private final RentalReturnReportRepository rentalReturnReportRepository;
+    private final RentalPaymentRepository rentalPaymentRepository;
+    private final RentalRefundRepository rentalRefundRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -112,7 +117,7 @@ public class RentalServiceImpl implements RentalService {
                 .endDate(request.getEndDate())
                 .status(RentalOrderStatus.PENDING_PAYMENT)
                 .rentalFee(totalRentalFee)
-                .depositAmount(BigDecimal.ZERO) // Will be set by Staff upon approval
+                .estimatedDepositAmount(BigDecimal.ZERO) // Will be set by Staff upon approval
                 .paymentMethod(request.getPaymentMethod())
                 .paymentStatus(PaymentStatus.PENDING)
                 .shippingName(shippingName)
@@ -191,7 +196,10 @@ public class RentalServiceImpl implements RentalService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Hợp đồng này đã được ký và khóa.");
         }
 
-        contract.setCustomerSignature(signature);
+        // Basic implementation for signing contract
+        contract.setContractHash(signature); // use signature as hash for now or compute real hash later
+        contract.setStatus(org.web.common.enums.ContractStatus.SIGNED);
+        contract.setSignerUserId(user.getId());
         contract.setSignedAt(LocalDateTime.now());
         contract.setLocked(true);
         rentalContractRepository.save(contract);
@@ -248,16 +256,22 @@ public class RentalServiceImpl implements RentalService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public RentalOrderResponse getStaffRentalDetail(Long id) {
+        RentalOrder order = rentalOrderRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn thuê"));
+        return mapToResponse(order);
+    }
+
+    @Override
     @Transactional
-    public RentalOrderResponse approveRental(Long id, ApproveRentalRequest request) {
+    public RentalOrderResponse prepareRental(Long id, PrepareRentalRequest request) {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn đặt thuê"));
 
-        if (order.getStatus() != RentalOrderStatus.PENDING_PAYMENT) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng không ở trạng thái chờ duyệt.");
+        if (order.getStatus() != RentalOrderStatus.PAID_RENTAL_FEE) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái đã thanh toán phí thuê để chuẩn bị thiết bị.");
         }
-
-        order.setDepositAmount(request.getDepositAmount());
 
         // Assign physical devices
         for (Map.Entry<Long, Long> entry : request.getItemDeviceAssignments().entrySet()) {
@@ -275,7 +289,19 @@ public class RentalServiceImpl implements RentalService {
             rentalOrderItemRepository.save(item);
         }
 
-        order.setStatus(RentalOrderStatus.PENDING_PAYMENT);
+        // Generate contract draft
+        RentalContract contract = RentalContract.builder()
+                .rentalOrder(order)
+                .contractNumber("CONTRACT-" + order.getCode())
+                .termsAndConditions("Hợp đồng cho thuê thiết bị...")
+                .status(org.web.common.enums.ContractStatus.DRAFT)
+                .generatedAt(LocalDateTime.now())
+                .isLocked(false)
+                .build();
+        rentalContractRepository.save(contract);
+        order.setContract(contract);
+
+        order.setStatus(RentalOrderStatus.WAITING_PICKUP);
         RentalOrder saved = rentalOrderRepository.save(order);
 
         return mapToResponse(saved);
@@ -287,8 +313,8 @@ public class RentalServiceImpl implements RentalService {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn đặt thuê"));
 
-        if (order.getStatus() != RentalOrderStatus.PENDING_PAYMENT) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Chỉ có thể từ chối đơn thuê ở trạng thái chờ duyệt.");
+        if (order.getStatus() == RentalOrderStatus.RENTING || order.getStatus() == RentalOrderStatus.COMPLETED || order.getStatus() == RentalOrderStatus.CANCELLED) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Không thể hủy đơn thuê ở trạng thái hiện tại.");
         }
 
         order.setStatus(RentalOrderStatus.CANCELLED);
@@ -298,38 +324,91 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     @Transactional
-    public RentalOrderResponse handoverDevices(Long id, HandoverRentalRequest request) {
+    public RentalOrderResponse createHandoverReport(Long id, User staff, HandoverReportRequest request) {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn thuê"));
 
         if (order.getStatus() != RentalOrderStatus.WAITING_PICKUP) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Hợp đồng phải được ký trước khi bàn giao thiết bị.");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái WAITING_PICKUP.");
         }
 
-        // Record handover condition reports
+        RentalHandoverReport report = RentalHandoverReport.builder()
+                .rentalOrder(order)
+                .staff(staff)
+                .serialNumber(request.getSerialNumber())
+                .bodyCondition(request.getBodyCondition())
+                .lensCondition(request.getLensCondition())
+                .batteryCondition(request.getBatteryCondition())
+                .accessoryCondition(request.getAccessoryCondition())
+                .riskLevel(request.getRiskLevel())
+                .finalDepositAmount(request.getFinalDepositAmount())
+                .depositPaymentMethod(request.getDepositPaymentMethod())
+                .note(request.getNote())
+                .build();
+        rentalHandoverReportRepository.save(report);
+
+        order.setFinalDepositAmount(request.getFinalDepositAmount());
+        order.setRiskLevel(request.getRiskLevel());
+        order.setDepositStatus(org.web.common.enums.DepositStatus.NOT_COLLECTED);
+        RentalOrder saved = rentalOrderRepository.save(order);
+
+        return mapToResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public RentalOrderResponse collectDeposit(Long id, CollectDepositRequest request) {
+        RentalOrder order = rentalOrderRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn thuê"));
+
+        if (order.getDepositStatus() == org.web.common.enums.DepositStatus.PAID) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng đã thu cọc.");
+        }
+
+        RentalPayment payment = RentalPayment.builder()
+                .rentalOrder(order)
+                .paymentType(org.web.common.enums.RentalPaymentType.DEPOSIT_OFFLINE)
+                .amount(request.getAmount())
+                .paymentMethod(request.getPaymentMethod())
+                .status(PaymentStatus.SUCCESS)
+                .paidAt(LocalDateTime.now())
+                .build();
+        rentalPaymentRepository.save(payment);
+
+        order.setDepositStatus(org.web.common.enums.DepositStatus.PAID);
+        RentalOrder saved = rentalOrderRepository.save(order);
+
+        return mapToResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public RentalOrderResponse handoverDevices(Long id) {
+        RentalOrder order = rentalOrderRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn thuê"));
+
+        if (order.getStatus() != RentalOrderStatus.WAITING_PICKUP) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái WAITING_PICKUP.");
+        }
+
+        if (order.getPaymentStatus() != PaymentStatus.SUCCESS) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Chưa thanh toán tiền thuê online.");
+        }
+
+        if (order.getDepositStatus() != org.web.common.enums.DepositStatus.PAID) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Chưa thu tiền cọc offline.");
+        }
+
+        if (order.getContract() == null || order.getContract().getStatus() != org.web.common.enums.ContractStatus.SIGNED || !order.getContract().isLocked()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Khách hàng chưa ký hợp đồng thuê.");
+        }
+
         for (RentalOrderItem item : order.getItems()) {
             Device device = item.getDevice();
-            if (device == null) {
-                throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "Thiết bị vật lý chưa được gán cho đơn hàng này.");
+            if (device != null) {
+                device.setStatus(DeviceStatus.RENTED);
+                deviceRepository.save(device);
             }
-
-            String condition = request.getItemConditions() != null ? request.getItemConditions().get(item.getId()) : "Bình thường";
-            item.setConditionBeforeHandover(condition);
-            rentalOrderItemRepository.save(item);
-
-            // Change device status to RENTED
-            device.setStatus(DeviceStatus.RENTED);
-            deviceRepository.save(device);
-
-            // Create Condition Report
-            DeviceConditionReport report = DeviceConditionReport.builder()
-                    .device(device)
-                    .rentalOrder(order)
-                    .type(ReportType.HANDOVER_INSPECTION)
-                    .conditionNotes(condition)
-                    .inspectorName(request.getInspectorName())
-                    .build();
-            deviceConditionReportRepository.save(report);
         }
 
         order.setHandedOverAt(LocalDateTime.now());
@@ -341,95 +420,112 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     @Transactional
-    public RentalOrderResponse returnDevices(Long id, ReturnRentalRequest request) {
+    public RentalOrderResponse createReturnReport(Long id, User staff, ReturnReportRequest request) {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn thuê"));
 
         if (order.getStatus() != RentalOrderStatus.RENTING) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái đang được thuê để thực hiện trả máy.");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái RENTING để lập biên bản trả.");
         }
 
-        BigDecimal additionalFee = BigDecimal.ZERO;
+        BigDecimal totalPenalty = request.getLateFee().add(request.getDamageFee()).add(request.getMissingAccessoryFee());
+        BigDecimal finalDeposit = order.getFinalDepositAmount() != null ? order.getFinalDepositAmount() : BigDecimal.ZERO;
 
-        // 1. Calculate Late Return Fee
-        LocalDateTime now = LocalDateTime.now();
-        if (now.isAfter(order.getEndDate())) {
-            long lateDays = ChronoUnit.DAYS.between(order.getEndDate().toLocalDate(), now.toLocalDate());
-            if (lateDays > 0) {
-                // Sum price per day of all items
-                BigDecimal totalDailyFee = order.getItems().stream()
-                        .map(RentalOrderItem::getPricePerDay)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal refundAmount = finalDeposit.subtract(totalPenalty);
+        BigDecimal extraPaymentAmount = BigDecimal.ZERO;
 
-                // Multiplier 1.5 for penalty
-                BigDecimal lateFee = totalDailyFee.multiply(BigDecimal.valueOf(lateDays)).multiply(BigDecimal.valueOf(1.5));
-                additionalFee = additionalFee.add(lateFee);
-            }
+        if (refundAmount.compareTo(BigDecimal.ZERO) < 0) {
+            extraPaymentAmount = refundAmount.negate();
+            refundAmount = BigDecimal.ZERO;
         }
 
-        // 2. Add damage fee
-        if (request.getDamageFee() != null && request.getDamageFee().compareTo(BigDecimal.ZERO) > 0) {
-            additionalFee = additionalFee.add(request.getDamageFee());
-        }
+        RentalReturnReport report = RentalReturnReport.builder()
+                .rentalOrder(order)
+                .staff(staff)
+                .returnDate(LocalDateTime.now())
+                .bodyConditionAfter(request.getBodyConditionAfter())
+                .lensConditionAfter(request.getLensConditionAfter())
+                .batteryConditionAfter(request.getBatteryConditionAfter())
+                .accessoryConditionAfter(request.getAccessoryConditionAfter())
+                .lateDays(request.getLateDays())
+                .lateFee(request.getLateFee())
+                .damageFee(request.getDamageFee())
+                .missingAccessoryFee(request.getMissingAccessoryFee())
+                .totalPenalty(totalPenalty)
+                .refundAmount(refundAmount)
+                .extraPaymentAmount(extraPaymentAmount)
+                .note(request.getNote())
+                .build();
+        rentalReturnReportRepository.save(report);
 
-        order.setAdditionalFee(additionalFee);
+        order.setReturnedAt(LocalDateTime.now());
+        order.setAdditionalFee(totalPenalty);
+        order.setStatus(RentalOrderStatus.RETURNED);
 
-        // Record return reports
+        // Reset device statuses
         for (RentalOrderItem item : order.getItems()) {
             Device device = item.getDevice();
-            String condition = request.getItemConditions() != null ? request.getItemConditions().get(item.getId()) : "Bình thường";
-            item.setConditionAfterReturn(condition);
-            rentalOrderItemRepository.save(item);
-
-            // Create Condition Report
-            DeviceConditionReport report = DeviceConditionReport.builder()
-                    .device(device)
-                    .rentalOrder(order)
-                    .type(ReportType.RETURN_INSPECTION)
-                    .conditionNotes(condition)
-                    .inspectorName(request.getInspectorName())
-                    .build();
-            deviceConditionReportRepository.save(report);
-
-            // Reset device status to AVAILABLE or DAMAGED based on notes
-            if (condition.toLowerCase().contains("hỏng") || condition.toLowerCase().contains("broken") || condition.toLowerCase().contains("vỡ")) {
-                device.setStatus(DeviceStatus.DAMAGED);
-            } else {
-                device.setStatus(DeviceStatus.AVAILABLE);
+            if (device != null) {
+                if (request.getDamageFee().compareTo(BigDecimal.ZERO) > 0) {
+                    device.setStatus(DeviceStatus.DAMAGED);
+                } else {
+                    device.setStatus(DeviceStatus.AVAILABLE);
+                }
+                deviceRepository.save(device);
             }
-            deviceRepository.save(device);
         }
 
-        order.setReturnedAt(now);
-        order.setStatus(RentalOrderStatus.RETURNED);
         RentalOrder saved = rentalOrderRepository.save(order);
-
         return mapToResponse(saved);
     }
 
     @Override
     @Transactional
-    public RentalOrderResponse settleAndComplete(Long id) {
+    public RentalOrderResponse completeRental(Long id, User staff, CompleteRentalRequest request) {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn thuê"));
 
         if (order.getStatus() != RentalOrderStatus.RETURNED) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái đã trả (RETURNED) để hoàn cọc & hoàn tất.");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái RETURNED để hoàn tất.");
         }
 
-        // Release devices if not already done in return step
-        for (RentalOrderItem item : order.getItems()) {
-            Device device = item.getDevice();
-            if (device != null && device.getStatus() == DeviceStatus.RENTED) {
-                device.setStatus(DeviceStatus.AVAILABLE);
-                deviceRepository.save(device);
+        RentalReturnReport returnReport = rentalReturnReportRepository.findAll().stream()
+                .filter(r -> r.getRentalOrder().getId().equals(order.getId()))
+                .findFirst().orElse(null);
+
+        if (returnReport == null) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Chưa lập biên bản nhận lại thiết bị.");
+        }
+
+        if (returnReport.getRefundAmount().compareTo(BigDecimal.ZERO) > 0) {
+            RentalRefund refund = RentalRefund.builder()
+                    .rentalOrder(order)
+                    .amount(returnReport.getRefundAmount())
+                    .refundMethod(request.getRefundMethod())
+                    .status(PaymentStatus.SUCCESS)
+                    .refundedAt(LocalDateTime.now())
+                    .note(request.getNote())
+                    .build();
+            rentalRefundRepository.save(refund);
+            order.setDepositStatus(org.web.common.enums.DepositStatus.REFUNDED);
+        } else {
+            if (returnReport.getExtraPaymentAmount().compareTo(BigDecimal.ZERO) > 0) {
+                // We should record an extra payment if we collected it.
+                RentalPayment payment = RentalPayment.builder()
+                        .rentalOrder(order)
+                        .paymentType(org.web.common.enums.RentalPaymentType.EXTRA_FEE_OFFLINE)
+                        .amount(returnReport.getExtraPaymentAmount())
+                        .paymentMethod(request.getRefundMethod() != null ? request.getRefundMethod() : PaymentMethod.COD)
+                        .status(PaymentStatus.SUCCESS)
+                        .paidAt(LocalDateTime.now())
+                        .build();
+                rentalPaymentRepository.save(payment);
             }
+            order.setDepositStatus(org.web.common.enums.DepositStatus.FULLY_DEDUCTED);
         }
 
         order.setStatus(RentalOrderStatus.COMPLETED);
         order.setCompletedAt(LocalDateTime.now());
-        order.setRefundStatus(PaymentStatus.SUCCESS); // Completed deposit refund process
-
         RentalOrder saved = rentalOrderRepository.save(order);
         return mapToResponse(saved);
     }
@@ -510,7 +606,10 @@ public class RentalServiceImpl implements RentalService {
                 .endDate(order.getEndDate())
                 .status(order.getStatus())
                 .rentalFee(order.getRentalFee())
-                .depositAmount(order.getDepositAmount())
+                .estimatedDepositAmount(order.getEstimatedDepositAmount())
+                .finalDepositAmount(order.getFinalDepositAmount())
+                .depositStatus(order.getDepositStatus())
+                .riskLevel(order.getRiskLevel())
                 .additionalFee(order.getAdditionalFee())
                 .paymentMethod(order.getPaymentMethod())
                 .paymentStatus(order.getPaymentStatus())
@@ -550,7 +649,11 @@ public class RentalServiceImpl implements RentalService {
                 .id(contract.getId())
                 .contractNumber(contract.getContractNumber())
                 .termsAndConditions(contract.getTermsAndConditions())
-                .customerSignature(contract.getCustomerSignature())
+                .contractVersion(contract.getContractVersion())
+                .contractHash(contract.getContractHash())
+                .signerUserId(contract.getSignerUserId())
+                .signerIp(contract.getSignerIp())
+                .status(contract.getStatus())
                 .signedAt(contract.getSignedAt())
                 .isLocked(contract.isLocked())
                 .build();

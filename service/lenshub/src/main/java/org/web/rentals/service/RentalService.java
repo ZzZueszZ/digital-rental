@@ -28,15 +28,21 @@ public interface RentalService {
     // Staff actions
     Page<RentalOrderResponse> getAllRentals(RentalOrderStatus status, int page, int size);
 
-    RentalOrderResponse approveRental(Long id, ApproveRentalRequest request);
+    RentalOrderResponse getStaffRentalDetail(Long id);
+
+    RentalOrderResponse prepareRental(Long id, PrepareRentalRequest request);
 
     RentalOrderResponse rejectRental(Long id, String reason);
 
-    RentalOrderResponse handoverDevices(Long id, HandoverRentalRequest request);
+    RentalOrderResponse createHandoverReport(Long id, User staff, HandoverReportRequest request);
 
-    RentalOrderResponse returnDevices(Long id, ReturnRentalRequest request);
+    RentalOrderResponse collectDeposit(Long id, CollectDepositRequest request);
 
-    RentalOrderResponse settleAndComplete(Long id);
+    RentalOrderResponse handoverDevices(Long id);
+
+    RentalOrderResponse createReturnReport(Long id, User staff, ReturnReportRequest request);
+
+    RentalOrderResponse completeRental(Long id, User staff, CompleteRentalRequest request);
 
     // Device Management
     DeviceResponse createDevice(DeviceRequest request);

@@ -98,7 +98,7 @@ public class RentalController {
 
     // ================= STAFF / ADMIN ENDPOINTS =================
 
-    @GetMapping("/admin")
+    @GetMapping("/staff")
     @PreAuthorize("hasAuthority('ORDER_MANAGE')")
     public ResponseEntity<ApiResponse<List<RentalOrderResponse>>> getAllRentals(
             @RequestParam(defaultValue = "0") int page,
@@ -109,62 +109,77 @@ public class RentalController {
         return ResponseEntity.ok(ApiResponse.successfulPageResponse("Lấy danh sách quản lý đơn thuê thành công", result));
     }
 
-    @PostMapping("/admin/{id}/approve")
+    @GetMapping("/staff/{id}")
     @PreAuthorize("hasAuthority('ORDER_MANAGE')")
-    public ResponseEntity<ApiResponse<RentalOrderResponse>> approveRental(
-            @PathVariable Long id,
-            @Valid @RequestBody ApproveRentalRequest request
-    ) {
-        RentalOrderResponse response = rentalService.approveRental(id, request);
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã phê duyệt đơn thuê & gán thiết bị thành công", response));
-    }
-
-    @PostMapping("/admin/{id}/pay-deposit")
-    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
-    public ResponseEntity<ApiResponse<RentalOrderResponse>> payDeposit(
+    public ResponseEntity<ApiResponse<RentalOrderResponse>> getStaffRentalDetail(
             @PathVariable Long id
     ) {
-        RentalOrderResponse response = rentalService.payDeposit(id);
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã thanh toán tiền cọc thành công", response));
+        RentalOrderResponse response = rentalService.getStaffRentalDetail(id);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Lấy chi tiết đơn thuê thành công", response));
     }
 
-    @PostMapping("/admin/{id}/reject")
+    @PostMapping("/staff/{id}/prepare")
     @PreAuthorize("hasAuthority('ORDER_MANAGE')")
-    public ResponseEntity<ApiResponse<RentalOrderResponse>> rejectRental(
+    public ResponseEntity<ApiResponse<RentalOrderResponse>> prepareRental(
             @PathVariable Long id,
-            @RequestBody(required = false) String reason
+            @Valid @RequestBody PrepareRentalRequest request
     ) {
-        RentalOrderResponse response = rentalService.rejectRental(id, reason != null ? reason : "Không đủ điều kiện hoặc thiết bị không sẵn sàng");
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã từ chối đơn thuê", response));
+        RentalOrderResponse response = rentalService.prepareRental(id, request);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã chuẩn bị thiết bị & tạo hợp đồng nháp", response));
+    }
+    @PostMapping("/staff/{id}/handover-report")
+    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
+    public ResponseEntity<ApiResponse<RentalOrderResponse>> createHandoverReport(
+            Authentication authentication,
+            @PathVariable Long id,
+            @Valid @RequestBody HandoverReportRequest request
+    ) {
+        User staff = getCurrentUser(authentication);
+        RentalOrderResponse response = rentalService.createHandoverReport(id, staff, request);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã lưu biên bản bàn giao và xác nhận cọc", response));
     }
 
-    @PostMapping("/admin/{id}/handover")
+    @PostMapping("/staff/{id}/collect-deposit")
+    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
+    public ResponseEntity<ApiResponse<RentalOrderResponse>> collectDeposit(
+            @PathVariable Long id,
+            @Valid @RequestBody CollectDepositRequest request
+    ) {
+        RentalOrderResponse response = rentalService.collectDeposit(id, request);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã thu tiền cọc offline", response));
+    }
+
+    @PostMapping("/staff/{id}/handover")
     @PreAuthorize("hasAuthority('ORDER_MANAGE')")
     public ResponseEntity<ApiResponse<RentalOrderResponse>> handoverDevices(
-            @PathVariable Long id,
-            @Valid @RequestBody HandoverRentalRequest request
-    ) {
-        RentalOrderResponse response = rentalService.handoverDevices(id, request);
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã bàn giao thiết bị & lưu biên bản thành công", response));
-    }
-
-    @PostMapping("/admin/{id}/return")
-    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
-    public ResponseEntity<ApiResponse<RentalOrderResponse>> returnDevices(
-            @PathVariable Long id,
-            @Valid @RequestBody ReturnRentalRequest request
-    ) {
-        RentalOrderResponse response = rentalService.returnDevices(id, request);
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã nhận lại thiết bị & cập nhật phí phát sinh thành công", response));
-    }
-
-    @PostMapping("/admin/{id}/settle")
-    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
-    public ResponseEntity<ApiResponse<RentalOrderResponse>> settleAndComplete(
             @PathVariable Long id
     ) {
-        RentalOrderResponse response = rentalService.settleAndComplete(id);
-        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã quyết toán & đóng đơn đặt thuê", response));
+        RentalOrderResponse response = rentalService.handoverDevices(id);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã bàn giao thiết bị thành công", response));
+    }
+
+    @PostMapping("/staff/{id}/return-report")
+    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
+    public ResponseEntity<ApiResponse<RentalOrderResponse>> createReturnReport(
+            Authentication authentication,
+            @PathVariable Long id,
+            @Valid @RequestBody ReturnReportRequest request
+    ) {
+        User staff = getCurrentUser(authentication);
+        RentalOrderResponse response = rentalService.createReturnReport(id, staff, request);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã lưu biên bản nhận lại thiết bị", response));
+    }
+
+    @PostMapping("/staff/{id}/complete")
+    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
+    public ResponseEntity<ApiResponse<RentalOrderResponse>> completeRental(
+            Authentication authentication,
+            @PathVariable Long id,
+            @Valid @RequestBody CompleteRentalRequest request
+    ) {
+        User staff = getCurrentUser(authentication);
+        RentalOrderResponse response = rentalService.completeRental(id, staff, request);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã hoàn tất đơn đặt thuê", response));
     }
 
     // ================= PHYSICAL DEVICE INVENTORY MANAGEMENT =================

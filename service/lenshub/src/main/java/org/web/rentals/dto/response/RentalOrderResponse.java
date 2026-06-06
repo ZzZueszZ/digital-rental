@@ -23,7 +23,10 @@ public class RentalOrderResponse {
     private LocalDateTime endDate;
     private RentalOrderStatus status;
     private BigDecimal rentalFee;
-    private BigDecimal depositAmount;
+    private BigDecimal estimatedDepositAmount;
+    private BigDecimal finalDepositAmount;
+    private org.web.common.enums.DepositStatus depositStatus;
+    private org.web.common.enums.RiskLevel riskLevel;
     private BigDecimal additionalFee;
     private PaymentMethod paymentMethod;
     private PaymentStatus paymentStatus;

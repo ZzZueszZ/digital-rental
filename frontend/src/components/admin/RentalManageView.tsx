@@ -32,6 +32,7 @@ import {
   useHandoverDevices,
   useCreateReturnReport,
   useCompleteRental,
+  useSignContractOffline,
   rentalService,
   DeviceResponse,
   RiskLevel
@@ -55,6 +56,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   const handoverMutation = useHandoverDevices();
   const returnReportMutation = useCreateReturnReport();
   const completeMutation = useCompleteRental();
+  const signOfflineMutation = useSignContractOffline();
 
   const rentals = rentalsRes?.data || [];
   const pagination = rentalsRes?.meta; // page/size/total info if present, otherwise default
@@ -72,6 +74,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   // Form values
   const [rejectReason, setRejectReason] = useState("");
   const [depositAmount, setDepositAmount] = useState<number>(0);
+  const [riskLevel, setRiskLevel] = useState<RiskLevel>(RiskLevel.LOW_RISK);
   const [deviceAssignments, setDeviceAssignments] = useState<Record<number, number>>({}); // itemId -> deviceId
   const [availableDevicesMap, setAvailableDevicesMap] = useState<Record<number, DeviceResponse[]>>({});
   const [loadingDevices, setLoadingDevices] = useState(false);
@@ -82,7 +85,8 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
 
   const handleOpenApprove = async (rental: any) => {
     setSelectedRental(rental);
-    setDepositAmount(rental.depositAmount || 0);
+    setDepositAmount(rental.estimatedDepositAmount || 0);
+    setRiskLevel(rental.riskLevel || RiskLevel.LOW_RISK);
     setDeviceAssignments({});
     setAvailableDevicesMap({});
     setIsApproveOpen(true);
@@ -115,7 +119,9 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
       await prepareMutation.mutateAsync({
         id: selectedRental.id,
         req: {
-          itemDeviceAssignments: deviceAssignments
+          itemDeviceAssignments: deviceAssignments,
+          estimatedDepositAmount: depositAmount,
+          riskLevel: riskLevel
         }
       });
       toast.success("Duyệt đơn thuê và gán thiết bị thành công!");
@@ -127,12 +133,12 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
 
   // handleOpenReject and handleRejectSubmit removed because reject logic was removed
 
-  const handlePayDeposit = async (id: number) => {
+  const handlePayDeposit = async (id: number, amount: number) => {
     try {
       await collectDepositMutation.mutateAsync({
         id: id,
         req: {
-          amount: selectedRental?.finalDepositAmount || 0,
+          amount: amount,
           paymentMethod: "CASH"
         }
       });
@@ -231,6 +237,24 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
       toast.success("Quyết toán đơn thuê và hoàn cọc thành công!");
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Lỗi quyết toán");
+    }
+  };
+
+  const handleSignOffline = async (id: number) => {
+    try {
+      await signOfflineMutation.mutateAsync({ id });
+      toast.success("Xác nhận ký hợp đồng offline thành công!");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Lỗi ký hợp đồng offline");
+    }
+  };
+
+  const handleHandoverDevices = async (id: number) => {
+    try {
+      await handoverMutation.mutateAsync({ id });
+      toast.success("Đã thực hiện bàn giao thiết bị thành công!");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Lỗi bàn giao thiết bị");
     }
   };
 
@@ -438,8 +462,8 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex gap-2 justify-end">
-                        {/* Prepare Rental Button */}
+                      <div className="flex gap-2 justify-end items-center">
+                        {/* PAID_RENTAL_FEE: Prepare devices */}
                         {rental.status === RentalOrderStatus.PAID_RENTAL_FEE && (
                           <Button
                             onClick={() => handleOpenApprove(rental)}
@@ -448,7 +472,73 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                             Chuẩn bị thiết bị
                           </Button>
                         )}
-                        <span className="text-xs text-zinc-400 font-bold self-center">...</span>
+
+                        {/* WAITING_PICKUP actions */}
+                        {rental.status === RentalOrderStatus.WAITING_PICKUP && (
+                          <>
+                            {/* Case 1: Handover report not created yet (finalDepositAmount is null/undefined) */}
+                            {(!rental.finalDepositAmount && rental.finalDepositAmount !== 0) ? (
+                              <Button
+                                onClick={() => handleOpenHandover(rental)}
+                                className="h-8 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold border-none"
+                              >
+                                Lập BB bàn giao
+                              </Button>
+                            ) : (
+                              <>
+                                {/* Case 2: Contract not signed/locked */}
+                                {(!rental.contract || !rental.contract.isLocked) ? (
+                                  <Button
+                                    onClick={() => handleSignOffline(rental.id)}
+                                    className="h-8 px-3 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold border-none animate-pulse"
+                                  >
+                                    Ký offline (HĐ Giấy)
+                                  </Button>
+                                ) : (
+                                  <>
+                                    {/* Case 3: Deposit not collected */}
+                                    {rental.depositStatus !== "PAID" ? (
+                                      <Button
+                                        onClick={() => handlePayDeposit(rental.id, rental.finalDepositAmount || 0)}
+                                        className="h-8 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold border-none"
+                                      >
+                                        Thu tiền cọc
+                                      </Button>
+                                    ) : (
+                                      /* Case 4: Ready to handover */
+                                      <Button
+                                        onClick={() => handleHandoverDevices(rental.id)}
+                                        className="h-8 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold border-none"
+                                      >
+                                        Bàn giao máy
+                                      </Button>
+                                    )}
+                                  </>
+                                )}
+                              </>
+                            )}
+                          </>
+                        )}
+
+                        {/* RENTING: Return Devices */}
+                        {rental.status === RentalOrderStatus.RENTING && (
+                          <Button
+                            onClick={() => handleOpenReturn(rental)}
+                            className="h-8 px-3 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold border-none"
+                          >
+                            Nhận trả máy
+                          </Button>
+                        )}
+
+                        {/* RETURNED: Complete / Settle */}
+                        {rental.status === RentalOrderStatus.RETURNED && (
+                          <Button
+                            onClick={() => handleSettle(rental.id)}
+                            className="h-8 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold border-none"
+                          >
+                            Quyết toán & Hoàn cọc
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -487,6 +577,21 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
             </div>
           ) : (
             <div className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                  Đánh giá mức độ rủi ro (CIC)
+                </label>
+                <select
+                  value={riskLevel}
+                  onChange={(e) => setRiskLevel(e.target.value as RiskLevel)}
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-xs bg-white"
+                >
+                  <option value={RiskLevel.LOW_RISK}>LOW RISK (Rủi ro thấp - Cọc ít/Miễn cọc)</option>
+                  <option value={RiskLevel.MEDIUM_RISK}>MEDIUM RISK (Rủi ro trung bình - Cọc một phần)</option>
+                  <option value={RiskLevel.HIGH_RISK}>HIGH RISK (Rủi ro cao - Cọc 100% giá trị)</option>
+                </select>
+              </div>
+
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
                   Cập nhật số tiền đặt cọc (VND)

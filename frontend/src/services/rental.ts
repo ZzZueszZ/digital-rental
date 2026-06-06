@@ -111,6 +111,8 @@ export interface DeviceResponse {
 // ----- DTOs -----
 export interface PrepareRentalRequest {
   itemDeviceAssignments: Record<number, number>; // itemId -> deviceId
+  estimatedDepositAmount?: number;
+  riskLevel?: RiskLevel;
 }
 
 export interface HandoverReportRequest {
@@ -219,7 +221,7 @@ export const rentalService = {
     return response.data;
   },
 
-  handoverDevices: async (id: number, req: HandoverDevicesRequest): Promise<{ success: boolean; data: RentalOrderResponse }> => {
+  handoverDevices: async (id: number, req?: HandoverDevicesRequest): Promise<{ success: boolean; data: RentalOrderResponse }> => {
     const response = await axios.post<{ success: boolean; data: RentalOrderResponse }>(`/rentals/staff/${id}/handover`, req);
     return response.data;
   },
@@ -231,6 +233,11 @@ export const rentalService = {
 
   completeRental: async (id: number, req: CompleteRentalRequest): Promise<{ success: boolean; data: RentalOrderResponse }> => {
     const response = await axios.post<{ success: boolean; data: RentalOrderResponse }>(`/rentals/staff/${id}/complete`, req);
+    return response.data;
+  },
+
+  signContractOffline: async (id: number): Promise<{ success: boolean; data: RentalOrderResponse }> => {
+    const response = await axios.post<{ success: boolean; data: RentalOrderResponse }>(`/rentals/staff/${id}/contract/sign-offline`);
     return response.data;
   },
 
@@ -325,7 +332,7 @@ export const useCollectDeposit = () => {
 export const useHandoverDevices = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, req }: { id: number; req: HandoverDevicesRequest }) => rentalService.handoverDevices(id, req),
+    mutationFn: ({ id, req }: { id: number; req?: HandoverDevicesRequest }) => rentalService.handoverDevices(id, req),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["rentals"] })
   });
 };
@@ -342,6 +349,14 @@ export const useCompleteRental = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, req }: { id: number; req: CompleteRentalRequest }) => rentalService.completeRental(id, req),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["rentals"] })
+  });
+};
+
+export const useSignContractOffline = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id }: { id: number }) => rentalService.signContractOffline(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["rentals"] })
   });
 };

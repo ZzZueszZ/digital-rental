@@ -13,4 +13,8 @@ public class PrepareRentalRequest {
     // Map of RentalOrderItem ID to assigned Device ID
     @NotNull(message = "Device assignments map is required")
     private Map<Long, Long> itemDeviceAssignments;
+
+    private java.math.BigDecimal estimatedDepositAmount;
+
+    private org.web.common.enums.RiskLevel riskLevel;
 }

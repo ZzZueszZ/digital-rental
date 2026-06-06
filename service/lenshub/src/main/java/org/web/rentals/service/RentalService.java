@@ -32,6 +32,8 @@ public interface RentalService {
 
     RentalOrderResponse prepareRental(Long id, PrepareRentalRequest request);
 
+    RentalOrderResponse signContractOffline(Long id);
+
     RentalOrderResponse rejectRental(Long id, String reason);
 
     RentalOrderResponse createHandoverReport(Long id, User staff, HandoverReportRequest request);

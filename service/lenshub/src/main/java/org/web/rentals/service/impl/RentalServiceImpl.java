@@ -120,6 +120,7 @@ public class RentalServiceImpl implements RentalService {
                 .estimatedDepositAmount(BigDecimal.ZERO) // Will be set by Staff upon approval
                 .paymentMethod(request.getPaymentMethod())
                 .paymentStatus(PaymentStatus.PENDING)
+                .depositStatus(org.web.common.enums.DepositStatus.NOT_COLLECTED)
                 .shippingName(shippingName)
                 .shippingPhone(shippingPhone)
                 .shippingAddress(shippingAddress)
@@ -183,8 +184,8 @@ public class RentalServiceImpl implements RentalService {
             throw new ApplicationException(HttpStatus.FORBIDDEN, "Bạn không có quyền ký hợp đồng này");
         }
 
-        if (order.getStatus() != RentalOrderStatus.PAID_RENTAL_FEE) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái đã đóng tiền cọc (PAID_DEPOSIT) để thực hiện ký hợp đồng.");
+        if (order.getStatus() != RentalOrderStatus.PAID_RENTAL_FEE && order.getStatus() != RentalOrderStatus.WAITING_PICKUP) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái đã thanh toán hoặc chờ lấy máy để thực hiện ký hợp đồng.");
         }
 
         RentalContract contract = order.getContract();
@@ -200,6 +201,38 @@ public class RentalServiceImpl implements RentalService {
         contract.setContractHash(signature); // use signature as hash for now or compute real hash later
         contract.setStatus(org.web.common.enums.ContractStatus.SIGNED);
         contract.setSignerUserId(user.getId());
+        contract.setSignedAt(LocalDateTime.now());
+        contract.setLocked(true);
+        rentalContractRepository.save(contract);
+
+        order.setStatus(RentalOrderStatus.WAITING_PICKUP);
+        RentalOrder saved = rentalOrderRepository.save(order);
+
+        return mapToResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public RentalOrderResponse signContractOffline(Long id) {
+        RentalOrder order = rentalOrderRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn hàng thuê"));
+
+        if (order.getStatus() != RentalOrderStatus.PAID_RENTAL_FEE && order.getStatus() != RentalOrderStatus.WAITING_PICKUP) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái đã thanh toán hoặc chờ lấy máy để thực hiện ký hợp đồng.");
+        }
+
+        RentalContract contract = order.getContract();
+        if (contract == null) {
+            throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "Hợp đồng chưa được khởi tạo cho đơn hàng này.");
+        }
+
+        if (contract.isLocked()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Hợp đồng này đã được ký và khóa.");
+        }
+
+        contract.setContractHash("OFFLINE_PHYSICAL_SIGNATURE");
+        contract.setStatus(org.web.common.enums.ContractStatus.SIGNED);
+        contract.setSignerUserId(order.getUser().getId());
         contract.setSignedAt(LocalDateTime.now());
         contract.setLocked(true);
         rentalContractRepository.save(contract);
@@ -292,15 +325,60 @@ public class RentalServiceImpl implements RentalService {
             rentalOrderItemRepository.save(item);
         }
 
-        // Generate contract draft
-        RentalContract contract = RentalContract.builder()
-                .rentalOrder(order)
-                .contractNumber("CONTRACT-" + order.getCode())
-                .termsAndConditions("Hợp đồng cho thuê thiết bị...")
-                .status(org.web.common.enums.ContractStatus.DRAFT)
-                .generatedAt(LocalDateTime.now())
-                .isLocked(false)
-                .build();
+        // Update order risk level and deposit
+        order.setEstimatedDepositAmount(request.getEstimatedDepositAmount() != null ? request.getEstimatedDepositAmount() : java.math.BigDecimal.ZERO);
+        order.setRiskLevel(request.getRiskLevel() != null ? request.getRiskLevel() : org.web.common.enums.RiskLevel.LOW_RISK);
+        order.setDepositStatus(org.web.common.enums.DepositStatus.NOT_COLLECTED);
+
+        // Build contract terms dynamically
+        StringBuilder terms = new StringBuilder();
+        terms.append("HỢP ĐỒNG THUÊ THIẾT BỊ HÌNH ẢNH KỸ THUẬT SỐ\n");
+        terms.append("Mã hợp đồng: CTR-").append(order.getCode()).append("\n\n");
+        terms.append("BÊN CHO THUÊ: Cửa hàng Digital Rental\n");
+        terms.append("BÊN THUÊ:\n");
+        terms.append("- Họ tên / Email: ").append(order.getUser().getEmail()).append("\n");
+        terms.append("- Số điện thoại: ").append(order.getShippingPhone()).append("\n\n");
+        
+        terms.append("THÔNG TIN THIẾT BỊ THUÊ:\n");
+        for (RentalOrderItem item : order.getItems()) {
+            terms.append("- ").append(item.getProduct().getName());
+            if (item.getDevice() != null) {
+                terms.append(" (Số Serial: ").append(item.getDevice().getSerialNumber())
+                     .append(" - Tình trạng: ").append(item.getDevice().getConditionDetails() != null ? item.getDevice().getConditionDetails() : "Mới 99%")
+                     .append(")");
+            }
+            terms.append("\n");
+        }
+        terms.append("\n");
+        
+        terms.append("ĐIỀU KHOẢN CHI TIẾT:\n");
+        terms.append("- Thời gian thuê: Từ ").append(order.getStartDate().toString().split("T")[0])
+             .append(" đến ").append(order.getEndDate().toString().split("T")[0]).append("\n");
+        terms.append("- Tổng phí thuê: ").append(order.getRentalFee()).append(" VND (Đã thanh toán Online)\n");
+        terms.append("- Tiền cọc thiết bị: ").append(order.getEstimatedDepositAmount()).append(" VND (Thanh toán trực tiếp tại cửa hàng)\n");
+        terms.append("- Đánh giá mức độ rủi ro: ").append(order.getRiskLevel()).append("\n\n");
+        
+        terms.append("Điều 1: Bên thuê có trách nhiệm tự kiểm tra và bàn giao đúng tình trạng như biên bản nhận.\n");
+        terms.append("Điều 2: Tiền cọc sẽ được hoàn lại đầy đủ sau khi thiết bị được trả và hoàn tất thẩm định không có lỗi/hư hỏng.\n");
+        terms.append("Điều 3: Trường hợp trả trễ hạn, mức phạt là 150% phí thuê hàng ngày của mỗi ngày trễ hạn.\n");
+        terms.append("Điều 4: Mọi tranh chấp sẽ được ưu tiên thương lượng giữa 2 bên.");
+
+        // Generate or update contract draft
+        RentalContract contract = order.getContract();
+        if (contract == null) {
+            contract = RentalContract.builder()
+                    .rentalOrder(order)
+                    .contractNumber("CONTRACT-" + order.getCode())
+                    .termsAndConditions(terms.toString())
+                    .status(org.web.common.enums.ContractStatus.DRAFT)
+                    .generatedAt(LocalDateTime.now())
+                    .isLocked(false)
+                    .build();
+        } else {
+            contract.setTermsAndConditions(terms.toString());
+            contract.setGeneratedAt(LocalDateTime.now());
+            contract.setStatus(org.web.common.enums.ContractStatus.DRAFT);
+        }
         rentalContractRepository.save(contract);
         order.setContract(contract);
 

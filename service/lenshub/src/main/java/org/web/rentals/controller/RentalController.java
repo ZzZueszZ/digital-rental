@@ -158,6 +158,15 @@ public class RentalController {
         return ResponseEntity.ok(ApiResponse.successfulResponse("Đã bàn giao thiết bị thành công", response));
     }
 
+    @PostMapping("/staff/{id}/contract/sign-offline")
+    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
+    public ResponseEntity<ApiResponse<RentalOrderResponse>> signContractOffline(
+            @PathVariable Long id
+    ) {
+        RentalOrderResponse response = rentalService.signContractOffline(id);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Xác nhận ký hợp đồng offline thành công", response));
+    }
+
     @PostMapping("/staff/{id}/return-report")
     @PreAuthorize("hasAuthority('ORDER_MANAGE')")
     public ResponseEntity<ApiResponse<RentalOrderResponse>> createReturnReport(

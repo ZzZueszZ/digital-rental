@@ -256,7 +256,9 @@ export function RentalDetailDialog({
                         : "bg-amber-50 text-amber-600 border-amber-100"
                     )}
                   >
-                    {rental.depositStatus !== "NOT_COLLECTED" && rental.depositStatus !== undefined ? "Đã đặt cọc" : "Chưa cọc"}
+                    {rental.depositStatus === "PAID" || rental.depositStatus === "PARTIALLY_DEDUCTED" || rental.depositStatus === "FULLY_DEDUCTED" || rental.depositStatus === "REFUNDED"
+                      ? "Đã đặt cọc"
+                      : "Chưa cọc"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-zinc-200/50">
@@ -328,7 +330,7 @@ export function RentalDetailDialog({
                 </div>
                 {rental.contract.isLocked ? (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] font-bold border border-emerald-100">
-                    <ShieldCheck className="w-3 h-3" /> Đã ký điện tử
+                    <ShieldCheck className="w-3 h-3" /> {rental.contract.contractHash === "OFFLINE_PHYSICAL_SIGNATURE" ? "Đã ký (HĐ Giấy)" : "Đã ký điện tử"}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] font-bold border border-amber-100">
@@ -343,8 +345,10 @@ export function RentalDetailDialog({
 
               {rental.contract.isLocked ? (
                 <div className="flex justify-between items-center text-xs font-semibold text-zinc-500 pt-2">
-                  <span>Chữ ký bên thuê:</span>
-                  <span className="font-bold text-zinc-950 font-mono italic underline">{rental.contract.contractHash}</span>
+                  <span>{rental.contract.contractHash === "OFFLINE_PHYSICAL_SIGNATURE" ? "Hình thức ký:" : "Chữ ký bên thuê:"}</span>
+                  <span className="font-bold text-zinc-950 font-mono italic underline">
+                    {rental.contract.contractHash === "OFFLINE_PHYSICAL_SIGNATURE" ? "Ký trực tiếp tại cửa hàng (Bản giấy)" : rental.contract.contractHash}
+                  </span>
                 </div>
               ) : (
                 !showSignForm && (

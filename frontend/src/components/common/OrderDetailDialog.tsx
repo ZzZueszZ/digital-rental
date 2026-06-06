@@ -12,7 +12,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
-import { OrderResponse, OrderStatus, PaymentStatus } from "@/types/order";
+import { OrderResponse, OrderStatus, PaymentStatus, PaymentMethod } from "@/types/order";
 import { useOrderDetail, useConfirmReceived } from "@/services/order";
 import { formatVND, getImageUrl, formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -96,7 +96,7 @@ export function OrderDetailDialog({
                   Phương thức
                 </span>
                 <span className="text-xs font-bold text-zinc-600">
-                  {order.paymentMethod}
+                  {order.paymentMethod === PaymentMethod.COD ? "Tiền mặt (COD)" : "VNPay Online"}
                 </span>
               </div>
             </div>
@@ -195,13 +195,19 @@ export function OrderDetailDialog({
                   </span>
                   <span
                     className={cn(
-                      "text-[11px] font-bold px-2 py-0.5 rounded tracking-tighter",
+                      "text-[11px] font-bold px-2 py-0.5 rounded tracking-tighter border",
                       order.paymentStatus === PaymentStatus.SUCCESS
-                        ? "bg-emerald-50 text-emerald-600"
-                        : "bg-red-50 text-red-600",
+                        ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                        : order.paymentStatus === PaymentStatus.PENDING
+                          ? "bg-amber-50 text-amber-600 border-amber-100"
+                          : "bg-red-50 text-red-600 border-red-100",
                     )}
                   >
-                    {order.paymentStatus}
+                    {order.paymentStatus === PaymentStatus.SUCCESS
+                      ? "Đã thanh toán"
+                      : order.paymentStatus === PaymentStatus.PENDING
+                        ? "Chưa thanh toán"
+                        : "Thanh toán thất bại"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-zinc-100/50">

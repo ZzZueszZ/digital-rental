@@ -424,6 +424,11 @@ public class RentalServiceImpl implements RentalService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái WAITING_PICKUP.");
         }
 
+        RentalContract contract = order.getContract();
+        if (contract == null || !contract.isLocked()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Hợp đồng chưa được ký. Vui lòng ký hợp đồng (online hoặc offline) trước khi lập biên bản bàn giao.");
+        }
+
         RentalHandoverReport report = RentalHandoverReport.builder()
                 .rentalOrder(order)
                 .staff(staff)

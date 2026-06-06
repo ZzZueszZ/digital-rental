@@ -476,23 +476,28 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                         {/* WAITING_PICKUP actions */}
                         {rental.status === RentalOrderStatus.WAITING_PICKUP && (
                           <>
-                            {/* Case 1: Handover report not created yet (finalDepositAmount is null/undefined) */}
-                            {(!rental.finalDepositAmount && rental.finalDepositAmount !== 0) ? (
-                              <Button
-                                onClick={() => handleOpenHandover(rental)}
-                                className="h-8 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold border-none"
-                              >
-                                Lập BB bàn giao
-                              </Button>
+                            {/* Case 1: Contract not signed/locked */}
+                            {(!rental.contract || !rental.contract.isLocked) ? (
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-100 animate-pulse">
+                                  Chờ ký HĐ
+                                </span>
+                                <Button
+                                  onClick={() => handleSignOffline(rental.id)}
+                                  className="h-8 px-3 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold border-none"
+                                >
+                                  Ký offline (HĐ Giấy)
+                                </Button>
+                              </div>
                             ) : (
                               <>
-                                {/* Case 2: Contract not signed/locked */}
-                                {(!rental.contract || !rental.contract.isLocked) ? (
+                                {/* Case 2: Handover report not created yet (finalDepositAmount is null/undefined) */}
+                                {(!rental.finalDepositAmount && rental.finalDepositAmount !== 0) ? (
                                   <Button
-                                    onClick={() => handleSignOffline(rental.id)}
-                                    className="h-8 px-3 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold border-none animate-pulse"
+                                    onClick={() => handleOpenHandover(rental)}
+                                    className="h-8 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold border-none"
                                   >
-                                    Ký offline (HĐ Giấy)
+                                    Lập BB bàn giao
                                   </Button>
                                 ) : (
                                   <>

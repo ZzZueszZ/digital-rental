@@ -227,21 +227,27 @@ export default function ProductDetailPage() {
       });
 
       if (res.data?.success) {
-        toast.success("Gửi yêu cầu đặt thuê thành công! Đang chuyển hướng thanh toán...");
-        
+        toast.success(
+          "Gửi yêu cầu đặt thuê thành công! Đang chuyển hướng thanh toán...",
+        );
+
         // Redirect to VNPay
         const orderId = res.data.data.id;
         try {
-          const vnpayRes = await http.post(`/payments/vnpay/rental-fee/create?rentalOrderId=${orderId}`);
+          const vnpayRes = await http.post(
+            `/payments/vnpay/rental-fee/create?rentalOrderId=${orderId}`,
+          );
           if (vnpayRes.data?.success && vnpayRes.data.data) {
             window.location.href = vnpayRes.data.data;
             return;
           }
         } catch (e) {
-          toast.error("Không thể khởi tạo thanh toán VNPay. Vui lòng thanh toán sau trong trang cá nhân.");
+          toast.error(
+            "Không thể khởi tạo thanh toán VNPay. Vui lòng thanh toán sau trong trang cá nhân.",
+          );
         }
-        
-        router.push("/profile/rentals");
+
+        router.push("/profile/orders");
       }
     } catch (err: any) {
       const msg = err.response?.data?.message || "Không thể gửi yêu cầu thuê";
@@ -729,12 +735,20 @@ export default function ProductDetailPage() {
                             </label>
                             <select
                               value={pickupTimeSlot}
-                              onChange={(e) => setPickupTimeSlot(e.target.value)}
+                              onChange={(e) =>
+                                setPickupTimeSlot(e.target.value)
+                              }
                               className="w-full h-11 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 transition-all"
                             >
-                              <option value="08:00 - 12:00">08:00 - 12:00 (Sáng)</option>
-                              <option value="13:00 - 17:00">13:00 - 17:00 (Chiều)</option>
-                              <option value="18:00 - 21:00">18:00 - 21:00 (Tối)</option>
+                              <option value="08:00 - 12:00">
+                                08:00 - 12:00 (Sáng)
+                              </option>
+                              <option value="13:00 - 17:00">
+                                13:00 - 17:00 (Chiều)
+                              </option>
+                              <option value="18:00 - 21:00">
+                                18:00 - 21:00 (Tối)
+                              </option>
                             </select>
                           </div>
 

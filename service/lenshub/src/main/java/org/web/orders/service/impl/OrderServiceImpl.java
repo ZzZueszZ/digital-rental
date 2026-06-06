@@ -150,7 +150,7 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         if (order.getCode() == null) {
-            order.setCode("ORD-" + System.currentTimeMillis());
+            order.setCode("ORD-" + System.currentTimeMillis() + "-" + java.util.UUID.randomUUID().toString().substring(0, 6));
         }
 
         for (OrderItem oi : orderItems) {
@@ -283,7 +283,7 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         if (order.getCode() == null) {
-            order.setCode("ORD-" + System.currentTimeMillis());
+            order.setCode("ORD-" + System.currentTimeMillis() + "-" + java.util.UUID.randomUUID().toString().substring(0, 6));
         }
 
         for (OrderItem oi : orderItems) {

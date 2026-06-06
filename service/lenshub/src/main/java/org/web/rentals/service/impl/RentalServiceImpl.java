@@ -111,7 +111,7 @@ public class RentalServiceImpl implements RentalService {
         String shippingAddress = "Nhận tại cửa hàng. Khung giờ: " + pickupTime;
 
         RentalOrder order = RentalOrder.builder()
-                .code("RNT-" + System.currentTimeMillis())
+                .code("RNT-" + System.currentTimeMillis() + "-" + java.util.UUID.randomUUID().toString().substring(0, 6))
                 .user(user)
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())

@@ -236,6 +236,8 @@ public class RentalServiceImpl implements RentalService {
                         + "Điều 2: Tiền cọc sẽ được hoàn lại đầy đủ sau khi thiết bị được trả và hoàn tất thẩm định không có lỗi/hư hỏng.\n"
                         + "Điều 3: Trường hợp trả trễ hạn, mức phạt là 150% phí thuê hàng ngày của mỗi ngày trễ hạn.\n"
                         + "Điều 4: Mọi tranh chấp sẽ được ưu tiên thương lượng giữa 2 bên.")
+                .lessorSignature("Cửa hàng Digital Rental")
+                .lessorSignedAt(LocalDateTime.now())
                 .isLocked(false)
                 .build();
         rentalContractRepository.save(contract);
@@ -343,12 +345,16 @@ public class RentalServiceImpl implements RentalService {
                     .termsAndConditions(terms.toString())
                     .status(org.web.common.enums.ContractStatus.DRAFT)
                     .generatedAt(LocalDateTime.now())
+                    .lessorSignature("Cửa hàng Digital Rental")
+                    .lessorSignedAt(LocalDateTime.now())
                     .isLocked(false)
                     .build();
         } else {
             contract.setTermsAndConditions(terms.toString());
             contract.setGeneratedAt(LocalDateTime.now());
             contract.setStatus(org.web.common.enums.ContractStatus.DRAFT);
+            contract.setLessorSignature("Cửa hàng Digital Rental");
+            contract.setLessorSignedAt(LocalDateTime.now());
         }
         rentalContractRepository.save(contract);
         order.setContract(contract);
@@ -798,6 +804,9 @@ public class RentalServiceImpl implements RentalService {
                 .signerIp(contract.getSignerIp())
                 .status(contract.getStatus())
                 .signedAt(contract.getSignedAt())
+                .lessorSignature(contract.getLessorSignature())
+                .lessorSignedAt(contract.getLessorSignedAt())
+                .generatedAt(contract.getGeneratedAt())
                 .isLocked(contract.isLocked())
                 .build();
     }

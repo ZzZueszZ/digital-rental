@@ -100,15 +100,18 @@ export function RentalDetailDialog({
               margin-bottom: 40px;
               text-align: justify;
             }
-            .signature-section {
+            .signatures-container {
               margin-top: 50px;
-              float: right;
-              width: 300px;
+              display: flex;
+              justify-content: space-between;
+            }
+            .signature-col {
+              width: 45%;
               text-align: center;
             }
             .signature-title {
               font-weight: bold;
-              margin-bottom: 10px;
+              margin-bottom: 15px;
             }
             .signature-box {
               border: 2px dashed #059669;
@@ -118,6 +121,17 @@ export function RentalDetailDialog({
               border-radius: 8px;
               font-size: 12px;
               font-weight: bold;
+              min-height: 70px;
+            }
+            .signature-box.lessor {
+              border-color: #dc2626;
+              background-color: #fef2f2;
+              color: #b91c1c;
+            }
+            .signature-box.unassigned {
+              border-color: #d1d5db;
+              background-color: #f9fafb;
+              color: #6b7280;
             }
             @media print {
               body {
@@ -143,12 +157,28 @@ export function RentalDetailDialog({
             ${terms}
           </div>
 
-          <div class="signature-section">
-            <div class="signature-title">BÊN THUÊ (Ký tên)</div>
-            <div class="signature-box">
-              ĐÃ KÝ ĐIỆN TỬ<br>
-              Khách hàng: ${signature}<br>
-              Thời gian: ${signedAtStr}
+          <div class="signatures-container">
+            <div class="signature-col">
+              <div class="signature-title">BÊN CHO THUÊ (Ký tên)</div>
+              <div class="signature-box lessor">
+                ĐÃ KÝ ĐIỆN TỬ<br>
+                Đại diện: ${rental.contract.lessorSignature || "Digital Rental"}<br>
+                Thời gian: ${rental.contract.lessorSignedAt ? formatDate(rental.contract.lessorSignedAt) : (signedAtStr || formatDate(rental.contract.generatedAt || new Date().toISOString()))}
+              </div>
+            </div>
+            <div class="signature-col">
+              <div class="signature-title">BÊN THUÊ (Ký tên)</div>
+              ${(rental.contract.isLocked || rental.contract.locked) ? `
+                <div class="signature-box">
+                  ĐÃ KÝ ĐIỆN TỬ<br>
+                  Khách hàng: ${signature}<br>
+                  Thời gian: ${signedAtStr}
+                </div>
+              ` : `
+                <div class="signature-box unassigned" style="display: flex; align-items: center; justify-content: center;">
+                  CHƯA KÝ TRỰC TUYẾN
+                </div>
+              `}
             </div>
           </div>
 

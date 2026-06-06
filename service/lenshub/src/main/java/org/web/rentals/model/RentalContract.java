@@ -43,6 +43,12 @@ public class RentalContract extends BaseAuditEntity {
     @Column(name = "signed_at")
     private LocalDateTime signedAt;
 
+    @Column(name = "lessor_signature", length = 255)
+    private String lessorSignature;
+
+    @Column(name = "lessor_signed_at")
+    private LocalDateTime lessorSignedAt;
+
     @Column(name = "signer_user_id")
     private Long signerUserId;
 

@@ -65,6 +65,9 @@ export interface RentalContractResponse {
   isLocked: boolean;
   locked?: boolean;
   status: ContractStatus;
+  lessorSignature?: string;
+  lessorSignedAt?: string;
+  generatedAt?: string;
 }
 
 export interface RentalHandoverReportResponse {

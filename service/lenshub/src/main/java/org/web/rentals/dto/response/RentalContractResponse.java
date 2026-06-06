@@ -20,6 +20,9 @@ public class RentalContractResponse {
     private String signerIp;
     private org.web.common.enums.ContractStatus status;
     private LocalDateTime signedAt;
+    private String lessorSignature;
+    private LocalDateTime lessorSignedAt;
+    private LocalDateTime generatedAt;
 
     @JsonProperty("isLocked")
     private boolean isLocked;

@@ -67,6 +67,40 @@ export interface RentalContractResponse {
   status: ContractStatus;
 }
 
+export interface RentalHandoverReportResponse {
+  id: number;
+  serialNumber: string;
+  bodyCondition: string;
+  lensCondition: string;
+  batteryCondition: string;
+  accessoryCondition: string;
+  riskLevel: RiskLevel;
+  finalDepositAmount: number;
+  depositPaymentMethod: string;
+  note?: string;
+  staffName?: string;
+  createdAt: string;
+}
+
+export interface RentalReturnReportResponse {
+  id: number;
+  returnDate: string;
+  bodyConditionAfter: string;
+  lensConditionAfter: string;
+  batteryConditionAfter: string;
+  accessoryConditionAfter: string;
+  lateDays: number;
+  lateFee: number;
+  damageFee: number;
+  missingAccessoryFee: number;
+  totalPenalty: number;
+  refundAmount: number;
+  extraPaymentAmount: number;
+  note?: string;
+  staffName?: string;
+  createdAt: string;
+}
+
 export interface RentalOrderResponse {
   id: number;
   code: string;
@@ -94,6 +128,8 @@ export interface RentalOrderResponse {
   canceledAt?: string;
   items: RentalOrderItemResponse[];
   contract?: RentalContractResponse;
+  handoverReport?: RentalHandoverReportResponse;
+  returnReport?: RentalReturnReportResponse;
   createdAt: string;
   updatedAt: string;
 }
@@ -125,6 +161,7 @@ export interface HandoverReportRequest {
   riskLevel: RiskLevel;
   finalDepositAmount: number;
   note?: string;
+  itemConditions?: Record<number, string>;
 }
 
 export interface CollectDepositRequest {
@@ -147,6 +184,7 @@ export interface ReturnReportRequest {
   damageFee: number;
   missingAccessoryFee: number;
   note?: string;
+  itemConditions?: Record<number, string>;
 }
 
 export interface CompleteRentalRequest {

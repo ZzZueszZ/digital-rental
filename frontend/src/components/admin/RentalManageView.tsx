@@ -180,9 +180,10 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
           lensCondition: "Bình thường",
           batteryCondition: "Bình thường",
           accessoryCondition: "Bình thường",
-          riskLevel: RiskLevel.LOW_RISK,
+          riskLevel: selectedRental.riskLevel || RiskLevel.LOW_RISK,
           finalDepositAmount: selectedRental.finalDepositAmount || 0,
-          note: "Không có ghi chú"
+          note: `Nhân viên kiểm tra: ${inspectorName}`,
+          itemConditions: itemConditions
         }
       });
       toast.success("Đã tạo biên bản bàn giao thành công!");
@@ -198,7 +199,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
     setDamageFee(0);
     const initConditions: Record<number, string> = {};
     rental.items.forEach((item: any) => {
-      initConditions[item.id] = "Bình thường";
+      initConditions[item.id] = item.conditionBeforeHandover || "Bình thường";
     });
     setItemConditions(initConditions);
     setIsReturnOpen(true);
@@ -222,7 +223,8 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
           lateFee: 0,
           damageFee: damageFee,
           missingAccessoryFee: 0,
-          note: "Trả đúng hạn"
+          note: `Nhân viên kiểm tra: ${inspectorName}`,
+          itemConditions: itemConditions
         }
       });
       toast.success("Nhận trả thiết bị thành công!");

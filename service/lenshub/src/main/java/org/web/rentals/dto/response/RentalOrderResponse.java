@@ -40,6 +40,8 @@ public class RentalOrderResponse {
     private LocalDateTime canceledAt;
     private List<RentalOrderItemResponse> items;
     private RentalContractResponse contract;
+    private RentalHandoverReportResponse handoverReport;
+    private RentalReturnReportResponse returnReport;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

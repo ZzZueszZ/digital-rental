@@ -103,4 +103,10 @@ public class RentalOrder extends BaseAuditEntity {
 
     @OneToOne(mappedBy = "rentalOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private RentalContract contract;
+
+    @OneToOne(mappedBy = "rentalOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private RentalHandoverReport handoverReport;
+
+    @OneToOne(mappedBy = "rentalOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private RentalReturnReport returnReport;
 }

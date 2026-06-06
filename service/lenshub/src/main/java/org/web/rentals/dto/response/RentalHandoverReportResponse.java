@@ -1,30 +1,27 @@
-package org.web.rentals.dto.request;
+package org.web.rentals.dto.response;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.web.common.enums.PaymentMethod;
 import org.web.common.enums.RiskLevel;
-
-import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class HandoverReportRequest {
-
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class RentalHandoverReportResponse {
+    private Long id;
     private String serialNumber;
     private String bodyCondition;
     private String lensCondition;
     private String batteryCondition;
     private String accessoryCondition;
-
-    @NotNull(message = "Risk level is required")
     private RiskLevel riskLevel;
-
-    @NotNull(message = "Final deposit amount is required")
     private BigDecimal finalDepositAmount;
-
     private PaymentMethod depositPaymentMethod;
     private String note;
-    private java.util.Map<Long, String> itemConditions;
+    private String staffName;
+    private LocalDateTime createdAt;
 }

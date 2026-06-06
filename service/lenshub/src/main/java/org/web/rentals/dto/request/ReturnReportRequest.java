@@ -20,4 +20,5 @@ public class ReturnReportRequest {
     private BigDecimal missingAccessoryFee;
 
     private String note;
+    private java.util.Map<Long, String> itemConditions;
 }

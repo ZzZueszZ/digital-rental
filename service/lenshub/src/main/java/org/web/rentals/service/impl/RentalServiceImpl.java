@@ -23,7 +23,9 @@ import org.web.rentals.model.*;
 import org.web.rentals.repository.*;
 import org.web.rentals.service.RentalService;
 import org.web.users.model.User;
+import org.web.users.model.UserProfile;
 import org.web.users.repository.UserRepository;
+import org.web.users.repository.UserProfileRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -44,6 +46,7 @@ public class RentalServiceImpl implements RentalService {
     private final DeviceConditionReportRepository deviceConditionReportRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
     private final ShippingAddressRepository shippingAddressRepository;
     private final RentalHandoverReportRepository rentalHandoverReportRepository;
     private final RentalReturnReportRepository rentalReturnReportRepository;
@@ -415,8 +418,16 @@ public class RentalServiceImpl implements RentalService {
         order.setFinalDepositAmount(request.getFinalDepositAmount());
         order.setRiskLevel(request.getRiskLevel());
         order.setDepositStatus(org.web.common.enums.DepositStatus.NOT_COLLECTED);
-        RentalOrder saved = rentalOrderRepository.save(order);
 
+        if (request.getItemConditions() != null) {
+            for (RentalOrderItem item : order.getItems()) {
+                if (request.getItemConditions().containsKey(item.getId())) {
+                    item.setConditionBeforeHandover(request.getItemConditions().get(item.getId()));
+                }
+            }
+        }
+
+        RentalOrder saved = rentalOrderRepository.save(order);
         return mapToResponse(saved);
     }
 
@@ -537,6 +548,14 @@ public class RentalServiceImpl implements RentalService {
                     device.setStatus(DeviceStatus.AVAILABLE);
                 }
                 deviceRepository.save(device);
+            }
+        }
+
+        if (request.getItemConditions() != null) {
+            for (RentalOrderItem item : order.getItems()) {
+                if (request.getItemConditions().containsKey(item.getId())) {
+                    item.setConditionAfterReturn(request.getItemConditions().get(item.getId()));
+                }
             }
         }
 
@@ -693,8 +712,62 @@ public class RentalServiceImpl implements RentalService {
                 .canceledAt(order.getCanceledAt())
                 .items(order.getItems() != null ? order.getItems().stream().map(this::mapToItemResponse).toList() : List.of())
                 .contract(order.getContract() != null ? mapToContractResponse(order.getContract()) : null)
+                .handoverReport(order.getHandoverReport() != null ? mapToHandoverResponse(order.getHandoverReport()) : null)
+                .returnReport(order.getReturnReport() != null ? mapToReturnResponse(order.getReturnReport()) : null)
                 .createdAt(order.getCreatedAt())
                 .updatedAt(order.getUpdatedAt())
+                .build();
+    }
+
+    private RentalHandoverReportResponse mapToHandoverResponse(RentalHandoverReport report) {
+        if (report == null) return null;
+        String staffName = null;
+        if (report.getStaff() != null) {
+            staffName = userProfileRepository.findById(report.getStaff().getId())
+                    .map(UserProfile::getFullName)
+                    .orElse(report.getStaff().getEmail());
+        }
+        return RentalHandoverReportResponse.builder()
+                .id(report.getId())
+                .serialNumber(report.getSerialNumber())
+                .bodyCondition(report.getBodyCondition())
+                .lensCondition(report.getLensCondition())
+                .batteryCondition(report.getBatteryCondition())
+                .accessoryCondition(report.getAccessoryCondition())
+                .riskLevel(report.getRiskLevel())
+                .finalDepositAmount(report.getFinalDepositAmount())
+                .depositPaymentMethod(report.getDepositPaymentMethod())
+                .note(report.getNote())
+                .staffName(staffName)
+                .createdAt(report.getCreatedAt())
+                .build();
+    }
+
+    private RentalReturnReportResponse mapToReturnResponse(RentalReturnReport report) {
+        if (report == null) return null;
+        String staffName = null;
+        if (report.getStaff() != null) {
+            staffName = userProfileRepository.findById(report.getStaff().getId())
+                    .map(UserProfile::getFullName)
+                    .orElse(report.getStaff().getEmail());
+        }
+        return RentalReturnReportResponse.builder()
+                .id(report.getId())
+                .returnDate(report.getReturnDate())
+                .bodyConditionAfter(report.getBodyConditionAfter())
+                .lensConditionAfter(report.getLensConditionAfter())
+                .batteryConditionAfter(report.getBatteryConditionAfter())
+                .accessoryConditionAfter(report.getAccessoryConditionAfter())
+                .lateDays(report.getLateDays())
+                .lateFee(report.getLateFee())
+                .damageFee(report.getDamageFee())
+                .missingAccessoryFee(report.getMissingAccessoryFee())
+                .totalPenalty(report.getTotalPenalty())
+                .refundAmount(report.getRefundAmount())
+                .extraPaymentAmount(report.getExtraPaymentAmount())
+                .note(report.getNote())
+                .staffName(staffName)
+                .createdAt(report.getCreatedAt())
                 .build();
     }
 

@@ -21,21 +21,33 @@ import { cn, formatVND, formatDate } from "@/lib/utils";
 import {
   RentalOrderStatus,
   useRentalDetail,
-  useSignContract
+  useSignContract,
+  useStaffRentalDetail
 } from "@/services/rental";
 
 interface RentalDetailDialogProps {
   isOpen: boolean;
   onClose: () => void;
   rentalId: number;
+  hideSignAction?: boolean;
+  portalType?: "customer" | "admin" | "staff" | "super-admin";
 }
 
 export function RentalDetailDialog({
   isOpen,
   onClose,
-  rentalId
+  rentalId,
+  hideSignAction = false,
+  portalType = "customer"
 }: RentalDetailDialogProps) {
-  const { data: rentalRes, isLoading } = useRentalDetail(rentalId);
+  const isStaffPortal = portalType === "admin" || portalType === "staff" || portalType === "super-admin";
+
+  const customerDetailQuery = useRentalDetail(!isStaffPortal ? rentalId : 0);
+  const staffDetailQuery = useStaffRentalDetail(isStaffPortal ? rentalId : 0);
+
+  const rentalRes = isStaffPortal ? staffDetailQuery.data : customerDetailQuery.data;
+  const isLoading = isStaffPortal ? staffDetailQuery.isLoading : customerDetailQuery.isLoading;
+
   const { mutateAsync: signContract, isPending: isSigning } = useSignContract();
   const rental = rentalRes?.data;
   const [showSignForm, setShowSignForm] = useState(false);
@@ -351,7 +363,7 @@ export function RentalDetailDialog({
                   </span>
                 </div>
               ) : (
-                !showSignForm && (
+                !showSignForm && !hideSignAction && (
                   <Button
                     onClick={() => setShowSignForm(true)}
                     className="w-full h-11 bg-red-600 hover:bg-zinc-950 text-white font-bold text-xs rounded-xl transition-all border-none"
@@ -361,7 +373,7 @@ export function RentalDetailDialog({
                 )
               )}
 
-              {showSignForm && (
+              {showSignForm && !hideSignAction && (
                 <div className="space-y-3 pt-2 border-t border-black/5 animate-in slide-in-from-bottom-2 duration-300">
                   <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
                     Ký xác nhận (Nhập Họ tên đầy đủ của bạn)

@@ -14,7 +14,8 @@ import {
   User,
   ShieldCheck,
   ArrowRight,
-  ClipboardList
+  ClipboardList,
+  Eye
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ import { cn, formatVND, formatDate } from "@/lib/utils";
 import { Pagination } from "@/app/(staff)/staff/components/Pagination";
 import { EmptyState } from "@/app/(staff)/staff/users/components/EmptyState";
 import { StatCard } from "@/app/(staff)/staff/components/StatCard";
+import { RentalDetailDialog } from "@/components/common/RentalDetailDialog";
 import {
   RentalOrderStatus,
   useStaffRentals,
@@ -68,6 +70,13 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   const [isRejectOpen, setIsRejectOpen] = useState(false);
   const [isHandoverOpen, setIsHandoverOpen] = useState(false);
   const [isReturnOpen, setIsReturnOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [detailRentalId, setDetailRentalId] = useState<number | null>(null);
+
+  const handleOpenDetail = (id: number) => {
+    setDetailRentalId(id);
+    setIsDetailOpen(true);
+  };
 
   // Form values
   const [rejectReason, setRejectReason] = useState("");
@@ -453,6 +462,14 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex gap-2 justify-end items-center">
+                        <Button
+                          variant="outline"
+                          onClick={() => handleOpenDetail(rental.id)}
+                          className="h-8 px-2.5 rounded-lg border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 text-zinc-700 text-xs font-bold flex items-center gap-1.5"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          Chi tiết
+                        </Button>
                         {/* PAID_RENTAL_FEE: Prepare devices */}
                         {rental.status === RentalOrderStatus.PAID_RENTAL_FEE && (
                           <Button
@@ -734,6 +751,19 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
             </div>
           </div>
         </AdminFormDialog>
+      )}
+
+      {isDetailOpen && detailRentalId !== null && (
+        <RentalDetailDialog
+          isOpen={isDetailOpen}
+          onClose={() => {
+            setIsDetailOpen(false);
+            setDetailRentalId(null);
+          }}
+          rentalId={detailRentalId}
+          hideSignAction={true}
+          portalType={portalType}
+        />
       )}
     </div>
   );

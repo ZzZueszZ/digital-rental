@@ -12,7 +12,8 @@ import {
   FileText,
   FilePenLine,
   User,
-  ShieldCheck
+  ShieldCheck,
+  Download
 } from "lucide-react";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,116 @@ export function RentalDetailDialog({
   const rental = rentalRes?.data;
   const [showSignForm, setShowSignForm] = useState(false);
   const [signatureText, setSignatureText] = useState("");
+
+  const handleDownloadPDF = () => {
+    if (!rental || !rental.contract) return;
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      toast.error("Vui lòng cho phép mở popup để tải hợp đồng");
+      return;
+    }
+    
+    const terms = rental.contract.termsAndConditions || "";
+    const signature = rental.contract.contractHash || "";
+    const signedAtStr = rental.contract.signedAt ? formatDate(rental.contract.signedAt) : "";
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Hop_Dong_Thue_${rental.code}</title>
+          <style>
+            body {
+              font-family: 'Times New Roman', Times, serif;
+              padding: 40px;
+              color: #000;
+              line-height: 1.6;
+              font-size: 14px;
+            }
+            .header-national {
+              text-align: center;
+              font-weight: bold;
+              margin-bottom: 30px;
+            }
+            .header-title {
+              text-align: center;
+              font-size: 20px;
+              font-weight: bold;
+              margin-bottom: 20px;
+              text-transform: uppercase;
+            }
+            .contract-info {
+              margin-bottom: 20px;
+              font-style: italic;
+              text-align: center;
+            }
+            .content-box {
+              white-space: pre-wrap;
+              margin-bottom: 40px;
+              text-align: justify;
+            }
+            .signature-section {
+              margin-top: 50px;
+              float: right;
+              width: 300px;
+              text-align: center;
+            }
+            .signature-title {
+              font-weight: bold;
+              margin-bottom: 10px;
+            }
+            .signature-box {
+              border: 2px dashed #059669;
+              background-color: #ecfdf5;
+              color: #047857;
+              padding: 15px;
+              border-radius: 8px;
+              font-size: 12px;
+              font-weight: bold;
+            }
+            @media print {
+              body {
+                padding: 20px;
+              }
+              .no-print {
+                display: none;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header-national">
+            CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>
+            Độc lập - Tự do - Hạnh phúc<br>
+            --------------------------
+          </div>
+          
+          <div class="header-title">HỢP ĐỒNG THUÊ THIẾT BỊ ĐIỆN TỬ</div>
+          <div class="contract-info">Số: ${rental.contract.contractNumber}</div>
+
+          <div class="content-box">
+            ${terms}
+          </div>
+
+          <div class="signature-section">
+            <div class="signature-title">BÊN THUÊ (Ký tên)</div>
+            <div class="signature-box">
+              ĐÃ KÝ ĐIỆN TỬ<br>
+              Khách hàng: ${signature}<br>
+              Thời gian: ${signedAtStr}
+            </div>
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            }
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
 
   const handleSignContract = async () => {
     if (!signatureText.trim()) {
@@ -340,7 +451,7 @@ export function RentalDetailDialog({
                   <FileText className="w-4 h-4 text-zinc-500" />
                   <span className="text-xs font-bold text-zinc-800">Hợp đồng điện tử: {rental.contract.contractNumber}</span>
                 </div>
-                {rental.contract.isLocked ? (
+                {(rental.contract.isLocked || rental.contract.locked) ? (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] font-bold border border-emerald-100">
                     <ShieldCheck className="w-3 h-3" /> {rental.contract.contractHash === "OFFLINE_PHYSICAL_SIGNATURE" ? "Đã ký (HĐ Giấy)" : "Đã ký điện tử"}
                   </span>
@@ -355,12 +466,20 @@ export function RentalDetailDialog({
                 {rental.contract.termsAndConditions}
               </div>
 
-              {rental.contract.isLocked ? (
-                <div className="flex justify-between items-center text-xs font-semibold text-zinc-500 pt-2">
-                  <span>{rental.contract.contractHash === "OFFLINE_PHYSICAL_SIGNATURE" ? "Hình thức ký:" : "Chữ ký bên thuê:"}</span>
-                  <span className="font-bold text-zinc-950 font-mono italic underline">
-                    {rental.contract.contractHash === "OFFLINE_PHYSICAL_SIGNATURE" ? "Ký trực tiếp tại cửa hàng (Bản giấy)" : rental.contract.contractHash}
-                  </span>
+              {(rental.contract.isLocked || rental.contract.locked) ? (
+                <div className="space-y-3 pt-2">
+                  <div className="flex justify-between items-center text-xs font-semibold text-zinc-500">
+                    <span>{rental.contract.contractHash === "OFFLINE_PHYSICAL_SIGNATURE" ? "Hình thức ký:" : "Chữ ký bên thuê:"}</span>
+                    <span className="font-bold text-zinc-950 font-mono italic underline text-right truncate max-w-[200px]" title={rental.contract.contractHash}>
+                      {rental.contract.contractHash === "OFFLINE_PHYSICAL_SIGNATURE" ? "Ký trực tiếp tại cửa hàng (Bản giấy)" : rental.contract.contractHash}
+                    </span>
+                  </div>
+                  <Button
+                    onClick={handleDownloadPDF}
+                    className="w-full h-11 bg-zinc-950 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl transition-all border-none flex items-center justify-center gap-1.5"
+                  >
+                    <Download className="w-4 h-4" /> Tải file hợp đồng (PDF)
+                  </Button>
                 </div>
               ) : (
                 !showSignForm && !hideSignAction && (

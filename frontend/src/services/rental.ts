@@ -63,6 +63,7 @@ export interface RentalContractResponse {
   signerUserId?: number;
   signerIp?: string;
   isLocked: boolean;
+  locked?: boolean;
   status: ContractStatus;
 }
 

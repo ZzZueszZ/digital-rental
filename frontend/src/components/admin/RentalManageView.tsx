@@ -484,7 +484,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                         {rental.status === RentalOrderStatus.WAITING_PICKUP && (
                           <>
                             {/* Case 1: Contract not signed/locked */}
-                            {(!rental.contract || !rental.contract.isLocked) ? (
+                            {(!rental.contract || !(rental.contract.isLocked || rental.contract.locked)) ? (
                               <span className="text-[11px] font-bold text-amber-600 bg-amber-50 px-2.5 py-1.5 rounded-lg border border-amber-100 animate-pulse">
                                 Chờ khách ký HĐ (Trực tuyến)
                               </span>

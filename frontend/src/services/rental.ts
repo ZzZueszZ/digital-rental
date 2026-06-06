@@ -236,10 +236,6 @@ export const rentalService = {
     return response.data;
   },
 
-  signContractOffline: async (id: number): Promise<{ success: boolean; data: RentalOrderResponse }> => {
-    const response = await axios.post<{ success: boolean; data: RentalOrderResponse }>(`/rentals/staff/${id}/contract/sign-offline`);
-    return response.data;
-  },
 
 
 
@@ -353,13 +349,6 @@ export const useCompleteRental = () => {
   });
 };
 
-export const useSignContractOffline = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id }: { id: number }) => rentalService.signContractOffline(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["rentals"] })
-  });
-};
 
 export const useGetDevicesByProduct = (productId: number) => {
   return useQuery({

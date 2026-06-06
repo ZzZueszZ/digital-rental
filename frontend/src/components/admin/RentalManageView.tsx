@@ -32,7 +32,6 @@ import {
   useHandoverDevices,
   useCreateReturnReport,
   useCompleteRental,
-  useSignContractOffline,
   rentalService,
   DeviceResponse,
   RiskLevel
@@ -56,7 +55,6 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   const handoverMutation = useHandoverDevices();
   const returnReportMutation = useCreateReturnReport();
   const completeMutation = useCompleteRental();
-  const signOfflineMutation = useSignContractOffline();
 
   const rentals = rentalsRes?.data || [];
   const pagination = rentalsRes?.meta; // page/size/total info if present, otherwise default
@@ -240,14 +238,6 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
     }
   };
 
-  const handleSignOffline = async (id: number) => {
-    try {
-      await signOfflineMutation.mutateAsync({ id });
-      toast.success("Xác nhận ký hợp đồng offline thành công!");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Lỗi ký hợp đồng offline");
-    }
-  };
 
   const handleHandoverDevices = async (id: number) => {
     try {
@@ -478,17 +468,9 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                           <>
                             {/* Case 1: Contract not signed/locked */}
                             {(!rental.contract || !rental.contract.isLocked) ? (
-                              <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-100 animate-pulse">
-                                  Chờ ký HĐ
-                                </span>
-                                <Button
-                                  onClick={() => handleSignOffline(rental.id)}
-                                  className="h-8 px-3 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold border-none"
-                                >
-                                  Ký offline (HĐ Giấy)
-                                </Button>
-                              </div>
+                              <span className="text-[11px] font-bold text-amber-600 bg-amber-50 px-2.5 py-1.5 rounded-lg border border-amber-100 animate-pulse">
+                                Chờ khách ký HĐ (Trực tuyến)
+                              </span>
                             ) : (
                               <>
                                 {/* Case 2: Handover report not created yet (finalDepositAmount is null/undefined) */}

@@ -213,38 +213,6 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     @Transactional
-    public RentalOrderResponse signContractOffline(Long id) {
-        RentalOrder order = rentalOrderRepository.findById(id)
-                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn hàng thuê"));
-
-        if (order.getStatus() != RentalOrderStatus.PAID_RENTAL_FEE && order.getStatus() != RentalOrderStatus.WAITING_PICKUP) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái đã thanh toán hoặc chờ lấy máy để thực hiện ký hợp đồng.");
-        }
-
-        RentalContract contract = order.getContract();
-        if (contract == null) {
-            throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "Hợp đồng chưa được khởi tạo cho đơn hàng này.");
-        }
-
-        if (contract.isLocked()) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Hợp đồng này đã được ký và khóa.");
-        }
-
-        contract.setContractHash("OFFLINE_PHYSICAL_SIGNATURE");
-        contract.setStatus(org.web.common.enums.ContractStatus.SIGNED);
-        contract.setSignerUserId(order.getUser().getId());
-        contract.setSignedAt(LocalDateTime.now());
-        contract.setLocked(true);
-        rentalContractRepository.save(contract);
-
-        order.setStatus(RentalOrderStatus.WAITING_PICKUP);
-        RentalOrder saved = rentalOrderRepository.save(order);
-
-        return mapToResponse(saved);
-    }
-
-    @Override
-    @Transactional
     public RentalOrderResponse payDeposit(Long id) {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn thuê"));

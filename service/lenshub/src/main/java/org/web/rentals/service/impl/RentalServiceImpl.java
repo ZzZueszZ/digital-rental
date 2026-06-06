@@ -563,6 +563,11 @@ public class RentalServiceImpl implements RentalService {
                 .build();
 
         Device saved = deviceRepository.save(device);
+
+        // Update product rental quantity
+        product.setRentalQuantity(product.getRentalQuantity() + 1);
+        productRepository.save(product);
+
         return mapToDeviceResponse(saved);
     }
 

@@ -39,6 +39,7 @@ import {
   useUpdateProductPrice,
 } from "@/services/product";
 import { useAdjustStock, useInventoryLogs } from "@/services/inventory";
+import { useGetDevicesByProduct, useCreateDevice, useUpdateDevice } from "@/services/rental";
 import { useCategories } from "@/services/category";
 import {
   ProductInfoUpdateRequest,
@@ -114,6 +115,14 @@ export default function ProductDetailPage({
   const [saleStockAction, setSaleStockAction] = useState<"IMPORT" | "EXPORT">("IMPORT");
   const [rentalStockAction, setRentalStockAction] = useState<"IMPORT" | "EXPORT">("IMPORT");
   const adjustStockMutation = useAdjustStock(productId);
+  const { data: devicesRes } = useGetDevicesByProduct(productId);
+  const devices = devicesRes?.data || [];
+  const createDeviceMutation = useCreateDevice();
+  const updateDeviceMutation = useUpdateDevice(productId);
+  
+  const [showDeviceForm, setShowDeviceForm] = useState(false);
+  const [deviceSerial, setDeviceSerial] = useState("");
+  const [deviceCondition, setDeviceCondition] = useState("");
 
   const handleBack = () => router.push("/admin/products");
 
@@ -201,6 +210,39 @@ export default function ProductDetailPage({
       toast.error(err.response?.data?.message || "Không thể điều chỉnh kho bán");
     }
   };
+
+  
+  const handleCreateDevice = async () => {
+    if (!deviceSerial.trim()) {
+      toast.error("Vui lòng nhập Số Serial");
+      return;
+    }
+    try {
+      await createDeviceMutation.mutateAsync({
+        productId,
+        serialNumber: deviceSerial.trim(),
+        conditionDetails: deviceCondition.trim() || "Mới"
+      });
+      toast.success("Thêm thiết bị thành công");
+      setDeviceSerial("");
+      setDeviceCondition("");
+      setShowDeviceForm(false);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Không thể thêm thiết bị");
+    }
+  };
+  
+  const handleUpdateDeviceStatus = async (deviceId: number, currentStatus: string) => {
+    const nextStatus = currentStatus === "AVAILABLE" ? "MAINTENANCE" : (currentStatus === "MAINTENANCE" ? "AVAILABLE" : currentStatus);
+    if (nextStatus === currentStatus) return;
+    try {
+      await updateDeviceMutation.mutateAsync({ id: deviceId, req: { status: nextStatus, conditionDetails: "" } });
+      toast.success("Cập nhật trạng thái thành công");
+    } catch {
+      toast.error("Lỗi khi cập nhật trạng thái");
+    }
+  };
+
 
   const handleAdjustRentalStock = async () => {
     if (!product) return;
@@ -561,78 +603,77 @@ export default function ProductDetailPage({
                   <div className="rounded-dash-md border border-amber-100 bg-amber-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <h4 className="text-sm font-bold text-amber-950">kho cho thuê</h4>
+                        <h4 className="text-sm font-bold text-amber-950">Quản lý kho thuê (Serial)</h4>
                         <p className="text-xs font-medium text-amber-700/70">
-                          Nhập số lượng cần cộng thêm hoặc trừ bớt.
+                          Quản lý độc lập từng thiết bị cho thuê.
                         </p>
                       </div>
                       <span className="text-xs font-semibold text-amber-700 bg-white border border-amber-100 rounded-dash-sm px-3 py-1">
-                        hiện có {product.rentalQuantity ?? 0}
+                        {devices.length} máy
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 rounded-dash-sm border border-amber-100 bg-white p-1">
-                      <button
-                        type="button"
-                        onClick={() => setRentalStockAction("IMPORT")}
-                        disabled={adjustStockMutation.isPending}
-                        className={cn(
-                          "h-9 rounded-dash-sm text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
-                          rentalStockAction === "IMPORT"
-                            ? "bg-amber-600 text-white"
-                            : "text-zinc-500 hover:bg-amber-50 hover:text-amber-700",
-                        )}
-                      >
-                        nhập thêm
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setRentalStockAction("EXPORT")}
-                        disabled={adjustStockMutation.isPending}
-                        className={cn(
-                          "h-9 rounded-dash-sm text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
-                          rentalStockAction === "EXPORT"
-                            ? "bg-red-600 text-white"
-                            : "text-zinc-500 hover:bg-red-50 hover:text-red-600",
-                        )}
-                      >
-                        trừ bớt
-                      </button>
+                    <div className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1">
+                      {devices.length === 0 ? (
+                        <div className="text-xs text-center py-4 text-amber-600/70">Chưa có thiết bị nào.</div>
+                      ) : (
+                        devices.map((d: any) => (
+                          <div key={d.id} className="flex items-center justify-between bg-white border border-amber-100 rounded-dash-sm p-2 text-sm">
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-zinc-900">SN: {d.serialNumber}</span>
+                              <span className="text-xs text-zinc-500 line-clamp-1">{d.conditionDetails}</span>
+                            </div>
+                            <button
+                              onClick={() => handleUpdateDeviceStatus(d.id, d.status)}
+                              className={cn("text-[10px] font-bold px-2 py-1 rounded-md transition-colors", 
+                                d.status === "AVAILABLE" ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" :
+                                d.status === "RENTED" ? "bg-blue-100 text-blue-700" :
+                                "bg-red-100 text-red-700 hover:bg-red-200"
+                              )}
+                            >
+                              {d.status === "AVAILABLE" ? "Sẵn sàng" : d.status === "RENTED" ? "Đang cho thuê" : "Bảo trì"}
+                            </button>
+                          </div>
+                        ))
+                      )}
                     </div>
 
-                    <label className="space-y-1 block">
-                      <span className="text-xs font-semibold text-zinc-700">
-                        số lượng {rentalStockAction === "IMPORT" ? "nhập thêm" : "trừ bớt"}
-                      </span>
-                      <input
-                        type="number"
-                        min={1}
-                        value={rentalStockInput}
-                        onChange={(e) => setRentalStockInput(e.target.value)}
-                        placeholder="Ví dụ: 2"
-                        className="w-full h-10 px-3 rounded-dash-sm border border-amber-100 bg-white text-sm font-semibold"
-                      />
-                    </label>
-                    <label className="space-y-1 block">
-                      <span className="text-xs font-semibold text-zinc-700">lý do chỉnh kho thuê</span>
-                      <input
-                        type="text"
-                        value={rentalStockReason}
-                        onChange={(e) => setRentalStockReason(e.target.value)}
-                        placeholder="Ví dụ: hàng lỗi, trả hàng về nhà máy"
-                        className="w-full h-10 px-3 rounded-dash-sm border border-amber-100 bg-white text-sm"
-                      />
-                    </label>
-                    <Button
-                      type="button"
-                      onClick={handleAdjustRentalStock}
-                      disabled={adjustStockMutation.isPending}
-                      className="w-full h-10 rounded-dash-sm bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-dash-sm hover:shadow-dash-md transition-all duration-200 ease-in-out"
-                    >
-                      {adjustStockMutation.isPending
-                        ? "Đang cập nhật..."
-                        : `${rentalStockAction === "IMPORT" ? "Nhập thêm" : "Trừ bớt"} kho thuê`}
-                    </Button>
+                    {!showDeviceForm ? (
+                      <Button
+                        type="button"
+                        onClick={() => setShowDeviceForm(true)}
+                        className="w-full h-10 rounded-dash-sm bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-dash-sm transition-all"
+                      >
+                        Thêm thiết bị mới
+                      </Button>
+                    ) : (
+                      <div className="bg-white p-3 rounded-dash-sm border border-amber-200 space-y-3">
+                        <label className="space-y-1 block">
+                          <span className="text-xs font-semibold text-zinc-700">Số Serial</span>
+                          <input
+                            type="text"
+                            value={deviceSerial}
+                            onChange={(e) => setDeviceSerial(e.target.value)}
+                            placeholder="Nhập serial..."
+                            className="w-full h-9 px-3 rounded-md border border-amber-100 bg-zinc-50 text-sm font-semibold"
+                          />
+                        </label>
+                        <label className="space-y-1 block">
+                          <span className="text-xs font-semibold text-zinc-700">Tình trạng (Tùy chọn)</span>
+                          <input
+                            type="text"
+                            value={deviceCondition}
+                            onChange={(e) => setDeviceCondition(e.target.value)}
+                            placeholder="Ví dụ: Mới 99%, có trầy nhẹ..."
+                            className="w-full h-9 px-3 rounded-md border border-amber-100 bg-zinc-50 text-sm"
+                          />
+                        </label>
+                        <div className="flex gap-2">
+                          <Button type="button" onClick={() => setShowDeviceForm(false)} variant="outline" className="flex-1 h-9 rounded-md text-xs font-semibold border-amber-200 text-amber-700">Hủy</Button>
+                          <Button type="button" onClick={handleCreateDevice} disabled={createDeviceMutation.isPending} className="flex-1 h-9 rounded-md bg-amber-600 text-white text-xs font-semibold">Lưu</Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

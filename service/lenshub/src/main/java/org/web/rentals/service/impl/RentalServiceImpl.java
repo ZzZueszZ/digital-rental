@@ -285,6 +285,9 @@ public class RentalServiceImpl implements RentalService {
                 throw new ApplicationException(HttpStatus.BAD_REQUEST, "Thiết bị số Serial " + device.getSerialNumber() + " hiện không sẵn sàng.");
             }
 
+            device.setStatus(DeviceStatus.RESERVED);
+            deviceRepository.save(device);
+
             item.setDevice(device);
             rentalOrderItemRepository.save(item);
         }
@@ -315,6 +318,17 @@ public class RentalServiceImpl implements RentalService {
 
         if (order.getStatus() == RentalOrderStatus.RENTING || order.getStatus() == RentalOrderStatus.COMPLETED || order.getStatus() == RentalOrderStatus.CANCELLED) {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Không thể hủy đơn thuê ở trạng thái hiện tại.");
+        }
+
+        // Release reserved devices
+        if (order.getItems() != null) {
+            for (RentalOrderItem item : order.getItems()) {
+                Device device = item.getDevice();
+                if (device != null && device.getStatus() == DeviceStatus.RESERVED) {
+                    device.setStatus(DeviceStatus.AVAILABLE);
+                    deviceRepository.save(device);
+                }
+            }
         }
 
         order.setStatus(RentalOrderStatus.CANCELLED);

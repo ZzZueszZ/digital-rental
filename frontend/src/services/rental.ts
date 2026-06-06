@@ -234,13 +234,25 @@ export const rentalService = {
     return response.data;
   },
 
-  getDevicesByProduct: async (productId: number): Promise<{ success: boolean; data: DeviceResponse[] }> => {
-    const response = await axios.get<{ success: boolean; data: DeviceResponse[] }>(`/rentals/staff/products/${productId}/devices`);
+
+
+  getAvailableDevices: async (productId: number): Promise<{ success: boolean; data: DeviceResponse[] }> => {
+    const response = await axios.get<{ success: boolean; data: DeviceResponse[] }>(`/rentals/admin/products/${productId}/devices/available`);
     return response.data;
   },
 
-  getAvailableDevices: async (productId: number): Promise<{ success: boolean; data: DeviceResponse[] }> => {
-    const response = await axios.get<{ success: boolean; data: DeviceResponse[] }>(`/rentals/staff/products/${productId}/devices/available`);
+  getDevicesByProduct: async (productId: number): Promise<{ success: boolean; data: DeviceResponse[] }> => {
+    const response = await axios.get<{ success: boolean; data: DeviceResponse[] }>(`/rentals/admin/products/${productId}/devices`);
+    return response.data;
+  },
+
+  createDevice: async (req: { productId: number; serialNumber: string; conditionDetails: string }): Promise<{ success: boolean; data: DeviceResponse }> => {
+    const response = await axios.post<{ success: boolean; data: DeviceResponse }>(`/rentals/admin/devices`, req);
+    return response.data;
+  },
+
+  updateDevice: async (id: number, req: { status: "AVAILABLE" | "RENTED" | "MAINTENANCE" | "BROKEN"; conditionDetails: string }): Promise<{ success: boolean; data: DeviceResponse }> => {
+    const response = await axios.put<{ success: boolean; data: DeviceResponse }>(`/rentals/admin/devices/${id}`, req);
     return response.data;
   }
 };
@@ -333,6 +345,37 @@ export const useCompleteRental = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["rentals"] })
   });
 };
+
+export const useGetDevicesByProduct = (productId: number) => {
+  return useQuery({
+    queryKey: ["devices", productId],
+    queryFn: () => rentalService.getDevicesByProduct(productId),
+    enabled: !!productId
+  });
+};
+
+export const useCreateDevice = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: rentalService.createDevice,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["devices", variables.productId] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    }
+  });
+};
+
+export const useUpdateDevice = (productId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, req }: { id: number; req: any }) => rentalService.updateDevice(id, req),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["devices", productId] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    }
+  });
+};
+
 
 export const useAvailableDevices = (productId: number) => {
   return useQuery({

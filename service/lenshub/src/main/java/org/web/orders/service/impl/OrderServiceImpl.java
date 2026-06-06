@@ -364,6 +364,9 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(OrderStatus.COMPLETED);
         order.setCompletedAt(LocalDateTime.now());
+        if (order.getPaymentMethod() == org.web.common.enums.PaymentMethod.COD) {
+            order.setPaymentStatus(org.web.common.enums.PaymentStatus.SUCCESS);
+        }
         
         order = orderRepository.save(order);
         auditLogService.logAction("ORDER", order.getId(), "CONFIRM_RECEIVED", "User confirmed receipt", null, null);
@@ -404,6 +407,9 @@ public class OrderServiceImpl implements OrderService {
             order.setShippedAt(now);
         } else if (newStatus == OrderStatus.DELIVERED) {
             order.setDeliveredAt(now);
+            if (order.getPaymentMethod() == org.web.common.enums.PaymentMethod.COD) {
+                order.setPaymentStatus(org.web.common.enums.PaymentStatus.SUCCESS);
+            }
         } else if (newStatus == OrderStatus.CANCELED) {
             order.setCanceledAt(now);
             restoreStock(order);

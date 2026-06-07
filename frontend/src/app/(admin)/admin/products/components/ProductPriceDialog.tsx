@@ -44,10 +44,10 @@ export function ProductPriceDialog({
     setPrevOpen(open);
     if (product) {
       setFormData({
-        rentPricePerDay: product.rentPricePerDay,
-        salePrice: product.salePrice,
-        isForRent: product.isForRent,
-        isForSale: product.isForSale,
+        rentPricePerDay: product.rentPricePerDay ?? 0,
+        salePrice: product.salePrice ?? 0,
+        isForRent: product.isForRent ?? false,
+        isForSale: product.isForSale ?? false,
       });
     }
     setErrors({});
@@ -127,7 +127,7 @@ export function ProductPriceDialog({
           <label className="flex items-center gap-3 cursor-pointer group">
             <input
               type="checkbox"
-              checked={formData.isForRent}
+              checked={formData.isForRent ?? false}
               onChange={(e) =>
                 setFormData({ ...formData, isForRent: e.target.checked })
               }
@@ -176,7 +176,7 @@ export function ProductPriceDialog({
           <label className="flex items-center gap-3 cursor-pointer group">
             <input
               type="checkbox"
-              checked={formData.isForSale}
+              checked={formData.isForSale ?? false}
               onChange={(e) =>
                 setFormData({ ...formData, isForSale: e.target.checked })
               }

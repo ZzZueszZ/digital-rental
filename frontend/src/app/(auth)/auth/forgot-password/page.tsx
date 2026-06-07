@@ -1,25 +1,22 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import Link from "next/link";
-import Image from "next/image";
-import { ChevronLeft, ArrowRight, KeyRound, Eye, EyeOff } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { ArrowRight, Eye, EyeOff, KeyRound, Mail } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Routers from "@/constants/routers";
 import { authService } from "@/services/auth";
-// Step 1: Email schema
+import { AuthPageShell } from "@/components/auth/AuthPageShell";
+
 const emailSchema = z.object({
   email: z.string().email("Email không hợp lệ"),
 });
 
-// Step 2: New password schema
 const resetSchema = z
   .object({
     newPassword: z.string().min(6, "Mật khẩu mới phải có ít nhất 6 ký tự"),
@@ -36,67 +33,67 @@ type ResetFormValues = z.infer<typeof resetSchema>;
 const OTP_LENGTH = 6;
 const COUNTDOWN_SECONDS = 60;
 
-// ── OTP Input Component ──────────────────────────────────────────
 function OtpInput({
   value,
   onChange,
 }: {
   value: string;
-  onChange: (val: string) => void;
+  onChange: (value: string) => void;
 }) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleChange = (index: number, char: string) => {
     if (!/^\d?$/.test(char)) return;
-    const arr = value.split("");
-    arr[index] = char;
-    const next = arr.join("").slice(0, OTP_LENGTH);
-    onChange(next);
+    const values = value.split("");
+    values[index] = char;
+    const nextValue = values.join("").slice(0, OTP_LENGTH);
+    onChange(nextValue);
     if (char && index < OTP_LENGTH - 1) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !value[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handlePaste = (e: React.ClipboardEvent) => {
-    e.preventDefault();
-    const pasted = e.clipboardData
+  const handlePaste = (event: React.ClipboardEvent) => {
+    event.preventDefault();
+    const pasted = event.clipboardData
       .getData("text")
       .replace(/\D/g, "")
       .slice(0, OTP_LENGTH);
     onChange(pasted);
-    const focusIdx = Math.min(pasted.length, OTP_LENGTH - 1);
-    inputRefs.current[focusIdx]?.focus();
+    inputRefs.current[Math.min(pasted.length, OTP_LENGTH - 1)]?.focus();
   };
 
   return (
-    <div className="flex gap-2 justify-center">
-      {Array.from({ length: OTP_LENGTH }).map((_, i) => (
+    <div
+      className="flex w-full flex-nowrap items-center justify-between gap-2"
+      role="group"
+      aria-label="Mã xác thực OTP gồm 6 chữ số"
+    >
+      {Array.from({ length: OTP_LENGTH }).map((_, index) => (
         <input
-          key={i}
-          ref={(el) => {
-            inputRefs.current[i] = el;
+          key={index}
+          ref={(element) => {
+            inputRefs.current[index] = element;
           }}
           type="text"
           inputMode="numeric"
           maxLength={1}
-          value={value[i] || ""}
-          onChange={(e) => handleChange(i, e.target.value)}
-          onKeyDown={(e) => handleKeyDown(i, e)}
+          value={value[index] || ""}
+          onChange={(event) => handleChange(index, event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Backspace" && !value[index] && index > 0) {
+              inputRefs.current[index - 1]?.focus();
+            }
+          }}
           onPaste={handlePaste}
-          className="w-12 h-12 rounded-xl border border-black/5 bg-white text-center text-xl font-bold text-zinc-900 outline-none transition-all shadow-dash-card focus:border-red-600 focus:ring-1 focus:ring-red-600/30"
+          className="h-11 w-11 min-w-0 flex-none rounded-xl border border-zinc-200 bg-white p-0 text-center text-base font-medium text-zinc-900 outline-none transition-colors focus:border-zinc-400 sm:h-12 sm:w-12"
+          aria-label={`Số OTP ${index + 1}`}
         />
       ))}
     </div>
   );
 }
 
-// ── Main Page ────────────────────────────────────────────────────
 export default function ForgotPasswordPage() {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
@@ -106,36 +103,31 @@ export default function ForgotPasswordPage() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Step 1 form
   const emailForm = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema),
     defaultValues: { email: "" },
   });
-
-  // Step 2 form
   const resetForm = useForm<ResetFormValues>({
     resolver: zodResolver(resetSchema),
     defaultValues: { newPassword: "", confirmPassword: "" },
   });
 
-  // ── Countdown timer ──
   useEffect(() => {
     if (countdown <= 0) return;
-    const timer = setInterval(() => setCountdown((c) => c - 1), 1000);
+    const timer = setInterval(() => setCountdown((value) => value - 1), 1000);
     return () => clearInterval(timer);
   }, [countdown]);
 
-  // ── Step 1: send OTP ──
   const handleSendOtp = async (values: EmailFormValues) => {
     try {
-      const res = await authService.forgotPassword({ email: values.email });
-      if (res.data.success) {
+      const response = await authService.forgotPassword({ email: values.email });
+      if (response.data.success) {
         toast.success("Mã OTP đã được gửi đến email của bạn");
         setEmail(values.email);
         setStep(2);
         setCountdown(COUNTDOWN_SECONDS);
       } else {
-        toast.error(res.data.message || "Không thể gửi OTP");
+        toast.error(response.data.message || "Không thể gửi OTP");
       }
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -145,17 +137,16 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  // ── Resend OTP ──
   const handleResendOtp = useCallback(async () => {
     if (countdown > 0) return;
     try {
-      const res = await authService.forgotPassword({ email });
-      if (res.data.success) {
+      const response = await authService.forgotPassword({ email });
+      if (response.data.success) {
         toast.success("Đã gửi lại mã OTP");
         setCountdown(COUNTDOWN_SECONDS);
         setOtp("");
       } else {
-        toast.error(res.data.message || "Không thể gửi lại OTP");
+        toast.error(response.data.message || "Không thể gửi lại OTP");
       }
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -163,23 +154,22 @@ export default function ForgotPasswordPage() {
     }
   }, [countdown, email]);
 
-  // ── Step 2: reset password ──
   const handleResetPassword = async (values: ResetFormValues) => {
     if (otp.length < OTP_LENGTH) {
       toast.error("Vui lòng nhập đầy đủ mã OTP");
       return;
     }
     try {
-      const res = await authService.resetPassword({
+      const response = await authService.resetPassword({
         email,
         otpCode: otp,
         newPassword: values.newPassword,
       });
-      if (res.data.success) {
+      if (response.data.success) {
         toast.success("Đặt lại mật khẩu thành công! Vui lòng đăng nhập.");
         router.push(Routers.LOGIN);
       } else {
-        toast.error(res.data.message || "Đặt lại mật khẩu thất bại");
+        toast.error(response.data.message || "Đặt lại mật khẩu thất bại");
       }
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -190,267 +180,163 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors duration-1000 bg-zinc-50">
-      {/* Top Navigation */}
-      <div className="px-8 py-6 flex items-center relative z-10">
-        <Link href={Routers.LOGIN}>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-xl h-10 w-10 border-black/5 bg-white text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-red-600 shadow-dash-card transition-colors"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-        </Link>
+    <AuthPageShell
+      title={step === 1 ? "Khôi phục tài khoản." : "Tạo mật khẩu mới."}
+      description={
+        step === 1
+          ? "Nhập email đăng ký để nhận mã xác thực OTP."
+          : "Xác nhận mã OTP và đặt một mật khẩu mới cho tài khoản."
+      }
+      backHref={Routers.LOGIN}
+      backLabel="Quay lại đăng nhập"
+    >
+      <div className="mb-7">
+        <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600">
+          {step === 1 ? (
+            <Mail className="h-5 w-5" />
+          ) : (
+            <KeyRound className="h-5 w-5" />
+          )}
+        </div>
+        <p className="mb-2 text-sm font-medium text-red-600">
+          {step === 1 ? "Quên mật khẩu" : "Xác nhận OTP"}
+        </p>
+        <h2 className="text-3xl font-semibold tracking-tight text-zinc-950">
+          {step === 1 ? "Nhận mã khôi phục" : "Đặt lại mật khẩu"}
+        </h2>
+        <p className="mt-2 text-sm font-normal leading-6 text-zinc-500">
+          {step === 1
+            ? "Chúng tôi sẽ gửi mã gồm 6 chữ số đến email của bạn."
+            : `Mã xác thực đã được gửi đến ${email}.`}
+        </p>
       </div>
 
-      <main className="flex-1 flex items-center px-8 pb-10">
-        <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
-          {/* ── Left: Hero ── */}
-          <div className="hidden lg:flex flex-col items-start justify-center relative pl-8">
-            <div className="space-y-3 mb-10">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 leading-[1.1]">
-                {step === 1 ? "Quên mật khẩu?" : "Đặt lại mật khẩu"}
-              </h1>
-              <p className="text-lg md:text-xl text-zinc-500 font-medium">
-                {step === 1
-                  ? "Nhập email để nhận mã xác thực"
-                  : "Nhập mã OTP và mật khẩu mới"}
+      {step === 1 ? (
+        <form
+          onSubmit={emailForm.handleSubmit(handleSendOtp)}
+          className="space-y-4"
+        >
+          <div>
+            <label className="mb-1.5 block text-xs font-normal text-zinc-600">
+              Email
+            </label>
+            <Input
+              type="email"
+              placeholder="email@example.com"
+              {...emailForm.register("email")}
+              className={`h-10 rounded-xl border-zinc-200 bg-white px-3 text-sm font-normal text-zinc-900 shadow-none placeholder:text-zinc-400 focus-visible:border-zinc-400 focus-visible:ring-0 ${emailForm.formState.errors.email ? "border-red-500" : ""}`}
+            />
+            {emailForm.formState.errors.email && (
+              <p className="mt-1 text-xs font-normal text-red-600">
+                {emailForm.formState.errors.email.message}
               </p>
-            </div>
-            <div className="relative w-full max-w-lg overflow-hidden flex items-center justify-center">
-              <Image
-                src="/images/auth-login-hero.png"
-                alt="Reset password illustration"
-                width={600}
-                height={500}
-                className="w-full h-auto object-contain scale-[1.05]"
-                priority
-              />
-            </div>
-          </div>
-
-          {/* ── Right: Form ── */}
-          <div className="w-full max-w-md mx-auto lg:mx-0">
-            {step === 1 ? (
-              /* ===== STEP 1: Enter Email ===== */
-              <div>
-                {/* Mobile heading */}
-                <div className="lg:hidden space-y-3 mb-10 text-center">
-                  <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900">
-                    Quên mật khẩu?
-                  </h1>
-                  <p className="text-base text-zinc-500 font-medium">
-                    Nhập email để nhận mã xác thực OTP
-                  </p>
-                </div>
-
-                <form
-                  onSubmit={emailForm.handleSubmit(handleSendOtp)}
-                  className="space-y-4"
-                >
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-zinc-900">
-                      Email
-                    </label>
-                    <Input
-                      placeholder="Nhập địa chỉ email của bạn"
-                      type="email"
-                      {...emailForm.register("email")}
-                      className={`h-12 bg-white border-black/5 rounded-xl focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600 text-zinc-900 text-sm px-5 shadow-dash-card ${emailForm.formState.errors.email ? "border-red-500 ring-red-500" : ""}`}
-                    />
-                    {emailForm.formState.errors.email && (
-                      <p className="text-xs text-error font-medium">
-                        {emailForm.formState.errors.email.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="w-full h-12 text-sm font-bold bg-zinc-900 text-white rounded-xl hover:bg-red-600 shadow-dash-card transition-all active:scale-95 gap-2 mt-2"
-                    disabled={emailForm.formState.isSubmitting}
-                  >
-                    {emailForm.formState.isSubmitting ? (
-                      "Đang gửi..."
-                    ) : (
-                      <>
-                        Gửi mã OTP
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
-                  </Button>
-                </form>
-
-                <p className="mt-10 text-center text-sm text-zinc-500">
-                  Nhớ mật khẩu?{" "}
-                  <Link
-                    href={Routers.LOGIN}
-                    className="text-red-600  hover:text-red-700 transition-all ml-1 font-bold"
-                  >
-                    Đăng nhập
-                  </Link>
-                </p>
-              </div>
-            ) : (
-              /* ===== STEP 2: OTP + New Password ===== */
-              <div>
-                {/* Mobile heading */}
-                <div className="lg:hidden space-y-3 mb-10 text-center">
-                  <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900">
-                    Đặt lại mật khẩu
-                  </h1>
-                </div>
-
-                {/* OTP info */}
-                <div className="mb-10">
-                  <h2 className="text-2xl font-bold text-zinc-900 hidden lg:block mb-2">
-                    Đã gửi mã OTP
-                  </h2>
-                  <p className="text-base text-zinc-500 font-medium">
-                    Nhập mã xác thực đã gửi đến{" "}
-                    <span className="font-bold text-zinc-950">{email}</span>
-                    <button
-                      onClick={() => {
-                        setStep(1);
-                        setOtp("");
-                      }}
-                      className="text-red-600 font-bold ml-2 hover:text-red-700 transition-colors"
-                    >
-                      Sửa
-                    </button>
-                  </p>
-                </div>
-
-                <form
-                  onSubmit={resetForm.handleSubmit(handleResetPassword)}
-                  className="space-y-4"
-                >
-                  {/* OTP Boxes */}
-                  <div className="space-y-4">
-                    <OtpInput value={otp} onChange={setOtp} />
-
-                    {/* Resend row */}
-                    <div className="flex items-center justify-between text-sm font-medium">
-                      <span className="text-zinc-500">
-                        Không nhận được mã?{" "}
-                        <button
-                          type="button"
-                          onClick={handleResendOtp}
-                          disabled={countdown > 0}
-                          className={`font-bold transition-colors ${
-                            countdown > 0
-                              ? "text-zinc-300 cursor-not-allowed"
-                              : "text-red-600 hover:text-red-700"
-                          }`}
-                        >
-                          Gửi lại
-                        </button>
-                      </span>
-                      {countdown > 0 && (
-                        <span className="flex items-center gap-1.5 text-zinc-400 tabular-nums text-xs">
-                          <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
-                          {countdown}s
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* New password */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-zinc-900">
-                      Mật khẩu mới
-                    </label>
-                    <div className="relative">
-                      <Input
-                        type={showNewPassword ? "text" : "password"}
-                        placeholder="Tối thiểu 6 ký tự"
-                        {...resetForm.register("newPassword")}
-                        className={`h-12 bg-white border-black/5 rounded-xl focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600 text-zinc-900 text-sm px-5 pr-12 shadow-dash-card ${resetForm.formState.errors.newPassword ? "border-red-500 ring-red-500" : ""}`}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowNewPassword(!showNewPassword)}
-                        className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-900 transition"
-                      >
-                        {showNewPassword ? (
-                          <EyeOff className="size-5" />
-                        ) : (
-                          <Eye className="size-5" />
-                        )}
-                      </button>
-                    </div>
-                    {resetForm.formState.errors.newPassword && (
-                      <p className="text-xs text-error font-medium">
-                        {resetForm.formState.errors.newPassword.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Confirm password */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-zinc-900">
-                      Xác nhận mật khẩu
-                    </label>
-                    <div className="relative">
-                      <Input
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Nhập lại mật khẩu mới"
-                        {...resetForm.register("confirmPassword")}
-                        className={`h-12 bg-white border-black/5 rounded-xl focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600 text-zinc-900 text-sm px-5 pr-12 shadow-dash-card ${resetForm.formState.errors.confirmPassword ? "border-red-500 ring-red-500" : ""}`}
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
-                        className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-900 transition"
-                      >
-                        {showConfirmPassword ? (
-                          <EyeOff className="size-5" />
-                        ) : (
-                          <Eye className="size-5" />
-                        )}
-                      </button>
-                    </div>
-                    {resetForm.formState.errors.confirmPassword && (
-                      <p className="text-xs text-error font-medium">
-                        {resetForm.formState.errors.confirmPassword.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Submit */}
-                  <Button
-                    type="submit"
-                    className="w-full h-12 mt-4 text-sm font-bold bg-zinc-900 text-white rounded-xl hover:bg-red-600 shadow-dash-card transition-all active:scale-95 gap-2"
-                    disabled={resetForm.formState.isSubmitting}
-                  >
-                    {resetForm.formState.isSubmitting ? (
-                      "Đang xử lý..."
-                    ) : (
-                      <>
-                        <KeyRound className="w-4 h-4" />
-                        Đặt lại mật khẩu
-                      </>
-                    )}
-                  </Button>
-                </form>
-
-                <p className="mt-10 text-center text-sm text-zinc-500">
-                  Nhớ mật khẩu?{" "}
-                  <Link
-                    href={Routers.LOGIN}
-                    className="text-red-600  hover:text-red-700 transition-all ml-1 font-bold"
-                  >
-                    Đăng nhập
-                  </Link>
-                </p>
-              </div>
             )}
           </div>
-        </div>
-      </main>
-    </div>
+          <button
+            type="submit"
+            disabled={emailForm.formState.isSubmitting}
+            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-zinc-950 px-5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50"
+          >
+            <span style={{ color: "#ffffff" }}>
+              {emailForm.formState.isSubmitting ? "Đang gửi..." : "Gửi mã OTP"}
+            </span>
+            {!emailForm.formState.isSubmitting && (
+              <ArrowRight className="h-4 w-4" />
+            )}
+          </button>
+        </form>
+      ) : (
+        <form
+          onSubmit={resetForm.handleSubmit(handleResetPassword)}
+          className="space-y-4"
+        >
+          <OtpInput value={otp} onChange={setOtp} />
+          <div className="flex items-center justify-between text-xs font-normal">
+            <button
+              type="button"
+              onClick={() => {
+                setStep(1);
+                setOtp("");
+              }}
+              className="text-zinc-500 hover:text-zinc-900"
+            >
+              Đổi email
+            </button>
+            <button
+              type="button"
+              onClick={handleResendOtp}
+              disabled={countdown > 0}
+              className="font-medium text-red-600 disabled:text-zinc-300"
+            >
+              {countdown > 0 ? `Gửi lại sau ${countdown}s` : "Gửi lại mã"}
+            </button>
+          </div>
+
+          {[
+            {
+              label: "Mật khẩu mới",
+              name: "newPassword" as const,
+              visible: showNewPassword,
+              toggle: () => setShowNewPassword((value) => !value),
+            },
+            {
+              label: "Xác nhận mật khẩu",
+              name: "confirmPassword" as const,
+              visible: showConfirmPassword,
+              toggle: () => setShowConfirmPassword((value) => !value),
+            },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="mb-1.5 block text-xs font-normal text-zinc-600">
+                {field.label}
+              </label>
+              <div className="relative">
+                <Input
+                  type={field.visible ? "text" : "password"}
+                  placeholder="Tối thiểu 6 ký tự"
+                  {...resetForm.register(field.name)}
+                  className={`h-10 rounded-xl border-zinc-200 bg-white px-3 pr-10 text-sm font-normal text-zinc-900 shadow-none placeholder:text-zinc-400 focus-visible:border-zinc-400 focus-visible:ring-0 ${resetForm.formState.errors[field.name] ? "border-red-500" : ""}`}
+                />
+                <button
+                  type="button"
+                  onClick={field.toggle}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-900"
+                >
+                  {field.visible ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+              {resetForm.formState.errors[field.name] && (
+                <p className="mt-1 text-xs font-normal text-red-600">
+                  {resetForm.formState.errors[field.name]?.message}
+                </p>
+              )}
+            </div>
+          ))}
+
+          <button
+            type="submit"
+            disabled={resetForm.formState.isSubmitting}
+            className="inline-flex h-10 w-full items-center justify-center rounded-xl bg-zinc-950 px-5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50"
+          >
+            <span style={{ color: "#ffffff" }}>
+              {resetForm.formState.isSubmitting
+                ? "Đang xử lý..."
+                : "Đặt lại mật khẩu"}
+            </span>
+          </button>
+        </form>
+      )}
+
+      <p className="mt-6 text-center text-sm font-normal text-zinc-500">
+        Nhớ mật khẩu?{" "}
+        <Link href={Routers.LOGIN} className="font-medium text-red-600">
+          Đăng nhập
+        </Link>
+      </p>
+    </AuthPageShell>
   );
 }

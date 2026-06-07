@@ -309,7 +309,7 @@ export default function ProductsAdminPage() {
                   setPage(0);
                 }}
               >
-                <SelectTrigger className="h-10 px-4 rounded-xl !border-zinc-100 !bg-zinc-50/50 text-[14px] font-medium text-zinc-700 outline-none focus:!bg-white transition-all min-w-[155px] shadow-sm">
+                <SelectTrigger className="!h-10 px-4 rounded-xl !border-zinc-100 !bg-zinc-50/50 text-[14px] font-medium text-zinc-700 outline-none focus:!bg-white transition-all min-w-[155px] shadow-sm">
                   <SelectValue placeholder="Tất cả danh mục" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay max-h-64 bg-white p-1">

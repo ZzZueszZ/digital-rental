@@ -12,7 +12,6 @@ import {
   Camera,
   UploadCloud,
   AlertCircle,
-  RefreshCw,
   Fingerprint,
   RefreshCw,
   Upload,

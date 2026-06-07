@@ -179,7 +179,7 @@ export default function VouchersAdminPage() {
                 <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
                   <Ticket className="w-4.5 h-4.5 text-white" strokeWidth={2} />
                 </div>
-                <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
+                <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
                   Quản lý Voucher
                 </h2>
               </div>

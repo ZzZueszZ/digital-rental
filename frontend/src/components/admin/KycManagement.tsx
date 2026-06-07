@@ -130,7 +130,7 @@ export default function KycManagement() {
                 <ShieldCheck className="w-4.5 h-4.5 text-white" strokeWidth={2} />
               </div>
               <div>
-                <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
+                <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
                   Duyệt hồ sơ eKYC
                 </h2>
                 <p className="text-[14px] text-zinc-500 font-medium ml-1">

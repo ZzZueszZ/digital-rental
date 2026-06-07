@@ -118,7 +118,7 @@ export default function OrdersAdminPage() {
                     strokeWidth={2}
                   />
                 </div>
-                <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
+                <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
                   Quản lý đơn hàng
                 </h2>
               </div>

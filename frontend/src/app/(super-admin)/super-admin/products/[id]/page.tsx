@@ -381,7 +381,7 @@ export default function ProductDetailPage({
                 {!isDeleted ? "Hoạt động" : "Đã xóa"}
               </Badge>
             </div>
-            <h1 className="text-[28px] sm:text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight truncate">
+            <h1 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight truncate">
               {product.name}
             </h1>
           </div>

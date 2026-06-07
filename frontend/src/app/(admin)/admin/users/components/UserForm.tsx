@@ -146,7 +146,7 @@ export function UserForm({
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div className="space-y-0.5">
-            <h1 className="leading-tight">
+            <h1 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
               {isEditing ? "Chỉnh sửa hồ sơ" : "Hồ sơ người dùng"}
             </h1>
             <p className="text-[14px] font-medium text-zinc-500">

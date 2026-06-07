@@ -29,8 +29,18 @@ interface DateInputProps {
 // ── Date helpers ──────────────────────────────────────────────
 
 const MONTH_NAMES = [
-  "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
-  "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12",
+  "Tháng 1",
+  "Tháng 2",
+  "Tháng 3",
+  "Tháng 4",
+  "Tháng 5",
+  "Tháng 6",
+  "Tháng 7",
+  "Tháng 8",
+  "Tháng 9",
+  "Tháng 10",
+  "Tháng 11",
+  "Tháng 12",
 ];
 
 const DAY_LABELS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
@@ -70,7 +80,9 @@ function toIsoString(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
-function parseIso(iso: string): { year: number; month: number; day: number } | null {
+function parseIso(
+  iso: string,
+): { year: number; month: number; day: number } | null {
   if (!iso) return null;
   const [y, m, d] = iso.split("-").map(Number);
   if (isNaN(y) || isNaN(m) || isNaN(d)) return null;
@@ -92,17 +104,12 @@ function Calendar({
 }) {
   const parsed = parseIso(selected || "");
   const today = new Date();
-  const [viewYear, setViewYear] = React.useState(parsed?.year ?? today.getFullYear());
-  const [viewMonth, setViewMonth] = React.useState(parsed?.month ?? today.getMonth());
-
-  // Sync view when selected date changes (e.g. user typed a valid date)
-  React.useEffect(() => {
-    const p = parseIso(selected || "");
-    if (p) {
-      setViewYear(p.year);
-      setViewMonth(p.month);
-    }
-  }, [selected]);
+  const [viewYear, setViewYear] = React.useState(
+    parsed?.year ?? today.getFullYear(),
+  );
+  const [viewMonth, setViewMonth] = React.useState(
+    parsed?.month ?? today.getMonth(),
+  );
 
   const minParsed = parseIso(min || "");
   const maxParsed = parseIso(max || "");
@@ -156,11 +163,20 @@ function Calendar({
   };
 
   const isToday = (year: number, month: number, day: number): boolean => {
-    return today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
+    return (
+      today.getFullYear() === year &&
+      today.getMonth() === month &&
+      today.getDate() === day
+    );
   };
 
   // Build grid cells
-  const cells: { day: number; month: number; year: number; isCurrentMonth: boolean }[] = [];
+  const cells: {
+    day: number;
+    month: number;
+    year: number;
+    isCurrentMonth: boolean;
+  }[] = [];
 
   // Leading days from previous month
   for (let i = firstDay - 1; i >= 0; i--) {
@@ -172,7 +188,12 @@ function Calendar({
 
   // Current month days
   for (let d = 1; d <= daysInMonth; d++) {
-    cells.push({ day: d, month: viewMonth, year: viewYear, isCurrentMonth: true });
+    cells.push({
+      day: d,
+      month: viewMonth,
+      year: viewYear,
+      isCurrentMonth: true,
+    });
   }
 
   // Trailing days from next month
@@ -189,35 +210,11 @@ function Calendar({
 
   return (
     <div className="w-[280px] select-none">
-      {/* Header: Month/Year dropdown selectors + nav */}
+      {/* Header: Month/Year + nav */}
       <div className="flex items-center justify-between px-1 mb-3">
-        <div className="flex items-center gap-1">
-          <select
-            value={viewMonth}
-            onChange={(e) => setViewMonth(Number(e.target.value))}
-            className="bg-transparent text-sm font-bold text-zinc-900 outline-none cursor-pointer hover:bg-zinc-100 px-1 py-0.5 rounded-lg transition-colors border-none focus:ring-0 focus-visible:ring-0 appearance-none"
-          >
-            {MONTH_NAMES.map((name, idx) => (
-              <option key={idx} value={idx}>
-                {name}
-              </option>
-            ))}
-          </select>
-          <select
-            value={viewYear}
-            onChange={(e) => setViewYear(Number(e.target.value))}
-            className="bg-transparent text-sm font-bold text-zinc-900 outline-none cursor-pointer hover:bg-zinc-100 px-1 py-0.5 rounded-lg transition-colors border-none focus:ring-0 focus-visible:ring-0 appearance-none"
-          >
-            {Array.from({ length: 120 }, (_, i) => {
-              const y = today.getFullYear() - 100 + i;
-              return (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              );
-            }).reverse()}
-          </select>
-        </div>
+        <span className="text-sm font-bold text-zinc-900 tracking-tight">
+          {MONTH_NAMES[viewMonth]} {viewYear}
+        </span>
         <div className="flex items-center gap-0.5">
           <button
             type="button"
@@ -239,7 +236,10 @@ function Calendar({
       {/* Day labels */}
       <div className="grid grid-cols-7 mb-1">
         {DAY_LABELS.map((label) => (
-          <div key={label} className="text-center text-[10px] font-semibold text-zinc-400 uppercase tracking-wider py-1">
+          <div
+            key={label}
+            className="text-center text-[10px] font-semibold text-zinc-400 uppercase tracking-wider py-1"
+          >
             {label}
           </div>
         ))}
@@ -270,10 +270,16 @@ function Calendar({
               className={cn(
                 "w-9 h-9 mx-auto rounded-lg text-xs font-semibold transition-all flex items-center justify-center",
                 !cell.isCurrentMonth && "text-zinc-300",
-                cell.isCurrentMonth && !selected && !disabled && "text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950",
+                cell.isCurrentMonth &&
+                  !selected &&
+                  !disabled &&
+                  "text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950",
                 selected && "bg-zinc-950 text-white shadow-sm",
-                todayCell && !selected && "ring-1 ring-red-600/40 text-red-600 font-bold",
-                disabled && "text-zinc-200 cursor-not-allowed hover:bg-transparent",
+                todayCell &&
+                  !selected &&
+                  "ring-1 ring-red-600/40 text-red-600 font-bold",
+                disabled &&
+                  "text-zinc-200 cursor-not-allowed hover:bg-transparent",
               )}
             >
               {cell.day}
@@ -329,7 +335,10 @@ export function DateInput({
   React.useEffect(() => {
     if (!isOpen) return;
     const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -354,7 +363,11 @@ export function DateInput({
     // Auto-insert slashes
     if (raw.length === 2 && !raw.includes("/")) {
       raw += "/";
-    } else if (raw.length === 5 && raw.indexOf("/") === 2 && raw.lastIndexOf("/") === 2) {
+    } else if (
+      raw.length === 5 &&
+      raw.indexOf("/") === 2 &&
+      raw.lastIndexOf("/") === 2
+    ) {
       raw += "/";
     }
 
@@ -382,7 +395,11 @@ export function DateInput({
   };
 
   return (
-    <div ref={containerRef} className={cn("relative", className ? "" : "w-full")} style={{ zIndex: isOpen ? 50 : undefined }}>
+    <div
+      ref={containerRef}
+      className={cn("relative", className ? "" : "w-full")}
+      style={{ zIndex: isOpen ? 50 : undefined }}
+    >
       {/* Text input */}
       <input
         type="text"

@@ -171,7 +171,7 @@ export function UserProfileCard({
   return (
     <div
       className={cn(
-        "bg-white rounded-2xl border overflow-hidden shadow-[0_2px_6px_rgba(0,0,0,0.04)] relative group transition-all duration-500",
+        "bg-white rounded-2xl border shadow-[0_2px_6px_rgba(0,0,0,0.04)] relative group transition-all duration-500",
         isEditing
           ? "border-zinc-300 ring-1 ring-zinc-100"
           : "border-zinc-100 hover:shadow-2xl",
@@ -180,7 +180,7 @@ export function UserProfileCard({
       {/* Accent line */}
       <div
         className={cn(
-          "absolute top-0 left-0 w-full h-1 transition-all duration-500",
+          "absolute top-0 left-0 w-full h-1 transition-all duration-500 rounded-t-2xl",
           isEditing
             ? "bg-zinc-950 opacity-100"
             : "bg-zinc-950 opacity-0 group-hover:opacity-100",
@@ -371,7 +371,7 @@ export function UserProfileCard({
             ) : (
               <button
                 onClick={handleProfileEdit}
-                className="h-10 px-4 text-[13px] font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100 flex items-center gap-2 transition-all rounded-xl border border-transparent hover:border-zinc-200"
+                className="h-10 px-4 text-[13px] font-semibold text-red-600 hover:text-red-700 bg-red-50/70 hover:bg-red-100/80 flex items-center gap-2 transition-all rounded-xl border border-red-100/40 shadow-sm shadow-red-600/5 active:scale-95"
               >
                 <Edit2 className="w-4 h-4" /> Sửa
               </button>

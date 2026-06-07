@@ -555,7 +555,7 @@ export default function CheckoutPage() {
                                 name: e.target.value,
                               })
                             }
-                            className="h-10 bg-zinc-50 border-zinc-100 rounded-xl font-semibold text-sm focus-visible:ring-red-600/5 px-4"
+                            className="h-10 bg-zinc-50 focus:bg-white border-zinc-200 focus:border-red-600/30 rounded-xl font-semibold text-[14px] px-5 transition-all outline-none focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600"
                           />
                         </div>
                         <div className="space-y-2">
@@ -571,7 +571,7 @@ export default function CheckoutPage() {
                                 phone: e.target.value,
                               })
                             }
-                            className="h-10 bg-zinc-50 border-zinc-100 rounded-xl font-semibold text-sm focus-visible:ring-red-600/5 px-4"
+                            className="h-10 bg-zinc-50 focus:bg-white border-zinc-200 focus:border-red-600/30 rounded-xl font-semibold text-[14px] px-5 transition-all outline-none focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600"
                           />
                         </div>
                         <div className="space-y-2 md:col-span-2">
@@ -587,7 +587,7 @@ export default function CheckoutPage() {
                                 address: e.target.value,
                               })
                             }
-                            className="h-12 bg-zinc-50 border-zinc-100 rounded-xl font-semibold text-sm focus-visible:ring-red-600/5 px-4"
+                            className="h-10 bg-zinc-50 focus:bg-white border-zinc-200 focus:border-red-600/30 rounded-xl font-semibold text-[14px] px-5 transition-all outline-none focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600"
                           />
                         </div>
                       </div>
@@ -742,7 +742,7 @@ export default function CheckoutPage() {
                       onChange={(e) =>
                         setVoucherCode(e.target.value.toUpperCase())
                       }
-                      className="h-10 bg-white border-zinc-100 rounded-xl text-sm font-semibold px-4 focus-visible:ring-red-600/5 text-center flex-1"
+                      className="h-10 bg-white border-zinc-200 focus:border-red-600/30 rounded-xl text-[14px] font-semibold px-5 transition-all outline-none focus-visible:ring-1 focus-visible:ring-red-600/30 focus-visible:border-red-600/30 caret-red-600 text-center flex-1"
                     />
                     <Button
                       onClick={() => handleApplyVoucher()}

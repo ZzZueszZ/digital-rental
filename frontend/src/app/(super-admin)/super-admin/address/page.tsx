@@ -195,7 +195,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight">
+          <h2 className="text-2xl font-bold text-zinc-950 tracking-tight">
             Danh sách địa chỉ ({addresses.length})
           </h2>
         </div>

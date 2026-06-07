@@ -249,7 +249,7 @@ export default function ProductsAdminPage() {
                       strokeWidth={2}
                     />
                   </div>
-                  <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
+                  <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
                     {viewMode === "ACTIVE" ? "Quản lý thiết bị" : "Kho lưu trữ"}
                   </h2>
                 </div>

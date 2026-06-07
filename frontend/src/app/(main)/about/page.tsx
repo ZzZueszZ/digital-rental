@@ -398,7 +398,7 @@ export default function AboutPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-1 bg-red-600" />
-                  <span className="text-xs font-black text-red-600 uppercase tracking-widest">
+                  <span className="text-sm font-medium text-red-600">
                     Connect with us
                   </span>
                 </div>
@@ -435,10 +435,10 @@ export default function AboutPage() {
                       <item.icon className="w-4 h-4 text-zinc-600 group-hover:text-white" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest leading-none mb-1.5">
+                      <p className="text-xs font-medium text-zinc-500 leading-none mb-1.5">
                         {item.label}
                       </p>
-                      <p className="text-[15px] font-bold text-zinc-900">
+                      <p className="text-sm font-medium text-zinc-900">
                         {item.value}
                       </p>
                     </div>
@@ -461,31 +461,31 @@ export default function AboutPage() {
 
             {/* Right: Modern Form */}
             <div className="lg:w-2/3">
-              <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2.5">
-                    <label className="text-[11px] font-black text-zinc-400 uppercase tracking-widest ml-1">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-zinc-600 ml-1">
                       Họ và tên nghệ sĩ
                     </label>
                     <Input
                       required
                       placeholder="Nguyễn Văn A"
-                      className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                      className="h-10 bg-white border border-black/5 rounded-xl px-4 font-normal text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
                     />
                   </div>
-                  <div className="space-y-2.5">
-                    <label className="text-[11px] font-black text-zinc-400 uppercase tracking-widest ml-1">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-zinc-600 ml-1">
                       Email liên hệ
                     </label>
                     <Input
                       required
                       type="email"
                       placeholder="email@example.com"
-                      className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                      className="h-10 bg-white border border-black/5 rounded-xl px-4 font-normal text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
                       value={formData.email}
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
@@ -494,23 +494,23 @@ export default function AboutPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2.5">
-                    <label className="text-[11px] font-black text-zinc-400 uppercase tracking-widest ml-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-zinc-600 ml-1">
                       Số điện thoại
                     </label>
                     <Input
                       required
                       placeholder="09xx xxx xxx"
-                      className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                      className="h-10 bg-white border border-black/5 rounded-xl px-4 font-normal text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
                       value={formData.phone}
                       onChange={(e) =>
                         setFormData({ ...formData, phone: e.target.value })
                       }
                     />
                   </div>
-                  <div className="space-y-2.5">
-                    <label className="text-[11px] font-black text-zinc-400 uppercase tracking-widest ml-1">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-zinc-600 ml-1">
                       Vấn đề cần hỗ trợ
                     </label>
                     <Select
@@ -522,7 +522,7 @@ export default function AboutPage() {
                         })
                       }
                     >
-                      <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-xl px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
+                      <SelectTrigger className="w-full !h-10 !bg-white !border-black/5 rounded-xl px-4 font-normal text-sm focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
                         <SelectValue placeholder="Chọn chủ đề" />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-zinc-100 shadow-dash-overlay bg-white p-1 z-[100]">
@@ -530,7 +530,7 @@ export default function AboutPage() {
                           <SelectItem
                             key={opt.value}
                             value={opt.value}
-                            className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-colors"
+                            className="font-normal py-2 text-sm text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-colors"
                           >
                             {opt.label}
                           </SelectItem>
@@ -540,14 +540,14 @@ export default function AboutPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2.5">
-                  <label className="text-[11px] font-black text-zinc-400 uppercase tracking-widest ml-1">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-zinc-600 ml-1">
                     Mô tả chi tiết
                   </label>
                   <Textarea
                     required
                     placeholder="Hãy cho chúng tôi biết dự án của bạn cần hỗ trợ những gì..."
-                    className="min-h-[160px] bg-zinc-50/50 border-none rounded-xl px-6 py-5 font-bold text-zinc-950 placeholder:text-zinc-300 focus:bg-white focus:ring-2 focus:ring-zinc-100 transition-all shadow-sm resize-none outline-none"
+                    className="min-h-[120px] bg-white border border-zinc-200 rounded-xl px-4 py-3 font-normal text-sm text-zinc-950 placeholder:text-zinc-400 focus-visible:border-red-200 focus-visible:ring-0 focus-visible:ring-transparent transition-colors shadow-sm resize-none outline-none"
                     value={formData.message}
                     onChange={(e) =>
                       setFormData({ ...formData, message: e.target.value })
@@ -558,7 +558,7 @@ export default function AboutPage() {
                 <Button
                   type="submit"
                   disabled={isPending}
-                  className="w-full h-16 rounded-xl bg-zinc-950 text-white font-black tracking-[0.2em] hover:bg-zinc-800 hover:text-white transition-all shadow-2xl shadow-zinc-200 active:scale-[0.98] border-none"
+                  className="w-full h-11 rounded-xl bg-zinc-950 text-white font-medium text-sm hover:bg-zinc-800 hover:text-white transition-all shadow-lg shadow-zinc-200 active:scale-[0.98] border-none"
                 >
                   {isPending ? (
                     <div className="flex items-center gap-3">

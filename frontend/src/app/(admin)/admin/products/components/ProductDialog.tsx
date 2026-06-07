@@ -260,7 +260,7 @@ export function ProductDialog({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left Column - Image */}
         <div className="md:col-span-1 space-y-3">
-          <label className="text-sm font-medium text-zinc-500 ml-1">
+          <label className="text-xs font-semibold text-zinc-500 ml-1">
             Ảnh đại diện
           </label>
           <div
@@ -290,7 +290,7 @@ export function ProductDialog({
               </>
             ) : (
               <div className="text-center p-4">
-                <div className="w-12 h-12 rounded-lg bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] flex items-center justify-center mx-auto mb-3 text-zinc-400 group-hover:text-red-600 transition-all duration-200 border border-black/5">
+                <div className="w-12 h-12 rounded-xl bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] flex items-center justify-center mx-auto mb-3 text-zinc-400 group-hover:text-red-600 transition-all duration-200 border border-black/5">
                   <Upload className="w-5 h-5" />
                 </div>
                 <span className="text-[13px] font-semibold text-zinc-600 block">
@@ -317,9 +317,9 @@ export function ProductDialog({
         </div>
 
         {/* Right Column - Info */}
-        <div className="md:col-span-2 space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-500 ml-1">
+        <div className="md:col-span-2 space-y-3">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-zinc-500 ml-1">
               Tên sản phẩm *
             </label>
             <Input
@@ -329,7 +329,7 @@ export function ProductDialog({
               }
               placeholder="VD: Sony Alpha A7IV Body..."
               className={cn(
-                "h-12 rounded-lg bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
+                "h-10 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
                 errors.name && "border-red-400 focus:ring-red-400/20",
               )}
             />
@@ -340,9 +340,9 @@ export function ProductDialog({
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-500 ml-1">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-zinc-500 ml-1">
                 Danh mục *
               </label>
               <Select
@@ -353,18 +353,18 @@ export function ProductDialog({
               >
                 <SelectTrigger
                   className={cn(
-                    "!w-full !h-12 px-4 rounded-lg !bg-zinc-50/50 !border-black/5 focus:!bg-white focus:!border-red-600/30 focus:!ring-4 focus:!ring-red-600/5 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] text-[15px] font-semibold text-zinc-900",
+                    "!w-full !h-10 px-3 rounded-xl !bg-zinc-50/50 !border-black/5 focus:!bg-white focus:!border-red-600/30 focus:!ring-4 focus:!ring-red-600/5 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] text-sm font-semibold text-zinc-900",
                     errors.categoryId && "!border-red-400",
                   )}
                 >
                   <SelectValue placeholder="Chọn danh mục" />
                 </SelectTrigger>
-                <SelectContent className="rounded-lg border border-black/5 shadow-[0_8px_24px_rgba(0,0,0,0.08)] bg-white overflow-hidden">
+                <SelectContent className="rounded-xl border border-black/5 shadow-[0_8px_24px_rgba(0,0,0,0.08)] bg-white overflow-hidden">
                   {categories.map((c) => (
                     <SelectItem
                       key={c.id}
                       value={c.id.toString()}
-                      className="font-medium py-2.5 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
+                      className="font-medium py-2 text-sm focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
                     >
                       {c.name}
                     </SelectItem>
@@ -378,8 +378,8 @@ export function ProductDialog({
               )}
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-500 ml-1">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-zinc-500 ml-1">
                 Thương hiệu
               </label>
               <Input
@@ -388,14 +388,14 @@ export function ProductDialog({
                   setFormData({ ...formData, brand: e.target.value })
                 }
                 placeholder="VD: Sony, Canon, Nikon..."
-                className="h-12 rounded-lg bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+                className="h-10 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
               />
             </div>
           </div>
 
           {!isUpdate && (
-            <div className="grid grid-cols-2 gap-4 pt-2 border-t border-zinc-100">
-              <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3 pt-2 border-t border-zinc-100">
+              <div className="space-y-2">
                 <label className="flex items-center gap-2 cursor-pointer group">
                   <input
                     type="checkbox"
@@ -405,7 +405,7 @@ export function ProductDialog({
                     }
                     className="w-4 h-4 cursor-pointer"
                   />
-                  <span className="text-sm font-medium text-zinc-700 group-hover:text-zinc-950 transition-colors">
+                  <span className="text-xs font-semibold text-zinc-700 group-hover:text-zinc-950 transition-colors">
                     Cho thuê
                   </span>
                 </label>
@@ -422,7 +422,7 @@ export function ProductDialog({
                     }
                     placeholder="Giá / Ngày"
                     className={cn(
-                      "h-12 rounded-lg bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-bold text-[15px] pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] focus:ring-4 focus:ring-red-600/5",
+                      "h-10 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-bold text-sm pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] focus:ring-4 focus:ring-red-600/5",
                       errors.rentPricePerDay && "border-red-400",
                     )}
                   />
@@ -437,7 +437,7 @@ export function ProductDialog({
                 )}
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <label className="flex items-center gap-2 cursor-pointer group">
                   <input
                     type="checkbox"
@@ -447,7 +447,7 @@ export function ProductDialog({
                     }
                     className="w-4 h-4 cursor-pointer"
                   />
-                  <span className="text-sm font-medium text-zinc-700 group-hover:text-zinc-950 transition-colors">
+                  <span className="text-xs font-semibold text-zinc-700 group-hover:text-zinc-950 transition-colors">
                     Bán
                   </span>
                 </label>
@@ -464,7 +464,7 @@ export function ProductDialog({
                     }
                     placeholder="Giá bán đứt"
                     className={cn(
-                      "h-12 rounded-lg bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-bold text-[15px] pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] focus:ring-4 focus:ring-red-600/5",
+                      "h-10 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-bold text-sm pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] focus:ring-4 focus:ring-red-600/5",
                       errors.salePrice && "border-red-400",
                     )}
                   />
@@ -489,7 +489,7 @@ export function ProductDialog({
       </div>
 
       <div className="space-y-2 mt-4 pt-4 border-t border-zinc-100">
-        <label className="text-sm font-medium text-zinc-500 ml-1 block mb-3">
+        <label className="text-xs font-semibold text-zinc-500 ml-1 block mb-2">
           Thông số kỹ thuật
         </label>
 
@@ -501,7 +501,7 @@ export function ProductDialog({
               onChange={(e) =>
                 updateSpecification(index, "specKey", e.target.value)
               }
-              className="h-12 rounded-lg bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 text-sm font-semibold text-zinc-900 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
+              className="h-10 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 text-sm font-semibold text-zinc-900 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
             />
             <Input
               placeholder="VD: Full-frame CMOS 33MP"
@@ -509,12 +509,12 @@ export function ProductDialog({
               onChange={(e) =>
                 updateSpecification(index, "specValue", e.target.value)
               }
-              className="h-12 rounded-lg bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 text-sm font-semibold text-zinc-900 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
+              className="h-10 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 text-sm font-semibold text-zinc-900 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
             />
             <button
               type="button"
               onClick={() => removeSpecification(index)}
-              className="h-12 w-12 shrink-0 rounded-lg flex items-center justify-center border border-black/5 bg-zinc-50/50 text-zinc-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
+              className="h-10 w-10 shrink-0 rounded-xl flex items-center justify-center border border-black/5 bg-zinc-50/50 text-zinc-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -523,14 +523,14 @@ export function ProductDialog({
         <button
           type="button"
           onClick={addSpecification}
-          className="h-11 px-4 rounded-xl flex items-center justify-center gap-2 border border-dashed border-zinc-200 text-[13px] font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50 hover:border-zinc-400 transition-all duration-200 w-full mt-3"
+          className="h-10 px-4 rounded-xl flex items-center justify-center gap-2 border border-dashed border-zinc-200 text-[13px] font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50 hover:border-zinc-400 transition-all duration-200 w-full mt-2"
         >
           <Plus className="w-4 h-4" /> Thêm thông số
         </button>
       </div>
 
-      <div className="space-y-2 mt-4 pt-4 border-t border-zinc-100">
-        <label className="text-sm font-medium text-zinc-500 ml-1">
+      <div className="space-y-1.5 mt-4 pt-4 border-t border-zinc-100">
+        <label className="text-xs font-semibold text-zinc-500 ml-1">
           Mô tả chi tiết
         </label>
         <Textarea
@@ -540,10 +540,12 @@ export function ProductDialog({
           }
           placeholder="Mô tả về tình trạng, tính năng nổi bật..."
           className={cn(
-            "flex min-h-[120px] w-full rounded-lg border border-black/5 bg-zinc-50/50 px-4 py-3 text-[15px] font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-[0_2px_6px_rgba(0,0,0,0.04)] leading-relaxed",
+            "flex min-h-[100px] w-full rounded-xl border border-black/5 bg-zinc-50/50 px-4 py-3 text-sm font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-[0_2px_6px_rgba(0,0,0,0.04)] leading-relaxed",
           )}
         />
       </div>
     </AdminFormDialog>
   );
 }
+
+

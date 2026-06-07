@@ -193,7 +193,7 @@ export default function OrdersPage() {
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500 pb-20">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-1">
         <div>
-          <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight leading-tight">
+          <h2 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight mb-2">
             Đơn hàng của bạn
           </h2>
           <p className="text-sm font-medium text-zinc-500">

@@ -143,7 +143,7 @@ export default function CartPage() {
               <Check className="w-3.5 h-3.5" />
             )}
           </button>
-          <h2 className="text-[30px] font-semibold text-zinc-950 tracking-tight">
+          <h2 className="text-2xl font-semibold text-zinc-950 tracking-tight">
             Giỏ hàng của bạn ({items.length})
           </h2>
         </div>

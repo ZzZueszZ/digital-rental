@@ -1,28 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import Image from "next/image";
+import { motion, Variants } from "framer-motion";
 import {
+  ArrowRight,
+  Award,
   Camera,
-  Shield,
+  CheckCircle2,
   Clock,
   Heart,
-  MessageSquare,
-  Phone,
+  History,
   Mail,
   MapPin,
+  Phone,
   Send,
-  Sparkles,
-  Zap,
+  ShieldCheck,
   Target,
   Users,
-  Award,
-  History,
-  Quote,
-  ArrowRight,
-  ChevronRight,
+  Video,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -35,8 +32,6 @@ import {
 import { SupportSubject } from "@/types/support";
 import { useSubmitTicket } from "@/services/support";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
@@ -48,22 +43,99 @@ const SUBJECT_OPTIONS = [
   { value: SupportSubject.OTHER, label: "Vấn đề khác" },
 ];
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
   },
 };
 
-const itemVariants = {
-  hidden: { y: 30, opacity: 0 },
+const itemVariants: Variants = {
+  hidden: { y: 16, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
-    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.5, ease: "easeOut" },
   },
 };
+
+const values = [
+  {
+    icon: Target,
+    title: "Tầm nhìn rõ ràng",
+    description:
+      "Trở thành hệ sinh thái thiết bị hình ảnh chuyên nghiệp, dễ tiếp cận và đáng tin cậy tại Việt Nam.",
+    image:
+      "https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    icon: Heart,
+    title: "Đồng hành thực tế",
+    description:
+      "Giúp nhà sáng tạo lựa chọn đúng thiết bị và nhận hỗ trợ trong suốt quá trình sử dụng.",
+    image:
+      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Minh bạch và an toàn",
+    description:
+      "Thông tin thiết bị, chi phí, tiền cọc và trạng thái đơn hàng luôn được trình bày rõ ràng.",
+    image:
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
+  },
+];
+
+const aboutStats = [
+  { label: "Năm hoạt động", value: "10+", icon: Clock },
+  { label: "Thiết bị và phụ kiện", value: "2.500+", icon: Camera },
+  { label: "Dự án đã phục vụ", value: "18.000+", icon: Video },
+  { label: "Đối tác đồng hành", value: "50+", icon: Award },
+];
+
+const milestones = [
+  {
+    year: "2016",
+    title: "Bắt đầu",
+    description: "Khởi đầu từ một studio nhỏ với 10 máy ảnh Canon và Nikon.",
+  },
+  {
+    year: "2018",
+    title: "Mở rộng cinema",
+    description: "Bổ sung hệ thống máy quay RED, ARRI và ống kính chuyên dụng.",
+  },
+  {
+    year: "2021",
+    title: "Số hóa dịch vụ",
+    description: "Ra mắt nền tảng đặt thuê và quản lý đơn hàng trực tuyến.",
+  },
+  {
+    year: "2024",
+    title: "Hoàn thiện hệ sinh thái",
+    description: "Kết hợp mua bán, cho thuê, eKYC và thanh toán trên một nền tảng.",
+  },
+];
+
+const contactItems = [
+  {
+    icon: Phone,
+    label: "Hotline hỗ trợ",
+    value: "0909 123 456",
+    href: "tel:0909123456",
+  },
+  {
+    icon: Mail,
+    label: "Email liên hệ",
+    value: "support@digitalrental.vn",
+    href: "mailto:support@digitalrental.vn",
+  },
+  {
+    icon: MapPin,
+    label: "Địa chỉ",
+    value: "Số 1, Võ Văn Ngân, TP. Thủ Đức",
+  },
+];
 
 export default function AboutPage() {
   const [formData, setFormData] = useState({
@@ -76,8 +148,8 @@ export default function AboutPage() {
 
   const { mutate: submitTicket, isPending } = useSubmitTicket();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
     submitTicket(formData, {
       onSuccess: () => {
         toast.success(
@@ -93,446 +165,472 @@ export default function AboutPage() {
       },
       onError: (error: unknown) => {
         console.error("Support submission error:", error);
-        const errorMessage = (
+        const message = (
           error as { response?: { data?: { message?: string } } }
         )?.response?.data?.message;
-        toast.error(errorMessage || "Đã có lỗi xảy ra, vui lòng thử lại sau.");
+        toast.error(message || "Đã có lỗi xảy ra, vui lòng thử lại sau.");
       },
     });
+  };
+
+  const scrollToStory = () => {
+    document
+      .getElementById("our-story")
+      ?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const scrollToSupport = () => {
+    document
+      .getElementById("support-form")
+      ?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white selection:bg-red-600/10">
-      {/* Hero Section - Light & Airy */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-red-50/50 rounded-full blur-[120px] -z-10 opacity-60" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-zinc-100/50 rounded-full blur-[100px] -z-10 opacity-40" />
-
-        <div className="container px-4 mx-auto">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={containerVariants}
-            className="max-w-5xl mx-auto text-center"
-          >
+      <main className="min-h-screen bg-white selection:bg-red-100">
+        <section className="border-b border-zinc-200 bg-zinc-50/70">
+          <div className="container mx-auto grid min-h-[680px] max-w-[1320px] items-center gap-10 px-4 py-14 md:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:py-20">
             <motion.div
-              variants={itemVariants}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-950 text-white text-[10px] font-black uppercase tracking-[0.3em] mb-10 shadow-xl shadow-zinc-200"
+              initial="hidden"
+              animate="visible"
+              variants={containerVariants}
+              className="max-w-xl"
             >
-              <Sparkles className="w-3 h-3 text-red-500" />
-              Studio Visuals Story
+              <motion.div
+                variants={itemVariants}
+                className="mb-5 inline-flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-xs font-normal text-red-700"
+              >
+                <Camera className="h-3.5 w-3.5" />
+                Câu chuyện Digital Rental
+              </motion.div>
+
+              <motion.h1
+                variants={itemVariants}
+                className="mb-5 text-4xl font-semibold leading-[1.08] tracking-tight text-zinc-950 sm:text-5xl lg:text-6xl"
+              >
+                Giúp ý tưởng lớn
+                <span className="block text-red-600">
+                  tiếp cận thiết bị tốt.
+                </span>
+              </motion.h1>
+
+              <motion.p
+                variants={itemVariants}
+                className="mb-8 max-w-lg text-base font-normal leading-7 text-zinc-500 md:text-lg"
+              >
+                Chúng tôi xây dựng một nền tảng mua và thuê thiết bị hình ảnh
+                minh bạch, dễ sử dụng, giúp nhà sáng tạo tập trung vào dự án
+                thay vì lo lắng về công cụ.
+              </motion.p>
+
+              <motion.div
+                variants={itemVariants}
+                className="flex flex-col gap-3 sm:flex-row"
+              >
+                <button
+                  type="button"
+                  onClick={scrollToStory}
+                  className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-950 px-6 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
+                >
+                  <span style={{ color: "#ffffff" }}>Tìm hiểu câu chuyện</span>
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={scrollToSupport}
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50"
+                >
+                  <span style={{ color: "#27272a" }}>Liên hệ với chúng tôi</span>
+                </button>
+              </motion.div>
+
+              <motion.div
+                variants={itemVariants}
+                className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-normal text-zinc-500"
+              >
+                {[
+                  "Hoạt động từ năm 2016",
+                  "12.000+ khách hàng",
+                  "2.500+ thiết bị",
+                ].map((item) => (
+                  <span key={item} className="flex items-center gap-1.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                    {item}
+                  </span>
+                ))}
+              </motion.div>
             </motion.div>
 
-            <motion.h1
-              variants={itemVariants}
-              className="text-[54px] md:text-[84px] font-black text-zinc-950 tracking-tighter leading-[0.95] mb-10"
-            >
-              Kiến tạo <span className="text-red-600 italic">tương lai</span>{" "}
-              <br />
-              của ngành hình ảnh.
-            </motion.h1>
-
-            <motion.p
-              variants={itemVariants}
-              className="max-w-2xl mx-auto text-zinc-500 text-lg md:text-xl font-medium leading-relaxed mb-12"
-            >
-              Chúng tôi không chỉ cho thuê thiết bị. Chúng tôi cung cấp chìa
-              khóa để hiện thực hóa mọi tầm nhìn sáng tạo của các nhiếp ảnh gia
-              và nhà làm phim.
-            </motion.p>
-
             <motion.div
-              variants={itemVariants}
-              className="flex flex-col sm:flex-row items-center justify-center gap-5"
-            >
-              <Button className="h-16 px-10 rounded-xl bg-zinc-950 text-white font-black uppercase tracking-widest text-xs hover:bg-zinc-800 hover:text-white transition-all shadow-2xl shadow-zinc-200 active:scale-95 border-none">
-                Khám phá ngay
-              </Button>
-              <Button className="h-16 px-10 rounded-xl border-2 border-zinc-200 bg-white text-zinc-950 font-black uppercase tracking-widest text-xs hover:bg-zinc-950 hover:text-white transition-all active:scale-95 shadow-sm">
-                Liên hệ hợp tác
-              </Button>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Story Section - The Journey */}
-      <section className="py-24 bg-white relative">
-        <div className="container px-4 mx-auto max-w-[1600px]">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.15 }}
               className="relative"
             >
-              <div className="relative aspect-4/5 rounded-xl overflow-hidden shadow-2xl border-8 border-white group">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-zinc-200 bg-white">
                 <Image
-                  src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2071&auto=format&fit=crop"
-                  alt="Our beginning"
+                  src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1800&auto=format&fit=crop"
+                  alt="Đội ngũ chuẩn bị thiết bị hình ảnh"
                   fill
-                  className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                  className="object-cover"
+                  priority
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-zinc-950/40 to-transparent" />
               </div>
-              <div className="absolute -bottom-10 -right-10 p-10 rounded-xl bg-white border border-zinc-100 shadow-2xl max-w-[280px] hidden md:block">
-                <div className="flex items-center gap-2 mb-4">
-                  <History className="w-5 h-5 text-red-600" />
-                  <span className="text-xs font-black uppercase tracking-widest text-zinc-400">
-                    Since 2016
-                  </span>
-                </div>
-                <p className="text-sm font-bold text-zinc-700 leading-relaxed italic">
-                  &quot;Bắt đầu từ một Studio nhỏ tại Thủ Đức, chúng tôi hiểu rõ
-                  nỗi lo của các nghệ sĩ về trang thiết bị.&quot;
+              <div className="absolute bottom-4 left-4 right-4 rounded-xl border border-white/50 bg-white/90 p-4 backdrop-blur-md">
+                <p className="text-sm font-medium text-zinc-900">
+                  Thiết bị được chuẩn bị trước mỗi dự án
+                </p>
+                <p className="mt-1 text-xs font-normal text-zinc-500">
+                  Kiểm tra ngoại quan, chức năng và phụ kiện trước khi bàn giao
                 </p>
               </div>
             </motion.div>
+          </div>
+        </section>
 
-            <div className="space-y-10">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-px w-10 bg-red-600" />
-                  <span className="text-xs font-black text-red-600 uppercase tracking-widest">
-                    Hành trình của chúng tôi
-                  </span>
+        <section className="border-b border-zinc-200 bg-white py-8">
+          <div className="container mx-auto grid max-w-[1320px] grid-cols-2 gap-3 px-4 md:px-6 lg:grid-cols-4 lg:px-8">
+            {aboutStats.map((stat) => (
+              <div
+                key={stat.label}
+                className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4"
+              >
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-50 text-red-600">
+                  <stat.icon className="h-4 w-4" />
                 </div>
-                <h2 className="text-[36px] md:text-[48px] font-bold text-zinc-950 tracking-tight leading-tight">
-                  Từ niềm đam mê <br />
-                  đến hệ sinh thái hàng đầu.
+                <div>
+                  <p className="text-lg font-semibold tracking-tight text-zinc-950">
+                    {stat.value}
+                  </p>
+                  <p className="text-xs font-normal text-zinc-500">
+                    {stat.label}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="bg-zinc-50/70 py-16 md:py-20">
+          <div className="container mx-auto max-w-[1320px] px-4 md:px-6 lg:px-8">
+            <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <p className="mb-2 text-sm font-medium text-red-600">
+                  Điều chúng tôi theo đuổi
+                </p>
+                <h2 className="text-3xl font-semibold tracking-tight text-zinc-950">
+                  Một nền tảng được xây dựng từ trải nghiệm thật
                 </h2>
               </div>
-              <div className="space-y-6 text-zinc-500 text-base md:text-lg font-medium leading-relaxed">
-                <p>
-                  Câu chuyện của Studio Visuals bắt đầu từ 8 năm trước, khi một
-                  nhóm nhiếp ảnh gia trẻ nhận ra rào cản lớn nhất đối với sự
-                  sáng tạo chính là chi phí đầu tư thiết bị. Những chiếc máy ảnh
-                  Cinema đắt đỏ hay ống kính Master Prime dường như là điều
-                  không tưởng đối với những người mới bắt đầu.
-                </p>
-                <p>
-                  Với mục tiêu &quot;Dân chủ hóa thiết bị hình ảnh&quot;, chúng
-                  tôi đã xây dựng Digital Rental - không chỉ là một cửa hàng cho
-                  thuê, mà là một cộng đồng nơi mọi ý tưởng đều có cơ hội trở
-                  thành hiện thực với chi phí tối ưu nhất.
-                </p>
-                <p>
-                  &quot;Studio Visuals không chỉ là nơi cho thuê máy ảnh. Đó là
-                  nơi niềm đam mê được chấp cánh.&quot; Hôm nay, chúng tôi tự
-                  hào là đối tác chiến lược của hơn 50 Production House lớn nhỏ
-                  và là điểm đến tin cậy của hơn 12,000 nghệ sĩ hình ảnh trên
-                  khắp cả nước.
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-8 pt-6">
-                <div>
-                  <h4 className="text-4xl font-black text-zinc-950 mb-2">
-                    2.5k+
-                  </h4>
-                  <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
-                    Thiết bị hiện có
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-4xl font-black text-zinc-950 mb-2">
-                    12k+
-                  </h4>
-                  <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
-                    Khách hàng tin tưởng
-                  </p>
-                </div>
-              </div>
+              <p className="max-w-md text-sm font-normal leading-6 text-zinc-500">
+                Mọi quyết định về sản phẩm và quy trình đều bắt đầu từ nhu cầu
+                thực tế của nhà sáng tạo và đội ngũ sản xuất.
+              </p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              {values.map((value, index) => (
+                <motion.article
+                  key={value.title}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.08 }}
+                  className="group overflow-hidden rounded-xl border border-zinc-200 bg-white"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <Image
+                      src={value.image}
+                      alt={value.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-50 text-red-600">
+                      <value.icon className="h-4 w-4" />
+                    </div>
+                    <h3 className="text-lg font-medium text-zinc-950">
+                      {value.title}
+                    </h3>
+                    <p className="mt-2 min-h-16 text-sm font-normal leading-6 text-zinc-500">
+                      {value.description}
+                    </p>
+                  </div>
+                </motion.article>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Vision & Mission - Clean Cards */}
-      <section className="py-24 bg-zinc-50/50 border-y border-zinc-100">
-        <div className="container px-4 mx-auto max-w-[1600px]">
-          <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-            <h2 className="text-[32px] md:text-[42px] font-bold text-zinc-950 tracking-tight">
-              Giá trị chúng tôi <span className="text-red-600">cam kết.</span>
-            </h2>
-            <p className="text-zinc-500 font-medium">
-              Chúng tôi xây dựng thương hiệu dựa trên sự minh bạch, chất lượng
-              và tinh thần đồng hành cùng nghệ sĩ.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Target,
-                title: "Tầm Nhìn",
-                desc: "Trở thành hệ sinh thái cung ứng giải pháp hình ảnh chuyên nghiệp và thân thiện nhất tại Đông Nam Á vào năm 2030.",
-              },
-              {
-                icon: Heart,
-                title: "Sứ Mệnh",
-                desc: "Trao quyền cho các nhà sáng tạo nội dung tiếp cận với những công nghệ tối tân nhất, xóa bỏ mọi rào cản về tài chính.",
-              },
-              {
-                icon: Shield,
-                title: "Giá Trị Cốt Lõi",
-                desc: "Sự trung thực trong kinh doanh, sự tỉ mỉ trong kỹ thuật và sự tận tâm trong dịch vụ khách hàng là kim chỉ nam của chúng tôi.",
-              },
-            ].map((card, idx) => (
-              <motion.div
-                key={idx}
-                whileHover={{ y: -10 }}
-                className="group p-10 bg-white rounded-xl border border-zinc-100 shadow-dash-card transition-all duration-500"
-              >
-                <div className="w-14 h-14 bg-zinc-50 rounded-xl flex items-center justify-center text-zinc-900 mb-8 group-hover:bg-red-600 group-hover:text-white group-hover:shadow-xl group-hover:shadow-red-200 transition-all duration-500">
-                  <card.icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-2xl font-bold text-zinc-950 mb-4">
-                  {card.title}
-                </h3>
-                <p className="text-zinc-500 font-medium leading-relaxed">
-                  {card.desc}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Milestones Section */}
-      <section className="py-24 bg-white overflow-hidden">
-        <div className="container px-4 mx-auto max-w-[1600px]">
-          <div className="flex flex-col lg:flex-row justify-between items-end gap-10 mb-20">
-            <div className="max-w-2xl">
-              <h2 className="text-[32px] md:text-[42px] font-bold text-zinc-950 tracking-tight leading-tight">
-                Những cột mốc <br />
-                <span className="text-zinc-400 italic">đáng nhớ.</span>
-              </h2>
-            </div>
-            <p className="text-zinc-500 text-base font-medium leading-relaxed max-w-sm">
-              Mỗi năm trôi qua là một bước tiến mới trong việc nâng cấp dịch vụ
-              và mở rộng hệ sinh thái.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-1">
-            {[
-              {
-                year: "2016",
-                title: "Khởi tạo",
-                desc: "Thành lập tại một Studio nhỏ với 10 máy ảnh Canon & Nikon.",
-              },
-              {
-                year: "2018",
-                title: "Vươn mình",
-                desc: "Mở rộng sang mảng Cinema với hệ thống máy quay RED và Arri.",
-              },
-              {
-                year: "2021",
-                title: "Số hóa",
-                desc: "Ra mắt nền tảng đặt thuê trực tuyến Digital Rental chuyên nghiệp.",
-              },
-              {
-                year: "2024",
-                title: "Dẫn đầu",
-                desc: "Trở thành đơn vị có kho thiết bị đa dạng nhất khu vực phía Nam.",
-              },
-            ].map((m, idx) => (
-              <div
-                key={idx}
-                className="p-10 border border-zinc-100 hover:bg-zinc-50 transition-all duration-500"
-              >
-                <span className="text-5xl font-black text-zinc-100 group-hover:text-red-100 mb-6 block transition-colors">
-                  {m.year}
-                </span>
-                <h4 className="text-xl font-bold text-zinc-950 mb-3">
-                  {m.title}
-                </h4>
-                <p className="text-sm text-zinc-500 font-medium leading-relaxed">
-                  {m.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonial Quote */}
-      <section className="py-24 bg-zinc-950 relative overflow-hidden">
-        {/* Subtle decoration to match Home testimonials */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/10 blur-[100px]" />
-
-        <div className="container px-4 mx-auto text-center relative z-10">
-          <Quote className="w-16 h-16 text-red-600 mx-auto mb-10 opacity-30" />
-          <h2 className="max-w-4xl mx-auto text-2xl md:text-4xl font-bold text-white tracking-tight leading-snug italic mb-12">
-            &quot;Chúng tôi không xem việc cho thuê thiết bị là một giao dịch
-            thương mại. Chúng tôi xem đó là sự đồng hành trong hành trình kiến
-            tạo những tác phẩm nghệ thuật xuất chúng.&quot;
-          </h2>
-          <div className="flex flex-col items-center">
-            <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-red-600 mb-4 shadow-xl">
+        <section id="our-story" className="bg-white py-16 md:py-20">
+          <div className="container mx-auto grid max-w-[1320px] items-center gap-10 px-4 md:px-6 lg:grid-cols-2 lg:px-8">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-zinc-200">
               <Image
-                src="https://i.pravatar.cc/150?u=admin"
-                alt="Founder"
-                width={64}
-                height={64}
+                src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1800&auto=format&fit=crop"
+                alt="Máy ảnh tại Digital Rental"
+                fill
+                className="object-cover"
               />
             </div>
-            <p className="text-white font-bold text-lg">Admin LensHub</p>
-            <p className="text-red-500 text-xs font-black uppercase tracking-widest mt-1">
-              Founder of Studio Visuals
-            </p>
-          </div>
-        </div>
-      </section>
 
-      {/* Support & Contact - Final Section */}
-      <section id="support-form" className="py-24 bg-white relative">
-        <div className="absolute top-1/2 left-0 w-full h-px bg-zinc-100 -z-10" />
-        <div className="container px-4 mx-auto">
-          <div className="max-w-[1400px] mx-auto bg-white border border-zinc-100 rounded-xl p-8 md:p-16 shadow-2xl shadow-zinc-200/50 flex flex-col lg:flex-row gap-20">
-            {/* Left: Contact Details */}
-            <div className="lg:w-1/3 space-y-12">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-1 bg-red-600" />
-                  <span className="text-sm font-medium text-red-600">
-                    Connect with us
-                  </span>
-                </div>
-                <h2 className="text-[36px] md:text-[42px] font-black text-zinc-950 tracking-tighter leading-tight">
-                  Chúng tôi luôn <br />
-                  <span className="text-zinc-400">lắng nghe bạn.</span>
-                </h2>
-                <p className="text-zinc-500 font-medium leading-relaxed">
-                  Đội ngũ kỹ thuật và tư vấn của Studio Visuals luôn sẵn sàng hỗ
-                  trợ bạn thực hiện những dự án tuyệt vời nhất.
+            <div className="lg:pl-6">
+              <p className="mb-2 text-sm font-medium text-red-600">
+                Hành trình của chúng tôi
+              </p>
+              <h2 className="text-3xl font-semibold leading-tight tracking-tight text-zinc-950">
+                Từ một studio nhỏ đến nền tảng thiết bị toàn diện.
+              </h2>
+              <div className="mt-5 space-y-4 text-sm font-normal leading-6 text-zinc-500">
+                <p>
+                  Digital Rental bắt đầu từ trải nghiệm rất thực tế của một
+                  nhóm nhiếp ảnh gia trẻ: thiết bị chuyên nghiệp có chi phí cao,
+                  trong khi mỗi dự án lại cần một cấu hình khác nhau.
+                </p>
+                <p>
+                  Chúng tôi xây dựng dịch vụ cho thuê để giúp nhà sáng tạo tiếp
+                  cận đúng công cụ vào đúng thời điểm. Sau đó, nền tảng được mở
+                  rộng với mua bán thiết bị, quản lý tồn kho, eKYC và thanh toán
+                  trực tuyến.
+                </p>
+                <p>
+                  Mục tiêu vẫn không thay đổi: giảm bớt rào cản về thiết bị và
+                  mang lại một quy trình đáng tin cậy cho cả khách hàng cá nhân
+                  lẫn đội ngũ sản xuất chuyên nghiệp.
                 </p>
               </div>
 
-              <div className="space-y-6">
+              <div className="mt-7 grid gap-3 sm:grid-cols-2">
                 {[
-                  {
-                    icon: Phone,
-                    label: "Hotline phản hồi",
-                    value: "0909 123 456",
-                  },
-                  {
-                    icon: Mail,
-                    label: "Email hỗ trợ",
-                    value: "support@studiovisuals.vn",
-                  },
-                  {
-                    icon: MapPin,
-                    label: "Địa chỉ Studio",
-                    value: "Số 1, Võ Văn Ngân, TP. Thủ Đức",
-                  },
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-4 group">
-                    <div className="w-10 h-10 bg-zinc-50 rounded-xl border border-zinc-100 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:border-red-600 transition-all duration-300">
-                      <item.icon className="w-4 h-4 text-zinc-600 group-hover:text-white" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-zinc-500 leading-none mb-1.5">
-                        {item.label}
-                      </p>
-                      <p className="text-sm font-medium text-zinc-900">
-                        {item.value}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-8 flex gap-4">
-                {/* Social Buttons placeholders */}
-                {[1, 2, 3].map((i) => (
+                  "Thiết bị được kiểm tra trước khi bàn giao",
+                  "Chi phí và trạng thái đơn hàng minh bạch",
+                  "Hỗ trợ kỹ thuật trong quá trình sử dụng",
+                  "Tích hợp eKYC và thanh toán an toàn",
+                ].map((item) => (
                   <div
-                    key={i}
-                    className="w-12 h-12 rounded-full border border-zinc-100 flex items-center justify-center hover:bg-zinc-50 cursor-pointer transition-all"
+                    key={item}
+                    className="flex gap-2.5 rounded-xl bg-zinc-50 p-3.5"
                   >
-                    <div className="w-2 h-2 rounded-full bg-zinc-300" />
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                    <span className="text-sm font-normal leading-5 text-zinc-600">
+                      {item}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
+          </div>
+        </section>
 
-            {/* Right: Modern Form */}
-            <div className="lg:w-2/3">
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-zinc-600 ml-1">
-                      Họ và tên nghệ sĩ
+        <section className="border-y border-zinc-200 bg-zinc-50/70 py-16 md:py-20">
+          <div className="container mx-auto max-w-[1320px] px-4 md:px-6 lg:px-8">
+            <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <p className="mb-2 text-sm font-medium text-red-600">
+                  Những cột mốc chính
+                </p>
+                <h2 className="text-3xl font-semibold tracking-tight text-zinc-950">
+                  Phát triển từng bước, theo nhu cầu thực tế.
+                </h2>
+              </div>
+              <p className="max-w-md text-sm font-normal leading-6 text-zinc-500">
+                Mỗi giai đoạn là một lần hoàn thiện thêm danh mục thiết bị và
+                trải nghiệm của người dùng.
+              </p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {milestones.map((milestone) => (
+                <article
+                  key={milestone.year}
+                  className="rounded-xl border border-zinc-200 bg-white p-5"
+                >
+                  <div className="mb-5 flex items-center justify-between">
+                    <History className="h-4 w-4 text-red-600" />
+                    <span className="text-sm font-medium text-zinc-400">
+                      {milestone.year}
+                    </span>
+                  </div>
+                  <h3 className="text-base font-medium text-zinc-950">
+                    {milestone.title}
+                  </h3>
+                  <p className="mt-2 text-sm font-normal leading-6 text-zinc-500">
+                    {milestone.description}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-white py-16 md:py-20">
+          <div className="container mx-auto max-w-[1320px] px-4 md:px-6 lg:px-8">
+            <div className="grid items-center gap-8 rounded-xl border border-zinc-200 bg-white p-6 md:grid-cols-[1fr_auto] md:p-10">
+              <div className="max-w-2xl">
+                <p className="mb-3 text-sm font-medium text-red-600">
+                  Cách chúng tôi làm việc
+                </p>
+                <p className="text-xl font-medium leading-8 text-zinc-900 md:text-2xl">
+                  “Một giao dịch tốt không kết thúc khi bàn giao thiết bị. Nó
+                  kết thúc khi khách hàng hoàn thành dự án một cách thuận lợi.”
+                </p>
+                <p className="mt-5 text-sm font-normal text-zinc-500">
+                  Đội ngũ Digital Rental
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-xl bg-zinc-50 p-4">
+                  <Clock className="mb-3 h-5 w-5 text-red-600" />
+                  <p className="text-sm font-medium text-zinc-900">
+                    Hỗ trợ nhanh
+                  </p>
+                  <p className="mt-1 text-xs font-normal text-zinc-500">
+                    Phản hồi trong giờ làm việc
+                  </p>
+                </div>
+                <div className="rounded-xl bg-zinc-50 p-4">
+                  <Users className="mb-3 h-5 w-5 text-red-600" />
+                  <p className="text-sm font-medium text-zinc-900">
+                    Tư vấn thực tế
+                  </p>
+                  <p className="mt-1 text-xs font-normal text-zinc-500">
+                    Dựa trên nhu cầu dự án
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="support-form"
+          className="border-y border-zinc-200 bg-zinc-50/70 py-16 md:py-20"
+        >
+          <div className="container mx-auto max-w-[1320px] px-4 md:px-6 lg:px-8">
+            <div className="grid gap-8 rounded-xl border border-zinc-200 bg-white p-5 md:p-8 lg:grid-cols-[0.75fr_1.25fr] lg:gap-12">
+              <div>
+                <p className="mb-2 text-sm font-medium text-red-600">
+                  Liên hệ và hỗ trợ
+                </p>
+                <h2 className="text-3xl font-semibold leading-tight tracking-tight text-zinc-950">
+                  Chúng tôi luôn lắng nghe bạn.
+                </h2>
+                <p className="mt-3 text-sm font-normal leading-6 text-zinc-500">
+                  Gửi thông tin về sản phẩm, đơn hàng hoặc dự án cần tư vấn. Đội
+                  ngũ Digital Rental sẽ phản hồi trong thời gian sớm nhất.
+                </p>
+
+                <div className="mt-7 space-y-3">
+                  {contactItems.map((item) => {
+                    const content = (
+                      <>
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-50 text-zinc-500">
+                          <item.icon className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-normal text-zinc-400">
+                            {item.label}
+                          </p>
+                          <p className="mt-0.5 text-sm font-medium text-zinc-900">
+                            {item.value}
+                          </p>
+                        </div>
+                      </>
+                    );
+
+                    return item.href ? (
+                      <a
+                        key={item.label}
+                        href={item.href}
+                        className="flex items-center gap-3 rounded-xl border border-zinc-200 p-3 transition-colors hover:bg-zinc-50"
+                      >
+                        {content}
+                      </a>
+                    ) : (
+                      <div
+                        key={item.label}
+                        className="flex items-center gap-3 rounded-xl border border-zinc-200 p-3"
+                      >
+                        {content}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="mb-1.5 block text-xs font-normal text-zinc-600">
+                      Họ và tên
                     </label>
                     <Input
                       required
                       placeholder="Nguyễn Văn A"
-                      className="h-10 bg-white border border-black/5 rounded-xl px-4 font-normal text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                      className="h-10 rounded-xl border-zinc-200 bg-white px-3 text-sm font-normal text-zinc-900 shadow-none placeholder:text-zinc-400 focus-visible:border-zinc-400 focus-visible:ring-0"
                       value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
+                      onChange={(event) =>
+                        setFormData({ ...formData, name: event.target.value })
                       }
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-zinc-600 ml-1">
+                  <div>
+                    <label className="mb-1.5 block text-xs font-normal text-zinc-600">
                       Email liên hệ
                     </label>
                     <Input
                       required
                       type="email"
                       placeholder="email@example.com"
-                      className="h-10 bg-white border border-black/5 rounded-xl px-4 font-normal text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                      className="h-10 rounded-xl border-zinc-200 bg-white px-3 text-sm font-normal text-zinc-900 shadow-none placeholder:text-zinc-400 focus-visible:border-zinc-400 focus-visible:ring-0"
                       value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
+                      onChange={(event) =>
+                        setFormData({ ...formData, email: event.target.value })
                       }
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-zinc-600 ml-1">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="mb-1.5 block text-xs font-normal text-zinc-600">
                       Số điện thoại
                     </label>
                     <Input
                       required
                       placeholder="09xx xxx xxx"
-                      className="h-10 bg-white border border-black/5 rounded-xl px-4 font-normal text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                      className="h-10 rounded-xl border-zinc-200 bg-white px-3 text-sm font-normal text-zinc-900 shadow-none placeholder:text-zinc-400 focus-visible:border-zinc-400 focus-visible:ring-0"
                       value={formData.phone}
-                      onChange={(e) =>
-                        setFormData({ ...formData, phone: e.target.value })
+                      onChange={(event) =>
+                        setFormData({ ...formData, phone: event.target.value })
                       }
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-zinc-600 ml-1">
+                  <div>
+                    <label className="mb-1.5 block text-xs font-normal text-zinc-600">
                       Vấn đề cần hỗ trợ
                     </label>
                     <Select
                       value={formData.subject}
-                      onValueChange={(val) =>
+                      onValueChange={(value) =>
                         setFormData({
                           ...formData,
-                          subject: val as SupportSubject,
+                          subject: value as SupportSubject,
                         })
                       }
                     >
-                      <SelectTrigger className="w-full !h-10 !bg-white !border-black/5 rounded-xl px-4 font-normal text-sm focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
+                      <SelectTrigger className="!h-10 w-full rounded-xl !border-zinc-200 !bg-white px-3 text-sm font-normal text-zinc-900 shadow-none !outline-none !ring-0 focus:!border-zinc-400">
                         <SelectValue placeholder="Chọn chủ đề" />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl border-zinc-100 shadow-dash-overlay bg-white p-1 z-[100]">
-                        {SUBJECT_OPTIONS.map((opt) => (
+                      <SelectContent className="z-[100] rounded-xl border-zinc-200 bg-white p-1 shadow-lg">
+                        {SUBJECT_OPTIONS.map((option) => (
                           <SelectItem
-                            key={opt.value}
-                            value={opt.value}
-                            className="font-normal py-2 text-sm text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-colors"
+                            key={option.value}
+                            value={option.value}
+                            className="cursor-pointer rounded-lg px-3 py-2.5 text-sm font-normal text-zinc-900 focus:bg-zinc-100 focus:text-zinc-950"
                           >
-                            {opt.label}
+                            {option.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -540,66 +638,92 @@ export default function AboutPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-zinc-600 ml-1">
+                <div>
+                  <label className="mb-1.5 block text-xs font-normal text-zinc-600">
                     Mô tả chi tiết
                   </label>
                   <Textarea
                     required
-                    placeholder="Hãy cho chúng tôi biết dự án của bạn cần hỗ trợ những gì..."
-                    className="min-h-[120px] bg-white border border-zinc-200 rounded-xl px-4 py-3 font-normal text-sm text-zinc-950 placeholder:text-zinc-400 focus-visible:border-red-200 focus-visible:ring-0 focus-visible:ring-transparent transition-colors shadow-sm resize-none outline-none"
+                    placeholder="Hãy cho chúng tôi biết bạn cần hỗ trợ những gì..."
+                    className="min-h-[120px] resize-none rounded-xl border-zinc-200 bg-white px-3 py-3 text-sm font-normal text-zinc-900 shadow-none placeholder:text-zinc-400 focus-visible:border-zinc-400 focus-visible:ring-0"
                     value={formData.message}
-                    onChange={(e) =>
-                      setFormData({ ...formData, message: e.target.value })
+                    onChange={(event) =>
+                      setFormData({ ...formData, message: event.target.value })
                     }
                   />
                 </div>
 
-                <Button
+                <button
                   type="submit"
                   disabled={isPending}
-                  className="w-full h-11 rounded-xl bg-zinc-950 text-white font-medium text-sm hover:bg-zinc-800 hover:text-white transition-all shadow-lg shadow-zinc-200 active:scale-[0.98] border-none"
+                  className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-zinc-950 px-5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isPending ? (
-                    <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Đang gửi yêu cầu...
-                    </div>
+                    <>
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                      <span style={{ color: "#ffffff" }}>Đang gửi yêu cầu...</span>
+                    </>
                   ) : (
-                    <div className="flex items-center gap-3">
-                      <Send className="w-4 h-4" />
-                      Gửi yêu cầu ngay
-                    </div>
+                    <>
+                      <Send className="h-4 w-4" />
+                      <span style={{ color: "#ffffff" }}>Gửi yêu cầu</span>
+                    </>
                   )}
-                </Button>
+                </button>
               </form>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Final Brand Trust Bar */}
-      <section className="py-20 bg-white border-t border-zinc-100">
-        <div className="container px-4 mx-auto">
-          <p className="text-center text-[10px] font-black text-zinc-300 uppercase tracking-[0.5em] mb-12">
-            Authorized Dealer & Professional Partner
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-10 md:gap-20 opacity-20 grayscale">
-            {["CANON", "SONY", "NIKON", "RED", "ARRI", "BLACKMAGIC"].map(
-              (brand) => (
-                <span
-                  key={brand}
-                  className="text-2xl font-black text-zinc-950 tracking-tighter"
-                >
-                  {brand}
-                </span>
-              ),
-            )}
+        <section className="border-b border-zinc-200 bg-white py-12">
+          <div className="container mx-auto max-w-[1320px] px-4 text-center md:px-6 lg:px-8">
+            <p className="mb-7 text-xs font-normal text-zinc-500">
+              Thiết bị từ các thương hiệu được tin dùng
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 text-xl font-semibold tracking-tight text-zinc-400 md:gap-x-16">
+              {["Canon", "Sony", "Nikon", "RED", "ARRI", "Blackmagic"].map(
+                (brand) => (
+                  <span key={brand}>{brand}</span>
+                ),
+              )}
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
-    <Footer />
-  </>
+        </section>
+
+        <section className="bg-white py-16 md:py-20">
+          <div className="container mx-auto max-w-[1320px] px-4 md:px-6 lg:px-8">
+            <div className="relative overflow-hidden rounded-xl bg-zinc-950 p-7 md:p-12">
+              <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-red-600/20 blur-3xl" />
+              <div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-center">
+                <div className="max-w-2xl">
+                  <p className="mb-3 text-sm font-normal text-zinc-400">
+                    Đồng hành cùng Digital Rental
+                  </p>
+                  <h2
+                    className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl"
+                    style={{ color: "#ffffff" }}
+                  >
+                    Có một dự án cần tư vấn thiết bị?
+                  </h2>
+                  <p className="mt-4 text-sm font-normal leading-6 text-zinc-400">
+                    Hãy chia sẻ nhu cầu của bạn, đội ngũ của chúng tôi sẽ hỗ trợ
+                    chọn cấu hình phù hợp.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={scrollToSupport}
+                  className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-white px-6 text-sm font-medium text-zinc-950 transition-colors hover:bg-zinc-100"
+                >
+                  <span style={{ color: "#09090b" }}>Gửi yêu cầu tư vấn</span>
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
   );
 }

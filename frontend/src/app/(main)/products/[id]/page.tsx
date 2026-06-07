@@ -750,20 +750,6 @@ export default function ProductDetailPage() {
                             </select>
                           </div>
 
-                          {/* Payment Method Selector */}
-                          <div className="mb-4">
-                            <label className="text-xs font-medium text-zinc-500 block mb-1.5">
-                               Phương thức thanh toán
-                            </label>
-                            <div className="grid grid-cols-1 gap-3">
-                              <button
-                                type="button"
-                                className="h-11 rounded-xl border border-zinc-950 bg-zinc-950 text-white shadow-sm font-bold text-xs flex items-center justify-center cursor-default"
-                              >
-                                Thanh toán phí thuê VNPay
-                              </button>
-                            </div>
-                          </div>
 
                           {/* Price Calculations */}
                           {days > 0 && (

@@ -346,7 +346,7 @@ export default function KycManagement() {
             {/* Left Column: OCR Fields */}
             <div className="space-y-6">
               <div>
-                <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4">Thông tin OCR trích xuất</h3>
+                <h3 className="text-sm font-semibold text-zinc-700 mb-4">Thông tin OCR trích xuất</h3>
                 <div className="bg-zinc-50 p-6 rounded-2xl border border-black/5 space-y-4">
                   <DetailRow label="Số CCCD" value={selectedSession.identityNumber} />
                   <DetailRow label="Họ và tên" value={selectedSession.fullName} />
@@ -361,7 +361,7 @@ export default function KycManagement() {
               </div>
 
               <div>
-                <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4">Đánh giá khớp mặt AI</h3>
+                <h3 className="text-sm font-semibold text-zinc-700 mb-4">Đánh giá khớp mặt AI</h3>
                 <div className="bg-zinc-50 p-6 rounded-2xl border border-black/5 space-y-3">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-semibold text-zinc-500">Độ khớp mặt selfie vs ảnh CCCD:</span>
@@ -379,7 +379,7 @@ export default function KycManagement() {
 
             {/* Right Column: Visual Images */}
             <div className="space-y-6">
-              <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Hình ảnh tài liệu đã tải lên</h3>
+              <h3 className="text-sm font-semibold text-zinc-700">Hình ảnh tài liệu đã tải lên</h3>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -493,7 +493,7 @@ function getImageUrl(url: string | null | undefined) {
 function DetailRow({ label, value }: { label: string; value?: string }) {
   return (
     <div className="flex justify-between items-center py-2.5 border-b border-zinc-200/50 last:border-0">
-      <span className="text-xs font-bold text-zinc-400 uppercase">{label}</span>
+      <span className="text-xs font-medium text-zinc-500">{label}</span>
       <span className="text-xs font-extrabold text-zinc-800 text-right max-w-[65%] truncate">{value || "---"}</span>
     </div>
   );

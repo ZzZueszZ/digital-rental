@@ -393,7 +393,7 @@ export default function CheckoutPage() {
             {itemsToDisplay.map((item: CheckoutDisplayItem) => (
               <div
                 key={item.id}
-                className="bg-white rounded-2xl border border-zinc-100 p-5 hover:border-zinc-200 transition-all group"
+                className="bg-white rounded-xl border border-zinc-100 p-5 hover:border-zinc-200 transition-all group"
               >
                 <div className="flex flex-col md:flex-row gap-6 items-center">
                   {/* Image Preview - Smaller */}
@@ -408,7 +408,7 @@ export default function CheckoutPage() {
                       className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute bottom-1 right-1">
-                      <span className="bg-zinc-950 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                      <span className="bg-zinc-950 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-xl">
                         Studio
                       </span>
                     </div>
@@ -467,7 +467,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Subtotal Summary Card - Lowered Padding */}
-          <div className="mt-4 p-5 bg-zinc-50/50 rounded-2xl border border-zinc-100 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="mt-4 p-5 bg-zinc-50/50 rounded-xl border border-zinc-100 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center border border-zinc-100 shadow-sm">
                 <Ticket className="w-5 h-5 text-zinc-400" />
@@ -540,7 +540,7 @@ export default function CheckoutPage() {
                   </div>
 
                   {useManualAddress ? (
-                    <div className="p-8 bg-white rounded-3xl border border-zinc-100 shadow-xl shadow-zinc-100/50 animate-in zoom-in-95 duration-300">
+                    <div className="p-8 bg-white rounded-xl border border-zinc-100 shadow-xl shadow-zinc-100/50 animate-in zoom-in-95 duration-300">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="space-y-2">
                           <Label className="text-xs font-semibold text-zinc-500 ml-1">
@@ -595,7 +595,7 @@ export default function CheckoutPage() {
                   ) : (
                     <div className="grid grid-cols-1 gap-3">
                       {addresses.length === 0 ? (
-                        <div className="p-12 text-center border border-dashed border-zinc-200 rounded-3xl bg-zinc-50/50 flex flex-col items-center justify-center">
+                        <div className="p-12 text-center border border-dashed border-zinc-200 rounded-xl bg-zinc-50/50 flex flex-col items-center justify-center">
                           <MapPin className="w-8 h-8 text-zinc-200 mx-auto mb-4" />
                           <p className="text-xs font-semibold text-zinc-400 mb-6">
                             Chưa có thông tin địa chỉ
@@ -617,7 +617,7 @@ export default function CheckoutPage() {
                             <label
                               key={addr.id}
                               className={cn(
-                                "flex items-start gap-5 p-6 rounded-2xl border transition-all cursor-pointer bg-white relative group",
+                                "flex items-start gap-5 p-6 rounded-xl border transition-all cursor-pointer bg-white relative group",
                                 selectedAddressId === addr.id
                                   ? "border-red-600 shadow-lg shadow-red-50"
                                   : "border-zinc-100 hover:border-zinc-200",
@@ -633,7 +633,7 @@ export default function CheckoutPage() {
                                     {addr.receiverName}
                                   </span>
                                   {addr.isDefault && (
-                                    <span className="text-[9px] font-bold bg-emerald-500 text-white px-1.5 py-0.5 rounded">
+                                    <span className="text-[9px] font-bold bg-emerald-500 text-white px-1.5 py-0.5 rounded-xl">
                                       Mặc định
                                     </span>
                                   )}
@@ -680,7 +680,7 @@ export default function CheckoutPage() {
                     <label
                       key={method.id}
                       className={cn(
-                        "flex flex-col gap-6 p-8 rounded-3xl border transition-all cursor-pointer bg-white group",
+                        "flex flex-col gap-6 p-8 rounded-xl border transition-all cursor-pointer bg-white group",
                         paymentMethod === method.id
                           ? "border-red-600 bg-red-50/30 shadow-lg shadow-red-100/50 scale-[1.02]"
                           : "border-zinc-100 hover:border-zinc-200",
@@ -731,7 +731,7 @@ export default function CheckoutPage() {
             {/* VOUCHER STEP CONTENT - Profile style input */}
             {currentStep === CheckoutStep.VOUCHER && (
               <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                <div className="bg-zinc-50/50 p-8 rounded-3xl border border-zinc-100 mb-8">
+                <div className="bg-zinc-50/50 p-8 rounded-xl border border-zinc-100 mb-8">
                   <p className="text-xs font-medium text-zinc-400 mb-6 text-center">
                     Mã giảm giá độc quyền
                   </p>
@@ -836,7 +836,7 @@ export default function CheckoutPage() {
             {currentStep === CheckoutStep.REVIEW && (
               <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-6 bg-white rounded-2xl border border-zinc-100 flex items-start gap-4">
+                  <div className="p-6 bg-white rounded-xl border border-zinc-100 flex items-start gap-4">
                     <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400 shrink-0 border border-zinc-50">
                       <MapPin className="w-5 h-5" />
                     </div>
@@ -855,7 +855,7 @@ export default function CheckoutPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="p-6 bg-white rounded-2xl border border-zinc-100 flex items-start gap-4">
+                  <div className="p-6 bg-white rounded-xl border border-zinc-100 flex items-start gap-4">
                     <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400 shrink-0 border border-zinc-50">
                       <CreditCard className="w-5 h-5" />
                     </div>
@@ -875,7 +875,7 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                <div className="p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex gap-4 items-center">
+                <div className="p-5 bg-emerald-50/50 rounded-xl border border-emerald-100 flex gap-4 items-center">
                   <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                   <p className="text-xs text-emerald-600 font-semibold leading-relaxed">
                     &ldquo;Dữ liệu của bạn được mã hóa an toàn qua cổng thanh toán

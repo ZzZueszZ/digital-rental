@@ -169,7 +169,7 @@ export default function AboutPage() {
               transition={{ duration: 1 }}
               className="relative"
             >
-              <div className="relative aspect-4/5 rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white group">
+              <div className="relative aspect-4/5 rounded-xl overflow-hidden shadow-2xl border-8 border-white group">
                 <Image
                   src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2071&auto=format&fit=crop"
                   alt="Our beginning"
@@ -178,7 +178,7 @@ export default function AboutPage() {
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-zinc-950/40 to-transparent" />
               </div>
-              <div className="absolute -bottom-10 -right-10 p-10 rounded-[2.5rem] bg-white border border-zinc-100 shadow-2xl max-w-[280px] hidden md:block">
+              <div className="absolute -bottom-10 -right-10 p-10 rounded-xl bg-white border border-zinc-100 shadow-2xl max-w-[280px] hidden md:block">
                 <div className="flex items-center gap-2 mb-4">
                   <History className="w-5 h-5 text-red-600" />
                   <span className="text-xs font-black uppercase tracking-widest text-zinc-400">
@@ -284,9 +284,9 @@ export default function AboutPage() {
               <motion.div
                 key={idx}
                 whileHover={{ y: -10 }}
-                className="group p-10 bg-white rounded-[2.5rem] border border-zinc-100 shadow-dash-card transition-all duration-500"
+                className="group p-10 bg-white rounded-xl border border-zinc-100 shadow-dash-card transition-all duration-500"
               >
-                <div className="w-14 h-14 bg-zinc-50 rounded-2xl flex items-center justify-center text-zinc-900 mb-8 group-hover:bg-red-600 group-hover:text-white group-hover:shadow-xl group-hover:shadow-red-200 transition-all duration-500">
+                <div className="w-14 h-14 bg-zinc-50 rounded-xl flex items-center justify-center text-zinc-900 mb-8 group-hover:bg-red-600 group-hover:text-white group-hover:shadow-xl group-hover:shadow-red-200 transition-all duration-500">
                   <card.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-2xl font-bold text-zinc-950 mb-4">
@@ -372,7 +372,7 @@ export default function AboutPage() {
             tạo những tác phẩm nghệ thuật xuất chúng.&quot;
           </h2>
           <div className="flex flex-col items-center">
-            <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-red-600 mb-4 shadow-xl">
+            <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-red-600 mb-4 shadow-xl">
               <Image
                 src="https://i.pravatar.cc/150?u=admin"
                 alt="Founder"
@@ -392,7 +392,7 @@ export default function AboutPage() {
       <section id="support-form" className="py-24 bg-white relative">
         <div className="absolute top-1/2 left-0 w-full h-px bg-zinc-100 -z-10" />
         <div className="container px-4 mx-auto">
-          <div className="max-w-[1400px] mx-auto bg-white border border-zinc-100 rounded-[3rem] p-8 md:p-16 shadow-2xl shadow-zinc-200/50 flex flex-col lg:flex-row gap-20">
+          <div className="max-w-[1400px] mx-auto bg-white border border-zinc-100 rounded-xl p-8 md:p-16 shadow-2xl shadow-zinc-200/50 flex flex-col lg:flex-row gap-20">
             {/* Left: Contact Details */}
             <div className="lg:w-1/3 space-y-12">
               <div className="space-y-4">

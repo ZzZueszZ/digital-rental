@@ -312,8 +312,8 @@ export default function UsersAdminPage() {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-zinc-100" />
                   <div className="flex-1 space-y-1">
-                    <div className="h-3 bg-zinc-100 rounded w-3/4" />
-                    <div className="h-2 bg-zinc-100 rounded w-1/4" />
+                    <div className="h-3 bg-zinc-100 rounded-xl w-3/4" />
+                    <div className="h-2 bg-zinc-100 rounded-xl w-1/4" />
                   </div>
                 </div>
               </div>
@@ -321,7 +321,7 @@ export default function UsersAdminPage() {
 
           {users.length === 0 && !query.isLoading && (
             <div className="flex flex-col items-center gap-3 py-16">
-              <div className="w-16 h-16 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
                 <Aperture className="w-7 h-7 text-zinc-300" />
               </div>
               <p className="text-sm font-bold text-zinc-400">
@@ -429,7 +429,7 @@ export default function UsersAdminPage() {
                     <span
                       key={role}
                       className={cn(
-                        "inline-block text-xs font-bold px-2 py-0.5 rounded-md border",
+                        "inline-block text-xs font-bold px-2 py-0.5 rounded-xl border",
                         role === "SUPER_ADMIN" || role === "ADMIN"
                           ? "bg-red-50 text-red-700 border-red-200"
                           : "bg-zinc-50 text-zinc-600 border-zinc-200",
@@ -483,7 +483,7 @@ export default function UsersAdminPage() {
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i}>
                     <td className="px-8 py-4">
-                      <div className="h-4 bg-zinc-50 rounded w-4" />
+                      <div className="h-4 bg-zinc-50 rounded-xl w-4" />
                     </td>
                     {Array.from({ length: 5 }).map((_, j) => (
                       <td key={j} className="px-8 py-4">
@@ -498,7 +498,7 @@ export default function UsersAdminPage() {
                 <tr>
                   <td colSpan={6} className="px-8 py-20 text-center">
                     <div className="flex flex-col items-center gap-3">
-                      <div className="w-16 h-16 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
+                      <div className="w-16 h-16 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
                         <Aperture className="w-7 h-7 text-zinc-300" />
                       </div>
                       <p className="text-sm font-bold text-zinc-400">
@@ -564,7 +564,7 @@ export default function UsersAdminPage() {
                             <span
                               key={role}
                               className={cn(
-                                "inline-block text-xs font-bold px-2 py-0.5 rounded-md border",
+                                "inline-block text-xs font-bold px-2 py-0.5 rounded-xl border",
                                 isSpecial
                                   ? "bg-red-50 text-red-700 border-red-200"
                                   : "bg-zinc-50 text-zinc-600 border-zinc-200",

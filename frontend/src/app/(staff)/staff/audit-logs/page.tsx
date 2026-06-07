@@ -34,7 +34,7 @@ export default function AuditLogsPage() {
   return (
     <div className="flex-1 space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-xl border border-zinc-100 shadow-sm">
         <div>
           <div className="flex items-center gap-2.5 mb-1">
             <div className="w-8 h-8 rounded-xl bg-zinc-950 flex items-center justify-center shadow-sm">
@@ -59,7 +59,7 @@ export default function AuditLogsPage() {
       </div>
 
       {/* Main Content */}
-      <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -87,7 +87,7 @@ export default function AuditLogsPage() {
                   <tr key={i} className="animate-pulse">
                     {Array.from({ length: 5 }).map((_, j) => (
                       <td key={j} className="px-6 py-4">
-                        <div className="h-4 bg-zinc-50 rounded w-full" />
+                        <div className="h-4 bg-zinc-50 rounded-xl w-full" />
                       </td>
                     ))}
                   </tr>
@@ -124,7 +124,7 @@ export default function AuditLogsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="space-y-1">
-                        <span className="inline-flex px-2 py-0.5 rounded bg-zinc-950 text-white text-[10px] font-bold">
+                        <span className="inline-flex px-2 py-0.5 rounded-xl bg-zinc-950 text-white text-[10px] font-bold">
                           {log.action}
                         </span>
                         <p
@@ -137,7 +137,7 @@ export default function AuditLogsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-zinc-700 bg-zinc-100 px-2 py-0.5 rounded">
+                        <span className="text-xs font-semibold text-zinc-700 bg-zinc-100 px-2 py-0.5 rounded-xl">
                           {log.targetType}
                         </span>
                         <span className="text-xs font-mono text-zinc-400">

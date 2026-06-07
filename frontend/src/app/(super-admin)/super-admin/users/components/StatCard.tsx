@@ -22,7 +22,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "relative bg-white rounded-2xl border border-zinc-200 p-5 overflow-hidden",
+        "relative bg-white rounded-xl border border-zinc-200 p-5 overflow-hidden",
         "shadow-sm hover:shadow-2xl",
         "transition-all duration-500 hover:-translate-y-1 group",
       )}
@@ -62,7 +62,7 @@ export function StatCard({
       <div className="flex items-center gap-1.5">
         <span
           className={cn(
-            "flex items-center gap-0.5 text-[10px] font-black px-1.5 py-0.5 rounded-md",
+            "flex items-center gap-0.5 text-[10px] font-black px-1.5 py-0.5 rounded-xl",
             isPositive
               ? "bg-emerald-50 text-emerald-600"
               : "bg-red-50 text-red-600",

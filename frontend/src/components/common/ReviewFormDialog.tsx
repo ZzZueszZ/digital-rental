@@ -209,7 +209,7 @@ export function ReviewFormDialog({
           </div>
           <Textarea
             placeholder="Hãy chia sẻ những điều bạn thích về thiết bị này nhé..."
-            className="min-h-[120px] rounded-2xl bg-zinc-50 border-zinc-100 focus:bg-white focus:ring-4 focus:ring-red-50 transition-all duration-300 text-sm"
+            className="min-h-[120px] rounded-xl bg-zinc-50 border-zinc-100 focus:bg-white focus:ring-4 focus:ring-red-50 transition-all duration-300 text-sm"
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
@@ -279,14 +279,14 @@ export function ReviewFormDialog({
             type="button"
             variant="ghost"
             onClick={handleClose}
-            className="flex-1 h-12 rounded-2xl text-zinc-500 font-bold hover:bg-zinc-50"
+            className="flex-1 h-12 rounded-xl text-zinc-500 font-bold hover:bg-zinc-50"
           >
             Hủy bỏ
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={isPending}
-            className="flex-[2] h-12 rounded-2xl bg-zinc-950 text-white font-black text-xs uppercase hover:bg-red-600 transition-all shadow-xl shadow-zinc-100"
+            className="flex-[2] h-12 rounded-xl bg-zinc-950 text-white font-black text-xs uppercase hover:bg-red-600 transition-all shadow-xl shadow-zinc-100"
           >
             {isPending ? (
               <Loader2 className="w-4 h-4 animate-spin mr-2" />

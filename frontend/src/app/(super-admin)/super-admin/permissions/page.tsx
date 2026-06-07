@@ -233,7 +233,7 @@ export default function PermissionsSuperAdminPage() {
                       #{perm.id.toString().padStart(3, "0")}
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-mono text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded border border-red-100">
+                      <span className="font-mono text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-xl border border-red-100">
                         {perm.name}
                       </span>
                     </td>

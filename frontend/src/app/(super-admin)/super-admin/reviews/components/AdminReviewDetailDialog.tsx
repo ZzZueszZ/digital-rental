@@ -52,7 +52,7 @@ export function AdminReviewDetailDialog({
       <div className="space-y-8 py-2">
         {/* User & Product Context */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-50 border border-zinc-100 group">
+          <div className="flex items-center gap-4 p-4 rounded-xl bg-zinc-50 border border-zinc-100 group">
             <div className="w-12 h-12 rounded-xl bg-white border border-zinc-200 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
               {review.userAvatar ? (
                 <img
@@ -76,7 +76,7 @@ export function AdminReviewDetailDialog({
             </div>
           </div>
 
-          <div className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-50 border border-zinc-100 group">
+          <div className="flex items-center gap-4 p-4 rounded-xl bg-zinc-50 border border-zinc-100 group">
             <div className="w-12 h-12 rounded-xl bg-white border border-zinc-200 flex items-center justify-center shrink-0 shadow-sm">
               <Package className="w-6 h-6 text-zinc-400 group-hover:text-red-600 transition-colors" />
             </div>
@@ -118,7 +118,7 @@ export function AdminReviewDetailDialog({
             </div>
           </div>
 
-          <div className="p-6 rounded-[24px] bg-white border-2 border-zinc-50 shadow-inner relative overflow-hidden">
+          <div className="p-6 rounded-xl bg-white border-2 border-zinc-50 shadow-inner relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-[0.03]">
               <MessageSquare className="w-24 h-24" />
             </div>
@@ -132,7 +132,7 @@ export function AdminReviewDetailDialog({
               {review.images.map((img, i) => (
                 <div
                   key={i}
-                  className="aspect-square rounded-2xl overflow-hidden border border-zinc-100 shadow-sm group relative"
+                  className="aspect-square rounded-xl overflow-hidden border border-zinc-100 shadow-sm group relative"
                 >
                   <img
                     src={getImageUrl(img)}

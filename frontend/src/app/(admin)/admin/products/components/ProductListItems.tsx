@@ -68,7 +68,7 @@ export function ProductTableRow({
               {product.name}
             </p>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded">
+              <span className="text-xs font-medium text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded-xl">
                 ID: {product.id}
               </span>
               <span className="text-xs font-medium text-zinc-500 line-clamp-1 max-w-[150px]">
@@ -118,7 +118,7 @@ export function ProductTableRow({
       <td className="px-6 py-3.5">
         <Badge
           className={cn(
-            "rounded-md px-2.5 py-1 text-xs font-semibold border-0 ring-0 shadow-none",
+            "rounded-xl px-2.5 py-1 text-xs font-semibold border-0 ring-0 shadow-none",
             !isDeleted
               ? product.active
                 ? "bg-emerald-50 text-emerald-600"
@@ -209,7 +209,7 @@ export function ProductMobileCard({
           </div>
           <div className="overflow-hidden">
             <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 bg-zinc-100 px-1.5 rounded">
+              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 bg-zinc-100 px-1.5 rounded-xl">
                 #{product.id}
               </span>
               <Badge

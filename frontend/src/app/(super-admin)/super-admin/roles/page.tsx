@@ -289,7 +289,7 @@ export default function RolesSuperAdminPage() {
                       <td className="px-6 py-4">
                         <span
                           className={cn(
-                            "inline-block text-xs font-bold px-2.5 py-1 rounded-md border",
+                            "inline-block text-xs font-bold px-2.5 py-1 rounded-xl border",
                             isSystem
                               ? "bg-red-50 text-red-700 border-red-200"
                               : "bg-zinc-50 text-zinc-700 border-zinc-200"
@@ -314,14 +314,14 @@ export default function RolesSuperAdminPage() {
                               role.permissions?.slice(0, 4).map((p) => (
                                 <span
                                   key={p.id}
-                                  className="text-[10px] font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-600 border border-zinc-200"
+                                  className="text-[10px] font-bold px-2 py-0.5 rounded-xl bg-zinc-100 text-zinc-600 border border-zinc-200"
                                 >
                                   {p.name}
                                 </span>
                               ))
                             )}
                             {role.permissions?.length > 4 && (
-                              <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-zinc-950 text-white">
+                              <span className="text-[10px] font-black px-1.5 py-0.5 rounded-xl bg-zinc-950 text-white">
                                 +{role.permissions.length - 4}
                               </span>
                             )}
@@ -463,7 +463,7 @@ export default function RolesSuperAdminPage() {
                 >
                   <div
                     className={cn(
-                      "w-4 h-4 rounded mt-0.5 border flex items-center justify-center shrink-0 transition-colors",
+                      "w-4 h-4 rounded-xl mt-0.5 border flex items-center justify-center shrink-0 transition-colors",
                       isChecked ? "bg-red-600 border-red-600 text-white" : "border-zinc-300 bg-white"
                     )}
                   >

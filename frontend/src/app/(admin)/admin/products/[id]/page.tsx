@@ -355,7 +355,7 @@ export default function ProductDetailPage({
   return (
     <div className="flex-1 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Top Header */}
-      <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm p-5 sm:p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
+      <div className="bg-white rounded-xl border border-zinc-100 shadow-sm p-5 sm:p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
         <div className="flex items-center gap-4 min-w-0">
           <Button
             onClick={handleBack}
@@ -367,12 +367,12 @@ export default function ProductDetailPage({
           </Button>
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-2">
-              <span className="text-xs font-medium text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-lg">
+              <span className="text-xs font-medium text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-xl">
                 Mã sản phẩm #{product.id}
               </span>
               <Badge
                 className={cn(
-                  "rounded-dash-sm px-3 py-1 text-xs font-semibold border-0 shadow-none inline-flex items-center gap-1.5",
+                  "rounded-xl px-3 py-1 text-xs font-semibold border-0 shadow-none inline-flex items-center gap-1.5",
                   !isDeleted
                     ? "bg-emerald-50 text-emerald-600"
                     : "bg-red-50 text-red-600",
@@ -420,7 +420,7 @@ export default function ProductDetailPage({
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
         {/* Left Column: Gallery & Visuals */}
         <div className="xl:col-span-7 space-y-6">
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-50 border border-zinc-100 shadow-sm group">
+          <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-zinc-50 border border-zinc-100 shadow-sm group">
             <Image
               src={getImageUrl(currentImage)}
               alt={product.name}
@@ -463,9 +463,9 @@ export default function ProductDetailPage({
           </div>
 
           {/* Description Card */}
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-zinc-100 shadow-sm group">
+          <div className="bg-white p-5 sm:p-6 rounded-xl border border-zinc-100 shadow-sm group">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-zinc-50 flex items-center justify-center border border-black/5 group-hover:bg-white transition-colors">
+              <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center border border-black/5 group-hover:bg-white transition-colors">
                 <Info className="w-5 h-5 text-zinc-400" />
               </div>
               <h3 className="text-base font-semibold text-zinc-950">
@@ -482,14 +482,14 @@ export default function ProductDetailPage({
         {/* Right Column: Key Info & Actions */}
         <div className="xl:col-span-5 space-y-6">
           {/* Status & Inventory Card */}
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-zinc-100 shadow-sm space-y-6">
+          <div className="bg-white p-5 sm:p-6 rounded-xl border border-zinc-100 shadow-sm space-y-6">
             <div className={cn(
               "grid gap-4",
               product.isForSale && product.isForRent ? "grid-cols-3" : "grid-cols-2"
             )}>
               {product.isForSale && (
                 <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-100 flex flex-col items-center text-center relative group/stock">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center mb-3 group-hover/stock:scale-110 transition-transform">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center mb-3 group-hover/stock:scale-110 transition-transform">
                     <Package className="w-5 h-5 text-emerald-600" />
                   </div>
                   <span className="text-xs font-medium text-emerald-700/80 mb-1">
@@ -504,7 +504,7 @@ export default function ProductDetailPage({
 
                   <button
                     onClick={() => setIsStockDialogOpen(true)}
-                    className="mt-3 px-3 py-1.5 bg-white border border-emerald-200 rounded-lg text-xs font-medium text-emerald-700 hover:bg-emerald-600 hover:text-white transition-colors shadow-sm"
+                    className="mt-3 px-3 py-1.5 bg-white border border-emerald-200 rounded-xl text-xs font-medium text-emerald-700 hover:bg-emerald-600 hover:text-white transition-colors shadow-sm"
                   >
                     Điều chỉnh
                   </button>
@@ -513,7 +513,7 @@ export default function ProductDetailPage({
 
               {product.isForRent && (
                 <div className="p-4 rounded-xl bg-amber-50/50 border border-amber-100 flex flex-col items-center text-center relative group/rental-stock">
-                  <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center mb-3 group-hover/rental-stock:scale-110 transition-transform">
+                  <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mb-3 group-hover/rental-stock:scale-110 transition-transform">
                     <Package className="w-5 h-5 text-amber-600" />
                   </div>
                   <span className="text-xs font-medium text-amber-700/80 mb-1">
@@ -528,7 +528,7 @@ export default function ProductDetailPage({
 
                   <button
                     onClick={() => setIsStockDialogOpen(true)}
-                    className="mt-3 px-3 py-1.5 bg-white border border-amber-200 rounded-lg text-xs font-medium text-amber-700 hover:bg-amber-600 hover:text-white transition-colors shadow-sm"
+                    className="mt-3 px-3 py-1.5 bg-white border border-amber-200 rounded-xl text-xs font-medium text-amber-700 hover:bg-amber-600 hover:text-white transition-colors shadow-sm"
                   >
                     Điều chỉnh
                   </button>
@@ -536,7 +536,7 @@ export default function ProductDetailPage({
               )}
 
               <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 flex flex-col items-center text-center justify-center">
-                <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center mb-3">
+                <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center mb-3">
                   <CheckCircle2 className="w-5 h-5 text-indigo-600" />
                 </div>
                 <span className="text-xs font-medium text-indigo-700/70 mb-1">
@@ -580,7 +580,7 @@ export default function ProductDetailPage({
               {stockTab !== null && (
                 <div className="grid gap-3">
                   {stockTab === "sale" && (
-                  <div className="rounded-dash-md border border-emerald-100 bg-emerald-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
+                  <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <h4 className="text-sm font-bold text-emerald-950">kho bán</h4>
@@ -588,18 +588,18 @@ export default function ProductDetailPage({
                           Nhập số lượng cần cộng thêm hoặc trừ bớt.
                         </p>
                       </div>
-                      <span className="text-xs font-semibold text-emerald-700 bg-white border border-emerald-100 rounded-dash-sm px-3 py-1">
+                      <span className="text-xs font-semibold text-emerald-700 bg-white border border-emerald-100 rounded-xl px-3 py-1">
                         hiện có {product.quantity}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 rounded-dash-sm border border-emerald-100 bg-white p-1">
+                    <div className="grid grid-cols-2 gap-2 rounded-xl border border-emerald-100 bg-white p-1">
                       <button
                         type="button"
                         onClick={() => setSaleStockAction("IMPORT")}
                         disabled={adjustStockMutation.isPending}
                         className={cn(
-                          "h-9 rounded-dash-sm text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
+                          "h-9 rounded-xl text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
                           saleStockAction === "IMPORT"
                             ? "bg-emerald-600 text-white"
                             : "text-zinc-500 hover:bg-emerald-50 hover:text-emerald-700",
@@ -612,7 +612,7 @@ export default function ProductDetailPage({
                         onClick={() => setSaleStockAction("EXPORT")}
                         disabled={adjustStockMutation.isPending}
                         className={cn(
-                          "h-9 rounded-dash-sm text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
+                          "h-9 rounded-xl text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
                           saleStockAction === "EXPORT"
                             ? "bg-red-600 text-white"
                             : "text-zinc-500 hover:bg-red-50 hover:text-red-600",
@@ -632,7 +632,7 @@ export default function ProductDetailPage({
                         value={saleStockInput}
                         onChange={(e) => setSaleStockInput(e.target.value)}
                         placeholder="Ví dụ: 10"
-                        className="w-full h-10 px-3 rounded-dash-sm border border-emerald-100 bg-white text-sm font-semibold"
+                        className="w-full h-10 px-3 rounded-xl border border-emerald-100 bg-white text-sm font-semibold"
                       />
                     </label>
                     <label className="space-y-1 block">
@@ -642,14 +642,14 @@ export default function ProductDetailPage({
                         value={saleStockReason}
                         onChange={(e) => setSaleStockReason(e.target.value)}
                         placeholder="Ví dụ: nhập hàng mới, hàng lỗi trả hãng"
-                        className="w-full h-10 px-3 rounded-dash-sm border border-emerald-100 bg-white text-sm"
+                        className="w-full h-10 px-3 rounded-xl border border-emerald-100 bg-white text-sm"
                       />
                     </label>
                     <Button
                       type="button"
                       onClick={handleAdjustSaleStock}
                       disabled={adjustStockMutation.isPending}
-                      className="w-full h-10 rounded-dash-sm bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-dash-sm hover:shadow-dash-md transition-all duration-200 ease-in-out"
+                      className="w-full h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-dash-sm hover:shadow-dash-md transition-all duration-200 ease-in-out"
                     >
                       {adjustStockMutation.isPending
                         ? "Đang cập nhật..."
@@ -659,7 +659,7 @@ export default function ProductDetailPage({
                   )}
 
                   {stockTab === "rental" && (
-                  <div className="rounded-dash-md border border-amber-100 bg-amber-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
+                  <div className="rounded-xl border border-amber-100 bg-amber-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <h4 className="text-sm font-bold text-amber-950">Quản lý kho thuê (Serial)</h4>
@@ -667,7 +667,7 @@ export default function ProductDetailPage({
                           Quản lý độc lập từng thiết bị cho thuê.
                         </p>
                       </div>
-                      <span className="text-xs font-semibold text-amber-700 bg-white border border-amber-100 rounded-dash-sm px-3 py-1">
+                      <span className="text-xs font-semibold text-amber-700 bg-white border border-amber-100 rounded-xl px-3 py-1">
                         {devices.length} máy
                       </span>
                     </div>
@@ -685,7 +685,7 @@ export default function ProductDetailPage({
                               setEditDeviceCondition(d.conditionDetails || "");
                               setEditDeviceStatus(d.status);
                             }}
-                            className="flex items-center justify-between bg-white border border-amber-100 rounded-sm p-2 text-sm cursor-pointer hover:bg-amber-50/50 hover:border-amber-200 transition-all duration-150"
+                            className="flex items-center justify-between bg-white border border-amber-100 rounded-xl p-2 text-sm cursor-pointer hover:bg-amber-50/50 hover:border-amber-200 transition-all duration-150"
                           >
                             <div className="flex flex-col">
                               <span className="font-semibold text-zinc-900">SN: {d.serialNumber}</span>
@@ -693,7 +693,7 @@ export default function ProductDetailPage({
                             </div>
                             <span
                               className={cn(
-                                "text-[10px] font-bold px-2 py-1 rounded-sm border transition-all duration-150",
+                                "text-[10px] font-bold px-2 py-1 rounded-xl border transition-all duration-150",
                                 d.status === "AVAILABLE" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
                                 d.status === "RESERVED" ? "bg-amber-50 text-amber-700 border-amber-100" :
                                 d.status === "RENTED" ? "bg-blue-50 text-blue-700 border-blue-100" :
@@ -717,12 +717,12 @@ export default function ProductDetailPage({
                       <Button
                         type="button"
                         onClick={() => setShowDeviceForm(true)}
-                        className="w-full h-10 rounded-dash-sm bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-dash-sm transition-all"
+                        className="w-full h-10 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-dash-sm transition-all"
                       >
                         Thêm thiết bị mới
                       </Button>
                     ) : (
-                      <div className="bg-white p-3 rounded-dash-sm border border-amber-200 space-y-3">
+                      <div className="bg-white p-3 rounded-xl border border-amber-200 space-y-3">
                         <label className="space-y-1 block">
                           <span className="text-xs font-semibold text-zinc-700">Số Serial</span>
                           <input
@@ -730,7 +730,7 @@ export default function ProductDetailPage({
                             value={deviceSerial}
                             onChange={(e) => setDeviceSerial(e.target.value)}
                             placeholder="Nhập serial..."
-                            className="w-full h-9 px-3 rounded-md border border-amber-100 bg-zinc-50 text-sm font-semibold"
+                            className="w-full h-9 px-3 rounded-xl border border-amber-100 bg-zinc-50 text-sm font-semibold"
                           />
                         </label>
                         <label className="space-y-1 block">
@@ -740,12 +740,12 @@ export default function ProductDetailPage({
                             value={deviceCondition}
                             onChange={(e) => setDeviceCondition(e.target.value)}
                             placeholder="Ví dụ: Mới 99%, có trầy nhẹ..."
-                            className="w-full h-9 px-3 rounded-md border border-amber-100 bg-zinc-50 text-sm"
+                            className="w-full h-9 px-3 rounded-xl border border-amber-100 bg-zinc-50 text-sm"
                           />
                         </label>
                         <div className="flex gap-2">
-                          <Button type="button" onClick={() => setShowDeviceForm(false)} variant="outline" className="flex-1 h-9 rounded-md text-xs font-semibold border-amber-200 text-amber-700">Hủy</Button>
-                          <Button type="button" onClick={handleCreateDevice} disabled={createDeviceMutation.isPending} className="flex-1 h-9 rounded-md bg-amber-600 text-white text-xs font-semibold">Lưu</Button>
+                          <Button type="button" onClick={() => setShowDeviceForm(false)} variant="outline" className="flex-1 h-9 rounded-xl text-xs font-semibold border-amber-200 text-amber-700">Hủy</Button>
+                          <Button type="button" onClick={handleCreateDevice} disabled={createDeviceMutation.isPending} className="flex-1 h-9 rounded-xl bg-amber-600 text-white text-xs font-semibold">Lưu</Button>
                         </div>
                       </div>
                     )}
@@ -758,7 +758,7 @@ export default function ProductDetailPage({
             <div className="space-y-4 pt-4 border-t border-black/5">
               <div className="flex items-center justify-between group/price">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center group-hover/price:scale-110 transition-transform border border-amber-100">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center group-hover/price:scale-110 transition-transform border border-amber-100">
                     <Truck className="w-5 h-5 text-amber-600" />
                   </div>
                   <div className="flex flex-col">
@@ -785,7 +785,7 @@ export default function ProductDetailPage({
 
               <div className="flex items-center justify-between pt-4 border-t border-black/5 group/price2">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center group-hover/price2:scale-110 transition-transform border border-blue-100">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover/price2:scale-110 transition-transform border border-blue-100">
                     <Zap className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="flex flex-col">
@@ -813,10 +813,10 @@ export default function ProductDetailPage({
           </div>
 
           {/* Specifications Table */}
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-zinc-100 shadow-sm space-y-6">
+          <div className="bg-white p-5 sm:p-6 rounded-xl border border-zinc-100 shadow-sm space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-zinc-50 border border-black/5 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-black/5 flex items-center justify-center">
                   <ShieldCheck className="w-5 h-5 text-red-600" />
                 </div>
                 <h3 className="text-base font-semibold text-zinc-950">
@@ -825,7 +825,7 @@ export default function ProductDetailPage({
               </div>
               <Badge
                 variant="outline"
-                className="bg-red-50 border-red-100 text-red-600 font-semibold text-xs rounded-lg"
+                className="bg-red-50 border-red-100 text-red-600 font-semibold text-xs rounded-xl"
               >
                 Chi tiết
               </Badge>
@@ -856,7 +856,7 @@ export default function ProductDetailPage({
           </div>
 
           {/* Timeline & Audit Card */}
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-zinc-100 shadow-sm">
+          <div className="bg-white p-5 sm:p-6 rounded-xl border border-zinc-100 shadow-sm">
             <h3 className="text-base font-semibold text-zinc-950 mb-6">
               Lịch sử hệ thống
             </h3>
@@ -936,7 +936,7 @@ export default function ProductDetailPage({
       />
 
       <Dialog open={!!selectedDevice} onOpenChange={(open) => !open && setSelectedDevice(null)}>
-        <DialogContent showCloseButton={false} className="sm:max-w-md !p-0 !gap-0 overflow-hidden border border-zinc-100 shadow-dash-overlay rounded-2xl bg-white">
+        <DialogContent showCloseButton={false} className="sm:max-w-md !p-0 !gap-0 overflow-hidden border border-zinc-100 shadow-dash-overlay rounded-xl bg-white">
           <div className="p-6">
             <DialogHeader className="text-left space-y-1">
               <DialogTitle className="text-lg font-semibold tracking-tight text-zinc-950">Chỉnh sửa thiết bị vật lý</DialogTitle>
@@ -1018,7 +1018,7 @@ export default function ProductDetailPage({
             </div>
           </div>
 
-          <DialogFooter className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-between gap-3 m-0 rounded-b-2xl">
+          <DialogFooter className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-between gap-3 m-0 rounded-b-xl">
             <Button
               type="button"
               variant="ghost"
@@ -1054,10 +1054,10 @@ export default function ProductDetailPage({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 mb-12">
         {/* Price History Section */}
-        <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
+        <div className="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
           <div className="px-5 sm:px-6 py-5 border-b border-zinc-100 bg-white flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-white shadow-sm border border-black/5 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-red-600" />
               </div>
               <div>
@@ -1069,7 +1069,7 @@ export default function ProductDetailPage({
                 </p>
               </div>
             </div>
-            <Badge className="bg-zinc-950 text-white text-xs font-semibold px-3 py-1 rounded-lg">
+            <Badge className="bg-zinc-950 text-white text-xs font-semibold px-3 py-1 rounded-xl">
               {pricePagination?.totalElements || 0}
             </Badge>
           </div>
@@ -1157,7 +1157,7 @@ export default function ProductDetailPage({
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="rounded-lg hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
+                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
                   disabled={priceHistoryPage === 0}
                   onClick={() => setPriceHistoryPage((p) => p - 1)}
                 >
@@ -1166,7 +1166,7 @@ export default function ProductDetailPage({
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="rounded-lg hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
+                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
                   disabled={priceHistoryPage >= pricePagination.totalPages - 1}
                   onClick={() => setPriceHistoryPage((p) => p + 1)}
                 >
@@ -1178,10 +1178,10 @@ export default function ProductDetailPage({
         </div>
 
         {/* Inventory History Section */}
-        <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
+        <div className="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
           <div className="px-5 sm:px-6 py-5 border-b border-zinc-100 bg-white flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-white shadow-sm border border-black/5 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 flex items-center justify-center">
                 <Package className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
@@ -1193,7 +1193,7 @@ export default function ProductDetailPage({
                 </p>
               </div>
             </div>
-            <Badge className="bg-emerald-600 text-white text-xs font-semibold px-3 py-1 rounded-lg">
+            <Badge className="bg-emerald-600 text-white text-xs font-semibold px-3 py-1 rounded-xl">
               {inventoryPagination?.totalElements || 0}
             </Badge>
           </div>
@@ -1278,7 +1278,7 @@ export default function ProductDetailPage({
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="rounded-lg hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
+                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
                   disabled={inventoryPage === 0}
                   onClick={() => setInventoryPage((p) => p - 1)}
                 >
@@ -1287,7 +1287,7 @@ export default function ProductDetailPage({
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="rounded-lg hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
+                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
                   disabled={inventoryPage >= inventoryPagination.totalPages - 1}
                   onClick={() => setInventoryPage((p) => p + 1)}
                 >

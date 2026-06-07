@@ -299,7 +299,7 @@ export default function EkycPage() {
               Hồ sơ định danh của bạn đã được hệ thống phê duyệt.
             </p>
           </div>
-          <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-sm shrink-0">
+          <div className="w-16 h-16 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-sm shrink-0">
             <ShieldCheck className="w-8 h-8" />
           </div>
         </div>
@@ -358,7 +358,7 @@ export default function EkycPage() {
           </div>
 
           {/* AI Metrics block */}
-          <div className="bg-zinc-50/50 p-8 rounded-2xl border border-zinc-100 space-y-6">
+          <div className="bg-zinc-50/50 p-8 rounded-xl border border-zinc-100 space-y-6">
             <h3 className="text-sm font-bold text-zinc-800 uppercase tracking-wider">Kết quả xác thực hệ thống</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
@@ -396,7 +396,7 @@ export default function EkycPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               <div className="space-y-2">
                 <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block text-center md:text-left">Mặt trước CCCD</span>
-                <div className="aspect-[1.6/1] rounded-2xl overflow-hidden border border-zinc-200/80 bg-zinc-50/50 flex items-center justify-center shadow-sm p-2">
+                <div className="aspect-[1.6/1] rounded-xl overflow-hidden border border-zinc-200/80 bg-zinc-50/50 flex items-center justify-center shadow-sm p-2">
                   {kycSession.frontImageUrl && (
                     <Image
                       src={getImageUrl(kycSession.frontImageUrl)}
@@ -411,7 +411,7 @@ export default function EkycPage() {
               </div>
               <div className="space-y-2">
                 <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider block text-center md:text-left">Mặt sau CCCD</span>
-                <div className="aspect-[1.6/1] rounded-2xl overflow-hidden border border-zinc-200/80 bg-zinc-50/50 flex items-center justify-center shadow-sm p-2">
+                <div className="aspect-[1.6/1] rounded-xl overflow-hidden border border-zinc-200/80 bg-zinc-50/50 flex items-center justify-center shadow-sm p-2">
                   {kycSession.backImageUrl && (
                     <Image
                       src={getImageUrl(kycSession.backImageUrl)}
@@ -459,16 +459,16 @@ export default function EkycPage() {
               Đội ngũ quản trị viên đang kiểm tra và đối chiếu hồ sơ của bạn.
             </p>
           </div>
-          <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shadow-sm shrink-0">
+          <div className="w-16 h-16 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shadow-sm shrink-0">
             <Fingerprint className="w-8 h-8 animate-pulse" />
           </div>
         </div>
 
         <div className="max-w-3xl mx-auto space-y-8">
-          <div className="bg-zinc-50/50 p-8 rounded-2xl border border-zinc-100 space-y-8 shadow-sm">
+          <div className="bg-zinc-50/50 p-8 rounded-xl border border-zinc-100 space-y-8 shadow-sm">
             <div className="flex justify-between items-center text-xs font-semibold pb-4 border-b border-zinc-100">
               <span className="text-zinc-400 uppercase tracking-wider">Trạng thái hồ sơ</span>
-              <span className="font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-lg border border-amber-100">Chờ phê duyệt thủ công</span>
+              <span className="font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-xl border border-amber-100">Chờ phê duyệt thủ công</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -509,14 +509,14 @@ export default function EkycPage() {
               Thông tin xác minh của bạn không được phê duyệt. Vui lòng kiểm tra lý do và thực hiện lại.
             </p>
           </div>
-          <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center shadow-sm shrink-0">
+          <div className="w-16 h-16 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shadow-sm shrink-0">
             <ShieldAlert className="w-8 h-8 animate-bounce" />
           </div>
         </div>
 
         <div className="max-w-xl mx-auto space-y-8">
           {kycSession.failureReason && (
-            <div className="bg-red-50 border border-red-100 text-red-700 p-5 rounded-2xl text-sm font-semibold shadow-sm">
+            <div className="bg-red-50 border border-red-100 text-red-700 p-5 rounded-xl text-sm font-semibold shadow-sm">
               <p className="text-xs text-red-400 font-bold uppercase tracking-wider mb-2">Lý do từ chối</p>
               <p className="text-zinc-800 leading-relaxed font-medium">{kycSession.failureReason}</p>
             </div>
@@ -554,7 +554,7 @@ export default function EkycPage() {
             <div
               key={num}
               className={cn(
-                "w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition-all",
+                "w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs transition-all",
                 step === num
                   ? "bg-red-600 text-white shadow-sm"
                   : step > num
@@ -713,8 +713,8 @@ export default function EkycPage() {
           </div>
 
           {isCameraOpen && activeCameraFor === "front" ? (
-            <div className="max-w-xl mx-auto flex flex-col items-center gap-6 bg-zinc-50/50 p-6 rounded-2xl border border-zinc-200/60 shadow-sm">
-              <div className="relative aspect-[1.6/1] w-full rounded-2xl border border-zinc-200/80 overflow-hidden bg-zinc-100 flex items-center justify-center shadow-inner">
+            <div className="max-w-xl mx-auto flex flex-col items-center gap-6 bg-zinc-50/50 p-6 rounded-xl border border-zinc-200/60 shadow-sm">
+              <div className="relative aspect-[1.6/1] w-full rounded-xl border border-zinc-200/80 overflow-hidden bg-zinc-100 flex items-center justify-center shadow-inner">
                 <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
                 <div className="absolute inset-4 border-2 border-dashed border-red-600/20 rounded-xl pointer-events-none flex items-center justify-center">
                   <span className="text-[11px] text-zinc-700 bg-white/95 border border-zinc-200/80 px-3 py-1.5 rounded-full uppercase tracking-wider font-bold shadow-sm">
@@ -734,24 +734,24 @@ export default function EkycPage() {
           ) : (
             <div className="max-w-xl mx-auto">
               {frontImage ? (
-                <div className="relative aspect-[1.6/1] w-full rounded-2xl border border-zinc-200 bg-zinc-50 flex items-center justify-center p-4">
+                <div className="relative aspect-[1.6/1] w-full rounded-xl border border-zinc-200 bg-zinc-50 flex items-center justify-center p-4">
                   <Image
                     src={getImageUrl(frontImage)}
                     alt="front cccd"
                     width={1200}
                     height={750}
                     unoptimized
-                    className="w-full h-full object-contain rounded-lg"
+                    className="w-full h-full object-contain rounded-xl"
                   />
                   <button
                     onClick={() => setFrontImage(null)}
-                    className="absolute top-3 right-3 bg-zinc-900/80 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold hover:bg-red-600 transition-colors shadow"
+                    className="absolute top-3 right-3 bg-zinc-900/80 text-white rounded-xl px-2.5 py-1 text-[11px] font-bold hover:bg-red-600 transition-colors shadow"
                   >
                     Thay đổi
                   </button>
                 </div>
               ) : (
-                <div className="aspect-[1.6/1] w-full rounded-2xl border-2 border-dashed border-zinc-200 hover:border-red-600/30 bg-zinc-50/30 hover:bg-zinc-50/60 transition-all duration-300 flex flex-col items-center justify-center p-6">
+                <div className="aspect-[1.6/1] w-full rounded-xl border-2 border-dashed border-zinc-200 hover:border-red-600/30 bg-zinc-50/30 hover:bg-zinc-50/60 transition-all duration-300 flex flex-col items-center justify-center p-6">
                   {uploadingImage ? (
                     <div className="flex flex-col items-center gap-3">
                       <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
@@ -810,8 +810,8 @@ export default function EkycPage() {
           </div>
 
           {isCameraOpen && activeCameraFor === "back" ? (
-            <div className="max-w-xl mx-auto flex flex-col items-center gap-6 bg-zinc-50/50 p-6 rounded-2xl border border-zinc-200/60 shadow-sm">
-              <div className="relative aspect-[1.6/1] w-full rounded-2xl border border-zinc-200/80 overflow-hidden bg-zinc-100 flex items-center justify-center shadow-inner">
+            <div className="max-w-xl mx-auto flex flex-col items-center gap-6 bg-zinc-50/50 p-6 rounded-xl border border-zinc-200/60 shadow-sm">
+              <div className="relative aspect-[1.6/1] w-full rounded-xl border border-zinc-200/80 overflow-hidden bg-zinc-100 flex items-center justify-center shadow-inner">
                 <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
                 <div className="absolute inset-4 border-2 border-dashed border-red-600/20 rounded-xl pointer-events-none flex items-center justify-center">
                   <span className="text-[11px] text-zinc-700 bg-white/95 border border-zinc-200/80 px-3 py-1.5 rounded-full uppercase tracking-wider font-bold shadow-sm">
@@ -831,24 +831,24 @@ export default function EkycPage() {
           ) : (
             <div className="max-w-xl mx-auto">
               {backImage ? (
-                <div className="relative aspect-[1.6/1] w-full rounded-2xl border border-zinc-200 bg-zinc-50 flex items-center justify-center p-4">
+                <div className="relative aspect-[1.6/1] w-full rounded-xl border border-zinc-200 bg-zinc-50 flex items-center justify-center p-4">
                   <Image
                     src={getImageUrl(backImage)}
                     alt="back cccd"
                     width={1200}
                     height={750}
                     unoptimized
-                    className="w-full h-full object-contain rounded-lg"
+                    className="w-full h-full object-contain rounded-xl"
                   />
                   <button
                     onClick={() => setBackImage(null)}
-                    className="absolute top-3 right-3 bg-zinc-900/80 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold hover:bg-red-600 transition-colors shadow"
+                    className="absolute top-3 right-3 bg-zinc-900/80 text-white rounded-xl px-2.5 py-1 text-[11px] font-bold hover:bg-red-600 transition-colors shadow"
                   >
                     Thay đổi
                   </button>
                 </div>
               ) : (
-                <div className="aspect-[1.6/1] w-full rounded-2xl border-2 border-dashed border-zinc-200 hover:border-red-600/30 bg-zinc-50/30 hover:bg-zinc-50/60 transition-all duration-300 flex flex-col items-center justify-center p-6">
+                <div className="aspect-[1.6/1] w-full rounded-xl border-2 border-dashed border-zinc-200 hover:border-red-600/30 bg-zinc-50/30 hover:bg-zinc-50/60 transition-all duration-300 flex flex-col items-center justify-center p-6">
                   {uploadingImage ? (
                     <div className="flex flex-col items-center gap-3">
                       <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
@@ -907,8 +907,8 @@ export default function EkycPage() {
           </div>
 
           {isCameraOpen && activeCameraFor === "selfie" ? (
-            <div className="max-w-md mx-auto flex flex-col items-center gap-6 bg-zinc-50/50 p-6 rounded-2xl border border-zinc-200/60 shadow-sm">
-              <div className="relative aspect-square w-full rounded-2xl border border-zinc-200/80 overflow-hidden bg-zinc-100 flex items-center justify-center shadow-inner">
+            <div className="max-w-md mx-auto flex flex-col items-center gap-6 bg-zinc-50/50 p-6 rounded-xl border border-zinc-200/60 shadow-sm">
+              <div className="relative aspect-square w-full rounded-xl border border-zinc-200/80 overflow-hidden bg-zinc-100 flex items-center justify-center shadow-inner">
                 <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
                 <div className="absolute inset-8 border-4 border-dashed border-red-600/10 rounded-full pointer-events-none flex items-center justify-center">
                   <span className="text-xs text-zinc-700 bg-white/70 border border-zinc-200/50 px-5 py-2 rounded-full font-semibold whitespace-nowrap">
@@ -928,7 +928,7 @@ export default function EkycPage() {
           ) : (
             <div className="max-w-md mx-auto">
               {selfieImage ? (
-                <div className="relative aspect-square w-full rounded-2xl border border-zinc-200 bg-zinc-50 flex items-center justify-center p-4 animate-in zoom-in-95 duration-200">
+                <div className="relative aspect-square w-full rounded-xl border border-zinc-200 bg-zinc-50 flex items-center justify-center p-4 animate-in zoom-in-95 duration-200">
                   <Image
                     src={getImageUrl(selfieImage)}
                     alt="selfie selfie"
@@ -945,7 +945,7 @@ export default function EkycPage() {
                   </button>
                 </div>
               ) : (
-                <div className="aspect-square w-full rounded-2xl border-2 border-dashed border-zinc-200 hover:border-red-600/30 bg-zinc-50/30 hover:bg-zinc-50/60 transition-all duration-300 flex flex-col items-center justify-center p-10 text-center">
+                <div className="aspect-square w-full rounded-xl border-2 border-dashed border-zinc-200 hover:border-red-600/30 bg-zinc-50/30 hover:bg-zinc-50/60 transition-all duration-300 flex flex-col items-center justify-center p-10 text-center">
                   {uploadingImage ? (
                     <div className="flex flex-col items-center gap-3">
                       <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
@@ -1002,7 +1002,7 @@ export default function EkycPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4">
               <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Thông tin cá nhân</h4>
-              <div className="bg-zinc-50/50 p-6 rounded-2xl border border-zinc-100 grid grid-cols-1 sm:grid-cols-2 gap-4 shadow-sm">
+              <div className="bg-zinc-50/50 p-6 rounded-xl border border-zinc-100 grid grid-cols-1 sm:grid-cols-2 gap-4 shadow-sm">
                 <div className="space-y-1">
                   <label className="text-[11px] font-bold text-zinc-400 uppercase ml-1">Số CCCD</label>
                   <Input disabled value={formData.identityNumber} className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-xs text-zinc-500 shadow-sm cursor-not-allowed" />
@@ -1043,7 +1043,7 @@ export default function EkycPage() {
                         width={1200}
                         height={750}
                         unoptimized
-                        className="w-full h-full object-contain rounded-lg"
+                        className="w-full h-full object-contain rounded-xl"
                       />
                     )}
                   </div>
@@ -1058,7 +1058,7 @@ export default function EkycPage() {
                         width={1200}
                         height={750}
                         unoptimized
-                        className="w-full h-full object-contain rounded-lg"
+                        className="w-full h-full object-contain rounded-xl"
                       />
                     )}
                   </div>

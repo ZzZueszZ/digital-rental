@@ -454,7 +454,7 @@ export default function ProductDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
             {/* Left: Image Showcase */}
             <div className="lg:col-span-7 space-y-10">
-              <div className="relative aspect-square w-full bg-white rounded-2xl border border-black/5 overflow-hidden group flex items-center justify-center p-8 shadow-dash-card">
+              <div className="relative aspect-square w-full bg-white rounded-xl border border-black/5 overflow-hidden group flex items-center justify-center p-8 shadow-dash-card">
                 {/* Main Image */}
                 {mainImageUrl ? (
                   <Image
@@ -596,7 +596,7 @@ export default function ProductDetailPage() {
 
               {/* Configuration / Quantity Selection */}
               <div className="space-y-6">
-                <div className="flex items-center justify-between p-6 bg-zinc-50/50 rounded-2xl border border-black/5 border-dashed">
+                <div className="flex items-center justify-between p-6 bg-zinc-50/50 rounded-xl border border-black/5 border-dashed">
                   <div>
                     <p className="text-xs font-medium text-zinc-500 mb-0.5">
                       Số lượng
@@ -608,7 +608,7 @@ export default function ProductDetailPage() {
                   <div className="flex items-center gap-4 bg-white p-1.5 rounded-xl border border-black/5 shadow-dash-card">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-8 h-8 rounded-md flex items-center justify-center text-zinc-400 hover:text-red-600 hover:bg-zinc-50 transition-all active:scale-90"
+                      className="w-8 h-8 rounded-xl flex items-center justify-center text-zinc-400 hover:text-red-600 hover:bg-zinc-50 transition-all active:scale-90"
                     >
                       <Minus className="w-3.5 h-3.5" />
                     </button>
@@ -617,7 +617,7 @@ export default function ProductDetailPage() {
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-8 h-8 rounded-md flex items-center justify-center text-zinc-400 hover:text-red-600 hover:bg-zinc-50 transition-all active:scale-90"
+                      className="w-8 h-8 rounded-xl flex items-center justify-center text-zinc-400 hover:text-red-600 hover:bg-zinc-50 transition-all active:scale-90"
                     >
                       <Plus className="w-3.5 h-3.5" />
                     </button>
@@ -627,7 +627,7 @@ export default function ProductDetailPage() {
                 {/* Pricing Cards */}
                 <div className="grid grid-cols-1 gap-5">
                   {product.forSale && (
-                    <div className="bg-white rounded-2xl p-6 border border-black/5 shadow-dash-card relative overflow-hidden group">
+                    <div className="bg-white rounded-xl p-6 border border-black/5 shadow-dash-card relative overflow-hidden group">
                       <p className="text-xs font-medium text-zinc-500 mb-4">
                         Giá bán
                       </p>
@@ -663,7 +663,7 @@ export default function ProductDetailPage() {
                   )}
 
                   {product.forRent && (
-                    <div className="bg-zinc-50/50 rounded-2xl p-6 border border-black/5 border-dashed relative group">
+                    <div className="bg-zinc-50/50 rounded-xl p-6 border border-black/5 border-dashed relative group">
                       <p className="text-xs font-medium text-zinc-500 mb-4">
                         Đặt thuê thiết bị
                       </p>
@@ -751,7 +751,7 @@ export default function ProductDetailPage() {
                                   <SelectItem
                                     key={slot.value}
                                     value={slot.value}
-                                    className="text-sm font-semibold py-2.5 px-3 rounded-lg cursor-pointer !text-zinc-800 focus:!bg-zinc-100 focus:!text-zinc-950 data-[state=checked]:!text-zinc-950 transition-colors"
+                                    className="text-sm font-semibold py-2.5 px-3 rounded-xl cursor-pointer !text-zinc-800 focus:!bg-zinc-100 focus:!text-zinc-950 data-[state=checked]:!text-zinc-950 transition-colors"
                                   >
                                     {slot.label}
                                   </SelectItem>
@@ -858,7 +858,7 @@ export default function ProductDetailPage() {
                 </p>
               </div>
               {reviewMeta && (
-                <div className="flex items-center gap-8 bg-white p-6 rounded-2xl border border-black/5 shadow-dash-card">
+                <div className="flex items-center gap-8 bg-white p-6 rounded-xl border border-black/5 shadow-dash-card">
                   <div className="text-center px-4">
                     <p className="text-4xl font-bold text-zinc-950 leading-none mb-3">
                       {reviewMeta.averageRating.toFixed(1)}
@@ -895,7 +895,7 @@ export default function ProductDetailPage() {
                 {reviews.map((r) => (
                   <div
                     key={r.id}
-                    className="bg-white p-8 rounded-2xl border border-black/5 shadow-dash-card hover:border-red-600/20 transition-all duration-300 group flex flex-col h-full"
+                    className="bg-white p-8 rounded-xl border border-black/5 shadow-dash-card hover:border-red-600/20 transition-all duration-300 group flex flex-col h-full"
                   >
                     <div className="flex items-center justify-between mb-6">
                       <div className="flex items-center gap-4">
@@ -1003,7 +1003,7 @@ export default function ProductDetailPage() {
                 ))}
               </div>
             ) : (
-              <div className="py-24 text-center bg-zinc-50/50 rounded-[2rem] border-2 border-dashed border-zinc-100">
+              <div className="py-24 text-center bg-zinc-50/50 rounded-xl border-2 border-dashed border-zinc-100">
                 <Star className="w-16 h-16 text-zinc-100 mx-auto mb-6" />
                 <p className="text-xs font-semibold text-zinc-300">
                   Chưa có đánh giá nào
@@ -1041,7 +1041,7 @@ export default function ProductDetailPage() {
         {/* KYC Alert Dialog */}
         {showKycDialog && (
           <div className="fixed inset-0 bg-zinc-950/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
-            <div className="bg-white rounded-2xl max-w-md w-full p-8 border border-black/5 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="bg-white rounded-xl max-w-md w-full p-8 border border-black/5 shadow-2xl animate-in zoom-in-95 duration-200">
               <div className="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mb-6">
                 <ShieldCheck className="w-6 h-6" />
               </div>

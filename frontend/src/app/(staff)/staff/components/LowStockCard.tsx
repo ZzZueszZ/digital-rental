@@ -26,7 +26,7 @@ export function LowStockCard({ products }: LowStockCardProps) {
   };
 
   return (
-    <div className="admin-card flex flex-col h-full !p-0 border-red-100 shadow-red-50/50 rounded-dash-md">
+    <div className="admin-card flex flex-col h-full !p-0 border-red-100 shadow-red-50/50 rounded-xl">
       <div className="p-4 border-b border-red-50 flex items-center justify-between bg-red-50/10">
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-red-500" />
@@ -47,10 +47,10 @@ export function LowStockCard({ products }: LowStockCardProps) {
             products.map((p) => (
               <div
                 key={p.productId}
-                className="flex items-center justify-between group p-2 rounded-dash-sm transition-all border border-transparent hover:border-red-100 hover:bg-red-50/30"
+                className="flex items-center justify-between group p-2 rounded-xl transition-all border border-transparent hover:border-red-100 hover:bg-red-50/30"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-dash-sm border border-zinc-100 overflow-hidden relative flex-shrink-0 bg-white">
+                  <div className="w-10 h-10 rounded-xl border border-zinc-100 overflow-hidden relative flex-shrink-0 bg-white">
                     {p.imageUrl ? (
                       <Image
                         src={getImageUrl(p.imageUrl)}
@@ -70,7 +70,7 @@ export function LowStockCard({ products }: LowStockCardProps) {
                       {p.productName}
                     </p>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-black text-red-600 bg-red-50 px-1.5 py-0.5 rounded uppercase">
+                      <span className="text-[10px] font-black text-red-600 bg-red-50 px-1.5 py-0.5 rounded-xl uppercase">
                         Kho: {p.stock}
                       </span>
                     </div>
@@ -84,7 +84,7 @@ export function LowStockCard({ products }: LowStockCardProps) {
       </div>
 
       <div className="p-3 border-t border-zinc-50">
-        <Button className="rounded-xl w-full h-10 bg-zinc-950 text-white hover:bg-white hover:text-zinc-950 border border-transparent hover:border-zinc-200 rounded-dash-sm font-bold text-[14px] tracking-tight transition-all shadow-dash-sm active:scale-95">
+        <Button className="rounded-xl w-full h-10 bg-zinc-950 text-white hover:bg-white hover:text-zinc-950 border border-transparent hover:border-zinc-200 rounded-xl font-bold text-[14px] tracking-tight transition-all shadow-dash-sm active:scale-95">
           Kiểm kê ngay
         </Button>
       </div>

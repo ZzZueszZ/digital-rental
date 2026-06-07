@@ -297,7 +297,7 @@ function SidebarItem({
       {badge !== undefined && (
         <span
           className={cn(
-            "w-4.5 h-4.5 rounded-md flex items-center justify-center font-bold text-[10px]",
+            "w-4.5 h-4.5 rounded-xl flex items-center justify-center font-bold text-[10px]",
             active ? "bg-white text-red-600" : "bg-red-50 text-red-600",
           )}
         >

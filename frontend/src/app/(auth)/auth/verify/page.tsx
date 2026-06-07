@@ -30,7 +30,7 @@ export default function VerifyPage() {
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-600/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-xl bg-white border border-black/5 rounded-2xl p-10 flex flex-col items-center text-center space-y-8 shadow-dash-card relative z-10">
+      <div className="w-full max-w-xl bg-white border border-black/5 rounded-xl p-10 flex flex-col items-center text-center space-y-8 shadow-dash-card relative z-10">
         {/* Icon */}
         <div className="relative">
           <div className="w-24 h-24 bg-zinc-50 border border-black/5 rounded-xl flex items-center justify-center shadow-sm">

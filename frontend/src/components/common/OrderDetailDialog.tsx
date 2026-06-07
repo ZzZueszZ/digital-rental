@@ -195,7 +195,7 @@ export function OrderDetailDialog({
                   </span>
                   <span
                     className={cn(
-                      "text-[11px] font-bold px-2 py-0.5 rounded tracking-tighter border",
+                      "text-[11px] font-bold px-2 py-0.5 rounded-xl tracking-tighter border",
                       order.paymentStatus === PaymentStatus.SUCCESS
                         ? "bg-emerald-50 text-emerald-600 border-emerald-100"
                         : order.paymentStatus === PaymentStatus.PENDING
@@ -223,7 +223,7 @@ export function OrderDetailDialog({
           </div>
 
           {/* Price Breakdown */}
-          <div className="p-5 bg-white border border-zinc-100 rounded-2xl space-y-4 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden">
+          <div className="p-5 bg-white border border-zinc-100 rounded-xl space-y-4 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-5">
               <CheckCircle2 className="w-20 h-20 text-zinc-900" />
             </div>
@@ -269,7 +269,7 @@ export function OrderDetailDialog({
               <Button
                 onClick={handleConfirmReceived}
                 disabled={isConfirming}
-                className="w-full h-12 rounded-2xl bg-emerald-600 text-white font-black text-xs uppercase transition-all shadow-xl shadow-emerald-100 border-none hover:bg-zinc-950"
+                className="w-full h-12 rounded-xl bg-emerald-600 text-white font-black text-xs uppercase transition-all shadow-xl shadow-emerald-100 border-none hover:bg-zinc-950"
               >
                 {isConfirming ? (
                   <Loader2 className="w-4 h-4 animate-spin mr-2" />

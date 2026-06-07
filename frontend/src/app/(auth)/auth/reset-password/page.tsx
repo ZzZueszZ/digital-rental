@@ -43,7 +43,7 @@ export default function ResetPasswordPage() {
     <main className="min-h-screen flex items-center justify-center bg-zinc-50 px-8 overflow-hidden relative">
       <div className="absolute -top-1/4 -right-1/4 w-[1200px] h-[1200px] bg-indigo-500/5 rounded-full blur-[250px] pointer-events-none" />
 
-      <div className="w-full max-w-xl bg-white border border-black/5 rounded-2xl p-10 flex flex-col space-y-8 shadow-dash-card relative z-10">
+      <div className="w-full max-w-xl bg-white border border-black/5 rounded-xl p-10 flex flex-col space-y-8 shadow-dash-card relative z-10">
         {/* Header */}
         <div className="space-y-4 text-center">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-xl bg-zinc-50 border border-black/5 mb-2 relative overflow-hidden shadow-sm">

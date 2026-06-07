@@ -269,7 +269,7 @@ export function UserForm({
         <div className="md:col-span-2 space-y-6">
           <Card
             className={cn(
-              "rounded-2xl border bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] overflow-hidden relative group transition-all duration-500",
+              "rounded-xl border bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] overflow-hidden relative group transition-all duration-500",
               isEditing
                 ? "border-zinc-300 ring-1 ring-zinc-100"
                 : "border-zinc-100 hover:shadow-2xl",
@@ -448,7 +448,7 @@ export function UserForm({
 
           <Card
             className={cn(
-              "rounded-2xl border bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] overflow-hidden relative group transition-all duration-500",
+              "rounded-xl border bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] overflow-hidden relative group transition-all duration-500",
               isEditing
                 ? "opacity-50 pointer-events-none border-zinc-200"
                 : "border-zinc-100 hover:shadow-2xl",

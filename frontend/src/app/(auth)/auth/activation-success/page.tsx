@@ -10,7 +10,7 @@ export default function ActivationSuccessPage() {
     <main className="min-h-screen flex flex-col items-center justify-center bg-zinc-50 px-8 overflow-hidden relative">
       <div className="absolute inset-0 bg-linear-to-b from-red-600/5 via-transparent to-transparent pointer-events-none" />
 
-      <div className="w-full max-w-xl bg-white border border-black/5 rounded-2xl p-10 flex flex-col items-center text-center space-y-8 shadow-dash-card relative z-10">
+      <div className="w-full max-w-xl bg-white border border-black/5 rounded-xl p-10 flex flex-col items-center text-center space-y-8 shadow-dash-card relative z-10">
         {/* Success Icon */}
         <div className="relative">
           <div className="w-24 h-24 bg-zinc-50 border border-black/5 rounded-xl flex items-center justify-center shadow-sm">

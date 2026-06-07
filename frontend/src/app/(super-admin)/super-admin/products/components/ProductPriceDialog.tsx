@@ -118,7 +118,7 @@ export function ProductPriceDialog({
     >
       <div className="space-y-5">
         {errors.general && (
-          <div className="bg-red-50 text-red-600 text-xs font-bold p-3 rounded-lg border border-red-100 shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
+          <div className="bg-red-50 text-red-600 text-xs font-bold p-3 rounded-xl border border-red-100 shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
             {errors.general}
           </div>
         )}
@@ -131,7 +131,7 @@ export function ProductPriceDialog({
               onChange={(e) =>
                 setFormData({ ...formData, isForRent: e.target.checked })
               }
-              className="w-4 h-4 rounded text-red-600 focus:ring-red-600/20 cursor-pointer"
+              className="w-4 h-4 rounded-xl text-red-600 focus:ring-red-600/20 cursor-pointer"
             />
             <span className="text-sm font-bold text-zinc-700 group-hover:text-amber-600 transition-colors">
               cho thuê thiết bị
@@ -154,7 +154,7 @@ export function ProductPriceDialog({
                 }
                 placeholder="Ví dụ: 150000"
                 className={cn(
-                  "h-11 rounded-lg bg-white text-sm font-bold text-zinc-900 pr-10 disabled:opacity-50 disabled:bg-zinc-100 shadow-[0_2px_6px_rgba(0,0,0,0.04)]",
+                  "h-11 rounded-xl bg-white text-sm font-bold text-zinc-900 pr-10 disabled:opacity-50 disabled:bg-zinc-100 shadow-[0_2px_6px_rgba(0,0,0,0.04)]",
                   errors.rentPricePerDay
                     ? "border-red-400"
                     : "border-black/5 focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/20",
@@ -180,7 +180,7 @@ export function ProductPriceDialog({
               onChange={(e) =>
                 setFormData({ ...formData, isForSale: e.target.checked })
               }
-              className="w-4 h-4 rounded text-red-600 focus:ring-red-600/20 cursor-pointer"
+              className="w-4 h-4 rounded-xl text-red-600 focus:ring-red-600/20 cursor-pointer"
             />
             <span className="text-sm font-bold text-zinc-700 group-hover:text-blue-600 transition-colors">
               Bán thiết bị
@@ -203,7 +203,7 @@ export function ProductPriceDialog({
                 }
                 placeholder="Ví dụ: 25000000"
                 className={cn(
-                  "h-11 rounded-lg bg-white text-sm font-bold text-zinc-900 pr-10 disabled:opacity-50 disabled:bg-zinc-100 shadow-[0_2px_6px_rgba(0,0,0,0.04)]",
+                  "h-11 rounded-xl bg-white text-sm font-bold text-zinc-900 pr-10 disabled:opacity-50 disabled:bg-zinc-100 shadow-[0_2px_6px_rgba(0,0,0,0.04)]",
                   errors.salePrice
                     ? "border-red-400"
                     : "border-black/5 focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/20",

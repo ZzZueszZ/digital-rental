@@ -128,7 +128,7 @@ export function StockAdjustmentDialog({
     return (
       <section
         className={cn(
-          "rounded-2xl border border-black/5 bg-zinc-50/70 p-4 shadow-dash-sm space-y-4",
+          "rounded-xl border border-black/5 bg-zinc-50/70 p-4 shadow-dash-sm space-y-4",
           !enabled && "opacity-60",
         )}
       >
@@ -162,7 +162,7 @@ export function StockAdjustmentDialog({
             onClick={() => updateForm(stockType, "action", "IMPORT")}
             disabled={isPending}
             className={cn(
-              "flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all disabled:cursor-not-allowed disabled:opacity-60",
+              "flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all disabled:cursor-not-allowed disabled:opacity-60",
               form.action === "IMPORT"
                 ? "bg-emerald-50 text-emerald-600 shadow-dash-sm"
                 : "text-zinc-500 hover:text-zinc-800",
@@ -176,7 +176,7 @@ export function StockAdjustmentDialog({
             onClick={() => updateForm(stockType, "action", "EXPORT")}
             disabled={isPending}
             className={cn(
-              "flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all disabled:cursor-not-allowed disabled:opacity-60",
+              "flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all disabled:cursor-not-allowed disabled:opacity-60",
               form.action === "EXPORT"
                 ? "bg-red-50 text-red-600 shadow-dash-sm"
                 : "text-zinc-500 hover:text-zinc-800",
@@ -195,7 +195,7 @@ export function StockAdjustmentDialog({
                 type="number"
                 value={form.quantity}
                 onChange={(e) => updateForm(stockType, "quantity", e.target.value)}
-                className="h-11 bg-white border-black/5 focus:ring-red-600/20 focus:border-red-600 text-sm font-bold rounded-lg pl-10 shadow-dash-sm"
+                className="h-11 bg-white border-black/5 focus:ring-red-600/20 focus:border-red-600 text-sm font-bold rounded-xl pl-10 shadow-dash-sm"
                 placeholder="0"
                 min="1"
                 disabled={isPending}
@@ -218,7 +218,7 @@ export function StockAdjustmentDialog({
             <Textarea
               value={form.reason}
               onChange={(e) => updateForm(stockType, "reason", e.target.value)}
-              className="min-h-[84px] bg-white border-black/5 focus:ring-red-600/20 focus:border-red-600 text-xs font-medium rounded-lg shadow-dash-sm resize-none"
+              className="min-h-[84px] bg-white border-black/5 focus:ring-red-600/20 focus:border-red-600 text-xs font-medium rounded-xl shadow-dash-sm resize-none"
               placeholder="Ví dụ: nhập hàng mới, kiểm kê, hàng lỗi..."
               disabled={isPending}
             />

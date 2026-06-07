@@ -26,7 +26,7 @@ export function TopProductsCard({ products }: TopProductsCardProps) {
   };
 
   return (
-    <div className="admin-card flex flex-col h-full !p-0 rounded-dash-md">
+    <div className="admin-card flex flex-col h-full !p-0 rounded-xl">
       <div className="p-4 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/20">
         <div className="flex items-center gap-2">
            <PackageOpen className="w-4 h-4 text-zinc-400" />
@@ -43,10 +43,10 @@ export function TopProductsCard({ products }: TopProductsCardProps) {
             products.map((p, i) => (
               <div
                 key={p.productId}
-                className="flex items-center justify-between group p-2 rounded-dash-sm transition-all border border-transparent hover:border-zinc-100 hover:bg-zinc-50/50"
+                className="flex items-center justify-between group p-2 rounded-xl transition-all border border-transparent hover:border-zinc-100 hover:bg-zinc-50/50"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-dash-sm border border-zinc-100 overflow-hidden relative flex-shrink-0 bg-white shadow-sm">
+                  <div className="w-10 h-10 rounded-xl border border-zinc-100 overflow-hidden relative flex-shrink-0 bg-white shadow-sm">
                     {p.imageUrl ? (
                       <Image
                         src={getImageUrl(p.imageUrl)}

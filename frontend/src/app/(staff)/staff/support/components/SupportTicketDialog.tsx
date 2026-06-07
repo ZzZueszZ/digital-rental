@@ -162,7 +162,7 @@ export default function SupportTicketDialog({
                 Nội dung yêu cầu
               </h3>
             </div>
-            <div className="p-6 rounded-2xl bg-zinc-50 border border-zinc-950/5 shadow-inner">
+            <div className="p-6 rounded-xl bg-zinc-50 border border-zinc-950/5 shadow-inner">
               <p className="text-[15px] font-medium text-zinc-700 leading-relaxed whitespace-pre-wrap italic opacity-90">
                 &quot;{ticket.message}&quot;
               </p>
@@ -178,7 +178,7 @@ export default function SupportTicketDialog({
                   Phản hồi của hệ thống
                 </h3>
               </div>
-              <div className="p-6 rounded-2xl bg-emerald-50/50 border border-emerald-100 relative overflow-hidden group">
+              <div className="p-6 rounded-xl bg-emerald-50/50 border border-emerald-100 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity duration-700 pointer-events-none">
                   <ShieldCheck className="w-32 h-32 text-emerald-600 rotate-12" />
                 </div>

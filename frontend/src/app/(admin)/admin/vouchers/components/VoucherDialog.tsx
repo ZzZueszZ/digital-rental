@@ -405,7 +405,7 @@ export function VoucherDialog({
           </div>
 
           {/* Note Box */}
-          <div className="mt-4 p-5 rounded-2xl bg-white border border-zinc-100 shadow-sm">
+          <div className="mt-4 p-5 rounded-xl bg-white border border-zinc-100 shadow-sm">
             <div className="flex gap-3">
               <div className="w-6 h-6 rounded-full bg-red-600 flex items-center justify-center shrink-0 shadow-lg shadow-red-100">
                 <Info className="w-3 h-3 text-white" />

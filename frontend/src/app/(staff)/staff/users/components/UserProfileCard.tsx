@@ -171,7 +171,7 @@ export function UserProfileCard({
   return (
     <div
       className={cn(
-        "bg-white rounded-2xl border shadow-[0_2px_6px_rgba(0,0,0,0.04)] relative group transition-all duration-500",
+        "bg-white rounded-xl border shadow-[0_2px_6px_rgba(0,0,0,0.04)] relative group transition-all duration-500",
         isEditing
           ? "border-zinc-300 ring-1 ring-zinc-100"
           : "border-zinc-100 hover:shadow-2xl",
@@ -180,7 +180,7 @@ export function UserProfileCard({
       {/* Accent line */}
       <div
         className={cn(
-          "absolute top-0 left-0 w-full h-1 transition-all duration-500 rounded-t-2xl",
+          "absolute top-0 left-0 w-full h-1 transition-all duration-500 rounded-t-xl",
           isEditing
             ? "bg-zinc-950 opacity-100"
             : "bg-zinc-950 opacity-0 group-hover:opacity-100",

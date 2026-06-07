@@ -293,18 +293,18 @@ export default function KycManagement() {
                   </div>
 
                   <div className="flex flex-wrap gap-2 text-xs">
-                    <span className="bg-zinc-50 border border-zinc-200/50 text-zinc-600 px-2 py-0.5 rounded-md font-semibold">
+                    <span className="bg-zinc-50 border border-zinc-200/50 text-zinc-600 px-2 py-0.5 rounded-xl font-semibold">
                       CCCD: {session.identityNumber}
                     </span>
                     <span className={cn(
-                      "px-2 py-0.5 rounded-md font-bold border",
+                      "px-2 py-0.5 rounded-xl font-bold border",
                       (session.faceMatchPassed ?? true)
                         ? "bg-emerald-50 text-emerald-700 border-emerald-100"
                         : "bg-red-50 text-red-700 border-red-100"
                     )}>
                       AI Match: {((session.faceMatchScore ?? 0.95) * 100).toFixed(0)}%
                     </span>
-                    <span className="bg-zinc-50 border border-zinc-200/50 text-zinc-500 px-2 py-0.5 rounded-md font-semibold">
+                    <span className="bg-zinc-50 border border-zinc-200/50 text-zinc-500 px-2 py-0.5 rounded-xl font-semibold">
                       OCR: {((session.ocrConfidence ?? 0.96) * 100).toFixed(0)}%
                     </span>
                   </div>
@@ -347,7 +347,7 @@ export default function KycManagement() {
             <div className="space-y-6">
               <div>
                 <h3 className="text-sm font-semibold text-zinc-700 mb-4">Thông tin OCR trích xuất</h3>
-                <div className="bg-zinc-50 p-6 rounded-2xl border border-black/5 space-y-4">
+                <div className="bg-zinc-50 p-6 rounded-xl border border-black/5 space-y-4">
                   <DetailRow label="Số CCCD" value={selectedSession.identityNumber} />
                   <DetailRow label="Họ và tên" value={selectedSession.fullName} />
                   <DetailRow label="Ngày sinh" value={selectedSession.dateOfBirth ? String(selectedSession.dateOfBirth) : ""} />
@@ -362,7 +362,7 @@ export default function KycManagement() {
 
               <div>
                 <h3 className="text-sm font-semibold text-zinc-700 mb-4">Đánh giá khớp mặt AI</h3>
-                <div className="bg-zinc-50 p-6 rounded-2xl border border-black/5 space-y-3">
+                <div className="bg-zinc-50 p-6 rounded-xl border border-black/5 space-y-3">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-semibold text-zinc-500">Độ khớp mặt selfie vs ảnh CCCD:</span>
                     <span className="font-bold text-red-600">{((selectedSession.faceMatchScore ?? 0.95) * 100).toFixed(1)}%</span>

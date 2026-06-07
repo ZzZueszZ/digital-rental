@@ -392,7 +392,7 @@ export function DateTimePicker({
             top: `${popoverCoords.top}px`,
             left: `${popoverCoords.left}px`,
           }}
-          className="bg-white rounded-2xl border border-zinc-200/80 shadow-2xl shadow-zinc-200/60 p-4 z-[9999] flex gap-4 animate-in fade-in slide-in-from-top-2 duration-200 md:w-[480px] w-[350px] flex-col md:flex-row"
+          className="bg-white rounded-xl border border-zinc-200/80 shadow-2xl shadow-zinc-200/60 p-4 z-[9999] flex gap-4 animate-in fade-in slide-in-from-top-2 duration-200 md:w-[480px] w-[350px] flex-col md:flex-row"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Calendar Picker (Left) */}
@@ -406,14 +406,14 @@ export function DateTimePicker({
                 <button
                   type="button"
                   onClick={prevMonth}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
+                  className="w-7 h-7 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   type="button"
                   onClick={nextMonth}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
+                  className="w-7 h-7 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -494,14 +494,14 @@ export function DateTimePicker({
                   onChange?.("");
                   setIsOpen(false);
                 }}
-                className="text-[11px] font-semibold text-zinc-400 hover:text-red-600 transition-colors px-2 py-1 rounded-md hover:bg-red-50"
+                className="text-[11px] font-semibold text-zinc-400 hover:text-red-600 transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
               >
                 Xóa
               </button>
               <button
                 type="button"
                 onClick={goToToday}
-                className="text-[11px] font-bold text-red-600 hover:text-red-700 transition-colors px-2 py-1 rounded-md hover:bg-red-50"
+                className="text-[11px] font-bold text-red-600 hover:text-red-700 transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
               >
                 Hôm nay
               </button>
@@ -541,7 +541,7 @@ export function DateTimePicker({
                           handleSelectTime(h, selectedMinute, selectedPeriod)
                         }
                         className={cn(
-                          "h-7 text-xs font-semibold rounded-lg flex items-center justify-center shrink-0 transition-all",
+                          "h-7 text-xs font-semibold rounded-xl flex items-center justify-center shrink-0 transition-all",
                           isActive
                             ? "bg-red-600 text-white font-bold shadow-md shadow-red-100"
                             : "text-zinc-600 hover:bg-zinc-100",
@@ -574,7 +574,7 @@ export function DateTimePicker({
                           handleSelectTime(selectedHour12, m, selectedPeriod)
                         }
                         className={cn(
-                          "h-7 text-xs font-semibold rounded-lg flex items-center justify-center shrink-0 transition-all",
+                          "h-7 text-xs font-semibold rounded-xl flex items-center justify-center shrink-0 transition-all",
                           isActive
                             ? "bg-red-600 text-white font-bold shadow-md shadow-red-100"
                             : "text-zinc-600 hover:bg-zinc-100",
@@ -607,7 +607,7 @@ export function DateTimePicker({
                           handleSelectTime(selectedHour12, selectedMinute, p)
                         }
                         className={cn(
-                          "h-7 text-xs font-bold rounded-lg flex items-center justify-center shrink-0 transition-all",
+                          "h-7 text-xs font-bold rounded-xl flex items-center justify-center shrink-0 transition-all",
                           isActive
                             ? "bg-red-600 text-white shadow-md shadow-red-100"
                             : "text-zinc-600 hover:bg-zinc-100",
@@ -626,7 +626,7 @@ export function DateTimePicker({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="text-[11px] font-bold text-zinc-800 hover:bg-zinc-100 transition-colors px-3 py-1.5 rounded-lg border border-zinc-200"
+                className="text-[11px] font-bold text-zinc-800 hover:bg-zinc-100 transition-colors px-3 py-1.5 rounded-xl border border-zinc-200"
               >
                 Xong
               </button>

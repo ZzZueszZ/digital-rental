@@ -103,7 +103,7 @@ export default function AdminSupportPage() {
                       setPage(0);
                     }}
                     className={cn(
-                      "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150 whitespace-nowrap",
+                      "px-4 py-1.5 rounded-xl text-[14px] font-medium transition-all duration-150 whitespace-nowrap",
                       viewMode === mode
                         ? "bg-zinc-950 text-white shadow-sm"
                         : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50",

@@ -119,7 +119,7 @@ export default function OverviewPage() {
 
         <div className="bg-white border border-zinc-100 rounded-xl p-8 text-zinc-950 shadow-[0_4px_20px_rgba(0,0,0,0.05)] relative overflow-hidden group hover:scale-[1.01] transition-all">
           <div className="relative z-10">
-            <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mb-8 border border-amber-100 shadow-sm">
+            <div className="w-16 h-16 rounded-xl bg-amber-50 flex items-center justify-center mb-8 border border-amber-100 shadow-sm">
               <Star className="w-8 h-8 text-amber-500 fill-amber-500" />
             </div>
             <h3 className="text-xl font-black mb-2 leading-tight text-zinc-950">
@@ -161,7 +161,7 @@ function OverviewCard({
       className="group bg-white border border-zinc-100 rounded-xl p-6 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all text-left flex flex-col justify-between h-44 active:scale-95"
     >
       <div
-        className={`w-14 h-14 rounded-2xl ${color} text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform`}
+        className={`w-14 h-14 rounded-xl ${color} text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform`}
       >
         {icon}
       </div>

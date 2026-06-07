@@ -111,8 +111,8 @@ export function RecentActivityCard() {
               >
                 <div className="w-8 h-8 rounded-xl bg-zinc-50 flex-shrink-0" />
                 <div className="flex-1 space-y-1.5">
-                  <div className="h-3 bg-zinc-50 rounded w-1/3" />
-                  <div className="h-2.5 bg-zinc-50 rounded w-2/3" />
+                  <div className="h-3 bg-zinc-50 rounded-xl w-1/3" />
+                  <div className="h-2.5 bg-zinc-50 rounded-xl w-2/3" />
                 </div>
               </div>
             ))
@@ -155,10 +155,10 @@ export function RecentActivityCard() {
                       {log.description}
                     </p>
                     <div className="flex items-center gap-1.5 mt-2">
-                      <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md bg-zinc-100 text-zinc-500 border border-zinc-200/50 tracking-wider">
+                      <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-xl bg-zinc-100 text-zinc-500 border border-zinc-200/50 tracking-wider">
                         {log.action.split("_").pop()}
                       </span>
-                      <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md bg-red-50 text-red-600 border border-red-100 tracking-wider">
+                      <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-xl bg-red-50 text-red-600 border border-red-100 tracking-wider">
                         {log.targetType} #{log.targetId}
                       </span>
                     </div>

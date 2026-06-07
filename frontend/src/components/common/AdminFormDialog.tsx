@@ -52,7 +52,7 @@ export function AdminFormDialog({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
         <div
           className={cn(
-            "relative w-full bg-white rounded-2xl shadow-dash-overlay overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 border border-zinc-100",
+            "relative w-full bg-white rounded-xl shadow-dash-overlay overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 border border-zinc-100",
             maxWidth,
           )}
         >

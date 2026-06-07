@@ -61,7 +61,7 @@ export function ReviewTableRow({
               {review.userName}
             </p>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded">
+              <span className="text-xs font-medium text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded-xl">
                 ID: {review.userId}
               </span>
             </div>
@@ -88,7 +88,7 @@ export function ReviewTableRow({
           </span>
           {review.images && review.images.length > 0 && (
             <div className="flex items-center gap-1 mt-2">
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tight bg-zinc-50 px-1.5 py-0.5 rounded border border-zinc-100">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tight bg-zinc-50 px-1.5 py-0.5 rounded-xl border border-zinc-100">
                 +{review.images.length} ảnh
               </span>
             </div>
@@ -190,7 +190,7 @@ export function ReviewMobileCard({
   onDelete,
 }: ReviewItemsProps) {
   return (
-    <div className="bg-white border border-zinc-100 rounded-2xl p-5 shadow-sm space-y-4">
+    <div className="bg-white border border-zinc-100 rounded-xl p-5 shadow-sm space-y-4">
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-zinc-50 border border-zinc-100 flex items-center justify-center overflow-hidden">

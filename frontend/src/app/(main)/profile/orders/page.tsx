@@ -291,8 +291,8 @@ export default function OrdersPage() {
           </p>
         </div>
       ) : orderType === "BUY" && orders.length === 0 ? (
-        <div className="bg-white border-2 border-dashed border-zinc-100 rounded-[2.5rem] p-20 flex flex-col items-center text-center">
-          <div className="w-20 h-20 rounded-3xl bg-zinc-50 flex items-center justify-center mb-6 text-zinc-200">
+        <div className="bg-white border-2 border-dashed border-zinc-100 rounded-xl p-20 flex flex-col items-center text-center">
+          <div className="w-20 h-20 rounded-xl bg-zinc-50 flex items-center justify-center mb-6 text-zinc-200">
             <ShoppingBag className="w-10 h-10" />
           </div>
           <h3 className="text-xl font-black text-zinc-950 tracking-tight mb-2">
@@ -310,8 +310,8 @@ export default function OrdersPage() {
           </Button>
         </div>
       ) : orderType === "RENT" && rentals.length === 0 ? (
-        <div className="bg-white border-2 border-dashed border-zinc-100 rounded-[2.5rem] p-20 flex flex-col items-center text-center">
-          <div className="w-20 h-20 rounded-3xl bg-zinc-50 flex items-center justify-center mb-6 text-zinc-200">
+        <div className="bg-white border-2 border-dashed border-zinc-100 rounded-xl p-20 flex flex-col items-center text-center">
+          <div className="w-20 h-20 rounded-xl bg-zinc-50 flex items-center justify-center mb-6 text-zinc-200">
             <Calendar className="w-10 h-10" />
           </div>
           <h3 className="text-xl font-black text-zinc-950 tracking-tight mb-2">

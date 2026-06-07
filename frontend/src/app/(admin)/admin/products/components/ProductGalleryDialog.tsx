@@ -137,7 +137,7 @@ export function ProductGalleryDialog({
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {product.gallery?.map((img) => (
               <div key={img.id} className={cn(
-                "group relative aspect-square rounded-2xl overflow-hidden bg-zinc-50 border transition-all duration-300",
+                "group relative aspect-square rounded-xl overflow-hidden bg-zinc-50 border transition-all duration-300",
                 markedForDeletionIds.has(img.id) ? "border-red-500 ring-2 ring-red-500/20" : "border-zinc-100"
               )}>
                 <Image
@@ -183,7 +183,7 @@ export function ProductGalleryDialog({
               </div>
             ))}
             {(!product.gallery || product.gallery.length === 0) && (
-              <div className="col-span-full py-12 flex flex-col items-center justify-center bg-zinc-50 rounded-3xl border-2 border-dashed border-zinc-200">
+              <div className="col-span-full py-12 flex flex-col items-center justify-center bg-zinc-50 rounded-xl border-2 border-dashed border-zinc-200">
                 <ImageIcon className="w-10 h-10 text-zinc-300 mb-3" />
                 <p className="text-xs font-bold text-zinc-400">Chưa có ảnh trong bộ sưu tập</p>
               </div>
@@ -196,7 +196,7 @@ export function ProductGalleryDialog({
           <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Tải lên ảnh mới</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {previews.map((preview, idx) => (
-              <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden border-2 border-red-100 shadow-sm">
+              <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border-2 border-red-100 shadow-sm">
                 <Image src={preview} alt="Preview" fill className="object-cover" unoptimized />
                 <button
                   type="button"
@@ -211,7 +211,7 @@ export function ProductGalleryDialog({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="aspect-square rounded-2xl border-2 border-dashed border-zinc-200 hover:border-red-400 hover:bg-red-50/30 transition-all flex flex-col items-center justify-center gap-2 group"
+              className="aspect-square rounded-xl border-2 border-dashed border-zinc-200 hover:border-red-400 hover:bg-red-50/30 transition-all flex flex-col items-center justify-center gap-2 group"
             >
               <div className="w-10 h-10 rounded-full bg-zinc-100 group-hover:bg-red-100 flex items-center justify-center transition-colors">
                 <Plus className="w-5 h-5 text-zinc-400 group-hover:text-red-600" />

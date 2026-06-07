@@ -52,7 +52,7 @@ export function CategoryTableRow({
       <td className="px-6 py-3">
         <Badge
           className={cn(
-            "rounded-md px-2.5 py-1 text-xs font-semibold border-0 ring-0 shadow-none",
+            "rounded-xl px-2.5 py-1 text-xs font-semibold border-0 ring-0 shadow-none",
             category.isActive
               ? "bg-emerald-50 text-emerald-600"
               : "bg-zinc-900 text-white",
@@ -95,7 +95,7 @@ export function CategoryMobileCard({
               </span>
               <Badge
                 className={cn(
-                  "rounded-md px-1.5 py-0 text-[8px] font-black uppercase border-0 ring-0",
+                  "rounded-xl px-1.5 py-0 text-[8px] font-black uppercase border-0 ring-0",
                   category.isActive
                     ? "bg-emerald-50 text-emerald-600"
                     : "bg-zinc-900 text-white",

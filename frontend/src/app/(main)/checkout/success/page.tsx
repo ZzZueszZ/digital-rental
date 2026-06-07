@@ -20,7 +20,7 @@ export default function OrderSuccessPage() {
   return (
     <div className="min-h-screen bg-white py-20 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl p-10 border border-black/5 text-center relative overflow-hidden shadow-dash-card">
+        <div className="bg-white rounded-xl p-10 border border-black/5 text-center relative overflow-hidden shadow-dash-card">
           {/* Decorative Background */}
           <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full blur-3xl opacity-10 bg-emerald-500" />
 

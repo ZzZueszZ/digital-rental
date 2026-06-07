@@ -369,7 +369,7 @@ function AddressDialog({
             onChange={(e) =>
               setFormData({ ...formData, setAsDefault: e.target.checked })
             }
-            className="w-5 h-5 rounded-md border-zinc-200 text-zinc-950 focus:ring-zinc-950 cursor-pointer"
+            className="w-5 h-5 rounded-xl border-zinc-200 text-zinc-950 focus:ring-zinc-950 cursor-pointer"
           />
           <label
             htmlFor="isDefault"

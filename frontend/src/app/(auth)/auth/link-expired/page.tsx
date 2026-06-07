@@ -9,7 +9,7 @@ import Routers from "@/constants/routers";
 export default function LinkExpiredPage() {
   return (
     <main className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center px-6">
-      <div className="w-full max-w-md bg-white border border-black/5 rounded-2xl p-10 flex flex-col items-center text-center space-y-8 shadow-dash-card">
+      <div className="w-full max-w-md bg-white border border-black/5 rounded-xl p-10 flex flex-col items-center text-center space-y-8 shadow-dash-card">
         <div className="w-20 h-20 bg-zinc-50 border border-black/5 rounded-xl flex items-center justify-center">
           <AlertCircle className="w-10 h-10 text-red-600" />
         </div>

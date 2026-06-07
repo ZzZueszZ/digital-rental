@@ -212,7 +212,7 @@ export default function OrdersAdminPage() {
               ? Array.from({ length: 3 }).map((_, i) => (
                   <div
                     key={i}
-                    className="h-40 bg-zinc-50 rounded-2xl animate-pulse"
+                    className="h-40 bg-zinc-50 rounded-xl animate-pulse"
                   />
                 ))
               : filteredOrders.map((order) => (

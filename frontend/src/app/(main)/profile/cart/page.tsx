@@ -133,7 +133,7 @@ export default function CartPage() {
           <button
             onClick={toggleSelectAll}
             className={cn(
-              "w-5 h-5 rounded border flex items-center justify-center transition-all",
+              "w-5 h-5 rounded-xl border flex items-center justify-center transition-all",
               selectedIds.length === items.length && items.length > 0
                 ? "bg-red-600 border-red-600 text-white"
                 : "border-zinc-300 hover:border-red-600 bg-white",
@@ -191,7 +191,7 @@ export default function CartPage() {
               <button
                 onClick={() => toggleSelect(item.id)}
                 className={cn(
-                  "w-5 h-5 rounded border flex items-center justify-center transition-all shrink-0",
+                  "w-5 h-5 rounded-xl border flex items-center justify-center transition-all shrink-0",
                   selectedIds.includes(item.id)
                     ? "bg-red-600 border-red-600 text-white"
                     : "border-zinc-300 hover:border-red-600 bg-white",
@@ -231,7 +231,7 @@ export default function CartPage() {
                       onClick={() =>
                         handleUpdateQuantity(item.id, item.quantity - 1)
                       }
-                      className="w-7 h-7 rounded flex items-center justify-center text-zinc-500 hover:bg-white hover:text-red-600 transition-all"
+                      className="w-7 h-7 rounded-xl flex items-center justify-center text-zinc-500 hover:bg-white hover:text-red-600 transition-all"
                     >
                       <Minus className="w-3 h-3" />
                     </button>
@@ -242,7 +242,7 @@ export default function CartPage() {
                       onClick={() =>
                         handleUpdateQuantity(item.id, item.quantity + 1)
                       }
-                      className="w-7 h-7 rounded flex items-center justify-center text-zinc-500 hover:bg-white hover:text-red-600 transition-all"
+                      className="w-7 h-7 rounded-xl flex items-center justify-center text-zinc-500 hover:bg-white hover:text-red-600 transition-all"
                     >
                       <Plus className="w-3 h-3" />
                     </button>
@@ -294,7 +294,7 @@ export default function CartPage() {
                   <span className="text-zinc-500 font-normal text-sm">
                     Phí vận chuyển
                   </span>
-                  <span className="text-emerald-600 font-bold text-[11px] bg-emerald-50 px-2.5 py-1 rounded-md">
+                  <span className="text-emerald-600 font-bold text-[11px] bg-emerald-50 px-2.5 py-1 rounded-xl">
                     Miễn phí
                   </span>
                 </div>

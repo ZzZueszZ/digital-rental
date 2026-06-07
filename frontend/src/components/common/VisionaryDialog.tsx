@@ -37,7 +37,7 @@ export function VisionaryDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         className={cn(
-          "p-0 overflow-hidden rounded-[2.5rem] border-none shadow-[0_30px_100px_rgba(0,0,0,0.1)] bg-white animate-in fade-in zoom-in-95 duration-300",
+          "p-0 overflow-hidden rounded-xl border-none shadow-[0_30px_100px_rgba(0,0,0,0.1)] bg-white animate-in fade-in zoom-in-95 duration-300",
           maxWidth,
           className,
         )}

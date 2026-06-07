@@ -219,14 +219,14 @@ function Calendar({
           <button
             type="button"
             onClick={prevMonth}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
+            className="w-7 h-7 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             type="button"
             onClick={nextMonth}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
+            className="w-7 h-7 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -268,7 +268,7 @@ function Calendar({
                 }
               }}
               className={cn(
-                "w-9 h-9 mx-auto rounded-lg text-xs font-semibold transition-all flex items-center justify-center",
+                "w-9 h-9 mx-auto rounded-xl text-xs font-semibold transition-all flex items-center justify-center",
                 !cell.isCurrentMonth && "text-zinc-300",
                 cell.isCurrentMonth &&
                   !selected &&
@@ -293,14 +293,14 @@ function Calendar({
         <button
           type="button"
           onClick={() => onSelect("")}
-          className="text-[11px] font-semibold text-zinc-400 hover:text-red-600 transition-colors px-2 py-1 rounded-md hover:bg-red-50"
+          className="text-[11px] font-semibold text-zinc-400 hover:text-red-600 transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
         >
           Xóa
         </button>
         <button
           type="button"
           onClick={goToToday}
-          className="text-[11px] font-bold text-red-600 hover:text-red-700 transition-colors px-2 py-1 rounded-md hover:bg-red-50"
+          className="text-[11px] font-bold text-red-600 hover:text-red-700 transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
         >
           Hôm nay
         </button>
@@ -423,7 +423,7 @@ export function DateInput({
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-all"
+        className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl flex items-center justify-center text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-all"
         tabIndex={-1}
       >
         <CalendarDays className="w-4 h-4" />
@@ -433,7 +433,7 @@ export function DateInput({
       {isOpen && (
         <div
           ref={popoverRef}
-          className="absolute top-full left-0 mt-2 bg-white rounded-2xl border border-zinc-200 shadow-xl shadow-zinc-200/50 p-4 z-[100] animate-in fade-in slide-in-from-top-2 duration-200"
+          className="absolute top-full left-0 mt-2 bg-white rounded-xl border border-zinc-200 shadow-xl shadow-zinc-200/50 p-4 z-[100] animate-in fade-in slide-in-from-top-2 duration-200"
         >
           <Calendar
             selected={value}

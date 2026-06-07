@@ -275,7 +275,7 @@ export default function ProductsAdminPage() {
                       setPage(0);
                     }}
                     className={cn(
-                      "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150",
+                      "px-4 py-1.5 rounded-xl text-[14px] font-medium transition-all duration-150",
                       viewMode === mode
                         ? "bg-zinc-950 text-white shadow-sm"
                         : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200/50",
@@ -436,7 +436,7 @@ export default function ProductsAdminPage() {
               Array.from({ length: 3 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-32 bg-zinc-50 rounded-2xl animate-pulse"
+                  className="h-32 bg-zinc-50 rounded-xl animate-pulse"
                 />
               ))
             ) : products.length === 0 ? (

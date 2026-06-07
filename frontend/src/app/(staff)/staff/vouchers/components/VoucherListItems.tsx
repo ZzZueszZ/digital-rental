@@ -86,7 +86,7 @@ export function VoucherTableRow({
               {voucher.code}
             </p>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded">
+              <span className="text-xs font-medium text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded-xl">
                 ID: {voucher.id}
               </span>
             </div>
@@ -108,7 +108,7 @@ export function VoucherTableRow({
           <div className="flex items-center gap-2">
             <Badge
               className={cn(
-                "rounded-md px-2.5 py-1 text-[10px] font-bold border-0 ring-0 shadow-none",
+                "rounded-xl px-2.5 py-1 text-[10px] font-bold border-0 ring-0 shadow-none",
                 status.className,
               )}
             >

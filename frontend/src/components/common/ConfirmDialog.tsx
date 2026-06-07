@@ -67,7 +67,7 @@ export function ConfirmDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="sm:max-w-md !p-0 !gap-0 overflow-hidden border border-zinc-100 shadow-dash-overlay rounded-2xl bg-white">
+      <DialogContent showCloseButton={false} className="sm:max-w-md !p-0 !gap-0 overflow-hidden border border-zinc-100 shadow-dash-overlay rounded-xl bg-white">
         <div className="p-6">
           <DialogHeader className="flex flex-col sm:flex-row sm:items-start gap-4 space-y-0 text-left">
             <div className={cn("w-12 h-12 rounded-full flex items-center justify-center shrink-0 self-start shadow-sm border border-zinc-100", getIconBg())}>
@@ -83,7 +83,7 @@ export function ConfirmDialog({
             </div>
           </DialogHeader>
         </div>
-        <DialogFooter className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex flex-row justify-end gap-3 m-0 rounded-b-2xl">
+        <DialogFooter className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex flex-row justify-end gap-3 m-0 rounded-b-xl">
           <DialogClose 
             render={
               <Button

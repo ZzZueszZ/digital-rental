@@ -290,7 +290,7 @@ export function ProductDialog({
               </>
             ) : (
               <div className="text-center p-4">
-                <div className="w-12 h-12 rounded-lg bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] flex items-center justify-center mx-auto mb-3 text-zinc-400 group-hover:text-red-600 transition-all duration-200 border border-black/5">
+                <div className="w-12 h-12 rounded-xl bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] flex items-center justify-center mx-auto mb-3 text-zinc-400 group-hover:text-red-600 transition-all duration-200 border border-black/5">
                   <Upload className="w-5 h-5" />
                 </div>
                 <span className="text-[13px] font-semibold text-zinc-600 block">
@@ -329,7 +329,7 @@ export function ProductDialog({
               }
               placeholder="VD: Sony Alpha A7IV Body..."
               className={cn(
-                "h-12 rounded-lg bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
+                "h-12 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
                 errors.name && "border-red-400 focus:ring-red-400/20",
               )}
             />
@@ -353,13 +353,13 @@ export function ProductDialog({
               >
                 <SelectTrigger
                   className={cn(
-                    "!w-full !h-12 px-4 rounded-lg !bg-zinc-50/50 !border-black/5 focus:!bg-white focus:!border-red-600/30 focus:!ring-4 focus:!ring-red-600/5 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] text-[15px] font-semibold text-zinc-900",
+                    "!w-full !h-12 px-4 rounded-xl !bg-zinc-50/50 !border-black/5 focus:!bg-white focus:!border-red-600/30 focus:!ring-4 focus:!ring-red-600/5 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] text-[15px] font-semibold text-zinc-900",
                     errors.categoryId && "!border-red-400",
                   )}
                 >
                   <SelectValue placeholder="Chọn danh mục" />
                 </SelectTrigger>
-                <SelectContent className="rounded-lg border border-black/5 shadow-[0_8px_24px_rgba(0,0,0,0.08)] bg-white overflow-hidden">
+                <SelectContent className="rounded-xl border border-black/5 shadow-[0_8px_24px_rgba(0,0,0,0.08)] bg-white overflow-hidden">
                   {categories.map((c) => (
                     <SelectItem
                       key={c.id}
@@ -388,7 +388,7 @@ export function ProductDialog({
                   setFormData({ ...formData, brand: e.target.value })
                 }
                 placeholder="VD: Sony, Canon, Nikon..."
-                className="h-12 rounded-lg bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+                className="h-12 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
               />
             </div>
           </div>
@@ -422,7 +422,7 @@ export function ProductDialog({
                     }
                     placeholder="Giá / Ngày"
                     className={cn(
-                      "h-12 rounded-lg bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-bold text-[15px] pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] focus:ring-4 focus:ring-red-600/5",
+                      "h-12 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-bold text-[15px] pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] focus:ring-4 focus:ring-red-600/5",
                       errors.rentPricePerDay && "border-red-400",
                     )}
                   />
@@ -464,7 +464,7 @@ export function ProductDialog({
                     }
                     placeholder="Giá bán đứt"
                     className={cn(
-                      "h-12 rounded-lg bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-bold text-[15px] pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] focus:ring-4 focus:ring-red-600/5",
+                      "h-12 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-bold text-[15px] pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] focus:ring-4 focus:ring-red-600/5",
                       errors.salePrice && "border-red-400",
                     )}
                   />
@@ -501,7 +501,7 @@ export function ProductDialog({
               onChange={(e) =>
                 updateSpecification(index, "specKey", e.target.value)
               }
-              className="h-12 rounded-lg bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 text-sm font-semibold text-zinc-900 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
+              className="h-12 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 text-sm font-semibold text-zinc-900 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
             />
             <Input
               placeholder="VD: Full-frame CMOS 33MP"
@@ -509,12 +509,12 @@ export function ProductDialog({
               onChange={(e) =>
                 updateSpecification(index, "specValue", e.target.value)
               }
-              className="h-12 rounded-lg bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 text-sm font-semibold text-zinc-900 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
+              className="h-12 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 text-sm font-semibold text-zinc-900 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
             />
             <button
               type="button"
               onClick={() => removeSpecification(index)}
-              className="h-12 w-12 shrink-0 rounded-lg flex items-center justify-center border border-black/5 bg-zinc-50/50 text-zinc-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
+              className="h-12 w-12 shrink-0 rounded-xl flex items-center justify-center border border-black/5 bg-zinc-50/50 text-zinc-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -540,7 +540,7 @@ export function ProductDialog({
           }
           placeholder="Mô tả về tình trạng, tính năng nổi bật..."
           className={cn(
-            "flex min-h-[120px] w-full rounded-lg border border-black/5 bg-zinc-50/50 px-4 py-3 text-[15px] font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-[0_2px_6px_rgba(0,0,0,0.04)] leading-relaxed",
+            "flex min-h-[120px] w-full rounded-xl border border-black/5 bg-zinc-50/50 px-4 py-3 text-[15px] font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-[0_2px_6px_rgba(0,0,0,0.04)] leading-relaxed",
           )}
         />
       </div>

@@ -28,9 +28,9 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --radius-lg: 16px;
+  --radius-lg: 12px;
   --radius-md: 12px;
-  --radius-sm: 8px;
+  --radius-sm: 12px;
 
   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -40,9 +40,9 @@
   --spacing-dash-gap: 1.25rem; /* 20px */
   --spacing-dash-card-p: 1rem; /* 16px */
   --spacing-dash-card-p-lg: 1.25rem; /* 20px */
-  --radius-dash-sm: 8px;
+  --radius-dash-sm: 12px;
   --radius-dash-md: 12px;
-  --radius-dash-lg: 16px;
+  --radius-dash-lg: 12px;
   --shadow-dash-sm: var(--shadow-sm);
   --shadow-dash-md: var(--shadow-md);
   --shadow-dash-lg: var(--shadow-lg);
@@ -127,7 +127,7 @@
 
   /* Admin Checkbox Standardization */
   input[type="checkbox"] {
-    @apply appearance-none w-4 h-4 rounded border border-zinc-300 bg-white cursor-pointer transition-all relative shrink-0;
+    @apply appearance-none w-4 h-4 rounded-xl border border-zinc-300 bg-white cursor-pointer transition-all relative shrink-0;
   }
 
   input[type="checkbox"]:checked {
@@ -221,7 +221,7 @@
   }
 
   .admin-sidebar-item {
-    @apply h-11 px-3.5 rounded-dash-sm flex items-center gap-3 text-sm font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950 transition-all duration-200 ease-in-out cursor-pointer mb-1;
+    @apply h-11 px-3.5 rounded-xl flex items-center gap-3 text-sm font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950 transition-all duration-200 ease-in-out cursor-pointer mb-1;
   }
 
   .admin-sidebar-item.active {
@@ -238,7 +238,7 @@
   }
 
   .admin-card {
-    @apply bg-white border border-black/5 rounded-dash-md p-4 shadow-dash-sm transition-all duration-200 ease-in-out;
+    @apply bg-white border border-black/5 rounded-xl p-4 shadow-dash-sm transition-all duration-200 ease-in-out;
   }
 
   .admin-card:hover {
@@ -263,7 +263,7 @@
 
   /* Admin Tables */
   .admin-table-container {
-    @apply bg-white border border-black/5 rounded-dash-md shadow-dash-sm overflow-hidden;
+    @apply bg-white border border-black/5 rounded-xl shadow-dash-sm overflow-hidden;
   }
 
   .admin-table-row {
@@ -276,10 +276,10 @@
 
   /* Admin Buttons */
   .btn-admin-sm {
-    @apply px-3 py-1.5 text-xs font-bold rounded-dash-sm transition-all duration-200 ease-in-out;
+    @apply px-3 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 ease-in-out;
   }
   .btn-admin-md {
-    @apply px-4 py-2 text-sm font-bold rounded-dash-sm transition-all duration-200 ease-in-out;
+    @apply px-4 py-2 text-sm font-bold rounded-xl transition-all duration-200 ease-in-out;
   }
 
   /* Admin Forms */
@@ -287,7 +287,7 @@
     @apply space-y-4;
   }
   .admin-input {
-    @apply h-10 px-3 rounded-dash-sm border-zinc-200 text-sm focus-visible:ring-zinc-950/10;
+    @apply h-10 px-3 rounded-xl border-zinc-200 text-sm focus-visible:ring-zinc-950/10;
   }
 
   /* =========================================
@@ -307,7 +307,7 @@
   }
 
   .badge-discount {
-    @apply font-bold tracking-widest text-white bg-red-600 px-2 py-0.5 rounded-sm uppercase;
+    @apply font-bold tracking-widest text-white bg-red-600 px-2 py-0.5 rounded-xl uppercase;
     font-size: clamp(0.75rem, 1.5vw, 0.875rem); /* 12px - 14px */
   }
 

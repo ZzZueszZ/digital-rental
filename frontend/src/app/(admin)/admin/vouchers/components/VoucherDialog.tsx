@@ -157,7 +157,7 @@ export function VoucherDialog({
                   }
                   placeholder="VD: PRO-PH-2024"
                   disabled={!!voucher}
-                  className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-bold text-base shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 tracking-wider"
+                  className="h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-bold text-sm shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 tracking-wider"
                 />
                 {errors.code && (
                   <p className="text-[11px] font-medium text-red-600 ml-1">
@@ -175,7 +175,7 @@ export function VoucherDialog({
                     setFormData({ ...formData, name: e.target.value })
                   }
                   placeholder="VD: Ưu đãi khách hàng thân thiết"
-                  className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+                  className="h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
                 />
                 {errors.name && (
                   <p className="text-[11px] font-medium text-red-600 ml-1">
@@ -230,7 +230,7 @@ export function VoucherDialog({
                             })
                           }
                           className={cn(
-                            "flex-1 py-2.5 rounded-xl text-[11px] font-bold tracking-wider transition-all",
+                            "flex-1 py-2 rounded-xl text-[11px] font-bold tracking-wider transition-all",
                             formData.type === t
                               ? "bg-red-600 text-white shadow-md shadow-red-100"
                               : "text-zinc-500 hover:text-zinc-800",
@@ -256,7 +256,7 @@ export function VoucherDialog({
                       })
                     }
                     placeholder="0"
-                    className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-bold text-xl shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 tracking-tight"
+                    className="h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-bold text-sm shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 tracking-tight"
                   />
                 </div>
               </div>
@@ -279,7 +279,7 @@ export function VoucherDialog({
                     }
                     placeholder="∞ Không giới hạn"
                     disabled={formData.type === "FIXED_AMOUNT"}
-                    className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm disabled:opacity-40 shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+                    className="h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm disabled:opacity-40 shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -296,7 +296,7 @@ export function VoucherDialog({
                       })
                     }
                     placeholder="0"
-                    className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+                    className="h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
                   />
                 </div>
               </div>
@@ -332,7 +332,7 @@ export function VoucherDialog({
                       })
                     }
                     placeholder="1"
-                    className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+                    className="h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -351,7 +351,7 @@ export function VoucherDialog({
                       })
                     }
                     placeholder="∞ Không giới hạn"
-                    className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+                    className="h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
                   />
                 </div>
               </div>
@@ -390,7 +390,7 @@ export function VoucherDialog({
                     }
                     className="absolute inset-0 opacity-0 z-20 cursor-pointer w-full h-full [color-scheme:light] accent-red-600"
                   />
-                  <div className="h-12 px-4 rounded-xl bg-zinc-50/50 border border-zinc-950/5 flex items-center justify-between text-sm font-semibold text-zinc-900 group-hover:border-red-600/30 group-focus-within:bg-white group-focus-within:border-red-600/30 transition-all duration-200 shadow-dash-card focus-within:ring-4 focus-within:ring-red-600/5">
+                  <div className="h-10 px-4 rounded-xl bg-zinc-50/50 border border-zinc-950/5 flex items-center justify-between text-sm font-semibold text-zinc-900 group-hover:border-red-600/30 group-focus-within:bg-white group-focus-within:border-red-600/30 transition-all duration-200 shadow-dash-card focus-within:ring-4 focus-within:ring-red-600/5">
                     <span>{formatDateTime(formData.startDate)}</span>
                     <Calendar className="w-4 h-4 text-red-400" />
                   </div>
@@ -416,7 +416,7 @@ export function VoucherDialog({
                     }
                     className="absolute inset-0 opacity-0 z-20 cursor-pointer w-full h-full [color-scheme:light] accent-red-600"
                   />
-                  <div className="h-12 px-4 rounded-xl bg-zinc-50/50 border border-zinc-950/5 flex items-center justify-between text-sm font-semibold text-zinc-900 group-hover:border-red-600/30 group-focus-within:bg-white group-focus-within:border-red-600/30 transition-all duration-200 shadow-dash-card focus-within:ring-4 focus-within:ring-red-600/5">
+                  <div className="h-10 px-4 rounded-xl bg-zinc-50/50 border border-zinc-950/5 flex items-center justify-between text-sm font-semibold text-zinc-900 group-hover:border-red-600/30 group-focus-within:bg-white group-focus-within:border-red-600/30 transition-all duration-200 shadow-dash-card focus-within:ring-4 focus-within:ring-red-600/5">
                     <span>{formatDateTime(formData.endDate)}</span>
                     <Calendar className="w-4 h-4 text-red-400" />
                   </div>

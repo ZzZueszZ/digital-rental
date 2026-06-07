@@ -15,7 +15,6 @@ import {
   Video,
   Zap,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ProductListSection } from "@/components/home/ProductListSection";
@@ -144,24 +143,25 @@ export default function Home() {
                 variants={itemVariants}
                 className="flex flex-col gap-3 sm:flex-row"
               >
-                <Button
+                <button
+                  type="button"
                   onClick={scrollToProducts}
-                  className="h-11 rounded-xl bg-zinc-950 px-6 text-sm font-medium text-white shadow-none hover:bg-zinc-800"
+                  className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-950 px-6 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
                 >
-                  Xem thiết bị
+                  <span style={{ color: "#ffffff" }}>Xem thiết bị</span>
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
+                </button>
+                <button
+                  type="button"
                   onClick={() =>
                     document
                       .getElementById("rental-process")
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
-                  className="h-11 rounded-xl border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-800 shadow-none hover:bg-zinc-50"
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50"
                 >
-                  Xem quy trình thuê
-                </Button>
+                  <span style={{ color: "#27272a" }}>Xem quy trình thuê</span>
+                </button>
               </motion.div>
 
               <motion.div
@@ -431,7 +431,10 @@ export default function Home() {
                   <p className="mb-3 text-sm font-normal text-zinc-400">
                     Bắt đầu dự án mới
                   </p>
-                  <h2 className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
+                  <h2
+                    className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl"
+                    style={{ color: "#ffffff" }}
+                  >
                     Tìm bộ thiết bị phù hợp ngay hôm nay.
                   </h2>
                   <p className="mt-4 text-sm font-normal leading-6 text-zinc-400">
@@ -439,13 +442,14 @@ export default function Home() {
                     phẩm.
                   </p>
                 </div>
-                <Button
+                <button
+                  type="button"
                   onClick={scrollToProducts}
-                  className="h-11 shrink-0 rounded-xl bg-white px-6 text-sm font-medium text-zinc-950 shadow-none hover:bg-zinc-100"
+                  className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-white px-6 text-sm font-medium text-zinc-950 transition-colors hover:bg-zinc-100"
                 >
-                  Khám phá thiết bị
+                  <span style={{ color: "#09090b" }}>Khám phá thiết bị</span>
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                </button>
               </div>
             </div>
           </div>

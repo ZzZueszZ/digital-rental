@@ -63,4 +63,10 @@ public class RentalContract extends BaseAuditEntity {
     @Column(name = "is_locked", nullable = false)
     @Builder.Default
     private boolean isLocked = false;
+
+    @Column(name = "signing_otp_code", length = 6)
+    private String signingOtpCode;
+
+    @Column(name = "signing_otp_expires_at")
+    private LocalDateTime signingOtpExpiresAt;
 }

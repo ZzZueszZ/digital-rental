@@ -84,15 +84,26 @@ public class RentalController {
         return ResponseEntity.ok(ApiResponse.successfulResponse("Lấy chi tiết đơn thuê thành công", response));
     }
 
+    @PostMapping("/{id}/contract/send-otp")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<Void>> sendSigningOtp(
+            Authentication authentication,
+            @PathVariable Long id
+    ) {
+        User user = getCurrentUser(authentication);
+        rentalService.sendSigningOtp(id, user);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Gửi mã OTP ký hợp đồng thành công", null));
+    }
+
     @PostMapping("/{id}/contract/sign")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<RentalOrderResponse>> signContract(
             Authentication authentication,
             @PathVariable Long id,
-            @RequestBody String signature
+            @RequestBody @Valid SignContractRequest request
     ) {
         User user = getCurrentUser(authentication);
-        RentalOrderResponse response = rentalService.signContract(id, user, signature);
+        RentalOrderResponse response = rentalService.signContract(id, user, request);
         return ResponseEntity.ok(ApiResponse.successfulResponse("Ký hợp đồng online thành công", response));
     }
 

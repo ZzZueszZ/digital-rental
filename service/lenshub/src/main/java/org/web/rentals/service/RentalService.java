@@ -21,7 +21,9 @@ public interface RentalService {
 
     RentalOrderResponse getRentalDetailByCode(String code, User currentUser);
 
-    RentalOrderResponse signContract(Long id, User user, String signature);
+    void sendSigningOtp(Long id, User user);
+
+    RentalOrderResponse signContract(Long id, User user, SignContractRequest request);
 
     RentalOrderResponse payDeposit(Long id);
 

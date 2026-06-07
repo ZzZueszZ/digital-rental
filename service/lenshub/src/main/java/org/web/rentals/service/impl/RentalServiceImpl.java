@@ -32,6 +32,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import org.web.common.mails.MailService;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +54,7 @@ public class RentalServiceImpl implements RentalService {
     private final RentalReturnReportRepository rentalReturnReportRepository;
     private final RentalPaymentRepository rentalPaymentRepository;
     private final RentalRefundRepository rentalRefundRepository;
+    private final MailService mailService;
 
     @Override
     @Transactional(readOnly = true)
@@ -179,7 +182,38 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     @Transactional
-    public RentalOrderResponse signContract(Long id, User user, String signature) {
+    public void sendSigningOtp(Long id, User user) {
+        RentalOrder order = rentalOrderRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn hàng thuê"));
+
+        if (!order.getUser().getId().equals(user.getId())) {
+            throw new ApplicationException(HttpStatus.FORBIDDEN, "Bạn không có quyền ký hợp đồng này");
+        }
+
+        if (order.getStatus() != RentalOrderStatus.PAID_RENTAL_FEE && order.getStatus() != RentalOrderStatus.WAITING_PICKUP) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái đã thanh toán hoặc chờ lấy máy để thực hiện gửi OTP.");
+        }
+
+        RentalContract contract = order.getContract();
+        if (contract == null) {
+            throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "Hợp đồng chưa được khởi tạo cho đơn hàng này.");
+        }
+
+        if (contract.isLocked()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Hợp đồng này đã được ký và khóa.");
+        }
+
+        String otp = String.valueOf(100000 + new SecureRandom().nextInt(900000));
+        contract.setSigningOtpCode(otp);
+        contract.setSigningOtpExpiresAt(LocalDateTime.now().plusMinutes(5));
+        rentalContractRepository.save(contract);
+
+        mailService.sendContractSigningOtp(user, otp, order.getCode());
+    }
+
+    @Override
+    @Transactional
+    public RentalOrderResponse signContract(Long id, User user, SignContractRequest request) {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn hàng thuê"));
 
@@ -200,12 +234,25 @@ public class RentalServiceImpl implements RentalService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Hợp đồng này đã được ký và khóa.");
         }
 
-        // Basic implementation for signing contract
-        contract.setContractHash(signature); // use signature as hash for now or compute real hash later
+        if (contract.getSigningOtpCode() == null || contract.getSigningOtpExpiresAt() == null) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Yêu cầu gửi OTP trước khi thực hiện ký hợp đồng.");
+        }
+
+        if (contract.getSigningOtpExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Mã OTP đã hết hạn. Vui lòng gửi lại OTP.");
+        }
+
+        if (!contract.getSigningOtpCode().equals(request.getOtpCode())) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Mã OTP không chính xác.");
+        }
+
+        contract.setContractHash(request.getSignature());
         contract.setStatus(org.web.common.enums.ContractStatus.SIGNED);
         contract.setSignerUserId(user.getId());
         contract.setSignedAt(LocalDateTime.now());
         contract.setLocked(true);
+        contract.setSigningOtpCode(null);
+        contract.setSigningOtpExpiresAt(null);
         rentalContractRepository.save(contract);
 
         order.setStatus(RentalOrderStatus.WAITING_PICKUP);

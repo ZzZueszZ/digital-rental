@@ -236,10 +236,13 @@ export const rentalService = {
     return response.data;
   },
 
-  signContract: async (id: number, signature: string): Promise<{ success: boolean; data: RentalOrderResponse }> => {
-    const response = await axios.post<{ success: boolean; data: RentalOrderResponse }>(`/rentals/${id}/contract/sign`, signature, {
-      headers: { "Content-Type": "text/plain" }
-    });
+  sendSigningOtp: async (id: number): Promise<{ success: boolean; data: null }> => {
+    const response = await axios.post<{ success: boolean; data: null }>(`/rentals/${id}/contract/send-otp`);
+    return response.data;
+  },
+
+  signContract: async (id: number, data: { signature: string; otpCode: string }): Promise<{ success: boolean; data: RentalOrderResponse }> => {
+    const response = await axios.post<{ success: boolean; data: RentalOrderResponse }>(`/rentals/${id}/contract/sign`, data);
     return response.data;
   },
 
@@ -324,12 +327,20 @@ export const useRentalDetail = (id: number) => {
   });
 };
 
+export const useSendSigningOtp = () => {
+  return useMutation({
+    mutationFn: (id: number) => rentalService.sendSigningOtp(id)
+  });
+};
+
 export const useSignContract = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, signature }: { id: number; signature: string }) => rentalService.signContract(id, signature),
-    onSuccess: () => {
+    mutationFn: ({ id, signature, otpCode }: { id: number; signature: string; otpCode: string }) =>
+      rentalService.signContract(id, { signature, otpCode }),
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["rentals"] });
+      queryClient.invalidateQueries({ queryKey: ["rentals", "detail", variables.id] });
     }
   });
 };

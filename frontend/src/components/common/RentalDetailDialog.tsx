@@ -23,7 +23,8 @@ import {
   RentalOrderStatus,
   useRentalDetail,
   useSignContract,
-  useStaffRentalDetail
+  useStaffRentalDetail,
+  useSendSigningOtp
 } from "@/services/rental";
 
 interface RentalDetailDialogProps {
@@ -50,9 +51,32 @@ export function RentalDetailDialog({
   const isLoading = isStaffPortal ? staffDetailQuery.isLoading : customerDetailQuery.isLoading;
 
   const { mutateAsync: signContract, isPending: isSigning } = useSignContract();
+  const { mutateAsync: sendSigningOtp, isPending: isSendingOtp } = useSendSigningOtp();
   const rental = rentalRes?.data;
   const [showSignForm, setShowSignForm] = useState(false);
   const [signatureText, setSignatureText] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+
+  const handleOpenSignForm = async () => {
+    try {
+      await sendSigningOtp(rentalId);
+      toast.success("Mã OTP đã được gửi về email của bạn!");
+      setShowSignForm(true);
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Lỗi gửi mã OTP. Vui lòng thử lại.");
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      await sendSigningOtp(rentalId);
+      toast.success("Đã gửi lại mã OTP mới về email của bạn!");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Lỗi gửi mã OTP. Vui lòng thử lại.");
+    }
+  };
 
   const handleDownloadPDF = () => {
     if (!rental || !rental.contract) return;
@@ -579,11 +603,16 @@ export function RentalDetailDialog({
       toast.error("Vui lòng nhập tên của bạn để ký hợp đồng");
       return;
     }
+    if (!otpCode.trim() || otpCode.length !== 6) {
+      toast.error("Vui lòng nhập mã OTP 6 chữ số hợp lệ");
+      return;
+    }
     try {
-      await signContract({ id: rentalId, signature: signatureText });
+      await signContract({ id: rentalId, signature: signatureText, otpCode });
       toast.success("Đã ký hợp đồng điện tử thành công!");
       setShowSignForm(false);
       setSignatureText("");
+      setOtpCode("");
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
       toast.error(error.response?.data?.message || "Lỗi ký hợp đồng");
@@ -895,30 +924,68 @@ export function RentalDetailDialog({
               ) : (
                 !showSignForm && !hideSignAction && (
                   <Button
-                    onClick={() => setShowSignForm(true)}
-                    className="w-full h-11 bg-red-600 hover:bg-zinc-950 text-white font-bold text-xs rounded-xl transition-all border-none"
+                    onClick={handleOpenSignForm}
+                    disabled={isSendingOtp}
+                    className="w-full h-11 bg-red-600 hover:bg-zinc-950 text-white font-bold text-xs rounded-xl transition-all border-none flex items-center justify-center gap-1.5"
                   >
-                    <FilePenLine className="w-4 h-4 mr-2" /> Tiến hành ký hợp đồng online
+                    {isSendingOtp ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <FilePenLine className="w-4 h-4" />
+                    )}
+                    Tiến hành ký hợp đồng online
                   </Button>
                 )
               )}
 
               {showSignForm && !hideSignAction && (
                 <div className="space-y-3 pt-2 border-t border-black/5 animate-in slide-in-from-bottom-2 duration-300">
-                  <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
-                    Ký xác nhận (Nhập Họ tên đầy đủ của bạn)
-                  </label>
-                  <input
-                    type="text"
-                    value={signatureText}
-                    onChange={(e) => setSignatureText(e.target.value)}
-                    placeholder="Ví dụ: Nguyễn Thành Đạt"
-                    className="w-full h-10 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950"
-                  />
+                  <div className="bg-zinc-50 border border-black/5 p-3 rounded-xl space-y-1">
+                    <p className="text-[10px] font-semibold text-zinc-600">
+                      Mã xác thực OTP đã được gửi đến email đăng ký của bạn. Vui lòng nhập mã OTP và Họ tên để hoàn tất ký hợp đồng.
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">
+                      Ký xác nhận (Nhập Họ tên đầy đủ của bạn)
+                    </label>
+                    <input
+                      type="text"
+                      value={signatureText}
+                      onChange={(e) => setSignatureText(e.target.value)}
+                      placeholder="Ví dụ: Nguyễn Thành Đạt"
+                      className="w-full h-10 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                        Mã OTP xác thực email
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleResendOtp}
+                        disabled={isSendingOtp}
+                        className="text-[10px] font-bold text-red-600 hover:underline disabled:text-zinc-400"
+                      >
+                        {isSendingOtp ? "Đang gửi..." : "Gửi lại OTP"}
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      placeholder="Nhập mã OTP 6 chữ số"
+                      className="w-full h-10 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 text-center tracking-[0.25em]"
+                    />
+                  </div>
                   <div className="flex gap-3">
                     <Button
                       variant="outline"
-                      onClick={() => setShowSignForm(false)}
+                      onClick={() => {
+                        setShowSignForm(false);
+                        setOtpCode("");
+                      }}
                       className="flex-1 h-10 rounded-xl text-xs font-bold"
                     >
                       Hủy bỏ
@@ -926,9 +993,9 @@ export function RentalDetailDialog({
                     <Button
                       onClick={handleSignContract}
                       disabled={isSigning}
-                      className="flex-1 h-10 rounded-xl bg-zinc-950 text-white text-xs font-bold hover:bg-red-600"
+                      className="flex-1 h-10 rounded-xl bg-zinc-950 text-white text-xs font-bold hover:bg-red-600 flex items-center justify-center"
                     >
-                      {isSigning ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Xác nhận ký"}
+                      {isSigning ? <Loader2 className="w-4 h-4 animate-spin" /> : "Xác nhận ký"}
                     </Button>
                   </div>
                 </div>

@@ -90,4 +90,23 @@ public class MailService {
             System.err.println("Failed to send support reply email to: " + ticket.getEmail());
         }
     }
+
+    public void sendContractSigningOtp(User user, String otpCode, String orderCode) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(user.getEmail());
+        message.setSubject("Mã OTP ký hợp đồng điện tử Lenshub - Đơn hàng #" + orderCode);
+        message.setText("Xin chào,\n\n"
+                + "Bạn đang thực hiện ký hợp đồng điện tử cho đơn thuê thiết bị #" + orderCode + ".\n"
+                + "Mã OTP của bạn là: " + otpCode + "\n"
+                + "Mã này có hiệu lực trong 5 phút. Vui lòng không chia sẻ mã này với bất kỳ ai.\n\n"
+                + "Trân trọng,\nLenshub Team");
+
+        try {
+            mailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to send signing OTP email to: " + user.getEmail());
+        }
+    }
 }

@@ -49,7 +49,7 @@ export default function ProfileLayout({
     try {
       await authService.logout();
       toast.success("Đã đăng xuất");
-      router.push("/login");
+      router.push("/auth/login");
     } catch (error) {
       toast.error("Lỗi khi đăng xuất");
     }

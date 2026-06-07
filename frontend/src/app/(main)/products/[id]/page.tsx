@@ -188,7 +188,7 @@ export default function ProductDetailPage() {
   const handleRentalSubmit = async () => {
     if (!accessToken) {
       toast.error("Vui lòng đăng nhập để thuê thiết bị");
-      router.push("/login");
+      router.push("/auth/login");
       return;
     }
 
@@ -282,7 +282,7 @@ export default function ProductDetailPage() {
   const handleAddToCart = async () => {
     if (!accessToken) {
       toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng");
-      router.push("/login");
+      router.push("/auth/login");
       return;
     }
 
@@ -308,7 +308,7 @@ export default function ProductDetailPage() {
   const handleBuyNow = async () => {
     if (!accessToken) {
       toast.error("Vui lòng đăng nhập để mua hàng");
-      router.push("/login");
+      router.push("/auth/login");
       return;
     }
 

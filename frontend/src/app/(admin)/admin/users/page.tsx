@@ -287,7 +287,7 @@ export default function UsersAdminPage() {
                     key={mode}
                     onClick={() => handleViewModeChange(mode)}
                     className={cn(
-                      "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150",
+                      "px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-150 whitespace-nowrap",
                       viewMode === mode
                         ? "bg-zinc-950 text-white shadow-md shadow-zinc-200"
                         : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50",

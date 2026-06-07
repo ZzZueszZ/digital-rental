@@ -65,7 +65,7 @@ export function CategoryDialog({
       open={open}
       onOpenChange={onOpenChange}
       icon={Tag}
-      iconClassName="bg-zinc-950 text-white shadow-lg shadow-zinc-200"
+      iconClassName="bg-red-600 text-white shadow-lg shadow-red-100/20"
       title={category ? "Cập nhật danh mục" : "Tạo danh mục mới"}
       description={
         category
@@ -89,7 +89,7 @@ export function CategoryDialog({
           disabled={!!category}
           placeholder="LAPTOP, CAMERA..."
           className={cn(
-            "h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] uppercase shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
+            "h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[14px] uppercase shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
             errors.code && "border-red-400 focus:ring-red-400/20",
           )}
         />
@@ -109,7 +109,7 @@ export function CategoryDialog({
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           placeholder="Máy tính xách tay, Máy ảnh..."
           className={cn(
-            "h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
+            "h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[14px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
             errors.name && "border-red-400 focus:ring-red-400/20",
           )}
         />

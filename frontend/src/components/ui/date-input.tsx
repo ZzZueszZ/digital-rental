@@ -95,6 +95,15 @@ function Calendar({
   const [viewYear, setViewYear] = React.useState(parsed?.year ?? today.getFullYear());
   const [viewMonth, setViewMonth] = React.useState(parsed?.month ?? today.getMonth());
 
+  // Sync view when selected date changes (e.g. user typed a valid date)
+  React.useEffect(() => {
+    const p = parseIso(selected || "");
+    if (p) {
+      setViewYear(p.year);
+      setViewMonth(p.month);
+    }
+  }, [selected]);
+
   const minParsed = parseIso(min || "");
   const maxParsed = parseIso(max || "");
 
@@ -180,11 +189,35 @@ function Calendar({
 
   return (
     <div className="w-[280px] select-none">
-      {/* Header: Month/Year + nav */}
+      {/* Header: Month/Year dropdown selectors + nav */}
       <div className="flex items-center justify-between px-1 mb-3">
-        <span className="text-sm font-bold text-zinc-900 tracking-tight">
-          {MONTH_NAMES[viewMonth]} {viewYear}
-        </span>
+        <div className="flex items-center gap-1">
+          <select
+            value={viewMonth}
+            onChange={(e) => setViewMonth(Number(e.target.value))}
+            className="bg-transparent text-sm font-bold text-zinc-900 outline-none cursor-pointer hover:bg-zinc-100 px-1 py-0.5 rounded-lg transition-colors border-none focus:ring-0 focus-visible:ring-0 appearance-none"
+          >
+            {MONTH_NAMES.map((name, idx) => (
+              <option key={idx} value={idx}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={viewYear}
+            onChange={(e) => setViewYear(Number(e.target.value))}
+            className="bg-transparent text-sm font-bold text-zinc-900 outline-none cursor-pointer hover:bg-zinc-100 px-1 py-0.5 rounded-lg transition-colors border-none focus:ring-0 focus-visible:ring-0 appearance-none"
+          >
+            {Array.from({ length: 120 }, (_, i) => {
+              const y = today.getFullYear() - 100 + i;
+              return (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              );
+            }).reverse()}
+          </select>
+        </div>
         <div className="flex items-center gap-0.5">
           <button
             type="button"

@@ -35,7 +35,7 @@ export default function OverviewPage() {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div>
             <h1 className="text-[36px] font-bold text-zinc-950 tracking-tight mb-4 leading-[1.2]">
-              Chào buổi chiều, <br className="hidden md:block" />{" "}
+              Mừng bạn trở lại, <br className="hidden md:block" />{" "}
               {profile?.fullName || "Người dùng"}!
             </h1>
             <p className="text-base text-zinc-500 font-medium max-w-md leading-relaxed">

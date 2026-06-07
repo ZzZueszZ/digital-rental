@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
 import {
   VoucherResponse,
   VoucherCreateRequest,
@@ -374,53 +375,26 @@ export function VoucherDialog({
                 <label className="text-sm font-medium text-zinc-500 ml-1">
                   Bắt đầu lúc
                 </label>
-                <div className="relative group">
-                  <input
-                    type="datetime-local"
-                    value={formData.startDate}
-                    onChange={(e) =>
-                      setFormData({ ...formData, startDate: e.target.value })
-                    }
-                    onClick={(e) =>
-                      (
-                        e.currentTarget as HTMLInputElement & {
-                          showPicker?: () => void;
-                        }
-                      ).showPicker?.()
-                    }
-                    className="absolute inset-0 opacity-0 z-20 cursor-pointer w-full h-full [color-scheme:light] accent-red-600"
-                  />
-                  <div className="h-10 px-4 rounded-xl bg-zinc-50/50 border border-zinc-950/5 flex items-center justify-between text-sm font-semibold text-zinc-900 group-hover:border-red-600/30 group-focus-within:bg-white group-focus-within:border-red-600/30 transition-all duration-200 shadow-dash-card focus-within:ring-4 focus-within:ring-red-600/5">
-                    <span>{formatDateTime(formData.startDate)}</span>
-                    <Calendar className="w-4 h-4 text-red-400" />
-                  </div>
-                </div>
+                <DateTimePicker
+                  value={formData.startDate}
+                  onChange={(val) =>
+                    setFormData({ ...formData, startDate: val })
+                  }
+                  placeholder="Chọn thời gian bắt đầu"
+                />
               </div>
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-zinc-500 ml-1">
                   Kết thúc lúc
                 </label>
-                <div className="relative group">
-                  <input
-                    type="datetime-local"
-                    value={formData.endDate}
-                    onChange={(e) =>
-                      setFormData({ ...formData, endDate: e.target.value })
-                    }
-                    onClick={(e) =>
-                      (
-                        e.currentTarget as HTMLInputElement & {
-                          showPicker?: () => void;
-                        }
-                      ).showPicker?.()
-                    }
-                    className="absolute inset-0 opacity-0 z-20 cursor-pointer w-full h-full [color-scheme:light] accent-red-600"
-                  />
-                  <div className="h-10 px-4 rounded-xl bg-zinc-50/50 border border-zinc-950/5 flex items-center justify-between text-sm font-semibold text-zinc-900 group-hover:border-red-600/30 group-focus-within:bg-white group-focus-within:border-red-600/30 transition-all duration-200 shadow-dash-card focus-within:ring-4 focus-within:ring-red-600/5">
-                    <span>{formatDateTime(formData.endDate)}</span>
-                    <Calendar className="w-4 h-4 text-red-400" />
-                  </div>
-                </div>
+                <DateTimePicker
+                  value={formData.endDate}
+                  onChange={(val) =>
+                    setFormData({ ...formData, endDate: val })
+                  }
+                  min={formData.startDate}
+                  placeholder="Chọn thời gian kết thúc"
+                />
                 {errors.endDate && (
                   <p className="text-[11px] font-medium text-red-600 ml-1">
                     {errors.endDate}

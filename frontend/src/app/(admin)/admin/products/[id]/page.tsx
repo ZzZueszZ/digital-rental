@@ -108,7 +108,7 @@ export default function ProductDetailPage({
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isStockDialogOpen, setIsStockDialogOpen] = useState(false);
   const [isPriceDialogOpen, setIsPriceDialogOpen] = useState(false);
-  const [showStockForm, setShowStockForm] = useState(false);
+  const [stockTab, setStockTab] = useState<"sale" | "rental" | null>(null);
   const [saleStockInput, setSaleStockInput] = useState("");
   const [rentalStockInput, setRentalStockInput] = useState("");
   const [saleStockReason, setSaleStockReason] = useState("");
@@ -549,17 +549,37 @@ export default function ProductDetailPage({
             </div>
 
             <div className="space-y-3 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowStockForm((prev) => !prev)}
-                className="w-full h-11 rounded-dash-sm bg-zinc-950 text-white border-0 text-sm font-semibold shadow-dash-sm hover:bg-zinc-800 hover:shadow-dash-md transition-all duration-200 ease-in-out"
-              >
-                {showStockForm ? "Ẩn form chỉnh tồn kho" : "Chỉnh tồn kho trực tiếp"}
-              </Button>
+              {/* Stock Tab Buttons */}
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  type="button"
+                  onClick={() => setStockTab(stockTab === "sale" ? null : "sale")}
+                  className={cn(
+                    "h-10 px-5 rounded-xl text-sm font-semibold transition-all duration-200 ease-in-out active:scale-95",
+                    stockTab === "sale"
+                      ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-100"
+                      : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 border-0"
+                  )}
+                >
+                  Kho bán
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setStockTab(stockTab === "rental" ? null : "rental")}
+                  className={cn(
+                    "h-10 px-5 rounded-xl text-sm font-semibold transition-all duration-200 ease-in-out active:scale-95",
+                    stockTab === "rental"
+                      ? "bg-amber-500 text-white hover:bg-amber-600 shadow-lg shadow-amber-100"
+                      : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 border-0"
+                  )}
+                >
+                  Kho thuê (Serial)
+                </Button>
+              </div>
 
-              {showStockForm && (
+              {stockTab !== null && (
                 <div className="grid gap-3">
+                  {stockTab === "sale" && (
                   <div className="rounded-dash-md border border-emerald-100 bg-emerald-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
                     <div className="flex items-center justify-between gap-3">
                       <div>
@@ -635,8 +655,10 @@ export default function ProductDetailPage({
                         ? "Đang cập nhật..."
                         : `${saleStockAction === "IMPORT" ? "Nhập thêm" : "Trừ bớt"} kho bán`}
                     </Button>
-                  </div>
+                   </div>
+                  )}
 
+                  {stockTab === "rental" && (
                   <div className="rounded-dash-md border border-amber-100 bg-amber-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
                     <div className="flex items-center justify-between gap-3">
                       <div>
@@ -728,6 +750,7 @@ export default function ProductDetailPage({
                       </div>
                     )}
                   </div>
+                  )}
                 </div>
               )}
             </div>

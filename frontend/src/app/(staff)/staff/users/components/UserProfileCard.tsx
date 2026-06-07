@@ -333,7 +333,7 @@ export function UserProfileCard({
                     setForm((p) => ({ ...p, lastName: e.target.value }))
                   }
                   placeholder="Nguyễn"
-                  className="h-12 rounded-xl border-black/5 bg-white text-[15px] font-semibold shadow-dash-card"
+                  className="h-10 rounded-xl border-black/5 bg-white text-sm font-semibold shadow-dash-card focus-visible:ring-0 focus-visible:border-zinc-300 px-4"
                 />
               </ProfileField>
               <ProfileField label="Tên">
@@ -343,7 +343,7 @@ export function UserProfileCard({
                     setForm((p) => ({ ...p, firstName: e.target.value }))
                   }
                   placeholder="Văn A"
-                  className="h-12 rounded-xl border-black/5 bg-white text-[15px] font-semibold shadow-dash-card"
+                  className="h-10 rounded-xl border-black/5 bg-white text-sm font-semibold shadow-dash-card focus-visible:ring-0 focus-visible:border-zinc-300 px-4"
                 />
               </ProfileField>
             </div>
@@ -354,7 +354,7 @@ export function UserProfileCard({
                   setForm((p) => ({ ...p, fullName: e.target.value }))
                 }
                 placeholder="Nguyễn Văn A"
-                className="h-12 rounded-xl border-black/5 bg-white text-[15px] font-semibold shadow-dash-card"
+                className="h-10 rounded-xl border-black/5 bg-white text-sm font-semibold shadow-dash-card focus-visible:ring-0 focus-visible:border-zinc-300 px-4"
               />
             </ProfileField>
             <ProfileField label="Giới tính">
@@ -370,7 +370,7 @@ export function UserProfileCard({
                       }))
                     }
                     className={cn(
-                      "flex-1 h-12 rounded-xl text-[13px] font-semibold border transition-all",
+                      "flex-1 h-10 rounded-xl text-[13px] font-semibold border transition-all",
                       form.gender === g.value
                         ? "bg-zinc-950 text-white border-zinc-950 shadow-lg shadow-zinc-200"
                         : "bg-white text-zinc-500 border-black/5 hover:border-zinc-300 shadow-dash-card",
@@ -387,6 +387,7 @@ export function UserProfileCard({
                 onChange={(v) =>
                   setForm((p) => ({ ...p, dateOfBirth: v }))
                 }
+                className="h-10 text-sm px-4 focus:border-zinc-300 focus:ring-0 focus-visible:ring-0 focus-visible:border-zinc-300"
               />
             </ProfileField>
             <ProfileField label="Nghề nghiệp">
@@ -396,7 +397,7 @@ export function UserProfileCard({
                   setForm((p) => ({ ...p, occupation: e.target.value }))
                 }
                 placeholder="Nhiếp ảnh gia"
-                className="h-12 rounded-xl border-black/5 bg-white text-[15px] font-semibold shadow-dash-card"
+                className="h-10 rounded-xl border-black/5 bg-white text-sm font-semibold shadow-dash-card focus-visible:ring-0 focus-visible:border-zinc-300 px-4"
               />
             </ProfileField>
             <ProfileField label="Công ty">
@@ -406,7 +407,7 @@ export function UserProfileCard({
                   setForm((p) => ({ ...p, companyName: e.target.value }))
                 }
                 placeholder="Studio ABC"
-                className="h-12 rounded-xl border-black/5 bg-white text-[15px] font-semibold shadow-dash-card"
+                className="h-10 rounded-xl border-black/5 bg-white text-sm font-semibold shadow-dash-card focus-visible:ring-0 focus-visible:border-zinc-300 px-4"
               />
             </ProfileField>
           </div>

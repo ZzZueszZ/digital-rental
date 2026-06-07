@@ -15,6 +15,13 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import {
   useProducts,
@@ -295,21 +302,34 @@ export default function ProductsAdminPage() {
                 />
               </div>
 
-              <select
-                value={selectedCategory}
-                onChange={(e) => {
-                  setSelectedCategory(e.target.value);
+              <Select
+                value={selectedCategory || "ALL"}
+                onValueChange={(val) => {
+                  setSelectedCategory(val === "ALL" || !val ? "" : val);
                   setPage(0);
                 }}
-                className="h-10 px-4 rounded-xl border border-zinc-100 bg-zinc-50/50 text-[14px] font-medium text-zinc-700 outline-none focus:bg-white transition-all min-w-[140px]"
               >
-                <option value="">Tất cả danh mục</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.name}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="h-10 px-4 rounded-xl !border-zinc-100 !bg-zinc-50/50 text-[14px] font-medium text-zinc-700 outline-none focus:!bg-white transition-all min-w-[155px] shadow-sm">
+                  <SelectValue placeholder="Tất cả danh mục" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay max-h-64 bg-white p-1">
+                  <SelectItem
+                    className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
+                    value="ALL"
+                  >
+                    Tất cả danh mục
+                  </SelectItem>
+                  {categories.map((c) => (
+                    <SelectItem
+                      key={c.id}
+                      value={c.name}
+                      className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
+                    >
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
               <Button
                 onClick={() => setDialogState({ type: "INFO", product: null })}

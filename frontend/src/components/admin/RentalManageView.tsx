@@ -19,6 +19,13 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import { cn, formatVND, formatDate } from "@/lib/utils";
 import { Pagination } from "@/app/(staff)/staff/components/Pagination";
@@ -83,7 +90,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   const [rejectReason, setRejectReason] = useState("");
   const [depositAmount, setDepositAmount] = useState<number>(0);
   const [riskLevel, setRiskLevel] = useState<RiskLevel>(RiskLevel.LOW_RISK);
-  const [deviceAssignments, setDeviceAssignments] = useState<Record<number, number>>({}); // itemId -> deviceId
+  const [deviceAssignments, setDeviceAssignments] = useState<Record<number, number | undefined>>({}); // itemId -> deviceId
   const [availableDevicesMap, setAvailableDevicesMap] = useState<Record<number, DeviceResponse[]>>({});
   const [loadingDevices, setLoadingDevices] = useState(false);
 
@@ -128,7 +135,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
       await prepareMutation.mutateAsync({
         id: selectedRental.id,
         req: {
-          itemDeviceAssignments: deviceAssignments,
+          itemDeviceAssignments: deviceAssignments as Record<number, number>,
           estimatedDepositAmount: depositAmount,
           riskLevel: riskLevel
         }
@@ -371,22 +378,61 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
             {/* Actions */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               {/* Status Selector */}
-              <select
-                value={statusFilter}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value as RentalOrderStatus | "ALL");
+              <Select
+                value={statusFilter as string}
+                onValueChange={(val: string | null) => {
+                  setStatusFilter((val || "ALL") as RentalOrderStatus | "ALL");
                   setPage(0);
                 }}
-                className="h-10 px-3 rounded-xl border border-zinc-200 text-xs font-bold text-zinc-600 bg-white outline-none focus:border-red-600"
               >
-                <option value="ALL">Tất cả trạng thái</option>
-                <option value={RentalOrderStatus.PENDING_PAYMENT}>Chờ thanh toán phí</option>
-                <option value={RentalOrderStatus.PAID_RENTAL_FEE}>Đã TT phí - Chờ chuẩn bị</option>
-                <option value={RentalOrderStatus.WAITING_PICKUP}>Chờ nhận máy</option>
-                <option value={RentalOrderStatus.RENTING}>Đang cho thuê</option>
-                <option value={RentalOrderStatus.RETURNED}>Đã trả - Chờ quyết toán</option>
-                <option value={RentalOrderStatus.COMPLETED}>Hoàn thành / Hoàn cọc</option>
-              </select>
+                <SelectTrigger className="w-full sm:w-[220px] !h-10 px-4 rounded-xl !border-zinc-200 !bg-white text-[13px] font-semibold text-zinc-600 focus:!border-red-600 transition-all duration-200 shadow-sm outline-none">
+                  <SelectValue placeholder="Tất cả trạng thái" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay max-h-64 bg-white p-1">
+                  <SelectItem
+                    className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
+                    value="ALL"
+                  >
+                    Tất cả trạng thái
+                  </SelectItem>
+                  <SelectItem
+                    className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
+                    value={RentalOrderStatus.PENDING_PAYMENT}
+                  >
+                    Chờ thanh toán phí
+                  </SelectItem>
+                  <SelectItem
+                    className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
+                    value={RentalOrderStatus.PAID_RENTAL_FEE}
+                  >
+                    Đã TT phí - Chờ chuẩn bị
+                  </SelectItem>
+                  <SelectItem
+                    className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
+                    value={RentalOrderStatus.WAITING_PICKUP}
+                  >
+                    Chờ nhận máy
+                  </SelectItem>
+                  <SelectItem
+                    className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
+                    value={RentalOrderStatus.RENTING}
+                  >
+                    Đang cho thuê
+                  </SelectItem>
+                  <SelectItem
+                    className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
+                    value={RentalOrderStatus.RETURNED}
+                  >
+                    Đã trả - Chờ quyết toán
+                  </SelectItem>
+                  <SelectItem
+                    className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
+                    value={RentalOrderStatus.COMPLETED}
+                  >
+                    Hoàn thành / Hoàn cọc
+                  </SelectItem>
+                </SelectContent>
+              </Select>
 
               <div className="relative flex-1 xl:w-80 group">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors duration-200" />
@@ -597,15 +643,34 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
                   Đánh giá mức độ rủi ro (CIC)
                 </label>
-                <select
+                <Select
                   value={riskLevel}
-                  onChange={(e) => setRiskLevel(e.target.value as RiskLevel)}
-                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-xs bg-white"
+                  onValueChange={(val) => setRiskLevel(val as RiskLevel)}
                 >
-                  <option value={RiskLevel.LOW_RISK}>LOW RISK (Rủi ro thấp - Cọc ít/Miễn cọc)</option>
-                  <option value={RiskLevel.MEDIUM_RISK}>MEDIUM RISK (Rủi ro trung bình - Cọc một phần)</option>
-                  <option value={RiskLevel.HIGH_RISK}>HIGH RISK (Rủi ro cao - Cọc 100% giá trị)</option>
-                </select>
+                  <SelectTrigger className="w-full !h-10 rounded-xl !border-zinc-200 !bg-white text-[13px] font-semibold text-zinc-900 focus:!border-red-600 transition-all duration-200 shadow-sm outline-none">
+                    <SelectValue placeholder="Chọn mức độ rủi ro" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay bg-white p-1">
+                    <SelectItem
+                      className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
+                      value={RiskLevel.LOW_RISK}
+                    >
+                      LOW RISK (Rủi ro thấp - Cọc ít/Miễn cọc)
+                    </SelectItem>
+                    <SelectItem
+                      className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
+                      value={RiskLevel.MEDIUM_RISK}
+                    >
+                      MEDIUM RISK (Rủi ro trung bình - Cọc một phần)
+                    </SelectItem>
+                    <SelectItem
+                      className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
+                      value={RiskLevel.HIGH_RISK}
+                    >
+                      HIGH RISK (Rủi ro cao - Cọc 100% giá trị)
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -629,18 +694,36 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                   return (
                     <div key={item.id} className="p-3 bg-zinc-50 border border-zinc-100 rounded-xl space-y-2">
                       <div className="text-xs font-bold text-zinc-900">{item.productName}</div>
-                      <select
-                        value={deviceAssignments[item.id] || ""}
-                        onChange={(e) => setDeviceAssignments({ ...deviceAssignments, [item.id]: Number(e.target.value) })}
-                        className="w-full h-9 rounded-lg border border-zinc-200 bg-white text-xs font-semibold px-2 outline-none"
+                      <Select
+                        value={deviceAssignments[item.id]?.toString() || "empty"}
+                        onValueChange={(val) => {
+                          setDeviceAssignments({
+                            ...deviceAssignments,
+                            [item.id]: val === "empty" ? undefined : Number(val),
+                          });
+                        }}
                       >
-                        <option value="">-- Chọn số Serial thiết bị trống --</option>
-                        {devs.map((d) => (
-                          <option key={d.id} value={d.id}>
-                            {d.serialNumber} ({d.conditionDetails || "Bình thường"})
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="w-full !h-10 rounded-xl !border-zinc-200 !bg-white text-[13px] font-semibold text-zinc-900 focus:!border-red-600 transition-all duration-200 shadow-sm outline-none">
+                          <SelectValue placeholder="-- Chọn số Serial thiết bị trống --" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay max-h-64 bg-white p-1">
+                          <SelectItem
+                            className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
+                            value="empty"
+                          >
+                            -- Chọn số Serial thiết bị trống --
+                          </SelectItem>
+                          {devs.map((d) => (
+                            <SelectItem
+                              key={d.id}
+                              value={d.id.toString()}
+                              className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
+                            >
+                              {d.serialNumber} ({d.conditionDetails || "Bình thường"})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       {devs.length === 0 && (
                         <p className="text-[10px] text-red-500 font-bold flex items-center gap-1">
                           <AlertTriangle className="w-3 h-3" /> Hết thiết bị sẵn sàng trong kho!

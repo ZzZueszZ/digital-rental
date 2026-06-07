@@ -2,10 +2,9 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { identityService, KycSessionResponse } from "@/services/identity";
+import { identityService, KycOcrPreviewResponse, KycSessionResponse } from "@/services/identity";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DateInput } from "@/components/ui/date-input";
 import {
   ShieldCheck,
   ShieldAlert,
@@ -13,19 +12,15 @@ import {
   Camera,
   UploadCloud,
   AlertCircle,
-  RefreshCw,
   Fingerprint,
+  RefreshCw,
   Upload,
+  Video,
+  Square,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useMyProfile } from "@/services/profile";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
 
 function base64ToFile(base64String: string, filename: string): File {
   const arr = base64String.split(",");
@@ -45,33 +40,26 @@ export default function EkycPage() {
   const [kycSession, setKycSession] = useState<KycSessionResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [step, setStep] = useState(1); // 1: Info, 2: Front CCCD, 3: Back CCCD, 4: Selfie, 5: Review & Submit
+  const [step, setStep] = useState(1); // 1: Front CCCD, 2: Back CCCD, 3: Selfie, 4: Liveness, 5: Review & Submit
 
   // Camera settings
   const [isCameraOpen, setIsCameraOpen] = useState(false);
-  const [activeCameraFor, setActiveCameraFor] = useState<"front" | "back" | "selfie" | null>(null);
+  const [activeCameraFor, setActiveCameraFor] = useState<"front" | "back" | "selfie" | "liveness" | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [recordingLiveness, setRecordingLiveness] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
 
   // Upload image URLs
   const [frontImage, setFrontImage] = useState<string | null>(null);
   const [backImage, setBackImage] = useState<string | null>(null);
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
-
-  // Form Fields CCCD
-  const [formData, setFormData] = useState({
-    identityNumber: "",
-    fullName: "",
-    dateOfBirth: "",
-    gender: "MALE",
-    nationality: "Việt Nam",
-    placeOfOrigin: "",
-    placeOfResidence: "",
-    issuedDate: "",
-    expiryDate: "",
-  });
+  const [livenessVideo, setLivenessVideo] = useState<string | null>(null);
+  const [ocrPreview, setOcrPreview] = useState<KycOcrPreviewResponse | null>(null);
+  const [previewingOcr, setPreviewingOcr] = useState(false);
 
   const fetchKycStatus = async () => {
     try {
@@ -92,11 +80,12 @@ export default function EkycPage() {
     };
   }, []);
 
-  const startCamera = async (target: "front" | "back" | "selfie") => {
+  const startCamera = async (target: "front" | "back" | "selfie" | "liveness") => {
     try {
       stopCamera();
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: target === "selfie" ? "user" : "environment", width: { ideal: 1280 }, height: { ideal: 720 } }
+        video: { facingMode: target === "front" || target === "back" ? "environment" : "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: target === "liveness",
       });
       streamRef.current = stream;
       setActiveCameraFor(target);
@@ -114,6 +103,10 @@ export default function EkycPage() {
   };
 
   const stopCamera = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+    setRecordingLiveness(false);
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
@@ -143,9 +136,11 @@ export default function EkycPage() {
       if (target === "front") {
         uploadedUrl = await identityService.uploadFront(file);
         setFrontImage(uploadedUrl);
+        setOcrPreview(null);
       } else if (target === "back") {
         uploadedUrl = await identityService.uploadBack(file);
         setBackImage(uploadedUrl);
+        setOcrPreview(null);
       } else {
         uploadedUrl = await identityService.uploadSelfie(file);
         setSelfieImage(uploadedUrl);
@@ -169,9 +164,11 @@ export default function EkycPage() {
       if (target === "front") {
         uploadedUrl = await identityService.uploadFront(file);
         setFrontImage(uploadedUrl);
+        setOcrPreview(null);
       } else {
         uploadedUrl = await identityService.uploadBack(file);
         setBackImage(uploadedUrl);
+        setOcrPreview(null);
       }
       toast.success("Tải ảnh lên thành công!");
     } catch (error) {
@@ -191,6 +188,8 @@ export default function EkycPage() {
       setFrontImage(null);
       setBackImage(null);
       setSelfieImage(null);
+      setLivenessVideo(null);
+      setOcrPreview(null);
     } catch {
       toast.error("Không thể khởi tạo phiên xác thực");
     } finally {
@@ -198,34 +197,107 @@ export default function EkycPage() {
     }
   };
 
-  const handleStep1Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.identityNumber || !formData.fullName || !formData.dateOfBirth || !formData.placeOfOrigin || !formData.placeOfResidence || !formData.issuedDate || !formData.expiryDate) {
-      toast.error("Vui lòng điền đầy đủ thông tin cá nhân CCCD");
-      return;
-    }
-    setStep(2);
-  };
-
   const handleStep2Submit = () => {
     if (!frontImage) {
       toast.error("Vui lòng tải lên hoặc chụp ảnh mặt trước CCCD");
       return;
     }
-    setStep(3);
+    setStep(2);
   };
 
-  const handleStep3Submit = () => {
+  const runOcrPreview = async () => {
+    if (!frontImage || !backImage) {
+      toast.error("Please upload both CCCD images before OCR preview");
+      return null;
+    }
+    try {
+      setPreviewingOcr(true);
+      const preview = await identityService.previewOcr({
+        frontImageUrl: frontImage,
+        backImageUrl: backImage,
+      });
+      setOcrPreview(preview);
+      if (preview.warnings?.length) {
+        toast.warning("OCR preview has warnings. Please review before continuing.");
+      } else {
+        toast.success("OCR preview ready");
+      }
+      return preview;
+    } catch (error) {
+      toast.error("OCR preview failed. Please retry or retake CCCD images.");
+      console.error(error);
+      return null;
+    } finally {
+      setPreviewingOcr(false);
+    }
+  };
+
+  const startLivenessRecording = () => {
+    if (!streamRef.current) return;
+    recordedChunksRef.current = [];
+    const mimeType = MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : "";
+    const recorder = new MediaRecorder(streamRef.current, mimeType ? { mimeType } : undefined);
+    mediaRecorderRef.current = recorder;
+    recorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        recordedChunksRef.current.push(event.data);
+      }
+    };
+    recorder.onstop = async () => {
+      const blob = new Blob(recordedChunksRef.current, { type: mimeType || "video/webm" });
+      const file = new File([blob], "liveness.webm", { type: mimeType || "video/webm" });
+      try {
+        setUploadingImage(true);
+        const uploadedUrl = await identityService.uploadLivenessVideo(file);
+        setLivenessVideo(uploadedUrl);
+        toast.success("Liveness video uploaded");
+      } catch (error) {
+        toast.error("Liveness video upload failed. Please record again.");
+        console.error(error);
+      } finally {
+        setUploadingImage(false);
+        setRecordingLiveness(false);
+        stopCamera();
+      }
+    };
+    recorder.start();
+    setRecordingLiveness(true);
+    setTimeout(() => {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+        mediaRecorderRef.current.stop();
+      }
+    }, 6000);
+  };
+
+  const stopLivenessRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+      mediaRecorderRef.current.stop();
+    }
+  };
+
+  const handleStep3Submit = async () => {
     if (!backImage) {
       toast.error("Vui lòng tải lên hoặc chụp ảnh mặt sau CCCD");
       return;
     }
-    setStep(4);
+    if (!ocrPreview) {
+      const preview = await runOcrPreview();
+      if (!preview) return;
+    }
+    setStep(3);
   };
 
   const handleStep4Submit = () => {
     if (!selfieImage) {
       toast.error("Vui lòng chụp ảnh chân dung selfie");
+      return;
+    }
+    setStep(4);
+  };
+
+  const handleStep5Submit = () => {
+    if (!livenessVideo) {
+      toast.error("Please record liveness video");
       return;
     }
     setStep(5);
@@ -234,19 +306,15 @@ export default function EkycPage() {
   const handleSubmitAll = async () => {
     try {
       setSubmitting(true);
+      if (!ocrPreview) {
+        const preview = await runOcrPreview();
+        if (!preview) return;
+      }
       const data = await identityService.submitKyc({
-        identityNumber: formData.identityNumber,
-        fullName: formData.fullName,
-        dateOfBirth: formData.dateOfBirth,
-        gender: formData.gender,
-        nationality: formData.nationality,
-        placeOfOrigin: formData.placeOfOrigin,
-        placeOfResidence: formData.placeOfResidence,
-        issuedDate: formData.issuedDate,
-        expiryDate: formData.expiryDate,
         frontImageUrl: frontImage || "",
         backImageUrl: backImage || "",
         selfieImageUrl: selfieImage || "",
+        livenessVideoUrl: livenessVideo || undefined,
       });
 
       if (data.status === "REJECTED") {
@@ -268,6 +336,72 @@ export default function EkycPage() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const renderOcrPreviewPanel = () => {
+    if (!ocrPreview) return null;
+    const fields = [
+      ["So CCCD", ocrPreview.identityNumber],
+      ["Ho va ten", ocrPreview.fullName],
+      ["Ngay sinh", ocrPreview.dateOfBirth],
+      ["Gioi tinh", ocrPreview.gender],
+      ["Quoc tich", ocrPreview.nationality],
+      ["Que quan", ocrPreview.placeOfOrigin],
+      ["Noi thuong tru", ocrPreview.placeOfResidence],
+      ["Ngay cap", ocrPreview.issuedDate],
+      ["Ngay het han", ocrPreview.expiryDate],
+    ];
+
+    return (
+      <div className="rounded-2xl border border-zinc-100 bg-zinc-50/60 p-5 shadow-sm space-y-5">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h4 className="text-sm font-bold text-zinc-900">OCR Preview</h4>
+            <p className="text-xs font-medium text-zinc-500 mt-1">
+              Extracted from CCCD front/back. Retake images if data is wrong.
+            </p>
+          </div>
+          <span className={cn(
+            "shrink-0 rounded-lg px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider",
+            ocrPreview.previewStatus === "READY"
+              ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+              : "bg-amber-50 text-amber-700 border border-amber-100"
+          )}>
+            {ocrPreview.previewStatus || "NEEDS_REVIEW"}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {fields.map(([label, value]) => (
+            <div key={label} className="rounded-xl border border-white bg-white px-3 py-2 shadow-sm min-w-0">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">{label}</div>
+              <div className="mt-1 text-sm font-semibold text-zinc-800 break-words">{value || "-"}</div>
+            </div>
+          ))}
+          <div className="rounded-xl border border-white bg-white px-3 py-2 shadow-sm min-w-0">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">OCR Confidence</div>
+            <div className="mt-1 text-sm font-semibold text-zinc-800">
+              {typeof ocrPreview.ocrConfidence === "number" ? `${(ocrPreview.ocrConfidence * 100).toFixed(1)}%` : "-"}
+            </div>
+          </div>
+          <div className="rounded-xl border border-white bg-white px-3 py-2 shadow-sm min-w-0">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Document Type</div>
+            <div className="mt-1 text-sm font-semibold text-zinc-800 break-words">{ocrPreview.documentType || "-"}</div>
+          </div>
+        </div>
+
+        {!!ocrPreview.warnings?.length && (
+          <div className="rounded-xl border border-amber-100 bg-amber-50 p-3 space-y-1">
+            {ocrPreview.warnings.map((warning) => (
+              <div key={warning} className="flex items-start gap-2 text-xs font-semibold text-amber-800">
+                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                <span>{warning}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   if (loading) {
@@ -544,7 +678,7 @@ export default function EkycPage() {
             Xác thực định danh (eKYC)
           </h1>
           <p className="text-sm text-zinc-500 font-medium mt-1">
-            Yêu cầu bắt buộc để thuê thiết bị máy ảnh. Hoàn thành 5 bước nhanh chóng.
+            Yêu cầu bắt buộc để thuê thiết bị máy ảnh. Hệ thống sẽ tự trích xuất thông tin từ ảnh CCCD.
           </p>
         </div>
 
@@ -568,145 +702,11 @@ export default function EkycPage() {
         </div>
       </div>
 
-      {/* Step 1: Input CCCD Details */}
+      {/* Step 1: Upload Front of CCCD */}
       {step === 1 && (
-        <form onSubmit={handleStep1Submit} className="space-y-8 animate-in fade-in duration-300">
-          <div>
-            <h3 className="text-lg font-semibold text-zinc-950">Bước 1: Nhập thông tin cá nhân trên CCCD</h3>
-            <p className="text-sm text-zinc-500 font-medium mt-1">
-              Nhập chính xác các thông tin ghi trên thẻ Căn cước công dân của bạn.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-500 ml-1">Số thẻ CCCD *</label>
-              <Input
-                required
-                value={formData.identityNumber}
-                onChange={(e) => setFormData({ ...formData, identityNumber: e.target.value })}
-                placeholder="Ví dụ: 079098123456"
-                className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-500 ml-1">Họ và Tên *</label>
-              <Input
-                required
-                value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                placeholder="Ví dụ: NGUYỄN VĂN A"
-                className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-500 ml-1">Ngày sinh *</label>
-              <DateInput
-                required
-                value={formData.dateOfBirth}
-                onChange={(v) => setFormData({ ...formData, dateOfBirth: v })}
-                className="h-10 text-[14px] px-4"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-500 ml-1">Giới tính *</label>
-              <Select
-                value={formData.gender}
-                onValueChange={(v) => setFormData({ ...formData, gender: v || "MALE" })}
-              >
-                <SelectTrigger className="w-full h-10! bg-white! border-black/5! rounded-xl px-4 font-semibold text-[14px] focus:border-red-600/30! transition-all duration-200 text-left shadow-dash-card outline-none">
-                  <span className={cn(formData.gender ? "text-zinc-900" : "text-zinc-400")}>
-                    {formData.gender === "MALE" ? "Nam" : formData.gender === "FEMALE" ? "Nữ" : "Khác"}
-                  </span>
-                </SelectTrigger>
-                <SelectContent className="rounded-xl shadow-dash-overlay border-black/5 p-1 bg-white z-100">
-                  <SelectItem
-                    value="MALE"
-                    className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-highlighted:bg-red-600 data-highlighted:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
-                  >
-                    Nam
-                  </SelectItem>
-                  <SelectItem
-                    value="FEMALE"
-                    className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-highlighted:bg-red-600 data-highlighted:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
-                  >
-                    Nữ
-                  </SelectItem>
-                  <SelectItem
-                    value="OTHER"
-                    className="font-semibold py-3 text-zinc-950 focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-highlighted:bg-red-600 data-highlighted:text-white data-[state=checked]:bg-red-50 data-[state=checked]:text-red-600 cursor-pointer transition-all outline-none"
-                  >
-                    Khác
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-500 ml-1">Quốc tịch *</label>
-              <Input
-                required
-                value={formData.nationality}
-                onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                placeholder="Việt Nam"
-                className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-500 ml-1">Quê quán (Nơi ĐK khai sinh) *</label>
-              <Input
-                required
-                value={formData.placeOfOrigin}
-                onChange={(e) => setFormData({ ...formData, placeOfOrigin: e.target.value })}
-                placeholder="Ví dụ: Quận 1, TP. Hồ Chí Minh"
-                className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
-              />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-medium text-zinc-500 ml-1">Nơi thường trú *</label>
-              <Input
-                required
-                value={formData.placeOfResidence}
-                onChange={(e) => setFormData({ ...formData, placeOfResidence: e.target.value })}
-                placeholder="Ví dụ: 123 Đường Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh"
-                className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-500 ml-1">Ngày cấp *</label>
-              <DateInput
-                required
-                value={formData.issuedDate}
-                onChange={(v) => setFormData({ ...formData, issuedDate: v })}
-                className="h-10 text-[14px] px-4"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-500 ml-1">Ngày hết hạn *</label>
-              <DateInput
-                required
-                value={formData.expiryDate}
-                onChange={(v) => setFormData({ ...formData, expiryDate: v })}
-                className="h-10 text-[14px] px-4"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end pt-6 border-t border-zinc-100">
-            <Button
-              type="submit"
-              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 disabled:opacity-50"
-            >
-              Tiếp tục: Mặt trước CCCD
-            </Button>
-          </div>
-        </form>
-      )}
-
-      {/* Step 2: Upload Front of CCCD */}
-      {step === 2 && (
         <div className="space-y-8 animate-in fade-in duration-300">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-950">Bước 2: Tải lên hoặc Chụp ảnh mặt trước CCCD</h3>
+            <h3 className="text-lg font-semibold text-zinc-950">Bước 1: Tải lên hoặc Chụp ảnh mặt trước CCCD</h3>
             <p className="text-sm text-zinc-500 font-medium mt-1">
               Hình ảnh cần rõ nét, đủ ánh sáng, không bị mất góc hoặc bị lóa thông tin.
             </p>
@@ -744,7 +744,10 @@ export default function EkycPage() {
                     className="w-full h-full object-contain rounded-lg"
                   />
                   <button
-                    onClick={() => setFrontImage(null)}
+                    onClick={() => {
+                      setFrontImage(null);
+                      setOcrPreview(null);
+                    }}
                     className="absolute top-3 right-3 bg-zinc-900/80 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold hover:bg-red-600 transition-colors shadow"
                   >
                     Thay đổi
@@ -780,14 +783,7 @@ export default function EkycPage() {
             </div>
           )}
 
-          <div className="flex justify-between pt-8 border-t border-zinc-100">
-            <Button
-              variant="outline"
-              onClick={() => setStep(1)}
-              className="h-10 px-5 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
-            >
-              Quay lại bước 1
-            </Button>
+          <div className="flex justify-end pt-8 border-t border-zinc-100">
             <Button
               onClick={handleStep2Submit}
               disabled={!frontImage || uploadingImage}
@@ -799,11 +795,11 @@ export default function EkycPage() {
         </div>
       )}
 
-      {/* Step 3: Upload Back of CCCD */}
-      {step === 3 && (
+      {/* Step 2: Upload Back of CCCD */}
+      {step === 2 && (
         <div className="space-y-8 animate-in fade-in duration-300">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-950">Bước 3: Tải lên hoặc Chụp ảnh mặt sau CCCD</h3>
+            <h3 className="text-lg font-semibold text-zinc-950">Bước 2: Tải lên hoặc Chụp ảnh mặt sau CCCD</h3>
             <p className="text-sm text-zinc-500 font-medium mt-1">
               Hình ảnh cần rõ nét, đủ ánh sáng, không bị mất góc hoặc bị lóa thông tin.
             </p>
@@ -841,7 +837,10 @@ export default function EkycPage() {
                     className="w-full h-full object-contain rounded-lg"
                   />
                   <button
-                    onClick={() => setBackImage(null)}
+                    onClick={() => {
+                      setBackImage(null);
+                      setOcrPreview(null);
+                    }}
                     className="absolute top-3 right-3 bg-zinc-900/80 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold hover:bg-red-600 transition-colors shadow"
                   >
                     Thay đổi
@@ -877,30 +876,38 @@ export default function EkycPage() {
             </div>
           )}
 
+          {ocrPreview && renderOcrPreviewPanel()}
+
           <div className="flex justify-between pt-8 border-t border-zinc-100">
             <Button
               variant="outline"
-              onClick={() => setStep(2)}
+              onClick={() => setStep(1)}
               className="h-10 px-5 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
             >
-              Quay lại bước 2
+              Quay lại bước 1
             </Button>
             <Button
               onClick={handleStep3Submit}
-              disabled={!backImage || uploadingImage}
+              disabled={!backImage || uploadingImage || previewingOcr}
               className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 disabled:opacity-50"
             >
-              Tiếp tục: Chụp chân dung Selfie
+              {previewingOcr ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Extracting OCR...
+                </>
+              ) : (
+                "Trich xuat thong tin & tiep tuc"
+              )}
             </Button>
           </div>
         </div>
       )}
 
-      {/* Step 4: Capture Selfie (ONLY Live Camera allowed) */}
-      {step === 4 && (
+      {/* Step 3: Capture Selfie (ONLY Live Camera allowed) */}
+      {step === 3 && (
         <div className="space-y-8 animate-in fade-in duration-300">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-950">Bước 4: Chụp chân dung Selfie</h3>
+            <h3 className="text-lg font-semibold text-zinc-950">Bước 3: Chụp chân dung Selfie</h3>
             <p className="text-sm text-zinc-500 font-medium mt-1">
               Ảnh chân dung của bạn bắt buộc phải chụp trực tiếp từ camera. Đảm bảo nhìn thẳng, không đội mũ, đeo kính mát hoặc khẩu trang.
             </p>
@@ -973,17 +980,117 @@ export default function EkycPage() {
           <div className="flex justify-between pt-8 border-t border-zinc-100">
             <Button
               variant="outline"
-              onClick={() => setStep(3)}
+              onClick={() => setStep(2)}
               className="h-10 px-5 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
             >
-              Quay lại bước 3
+              Quay lại bước 2
             </Button>
             <Button
               onClick={handleStep4Submit}
               disabled={!selfieImage || uploadingImage}
               className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 disabled:opacity-50"
             >
-              Tiếp tục: Kiểm tra & Gửi
+              Tiep tuc: Liveness video
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 4: Liveness Video */}
+      {step === 4 && (
+        <div className="space-y-8 animate-in fade-in duration-300">
+          <div>
+            <h3 className="text-lg font-semibold text-zinc-950">Buoc 4: Record liveness video</h3>
+            <p className="text-sm text-zinc-500 font-medium mt-1">
+              Record a short 5-6 second face video. Keep one face in frame, good light, no mask or sunglasses.
+            </p>
+          </div>
+
+          {isCameraOpen && activeCameraFor === "liveness" ? (
+            <div className="max-w-md mx-auto flex flex-col items-center gap-6 bg-zinc-50/50 p-6 rounded-2xl border border-zinc-200/60 shadow-sm">
+              <div className="relative aspect-square w-full rounded-2xl border border-zinc-200/80 overflow-hidden bg-zinc-100 flex items-center justify-center shadow-inner">
+                <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+                <div className="absolute inset-8 border-4 border-dashed border-red-600/10 rounded-full pointer-events-none flex items-center justify-center">
+                  <span className="text-xs text-zinc-700 bg-white/80 border border-zinc-200/50 px-5 py-2 rounded-full font-semibold whitespace-nowrap">
+                    Keep face centered
+                  </span>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                {recordingLiveness ? (
+                  <Button onClick={stopLivenessRecording} className="h-10 px-5 rounded-xl bg-red-600 text-white font-semibold text-[14px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95">
+                    <Square className="w-4 h-4 mr-2" /> Stop
+                  </Button>
+                ) : (
+                  <Button onClick={startLivenessRecording} className="h-10 px-5 rounded-xl bg-red-600 text-white font-semibold text-[14px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95">
+                    <Video className="w-4 h-4 mr-2" /> Record 6s
+                  </Button>
+                )}
+                <Button onClick={stopCamera} variant="outline" className="h-10 px-5 rounded-xl border border-zinc-200 text-zinc-700 bg-white font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95">
+                  Close Camera
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="max-w-md mx-auto">
+              {livenessVideo ? (
+                <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5 space-y-4 text-center">
+                  <Video className="w-10 h-10 text-emerald-600 mx-auto" />
+                  <div>
+                    <p className="text-sm font-bold text-zinc-900">Liveness video ready</p>
+                    <p className="text-xs font-medium text-zinc-500 mt-1">This video will be checked on final submit.</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setLivenessVideo(null);
+                      startCamera("liveness");
+                    }}
+                    className="h-10 px-5 rounded-xl border border-zinc-200 text-zinc-700 bg-white font-semibold text-[14px]"
+                  >
+                    Record again
+                  </Button>
+                </div>
+              ) : (
+                <div className="aspect-square w-full rounded-2xl border-2 border-dashed border-zinc-200 hover:border-red-600/30 bg-zinc-50/30 hover:bg-zinc-50/60 transition-all duration-300 flex flex-col items-center justify-center p-10 text-center">
+                  {uploadingImage ? (
+                    <div className="flex flex-col items-center gap-3">
+                      <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
+                      <span className="text-xs font-bold text-zinc-400">Uploading liveness video...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <Video className="w-14 h-14 text-zinc-300 mb-6" />
+                      <span className="text-xs font-bold text-zinc-500 mb-6 max-w-xs leading-relaxed">
+                        Open camera and record a short live face video for anti-spoofing check.
+                      </span>
+                      <Button
+                        onClick={() => startCamera("liveness")}
+                        className="h-10 px-5 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 transition-all active:scale-95"
+                      >
+                        <Video className="w-4 h-4" /> Open Camera
+                      </Button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="flex justify-between pt-8 border-t border-zinc-100">
+            <Button
+              variant="outline"
+              onClick={() => setStep(4)}
+              className="h-10 px-5 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
+            >
+              Back to selfie
+            </Button>
+            <Button
+              onClick={handleStep5Submit}
+              disabled={!livenessVideo || uploadingImage || recordingLiveness}
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 disabled:opacity-50"
+            >
+              Tiep tuc: Kiem tra & Gui
             </Button>
           </div>
         </div>
@@ -993,41 +1100,29 @@ export default function EkycPage() {
       {step === 5 && (
         <div className="space-y-8 animate-in fade-in duration-300">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-950">Bước 5: Xem lại hồ sơ & Gửi xác thực</h3>
+            <h3 className="text-lg font-semibold text-zinc-950">Bước 4: Xem lại ảnh & Gửi xác thực</h3>
             <p className="text-sm text-zinc-500 font-medium mt-1">
-              Kiểm tra kỹ lưỡng các thông tin bên dưới trước khi gửi. Toàn bộ hình ảnh sẽ được mã hóa và truyền bảo mật lên máy chủ.
+              Kiểm tra kỹ hình ảnh trước khi gửi. Hệ thống sẽ tự trích xuất thông tin CCCD và chuyển hồ sơ sang hàng chờ duyệt.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4">
-              <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Thông tin cá nhân</h4>
-              <div className="bg-zinc-50/50 p-6 rounded-2xl border border-zinc-100 grid grid-cols-1 sm:grid-cols-2 gap-4 shadow-sm">
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-zinc-400 uppercase ml-1">Số CCCD</label>
-                  <Input disabled value={formData.identityNumber} className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-xs text-zinc-500 shadow-sm cursor-not-allowed" />
+              <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Trích xuất tự động</h4>
+              {ocrPreview && renderOcrPreviewPanel()}
+              {!ocrPreview && (
+              <div className="bg-zinc-50/50 p-6 rounded-2xl border border-zinc-100 space-y-4 shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6" />
                 </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-zinc-400 uppercase ml-1">Họ và Tên</label>
-                  <Input disabled value={formData.fullName} className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-xs text-zinc-500 shadow-sm cursor-not-allowed" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-zinc-400 uppercase ml-1">Ngày sinh</label>
-                  <Input disabled value={formData.dateOfBirth} className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-xs text-zinc-500 shadow-sm cursor-not-allowed" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-zinc-400 uppercase ml-1">Giới tính</label>
-                  <Input disabled value={formData.gender === "MALE" ? "Nam" : formData.gender === "FEMALE" ? "Nữ" : "Khác"} className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-xs text-zinc-500 shadow-sm cursor-not-allowed" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-zinc-400 uppercase ml-1">Quốc tịch</label>
-                  <Input disabled value={formData.nationality} className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-xs text-zinc-500 shadow-sm cursor-not-allowed" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-zinc-400 uppercase ml-1">Nơi thường trú</label>
-                  <Input disabled value={formData.placeOfResidence} className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-xs text-zinc-500 shadow-sm cursor-not-allowed col-span-1 sm:col-span-2" />
+                <div>
+                  <p className="text-sm font-bold text-zinc-900">Không cần nhập thông tin cá nhân</p>
+                  <p className="text-xs text-zinc-500 font-medium leading-relaxed mt-1">
+                    Sau khi gửi, backend sẽ gọi OCR để đọc số CCCD, họ tên, ngày sinh, địa chỉ và ngày hiệu lực từ ảnh. Admin sẽ kiểm tra dữ liệu trích xuất trước khi duyệt.
+                  </p>
                 </div>
               </div>
+              )}
             </div>
 
             <div className="space-y-4">
@@ -1078,21 +1173,25 @@ export default function EkycPage() {
                     )}
                   </div>
                 </div>
+                <div className="space-y-2 col-span-2">
+                  <div className="rounded-xl border border-zinc-100 bg-zinc-50/70 p-3 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Video className="h-4 w-4 text-emerald-600 shrink-0" />
+                      <span className="text-xs font-bold text-zinc-700 truncate">Liveness video</span>
+                    </div>
+                    <span className={cn(
+                      "text-[10px] font-bold uppercase rounded-lg px-2 py-1 border",
+                      livenessVideo
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                        : "bg-red-50 text-red-700 border-red-100"
+                    )}>
+                      {livenessVideo ? "Ready" : "Missing"}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-          {formData.identityNumber.startsWith("999") && (
-            <div className="bg-amber-50 border border-amber-100 text-amber-800 p-4 rounded-xl flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 shrink-0 text-amber-600 mt-0.5" />
-              <div>
-                <p className="font-bold text-xs">Mô phỏng từ chối tự động (Auto-reject)</p>
-                <p className="text-[11px] text-amber-600 font-semibold mt-0.5">
-                  Số CCCD bắt đầu bằng &quot;999&quot; sẽ mô phỏng việc AI chấm điểm trùng khớp thấp (dưới 90%), hệ thống sẽ tự động đưa vào trạng thái từ chối (REJECTED) để bạn chụp lại.
-                </p>
-              </div>
-            </div>
-          )}
 
           <div className="flex justify-between pt-8 border-t border-zinc-100">
             <Button
@@ -1100,7 +1199,7 @@ export default function EkycPage() {
               onClick={() => setStep(4)}
               className="h-10 px-5 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
             >
-              Quay lại bước 4
+              Quay lại bước 3
             </Button>
             <Button
               onClick={handleSubmitAll}

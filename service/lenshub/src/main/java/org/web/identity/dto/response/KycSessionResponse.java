@@ -1,6 +1,7 @@
 package org.web.identity.dto.response;
 
 import lombok.*;
+import org.web.common.enums.RiskLevel;
 import org.web.common.enums.VerificationSessionStatus;
 
 import java.time.LocalDate;
@@ -36,10 +37,19 @@ public class KycSessionResponse {
     // AI matching details
     private Double faceMatchScore;
     private Boolean faceMatchPassed;
+    private Double livenessScore;
+    private Boolean livenessPassed;
+    private Boolean spoofDetected;
+    private Boolean multipleFacesDetected;
     private Double ocrConfidence;
+    private Double riskScore;
+    private RiskLevel riskLevel;
+    private String riskReason;
+    private Boolean manualReviewRequired;
 
     // Uploaded image urls
     private String frontImageUrl;
     private String backImageUrl;
     private String selfieImageUrl;
+    private String livenessVideoUrl;
 }

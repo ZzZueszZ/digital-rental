@@ -20,7 +20,7 @@ export function getImageUrl(url: string | null | undefined): string {
   if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("blob:")) {
     return url;
   }
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:8080";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:8082";
   return `${baseUrl}${url}`;
 }
 

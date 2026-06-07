@@ -21,25 +21,51 @@ export interface KycSessionResponse {
   expiryDate?: string;
   faceMatchScore?: number;
   faceMatchPassed?: boolean;
+  livenessScore?: number;
+  livenessPassed?: boolean;
+  spoofDetected?: boolean;
+  multipleFacesDetected?: boolean;
   ocrConfidence?: number;
+  riskScore?: number;
+  riskLevel?: "LOW_RISK" | "MEDIUM_RISK" | "HIGH_RISK";
+  riskReason?: string;
+  manualReviewRequired?: boolean;
   frontImageUrl?: string;
   backImageUrl?: string;
   selfieImageUrl?: string;
+  livenessVideoUrl?: string;
 }
 
 export interface SubmitKycRequest {
-  identityNumber: string;
-  fullName: string;
-  dateOfBirth: string; // YYYY-MM-DD
-  gender: string; // MALE, FEMALE, OTHER
-  nationality: string;
-  placeOfOrigin: string;
-  placeOfResidence: string;
-  issuedDate: string; // YYYY-MM-DD
-  expiryDate: string; // YYYY-MM-DD
   frontImageUrl: string;
   backImageUrl: string;
   selfieImageUrl: string;
+  livenessVideoUrl?: string;
+}
+
+export interface OcrPreviewRequest {
+  frontImageUrl: string;
+  backImageUrl: string;
+}
+
+export interface KycOcrPreviewResponse {
+  sessionId: number;
+  frontImageUrl: string;
+  backImageUrl: string;
+  identityNumber?: string;
+  fullName?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  nationality?: string;
+  placeOfOrigin?: string;
+  placeOfResidence?: string;
+  issuedDate?: string;
+  expiryDate?: string;
+  ocrConfidence?: number;
+  documentType?: string;
+  successful?: boolean;
+  previewStatus?: "READY" | "NEEDS_REVIEW";
+  warnings?: string[];
 }
 
 export interface ResolveKycRequest {
@@ -55,6 +81,11 @@ export const identityService = {
 
   submitKyc: async (req: SubmitKycRequest) => {
     const res = await http.post<{ success: boolean; data: KycSessionResponse }>("/ekyc/submit", req);
+    return res.data.data;
+  },
+
+  previewOcr: async (req: OcrPreviewRequest) => {
+    const res = await http.post<{ success: boolean; data: KycOcrPreviewResponse }>("/ekyc/ocr-preview", req);
     return res.data.data;
   },
 
@@ -101,6 +132,15 @@ export const identityService = {
     const formData = new FormData();
     formData.append("file", file);
     const res = await http.post<{ success: boolean; data: { url: string } }>("/ekyc/upload-selfie", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return res.data.data.url;
+  },
+
+  uploadLivenessVideo: async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await http.post<{ success: boolean; data: { url: string } }>("/ekyc/upload-liveness-video", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return res.data.data.url;

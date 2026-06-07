@@ -1,0 +1,79 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c 'import json,re,sys; data=json.load(sys.stdin); cmd=data.get(\"tool_input\",{}).get(\"command\",\"\"); blocked=[r\"\\brm\\s+-rf\\b\",r\"\\bgit\\s+reset\\s+--hard\\b\",r\"\\bgit\\s+clean\\s+-[fd]\\b\",r\"\\bgit\\s+push\\b.*\\s--force\",r\"\\bdropdb\\b\",r\"\\bDROP\\s+DATABASE\\b\",r\"\\bTRUNCATE\\s+TABLE\\b\"]; match=next((p for p in blocked if re.search(p, cmd, re.I)), None); print(json.dumps({\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Blocked destructive command pattern: %s\"%match}} if match else {}))'",
+            "timeout": 5,
+            "statusMessage": "Checking command safety"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c 'import json,os,sys; data=json.load(sys.stdin); ti=data.get(\"tool_input\",{}); path=ti.get(\"file_path\") or ti.get(\"notebook_path\") or \"\"; base=os.path.basename(path); is_real_env=base.startswith(\".env\") and not base.endswith(\".example\"); msg=\"\";\nif is_real_env: msg=\"Cảnh báo: đang sửa file .env thật. Chỉ tiếp tục nếu người dùng yêu cầu rõ ràng; ưu tiên cập nhật .env.example.\"\nprint(json.dumps({\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":msg}} if msg else {}))'",
+            "timeout": 5,
+            "statusMessage": "Checking sensitive file edits"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "Bash|Write|Edit|Read|WebFetch|WebSearch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "(command -v notify-send >/dev/null && notify-send -t 5000 'Claude Code cần cấp quyền' 'Có tool/action đang chờ bạn approve.') || true; (command -v paplay >/dev/null && paplay /usr/share/sounds/freedesktop/stereo/dialog-information.oga) || (command -v canberra-gtk-play >/dev/null && canberra-gtk-play -i dialog-information) || printf '\\a'",
+            "timeout": 5,
+            "statusMessage": "Notifying permission request"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c 'import json,os,sys; data=json.load(sys.stdin); ti=data.get(\"tool_input\",{}); path=ti.get(\"file_path\") or ti.get(\"notebook_path\") or \"\"; rel=os.path.relpath(path, os.getcwd()) if path.startswith(os.getcwd()) else path; notes=[];\nif rel.startswith(\"frontend/\") and rel.endswith((\".ts\",\".tsx\",\".js\",\".jsx\")): notes.append(\"Frontend file changed: before finishing, consider `cd frontend && pnpm lint` and for UI changes manually verify http://localhost:3000.\")\nif rel.startswith(\"service/lenshub/\") and rel.endswith(\".java\"): notes.append(\"Lenshub Java file changed: before finishing, consider `cd service/lenshub && ./gradlew test` or a targeted `./gradlew test --tests ...`.\")\nif rel.endswith((\"application.yml\",\".env.example\")): notes.append(\"Config file changed: verify matching environment variables and avoid committing real secrets.\")\nprint(json.dumps({\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"\\n\".join(notes)}} if notes else {}))'",
+            "timeout": 5,
+            "statusMessage": "Suggesting project checks"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\":\"Trước khi compact: nhớ giữ lại mục tiêu hiện tại, file đã sửa, lệnh đã chạy, lỗi còn tồn tại, và quyết định về UI/eKYC/E2EE-SHIELD.\"}'",
+            "timeout": 5,
+            "statusMessage": "Preparing compact reminder"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "(command -v notify-send >/dev/null && notify-send -t 5000 'Claude Code đã xong lượt' 'Claude vừa hoàn thành phản hồi/task hiện tại.') || true; (command -v paplay >/dev/null && paplay /usr/share/sounds/freedesktop/stereo/complete.oga) || (command -v canberra-gtk-play >/dev/null && canberra-gtk-play -i complete) || printf '\\a'; python3 -c 'import json; print(json.dumps({\"systemMessage\":\"Gợi ý cuối phiên: nếu vừa sửa frontend hãy cân nhắc pnpm lint/build; nếu sửa Lenshub backend hãy cân nhắc ./gradlew test/build.\"}))'",
+            "timeout": 5,
+            "statusMessage": "Showing final project reminder"
+          }
+        ]
+      }
+    ]
+  }
+}

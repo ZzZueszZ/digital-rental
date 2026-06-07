@@ -21,6 +21,23 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
+type KycRiskLevel = NonNullable<KycSessionResponse["riskLevel"]>;
+
+const riskMeta: Record<KycRiskLevel, { label: string; className: string }> = {
+  LOW_RISK: {
+    label: "Low",
+    className: "bg-emerald-50 text-emerald-700 border-emerald-100",
+  },
+  MEDIUM_RISK: {
+    label: "Medium",
+    className: "bg-amber-50 text-amber-700 border-amber-100",
+  },
+  HIGH_RISK: {
+    label: "High",
+    className: "bg-red-50 text-red-700 border-red-100",
+  },
+};
+
 export default function KycManagement() {
   const [sessions, setSessions] = useState<KycSessionResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -191,6 +208,7 @@ export default function KycManagement() {
                       "Số CCCD",
                       "Khớp mặt AI",
                       "OCR Confidence",
+                      "Risk",
                       "Thời gian gửi",
                       "Thao tác"
                     ].map((col, i) => (
@@ -241,6 +259,9 @@ export default function KycManagement() {
                       </td>
                       <td className="px-6 py-4 text-sm font-semibold text-zinc-600">
                         {((session.ocrConfidence ?? 0.96) * 100).toFixed(0)}%
+                      </td>
+                      <td className="px-6 py-4">
+                        <RiskBadge session={session} />
                       </td>
                       <td className="px-6 py-4 text-xs text-zinc-400 font-semibold">
                         {session.submittedAt
@@ -307,6 +328,7 @@ export default function KycManagement() {
                     <span className="bg-zinc-50 border border-zinc-200/50 text-zinc-500 px-2 py-0.5 rounded-md font-semibold">
                       OCR: {((session.ocrConfidence ?? 0.96) * 100).toFixed(0)}%
                     </span>
+                    <RiskBadge session={session} />
                   </div>
 
                   <p className="text-[10px] text-zinc-400 font-semibold">
@@ -375,6 +397,46 @@ export default function KycManagement() {
                   </div>
                 </div>
               </div>
+              <div>
+                <h3 className="text-sm font-semibold text-zinc-700 mb-4">AI risk scoring</h3>
+                <div className="bg-zinc-50 p-6 rounded-2xl border border-black/5 space-y-3">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-semibold text-zinc-500">Risk level:</span>
+                    <RiskBadge session={selectedSession} />
+                  </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-semibold text-zinc-500">Risk score:</span>
+                    <span className="font-bold text-zinc-800">{formatPercent(selectedSession.riskScore)}</span>
+                  </div>
+                  <div className="text-xs">
+                    <span className="font-semibold text-zinc-500 block mb-1">Reason:</span>
+                    <p className="font-medium text-zinc-700 leading-relaxed">{selectedSession.riskReason || "---"}</p>
+                  </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-semibold text-zinc-500">Liveness score:</span>
+                    <span className="font-bold text-red-600">{formatPercent(selectedSession.livenessScore)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-semibold text-zinc-500">Liveness status:</span>
+                    <Badge
+                      variant="outline"
+                      className={
+                        (selectedSession.livenessPassed ?? false)
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-100 font-bold"
+                          : "bg-amber-50 text-amber-700 border-amber-100 font-bold"
+                      }
+                    >
+                      {(selectedSession.livenessPassed ?? false) ? "Pass" : "Needs review"}
+                    </Badge>
+                  </div>
+                  {(selectedSession.spoofDetected || selectedSession.multipleFacesDetected) && (
+                    <div className="text-xs font-semibold text-red-700 bg-red-50 border border-red-100 rounded-xl p-3">
+                      {selectedSession.spoofDetected ? "Spoof detected. " : ""}
+                      {selectedSession.multipleFacesDetected ? "Multiple faces detected." : ""}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Right Column: Visual Images */}
@@ -417,6 +479,18 @@ export default function KycManagement() {
                       </a>
                     ) : (
                       <span className="text-xs text-zinc-400">Không có ảnh</span>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2 col-span-2">
+                  <span className="text-[11px] font-bold text-zinc-500 block text-center">Liveness video</span>
+                  <div className="rounded-xl border border-black/5 bg-zinc-100 flex items-center justify-center p-3">
+                    {selectedSession.livenessVideoUrl ? (
+                      <a href={getImageUrl(selectedSession.livenessVideoUrl)} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-red-600 hover:text-zinc-950">
+                        Open liveness video
+                      </a>
+                    ) : (
+                      <span className="text-xs text-zinc-400">No video</span>
                     )}
                   </div>
                 </div>
@@ -488,6 +562,29 @@ function getImageUrl(url: string | null | undefined) {
   const baseUrl = apiBaseUrl.replace(/\/api$/, "");
   const cleanUrl = url.startsWith("/") ? url : `/${url}`;
   return `${baseUrl}${cleanUrl}`;
+}
+
+function formatPercent(value: number | null | undefined) {
+  if (value === null || value === undefined) return "---";
+  return `${(value * 100).toFixed(0)}%`;
+}
+
+function RiskBadge({ session }: { session: Pick<KycSessionResponse, "riskLevel" | "riskScore"> }) {
+  if (!session.riskLevel) {
+    return (
+      <Badge variant="outline" className="bg-zinc-50 text-zinc-500 border-zinc-200 font-bold">
+        N/A
+      </Badge>
+    );
+  }
+
+  const meta = riskMeta[session.riskLevel];
+
+  return (
+    <Badge variant="outline" className={cn("font-bold", meta.className)}>
+      {meta.label} {formatPercent(session.riskScore)}
+    </Badge>
+  );
 }
 
 function DetailRow({ label, value }: { label: string; value?: string }) {

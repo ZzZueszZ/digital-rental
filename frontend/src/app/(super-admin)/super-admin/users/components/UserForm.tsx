@@ -275,31 +275,31 @@ export function UserForm({
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
                         <SelectItem
-                          className="rounded-xl px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
+                          className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
                           value={AccountStatus.ACTIVE}
                         >
                           Hoạt động
                         </SelectItem>
                         <SelectItem
-                          className="rounded-xl px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
+                          className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
                           value={AccountStatus.PENDING}
                         >
                           Chờ duyệt
                         </SelectItem>
                         <SelectItem
-                          className="rounded-xl px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
+                          className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
                           value={AccountStatus.SUSPENDED}
                         >
                           Đình chỉ
                         </SelectItem>
                         <SelectItem
-                          className="rounded-xl px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
+                          className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
                           value={AccountStatus.DISABLED}
                         >
                           Vô hiệu
                         </SelectItem>
                         <SelectItem
-                          className="rounded-xl px-3 py-2 cursor-pointer focus:bg-red-600 focus:text-white hover:bg-red-600 hover:text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white transition-colors"
+                          className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
                           value={AccountStatus.DELETED}
                         >
                           Đã xóa

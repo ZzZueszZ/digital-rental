@@ -548,211 +548,24 @@ export default function ProductDetailPage({
               </div>
             </div>
 
-            <div className="space-y-3 pt-2">
-              {/* Stock Tab Buttons */}
+            <div className="space-y-2 pt-2">
+              {/* Stock Action Buttons */}
               <div className="grid grid-cols-2 gap-2">
                 <Button
                   type="button"
-                  onClick={() => setStockTab(stockTab === "sale" ? null : "sale")}
-                  className={cn(
-                    "h-10 px-5 rounded-xl text-sm font-semibold transition-all duration-200 ease-in-out active:scale-95",
-                    stockTab === "sale"
-                      ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-100"
-                      : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 border-0"
-                  )}
+                  onClick={() => setIsStockDialogOpen(true)}
+                  className="h-10 px-5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition-all duration-200 font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-100 active:scale-95"
                 >
                   Kho bán
                 </Button>
                 <Button
                   type="button"
-                  onClick={() => setStockTab(stockTab === "rental" ? null : "rental")}
-                  className={cn(
-                    "h-10 px-5 rounded-xl text-sm font-semibold transition-all duration-200 ease-in-out active:scale-95",
-                    stockTab === "rental"
-                      ? "bg-amber-500 text-white hover:bg-amber-600 shadow-lg shadow-amber-100"
-                      : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 border-0"
-                  )}
+                  onClick={() => router.push(`/admin/products/${productId}/devices`)}
+                  className="h-10 px-5 rounded-xl bg-amber-500 text-white hover:bg-amber-600 transition-all duration-200 font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-amber-100 active:scale-95"
                 >
                   Kho thuê (Serial)
                 </Button>
               </div>
-
-              {stockTab !== null && (
-                <div className="grid gap-3">
-                  {stockTab === "sale" && (
-                  <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <h4 className="text-sm font-bold text-emerald-950">kho bán</h4>
-                        <p className="text-xs font-medium text-emerald-700/70">
-                          Nhập số lượng cần cộng thêm hoặc trừ bớt.
-                        </p>
-                      </div>
-                      <span className="text-xs font-semibold text-emerald-700 bg-white border border-emerald-100 rounded-xl px-3 py-1">
-                        hiện có {product.quantity}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 rounded-xl border border-emerald-100 bg-white p-1">
-                      <button
-                        type="button"
-                        onClick={() => setSaleStockAction("IMPORT")}
-                        disabled={adjustStockMutation.isPending}
-                        className={cn(
-                          "h-9 rounded-xl text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
-                          saleStockAction === "IMPORT"
-                            ? "bg-emerald-600 text-white"
-                            : "text-zinc-500 hover:bg-emerald-50 hover:text-emerald-700",
-                        )}
-                      >
-                        nhập thêm
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setSaleStockAction("EXPORT")}
-                        disabled={adjustStockMutation.isPending}
-                        className={cn(
-                          "h-9 rounded-xl text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
-                          saleStockAction === "EXPORT"
-                            ? "bg-red-600 text-white"
-                            : "text-zinc-500 hover:bg-red-50 hover:text-red-600",
-                        )}
-                      >
-                        trừ bớt
-                      </button>
-                    </div>
-
-                    <label className="space-y-1 block">
-                      <span className="text-xs font-semibold text-zinc-700">
-                        số lượng {saleStockAction === "IMPORT" ? "nhập thêm" : "trừ bớt"}
-                      </span>
-                      <input
-                        type="number"
-                        min={1}
-                        value={saleStockInput}
-                        onChange={(e) => setSaleStockInput(e.target.value)}
-                        placeholder="Ví dụ: 10"
-                        className="w-full h-10 px-3 rounded-xl border border-emerald-100 bg-white text-sm font-semibold"
-                      />
-                    </label>
-                    <label className="space-y-1 block">
-                      <span className="text-xs font-semibold text-zinc-700">lý do chỉnh kho bán</span>
-                      <input
-                        type="text"
-                        value={saleStockReason}
-                        onChange={(e) => setSaleStockReason(e.target.value)}
-                        placeholder="Ví dụ: nhập hàng mới, hàng lỗi trả hãng"
-                        className="w-full h-10 px-3 rounded-xl border border-emerald-100 bg-white text-sm"
-                      />
-                    </label>
-                    <Button
-                      type="button"
-                      onClick={handleAdjustSaleStock}
-                      disabled={adjustStockMutation.isPending}
-                      className="w-full h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-dash-sm hover:shadow-dash-md transition-all duration-200 ease-in-out"
-                    >
-                      {adjustStockMutation.isPending
-                        ? "Đang cập nhật..."
-                        : `${saleStockAction === "IMPORT" ? "Nhập thêm" : "Trừ bớt"} kho bán`}
-                    </Button>
-                   </div>
-                  )}
-
-                  {stockTab === "rental" && (
-                  <div className="rounded-xl border border-amber-100 bg-amber-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <h4 className="text-sm font-bold text-amber-950">Quản lý kho thuê (Serial)</h4>
-                        <p className="text-xs font-medium text-amber-700/70">
-                          Quản lý độc lập từng thiết bị cho thuê.
-                        </p>
-                      </div>
-                      <span className="text-xs font-semibold text-amber-700 bg-white border border-amber-100 rounded-xl px-3 py-1">
-                        {devices.length} máy
-                      </span>
-                    </div>
-
-                    <div className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1">
-                      {devices.length === 0 ? (
-                        <div className="text-xs text-center py-4 text-amber-600/70">Chưa có thiết bị nào.</div>
-                      ) : (
-                        devices.map((d: DeviceResponse) => (
-                          <div
-                            key={d.id}
-                            onClick={() => {
-                              setSelectedDevice(d);
-                              setEditDeviceSerial(d.serialNumber);
-                              setEditDeviceCondition(d.conditionDetails || "");
-                              setEditDeviceStatus(d.status);
-                            }}
-                            className="flex items-center justify-between bg-white border border-amber-100 rounded-xl p-2 text-sm cursor-pointer hover:bg-amber-50/50 hover:border-amber-200 transition-all duration-150"
-                          >
-                            <div className="flex flex-col">
-                              <span className="font-semibold text-zinc-900">SN: {d.serialNumber}</span>
-                              <span className="text-xs text-zinc-500 line-clamp-1">{d.conditionDetails}</span>
-                            </div>
-                            <span
-                              className={cn(
-                                "text-[10px] font-bold px-2 py-1 rounded-xl border transition-all duration-150",
-                                d.status === "AVAILABLE" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
-                                d.status === "RESERVED" ? "bg-amber-50 text-amber-700 border-amber-100" :
-                                d.status === "RENTED" ? "bg-blue-50 text-blue-700 border-blue-100" :
-                                d.status === "MAINTENANCE" ? "bg-zinc-50 text-zinc-700 border-zinc-100" :
-                                d.status === "DAMAGED" ? "bg-rose-50 text-rose-700 border-rose-100" :
-                                "bg-red-50 text-red-700 border-red-100"
-                              )}
-                            >
-                              {d.status === "AVAILABLE" ? "Sẵn sàng" :
-                               d.status === "RESERVED" ? "Đặt trước" :
-                               d.status === "RENTED" ? "Thuê" :
-                               d.status === "MAINTENANCE" ? "Bảo trì" :
-                               d.status === "DAMAGED" ? "Hỏng" : "Mất"}
-                            </span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-
-                    {!showDeviceForm ? (
-                      <Button
-                        type="button"
-                        onClick={() => setShowDeviceForm(true)}
-                        className="w-full h-10 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-dash-sm transition-all"
-                      >
-                        Thêm thiết bị mới
-                      </Button>
-                    ) : (
-                      <div className="bg-white p-3 rounded-xl border border-amber-200 space-y-3">
-                        <label className="space-y-1 block">
-                          <span className="text-xs font-semibold text-zinc-700">Số Serial</span>
-                          <input
-                            type="text"
-                            value={deviceSerial}
-                            onChange={(e) => setDeviceSerial(e.target.value)}
-                            placeholder="Nhập serial..."
-                            className="w-full h-9 px-3 rounded-xl border border-amber-100 bg-zinc-50 text-sm font-semibold"
-                          />
-                        </label>
-                        <label className="space-y-1 block">
-                          <span className="text-xs font-semibold text-zinc-700">Tình trạng (Tùy chọn)</span>
-                          <input
-                            type="text"
-                            value={deviceCondition}
-                            onChange={(e) => setDeviceCondition(e.target.value)}
-                            placeholder="Ví dụ: Mới 99%, có trầy nhẹ..."
-                            className="w-full h-9 px-3 rounded-xl border border-amber-100 bg-zinc-50 text-sm"
-                          />
-                        </label>
-                        <div className="flex gap-2">
-                          <Button type="button" onClick={() => setShowDeviceForm(false)} variant="outline" className="flex-1 h-9 rounded-xl text-xs font-semibold border-amber-200 text-amber-700">Hủy</Button>
-                          <Button type="button" onClick={handleCreateDevice} disabled={createDeviceMutation.isPending} className="flex-1 h-9 rounded-xl bg-amber-600 text-white text-xs font-semibold">Lưu</Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  )}
-                </div>
-              )}
             </div>
 
             <div className="space-y-4 pt-4 border-t border-black/5">

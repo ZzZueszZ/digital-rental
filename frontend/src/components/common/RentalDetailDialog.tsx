@@ -775,14 +775,14 @@ export function RentalDetailDialog({
 
           {/* Delivery & Billing Address */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
+            <div className="flex flex-col h-full space-y-3">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-zinc-400" />
                 <h3 className="text-sm font-bold text-zinc-900">
                   Địa chỉ nhận máy
                 </h3>
               </div>
-              <div className="p-4 bg-zinc-50/50 border border-zinc-100 rounded-xl space-y-3">
+              <div className="p-4 bg-zinc-50/50 border border-zinc-100 rounded-xl space-y-3 flex-1">
                 <div className="space-y-1">
                   <p className="text-[10px] font-bold text-zinc-400">
                     Người nhận máy
@@ -801,14 +801,14 @@ export function RentalDetailDialog({
             </div>
 
             {/* Deposit Status Details */}
-            <div className="space-y-3">
+            <div className="flex flex-col h-full space-y-3">
               <div className="flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-zinc-400" />
                 <h3 className="text-sm font-bold text-zinc-900">
                   Tình trạng đặt cọc
                 </h3>
               </div>
-              <div className="p-4 bg-zinc-50/50 border border-zinc-100 rounded-xl space-y-3">
+              <div className="p-4 bg-zinc-50/50 border border-zinc-100 rounded-xl space-y-3 flex-1">
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] font-bold text-zinc-400">Trạng thái cọc</span>
                   <span

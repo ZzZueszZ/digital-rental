@@ -2,6 +2,7 @@ package org.web.common.exceptions;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -17,6 +18,7 @@ import org.web.common.dto.ApiResponse;
 import java.util.*;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     // Lỗi validate đầu vào (@Valid)
@@ -133,6 +135,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponse<String>> handleDataIntegrityViolation(org.springframework.dao.DataIntegrityViolationException ex) {
         String message = ex.getMostSpecificCause().getMessage();
+        log.error("Data integrity violation: {}", message, ex);
         String errorMessage = "Data integrity violation";
         
         if (message != null) {
@@ -176,7 +179,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<String>> handleUnexpected(Exception ex) {
-        ex.printStackTrace();
+        log.error("Unexpected application error: {}", ex.getMessage(), ex);
 
         ApiResponse<String> body = ApiResponse.failedResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -187,4 +190,3 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
 }
-

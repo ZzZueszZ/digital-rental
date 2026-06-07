@@ -103,6 +103,7 @@ public class AuthServiceImpl implements AuthService {
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .accountStatus(AccountStatus.PENDING)
                 .enabled(true)
+                .accountNonLocked(true)
                 .roles(new HashSet<>())
                 .build();
 

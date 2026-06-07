@@ -1,8 +1,0 @@
-version: "3.7"
-services:
-  app-test:
-    build: .
-    ports:
-      - "8089:80"
-    environment:
-      - ENV_BACKEND_HOST=https://auth.xbase.dev

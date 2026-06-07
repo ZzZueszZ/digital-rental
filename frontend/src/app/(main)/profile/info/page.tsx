@@ -45,7 +45,7 @@ export default function InfoPage() {
     try {
       await updateProfile(formData);
       toast.success("Hồ sơ đã được lưu thành công");
-    } catch (error) {
+    } catch {
       toast.error("Không thể lưu thay đổi");
     }
   };
@@ -107,7 +107,7 @@ export default function InfoPage() {
               onChange={(e) =>
                 setFormData({ ...formData, firstName: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
           <div className="space-y-2">
@@ -119,7 +119,7 @@ export default function InfoPage() {
               onChange={(e) =>
                 setFormData({ ...formData, lastName: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
           <div className="space-y-2">
@@ -135,7 +135,7 @@ export default function InfoPage() {
                 })
               }
             >
-              <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-xl px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
+              <SelectTrigger className="w-full h-10! bg-white! border-black/5! rounded-xl px-4 font-semibold text-[14px] focus:border-red-600/30! transition-all duration-200 text-left shadow-dash-card outline-none">
                 <span
                   className={cn(
                     formData.gender ? "text-zinc-900" : "text-zinc-400",
@@ -181,6 +181,7 @@ export default function InfoPage() {
               onChange={(v) =>
                 setFormData({ ...formData, dateOfBirth: v })
               }
+              className="h-10 text-[14px] px-4"
             />
           </div>
           <div className="space-y-2">
@@ -192,7 +193,7 @@ export default function InfoPage() {
               onChange={(e) =>
                 setFormData({ ...formData, occupation: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
           <div className="space-y-2">
@@ -204,29 +205,29 @@ export default function InfoPage() {
               onChange={(e) =>
                 setFormData({ ...formData, companyName: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             />
           </div>
         </div>
 
-        <div className="pt-10 flex items-center gap-4">
+        <div className="pt-10 flex items-center justify-end gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="h-10 px-5 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
+          >
+            Hủy bỏ
+          </Button>
           <Button
             type="submit"
             disabled={isUpdating}
-            className="flex-1 h-12 rounded-xl bg-zinc-950 text-white font-semibold text-sm shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50"
+            className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 disabled:opacity-50"
           >
             {isUpdating ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              "Lưu cấu hình hồ sơ"
+              "Lưu hồ sơ"
             )}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="h-12 px-8 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
-          >
-            Hủy bỏ
           </Button>
         </div>
       </form>

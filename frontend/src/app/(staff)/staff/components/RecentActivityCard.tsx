@@ -14,6 +14,17 @@ import {
   RefreshCw,
   ArrowRight,
   LucideIcon,
+  FileText,
+  Mail,
+  FileCheck,
+  CreditCard,
+  PackageCheck,
+  XCircle,
+  FilePlus,
+  Coins,
+  Truck,
+  ArrowLeftRight,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuditLogs } from "@/services/audit";
@@ -32,6 +43,17 @@ const ACTION_ICONS: Record<string, LucideIcon> = {
   UPDATE_PASSWORD: Key,
   DELETE_AVATAR: Trash2,
   UPLOAD_AVATAR: RefreshCw,
+  CREATE_ORDER: FilePlus,
+  SEND_OTP: Mail,
+  SIGN_CONTRACT: FileCheck,
+  PAY_DEPOSIT: CreditCard,
+  PREPARE_RENTAL: PackageCheck,
+  REJECT_RENTAL: XCircle,
+  CREATE_HANDOVER_REPORT: FileText,
+  COLLECT_DEPOSIT: Coins,
+  HANDOVER_DEVICES: Truck,
+  CREATE_RETURN_REPORT: ArrowLeftRight,
+  COMPLETE_RENTAL: CheckCircle2,
 };
 
 const ACTION_COLORS: Record<string, string> = {
@@ -42,6 +64,17 @@ const ACTION_COLORS: Record<string, string> = {
   BATCH_SOFT_DELETE: "text-red-600 bg-red-50",
   BATCH_RESTORE: "text-indigo-600 bg-indigo-50",
   RESET_PASSWORD: "text-amber-600 bg-amber-50",
+  CREATE_ORDER: "text-indigo-600 bg-indigo-50",
+  SEND_OTP: "text-amber-600 bg-amber-50",
+  SIGN_CONTRACT: "text-emerald-600 bg-emerald-50",
+  PAY_DEPOSIT: "text-blue-600 bg-blue-50",
+  PREPARE_RENTAL: "text-teal-600 bg-teal-50",
+  REJECT_RENTAL: "text-red-600 bg-red-50",
+  CREATE_HANDOVER_REPORT: "text-sky-600 bg-sky-50",
+  COLLECT_DEPOSIT: "text-orange-600 bg-orange-50",
+  HANDOVER_DEVICES: "text-emerald-600 bg-emerald-50",
+  CREATE_RETURN_REPORT: "text-purple-600 bg-purple-50",
+  COMPLETE_RENTAL: "text-emerald-600 bg-emerald-50",
 };
 
 export function RecentActivityCard() {

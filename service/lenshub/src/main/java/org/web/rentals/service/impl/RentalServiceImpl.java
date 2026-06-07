@@ -55,6 +55,7 @@ public class RentalServiceImpl implements RentalService {
     private final RentalPaymentRepository rentalPaymentRepository;
     private final RentalRefundRepository rentalRefundRepository;
     private final MailService mailService;
+    private final org.web.common.service.AuditLogService auditLogService;
 
     @Override
     @Transactional(readOnly = true)
@@ -138,6 +139,7 @@ public class RentalServiceImpl implements RentalService {
         order.setItems(orderItems);
 
         RentalOrder saved = rentalOrderRepository.save(order);
+        auditLogService.logAction("RENTAL_ORDER", saved.getId(), "CREATE_ORDER", "Khách hàng đặt thuê thiết bị. Đơn hàng: " + saved.getCode(), null, saved.getStatus().name());
         return mapToResponse(saved);
     }
 
@@ -207,7 +209,7 @@ public class RentalServiceImpl implements RentalService {
         contract.setSigningOtpCode(otp);
         contract.setSigningOtpExpiresAt(LocalDateTime.now().plusMinutes(5));
         rentalContractRepository.save(contract);
-
+        auditLogService.logAction("RENTAL_ORDER", order.getId(), "SEND_OTP", "Gửi mã OTP ký hợp đồng cho đơn hàng: " + order.getCode(), null, null);
         mailService.sendContractSigningOtp(user, otp, order.getCode());
     }
 
@@ -257,7 +259,7 @@ public class RentalServiceImpl implements RentalService {
 
         order.setStatus(RentalOrderStatus.WAITING_PICKUP);
         RentalOrder saved = rentalOrderRepository.save(order);
-
+        auditLogService.logAction("RENTAL_ORDER", saved.getId(), "SIGN_CONTRACT", "Khách hàng ký hợp đồng điện tử online thành công. Đơn hàng: " + saved.getCode(), null, saved.getStatus().name());
         return mapToResponse(saved);
     }
 
@@ -291,6 +293,7 @@ public class RentalServiceImpl implements RentalService {
         order.setContract(contract);
 
         RentalOrder saved = rentalOrderRepository.save(order);
+        auditLogService.logAction("RENTAL_ORDER", saved.getId(), "PAY_DEPOSIT", "Khách hàng thanh toán tiền cọc thành công cho đơn hàng: " + saved.getCode(), null, saved.getStatus().name());
         return mapToResponse(saved);
     }
 
@@ -408,7 +411,7 @@ public class RentalServiceImpl implements RentalService {
 
         order.setStatus(RentalOrderStatus.WAITING_PICKUP);
         RentalOrder saved = rentalOrderRepository.save(order);
-
+        auditLogService.logAction("RENTAL_ORDER", saved.getId(), "PREPARE_RENTAL", "Nhân viên chuẩn bị thiết bị cho đơn hàng: " + saved.getCode() + ". Đã sinh dự thảo hợp đồng.", null, saved.getStatus().name());
         return mapToResponse(saved);
     }
 
@@ -435,6 +438,7 @@ public class RentalServiceImpl implements RentalService {
 
         order.setStatus(RentalOrderStatus.CANCELLED);
         RentalOrder saved = rentalOrderRepository.save(order);
+        auditLogService.logAction("RENTAL_ORDER", saved.getId(), "REJECT_RENTAL", "Từ chối đơn hàng: " + saved.getCode() + ". Lý do: " + reason, null, saved.getStatus().name());
         return mapToResponse(saved);
     }
 
@@ -481,6 +485,7 @@ public class RentalServiceImpl implements RentalService {
         }
 
         RentalOrder saved = rentalOrderRepository.save(order);
+        auditLogService.logAction("RENTAL_ORDER", saved.getId(), "CREATE_HANDOVER_REPORT", "Lập biên bản bàn giao cho đơn hàng: " + saved.getCode(), null, saved.getStatus().name());
         return mapToResponse(saved);
     }
 
@@ -506,7 +511,7 @@ public class RentalServiceImpl implements RentalService {
 
         order.setDepositStatus(org.web.common.enums.DepositStatus.PAID);
         RentalOrder saved = rentalOrderRepository.save(order);
-
+        auditLogService.logAction("RENTAL_ORDER", saved.getId(), "COLLECT_DEPOSIT", "Thu cọc trực tiếp cho đơn hàng: " + saved.getCode() + ". Số tiền: " + request.getAmount(), null, null);
         return mapToResponse(saved);
     }
 
@@ -543,7 +548,7 @@ public class RentalServiceImpl implements RentalService {
         order.setHandedOverAt(LocalDateTime.now());
         order.setStatus(RentalOrderStatus.RENTING);
         RentalOrder saved = rentalOrderRepository.save(order);
-
+        auditLogService.logAction("RENTAL_ORDER", saved.getId(), "HANDOVER_DEVICES", "Bàn giao thiết bị vật lý cho khách hàng. Đơn hàng chuyển sang trạng thái đang thuê (RENTING). Mã đơn: " + saved.getCode(), null, saved.getStatus().name());
         return mapToResponse(saved);
     }
 
@@ -613,6 +618,7 @@ public class RentalServiceImpl implements RentalService {
         }
 
         RentalOrder saved = rentalOrderRepository.save(order);
+        auditLogService.logAction("RENTAL_ORDER", saved.getId(), "CREATE_RETURN_REPORT", "Lập biên bản trả thiết bị cho đơn hàng: " + saved.getCode(), null, saved.getStatus().name());
         return mapToResponse(saved);
     }
 
@@ -664,6 +670,7 @@ public class RentalServiceImpl implements RentalService {
         order.setStatus(RentalOrderStatus.COMPLETED);
         order.setCompletedAt(LocalDateTime.now());
         RentalOrder saved = rentalOrderRepository.save(order);
+        auditLogService.logAction("RENTAL_ORDER", saved.getId(), "COMPLETE_RENTAL", "Hoàn tất đơn hàng thuê: " + saved.getCode(), null, saved.getStatus().name());
         return mapToResponse(saved);
     }
 

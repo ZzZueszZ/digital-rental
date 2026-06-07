@@ -361,9 +361,9 @@ export default function ProductDetailPage({
             onClick={handleBack}
             variant="ghost"
             size="icon"
-            className="h-11 w-11 rounded-xl border border-zinc-100 bg-zinc-50 text-zinc-600 hover:bg-zinc-950 hover:text-white transition-colors shrink-0"
+            className="h-10 w-10 rounded-xl bg-white border border-zinc-200 text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-sm shrink-0"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4" />
           </Button>
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-2">

@@ -141,9 +141,9 @@ export function UserForm({
             onClick={() =>
               router.push(isEditing ? `/staff/users/${userId}` : "/staff/users")
             }
-            className="h-12 w-12 rounded-xl bg-white border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-sm shrink-0"
+            className="h-10 w-10 rounded-xl bg-white border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-sm shrink-0"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4" />
           </Button>
           <div className="space-y-0.5">
             <h1 className="leading-tight">

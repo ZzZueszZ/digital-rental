@@ -25,7 +25,6 @@ public class UserResponse {
     private boolean emailVerified;
     private boolean phoneVerified;
     private boolean enabled;
-    private boolean accountNonLocked;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Set<String> roles; // We map the Role codes here for simplicity

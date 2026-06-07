@@ -210,9 +210,6 @@ public class UserServiceImpl implements UserService {
         if (request.getEnabled() != null) {
             user.setEnabled(request.getEnabled());
         }
-        if (request.getAccountNonLocked() != null) {
-            user.setAccountNonLocked(request.getAccountNonLocked());
-        }
 
         if (request.getRoles() != null) {
             Set<AppRole> assignedRoles = new HashSet<>();
@@ -250,11 +247,19 @@ public class UserServiceImpl implements UserService {
 
         // Validate allowed transitions
         boolean allowed = switch (currentStatus) {
-            case PENDING -> newStatus == AccountStatus.ACTIVE || newStatus == AccountStatus.SUSPENDED || newStatus == AccountStatus.DISABLED;
-            case ACTIVE -> newStatus == AccountStatus.SUSPENDED || newStatus == AccountStatus.DISABLED;
-            case SUSPENDED -> newStatus == AccountStatus.ACTIVE || newStatus == AccountStatus.DISABLED;
-            case DISABLED -> newStatus == AccountStatus.ACTIVE;
-            default -> false;
+            case PENDING -> newStatus == AccountStatus.ACTIVE
+                    || newStatus == AccountStatus.SUSPENDED
+                    || newStatus == AccountStatus.BANNED
+                    || newStatus == AccountStatus.DISABLED;
+            case ACTIVE -> newStatus == AccountStatus.SUSPENDED
+                    || newStatus == AccountStatus.BANNED
+                    || newStatus == AccountStatus.DISABLED;
+            case SUSPENDED -> newStatus == AccountStatus.ACTIVE
+                    || newStatus == AccountStatus.BANNED
+                    || newStatus == AccountStatus.DISABLED;
+            case BANNED -> newStatus == AccountStatus.ACTIVE || newStatus == AccountStatus.DISABLED;
+            case DISABLED -> newStatus == AccountStatus.ACTIVE || newStatus == AccountStatus.BANNED;
+            case DELETED -> false;
         };
 
         if (!allowed) {
@@ -279,17 +284,21 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findWithRolesById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
 
-        if (!user.isAccountNonLocked()) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Tài khoản đã bị khóa");
+        AccountStatus currentStatus = user.getAccountStatus();
+        if (currentStatus == AccountStatus.SUSPENDED) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Tài khoản đã bị tạm khóa");
+        }
+        if (currentStatus == AccountStatus.DELETED) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Người dùng đã bị xóa. Không thể tạm khóa.");
         }
 
-        user.setAccountNonLocked(false);
+        user.setAccountStatus(AccountStatus.SUSPENDED);
         User saved = userRepository.save(user);
 
         auditLogService.logAction("USER", saved.getId(), "LOCK_USER",
-                "Admin locked user account",
-                "{\"accountNonLocked\":true}",
-                "{\"accountNonLocked\":false}");
+                "Admin suspended user account",
+                "{\"status\":\"" + currentStatus + "\"}",
+                "{\"status\":\"SUSPENDED\"}");
 
         return userMapper.toUserResponse(saved);
     }
@@ -300,20 +309,21 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findWithRolesById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
 
-        if (user.isAccountNonLocked()) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Tài khoản chưa bị khóa");
+        AccountStatus currentStatus = user.getAccountStatus();
+        if (currentStatus != AccountStatus.SUSPENDED) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Chỉ có thể mở khóa tài khoản đang bị tạm khóa");
         }
 
         int oldFailedAttempts = user.getFailedLoginAttempts();
-        user.setAccountNonLocked(true);
+        user.setAccountStatus(AccountStatus.ACTIVE);
         user.setFailedLoginAttempts(0);
         user.setLockedUntil(null);
         User saved = userRepository.save(user);
 
         auditLogService.logAction("USER", saved.getId(), "UNLOCK_USER",
-                "Admin unlocked user account",
-                "{\"accountNonLocked\":false,\"failedLoginAttempts\":" + oldFailedAttempts + "}",
-                "{\"accountNonLocked\":true,\"failedLoginAttempts\":0}");
+                "Admin activated suspended user account",
+                "{\"status\":\"SUSPENDED\",\"failedLoginAttempts\":" + oldFailedAttempts + "}",
+                "{\"status\":\"ACTIVE\",\"failedLoginAttempts\":0}");
 
         return userMapper.toUserResponse(saved);
     }

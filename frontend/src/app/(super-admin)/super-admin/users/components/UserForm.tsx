@@ -11,7 +11,6 @@ import {
   Clock,
   CheckCircle2,
   Lock,
-  Unlock,
   Edit2,
   Save,
   Loader2,
@@ -72,6 +71,11 @@ const STATUS_CONFIG: Record<
     dot: "bg-red-500",
     badge: "bg-red-50 text-red-700 border border-red-200",
   },
+  BANNED: {
+    label: "Cấm vĩnh viễn",
+    dot: "bg-red-700",
+    badge: "bg-red-100 text-red-800 border border-red-300",
+  },
   DISABLED: {
     label: "Vô hiệu",
     dot: "bg-zinc-400",
@@ -103,7 +107,6 @@ export function UserForm({
     kycStatus: user.kycStatus,
     trustLevel: user.trustLevel,
     enabled: user.enabled,
-    accountNonLocked: user.accountNonLocked,
     roles: user.roles as string[],
   });
 
@@ -129,9 +132,6 @@ export function UserForm({
       }
       if (formData.enabled !== user.enabled) {
         changedData.enabled = formData.enabled;
-      }
-      if (formData.accountNonLocked !== user.accountNonLocked) {
-        changedData.accountNonLocked = formData.accountNonLocked;
       }
       
       const originalRoles = [...(user.roles || [])].sort();
@@ -332,6 +332,12 @@ export function UserForm({
                         </SelectItem>
                         <SelectItem
                           className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
+                          value={AccountStatus.BANNED}
+                        >
+                          Cấm vĩnh viễn
+                        </SelectItem>
+                        <SelectItem
+                          className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
                           value={AccountStatus.DISABLED}
                         >
                           Vô hiệu
@@ -362,45 +368,27 @@ export function UserForm({
                   )}
                 </div>
 
-                {/* Lock Status */}
+                {/* Access Status */}
                 <div
                   className={cn(
                     "rounded-xl p-4 border flex flex-col justify-center",
-                    isEditing
-                      ? "bg-white border-zinc-200"
-                      : "bg-zinc-50/50 border-zinc-100",
+                    "bg-zinc-50/50 border-zinc-100",
                   )}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[12px] font-medium text-zinc-400 mb-1.5 ml-1">
-                        Trạng thái khóa
-                      </p>
-                      {!isEditing &&
-                        (user.accountNonLocked ? (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            <Unlock className="w-3.5 h-3.5" />
-                            Không bị khóa
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-xl bg-red-50 text-red-700 border border-red-200">
-                            <Lock className="w-3.5 h-3.5" />
-                            Đang bị khóa
-                          </span>
-                        ))}
-                    </div>
-                    {isEditing && (
-                      <Switch
-                        checked={formData.accountNonLocked}
-                        onCheckedChange={(checked) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            accountNonLocked: checked,
-                          }))
-                        }
-                      />
-                    )}
-                  </div>
+                  <p className="text-[12px] font-medium text-zinc-400 mb-1.5 ml-1">
+                    Quyền đăng nhập
+                  </p>
+                  {user.accountStatus === AccountStatus.ACTIVE ? (
+                    <span className="inline-flex w-fit items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Được phép đăng nhập
+                    </span>
+                  ) : (
+                    <span className="inline-flex w-fit items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-xl bg-red-50 text-red-700 border border-red-200">
+                      <Lock className="w-3.5 h-3.5" />
+                      Không được đăng nhập
+                    </span>
+                  )}
                 </div>
 
                 {/* KYC Status */}

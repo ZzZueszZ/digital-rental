@@ -32,7 +32,7 @@ export interface UserActionCallbacks {
 interface UserActionMenuProps {
   userId: number;
   viewMode: "ACTIVE" | "DELETED";
-  accountNonLocked: boolean;
+  accountStatus: string;
   callbacks: UserActionCallbacks;
   /** Compact trigger style for desktop table */
   compact?: boolean;
@@ -41,7 +41,7 @@ interface UserActionMenuProps {
 export function UserActionMenu({
   userId,
   viewMode,
-  accountNonLocked,
+  accountStatus,
   callbacks,
   compact = false,
 }: UserActionMenuProps) {
@@ -90,7 +90,7 @@ export function UserActionMenu({
                   <RefreshCw className="w-3.5 h-3.5 text-zinc-400" /> Reset mật
                   khẩu
                 </DropdownMenuItem>
-                {accountNonLocked ? (
+                {accountStatus !== "SUSPENDED" ? (
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={callbacks.onLock}

@@ -32,7 +32,7 @@ export interface UserActionCallbacks {
 interface UserActionMenuProps {
   userId: number;
   viewMode: "ACTIVE" | "DELETED";
-  accountNonLocked: boolean;
+  accountStatus: string;
   callbacks: UserActionCallbacks;
   /** Compact trigger style for desktop table */
   compact?: boolean;
@@ -41,7 +41,7 @@ interface UserActionMenuProps {
 export function UserActionMenu({
   userId,
   viewMode,
-  accountNonLocked,
+  accountStatus,
   callbacks,
   compact = false,
 }: UserActionMenuProps) {

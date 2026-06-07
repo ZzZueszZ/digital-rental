@@ -65,10 +65,6 @@ public class User extends BaseAuditEntity {
     @Builder.Default
     private boolean enabled = true;
 
-    @Column(name = "account_non_locked", nullable = false)
-    @Builder.Default
-    private boolean accountNonLocked = true;
-
     @Column(name = "failed_login_attempts", nullable = false)
     @Builder.Default
     private int failedLoginAttempts = 0;

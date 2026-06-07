@@ -28,7 +28,6 @@ export interface UserResponse {
   emailVerified: boolean
   phoneVerified: boolean
   enabled: boolean
-  accountNonLocked: boolean
   createdAt: string
   updatedAt: string
   roles: Role[] | string[]
@@ -50,7 +49,6 @@ export interface UserUpdateRequest {
   kycStatus?: KycStatus
   trustLevel?: TrustLevel
   enabled?: boolean
-  accountNonLocked?: boolean
   roles?: string[]
 }
 

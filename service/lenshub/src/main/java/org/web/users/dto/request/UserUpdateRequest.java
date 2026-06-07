@@ -21,6 +21,5 @@ public class UserUpdateRequest {
     private KycStatus kycStatus;
     private TrustLevel trustLevel;
     private Boolean enabled;
-    private Boolean accountNonLocked;
     private Set<RoleName> roles;
 }

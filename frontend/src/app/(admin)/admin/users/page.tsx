@@ -468,7 +468,7 @@ export default function UsersAdminPage() {
                   <UserActionMenu
                     userId={u.id}
                     viewMode={viewMode}
-                    accountNonLocked={u.accountNonLocked}
+                    accountStatus={u.accountStatus}
                     callbacks={{
                       onResetPassword: () =>
                         requestAction(
@@ -725,7 +725,7 @@ export default function UsersAdminPage() {
                           compact
                           userId={u.id}
                           viewMode={viewMode}
-                          accountNonLocked={u.accountNonLocked}
+                          accountStatus={u.accountStatus}
                           callbacks={{
                             onResetPassword: () =>
                               requestAction(

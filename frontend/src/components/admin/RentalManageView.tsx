@@ -493,7 +493,11 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                 </tr>
               ) : (
                 filteredRentals.map((rental) => (
-                  <tr key={rental.id} className="hover:bg-zinc-50/30 transition-all duration-200">
+                  <tr
+                    key={rental.id}
+                    onClick={() => handleOpenDetail(rental.id)}
+                    className="cursor-pointer hover:bg-zinc-50/50 transition-all duration-200"
+                  >
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-zinc-950">#{rental.code}</span>

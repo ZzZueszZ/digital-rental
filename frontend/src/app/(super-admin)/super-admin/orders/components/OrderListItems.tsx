@@ -39,7 +39,10 @@ export function OrderTableRow({
   onUpdateStatus,
 }: OrderItemsProps) {
   return (
-    <tr className="admin-table-row group">
+    <tr
+      onClick={() => onView(order.id)}
+      className="admin-table-row group cursor-pointer hover:bg-zinc-50/50 transition-colors"
+    >
       <td className="px-6 py-4">
         <div className="flex flex-col">
           <span className="text-sm font-black text-zinc-950 group-hover:text-red-600 transition-colors">
@@ -92,7 +95,7 @@ export function OrderTableRow({
           {getStatusLabel(order.status)}
         </div>
       </td>
-      <td className="px-6 py-4 text-right">
+      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
         <DropdownMenu>
           <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-xl hover:bg-zinc-100 outline-none cursor-pointer">
             <MoreHorizontal className="h-4 w-4 text-zinc-500" />

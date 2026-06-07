@@ -147,8 +147,8 @@ export default function Home() {
                   transition={{ delay: i * 0.1 }}
                   className="group"
                 >
-                   <div className="flex flex-col items-center md:items-start p-8 rounded-3xl bg-zinc-50/50 border border-transparent hover:border-zinc-100 hover:bg-white hover:shadow-dash-card transition-all duration-500">
-                      <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-red-600 mb-6 group-hover:bg-red-600 group-hover:text-white transition-all">
+                   <div className="flex flex-col items-center md:items-start p-8 rounded-xl bg-zinc-50/50 border border-transparent hover:border-zinc-100 hover:bg-white hover:shadow-dash-card transition-all duration-500">
+                      <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-red-600 mb-6 group-hover:bg-red-600 group-hover:text-white transition-all">
                         <stat.icon className="w-6 h-6" />
                       </div>
                       <h3 className="text-3xl lg:text-4xl font-black text-zinc-950 mb-2 tracking-tighter">{stat.value}</h3>
@@ -206,7 +206,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.15 }}
-                  className="group relative h-[600px] rounded-[2.5rem] overflow-hidden border border-zinc-100 shadow-dash-card hover:-translate-y-2 transition-all duration-700"
+                  className="group relative h-[600px] rounded-xl overflow-hidden border border-zinc-100 shadow-dash-card hover:-translate-y-2 transition-all duration-700"
                 >
                   <Image
                     src={cat.image}
@@ -247,7 +247,7 @@ export default function Home() {
                   { icon: ShieldAlert, title: "Bàn giao an toàn", desc: "Hoàn tất dự án và bàn giao thiết bị tại Studio hoặc tận nơi." },
                 ].map((step, i) => (
                   <div key={i} className="relative group text-center md:text-left">
-                    <div className="w-16 h-16 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-900 mb-8 mx-auto md:mx-0 group-hover:bg-red-600 group-hover:text-white group-hover:shadow-xl group-hover:shadow-red-200 transition-all duration-500">
+                    <div className="w-16 h-16 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-900 mb-8 mx-auto md:mx-0 group-hover:bg-red-600 group-hover:text-white group-hover:shadow-xl group-hover:shadow-red-200 transition-all duration-500">
                       <step.icon className="w-7 h-7" />
                       <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-white border border-zinc-100 flex items-center justify-center text-xs font-black text-red-600 shadow-sm">
                         0{i + 1}
@@ -269,7 +269,7 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1600px]">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                <div className="relative">
-                  <div className="relative aspect-4/5 rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white">
+                  <div className="relative aspect-4/5 rounded-xl overflow-hidden shadow-2xl border-8 border-white">
                     <Image 
                       src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2071&auto=format&fit=crop"
                       alt="Studio Work"
@@ -278,7 +278,7 @@ export default function Home() {
                     />
                   </div>
                   {/* Floating Experience Card */}
-                  <div className="absolute -bottom-10 -right-10 bg-red-600 p-10 rounded-[2.5rem] text-white shadow-2xl shadow-red-200 max-w-xs hidden md:block animate-bounce-subtle">
+                  <div className="absolute -bottom-10 -right-10 bg-red-600 p-10 rounded-xl text-white shadow-2xl shadow-red-200 max-w-xs hidden md:block animate-bounce-subtle">
                      <p className="text-5xl font-black mb-2 tracking-tighter">10+</p>
                      <p className="text-xs font-bold uppercase tracking-widest opacity-80">Năm kinh nghiệm trong ngành Cinema & Media</p>
                   </div>
@@ -325,7 +325,7 @@ export default function Home() {
         {/* Testimonials Section */}
         <section className="py-24 bg-white">
           <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1600px]">
-             <div className="bg-zinc-950 rounded-[3rem] p-12 md:p-24 relative overflow-hidden">
+             <div className="bg-zinc-950 rounded-xl p-12 md:p-24 relative overflow-hidden">
                 {/* Decoration */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-red-600 opacity-10 blur-[100px]" />
                 
@@ -336,7 +336,7 @@ export default function Home() {
                         &ldquo;Digital Rental đã thay đổi hoàn toàn cách chúng tôi thực hiện các dự án Cinema. Thiết bị luôn ở trạng thái hoàn hảo nhất.&rdquo;
                       </h2>
                       <div className="flex items-center gap-4">
-                         <div className="w-16 h-16 rounded-2xl bg-zinc-800 border border-zinc-700 overflow-hidden">
+                         <div className="w-16 h-16 rounded-xl bg-zinc-800 border border-zinc-700 overflow-hidden">
                             <img src="https://i.pravatar.cc/150?u=4" alt="Reviewer" />
                          </div>
                          <div>
@@ -353,7 +353,7 @@ export default function Home() {
                         "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?q=80&w=600&auto=format&fit=crop",
                         "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=600&auto=format&fit=crop"
                       ].map((img, i) => (
-                        <div key={i} className="aspect-square rounded-3xl overflow-hidden border border-zinc-800 hover:border-red-600/50 transition-all duration-500">
+                        <div key={i} className="aspect-square rounded-xl overflow-hidden border border-zinc-800 hover:border-red-600/50 transition-all duration-500">
                            <img src={img} className="w-full h-full object-cover opacity-60 hover:opacity-100 hover:scale-110 transition-all duration-700" alt="Studio gallery" />
                         </div>
                       ))}

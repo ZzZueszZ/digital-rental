@@ -122,7 +122,7 @@ export function ProductListSection() {
             {[...Array(pageSize)].map((_, i) => (
               <div
                 key={i}
-                className="h-[420px] rounded-[2rem] bg-zinc-100 animate-pulse"
+                className="h-[420px] rounded-xl bg-zinc-100 animate-pulse"
               />
             ))}
           </div>
@@ -132,7 +132,7 @@ export function ProductListSection() {
               <Link
                 key={product.id}
                 href={`/products/${product.id}`}
-                className="group relative h-[420px] rounded-[2rem] bg-white border border-zinc-200 overflow-hidden transition-all duration-500 hover:border-red-600/30 hover:shadow-xl flex flex-col cursor-pointer"
+                className="group relative h-[420px] rounded-xl bg-white border border-zinc-200 overflow-hidden transition-all duration-500 hover:border-red-600/30 hover:shadow-xl flex flex-col cursor-pointer"
               >
                 {/* Image Wrapper */}
                 <div className="relative h-[220px] w-full bg-zinc-50 p-4 flex items-center justify-center overflow-hidden">
@@ -198,7 +198,7 @@ export function ProductListSection() {
             ))}
           </div>
         ) : (
-          <div className="h-[400px] flex flex-col items-center justify-center text-zinc-500 border border-dashed border-zinc-200 rounded-[2rem] bg-white">
+          <div className="h-[400px] flex flex-col items-center justify-center text-zinc-500 border border-dashed border-zinc-200 rounded-xl bg-white">
             <Camera className="w-12 h-12 mb-4 opacity-50" />
             <p className="font-medium text-sm">Không tìm thấy sản phẩm nào.</p>
           </div>

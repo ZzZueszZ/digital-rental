@@ -82,7 +82,7 @@ export function Navbar() {
               href="/"
               className="group flex items-center gap-3.5 transition-all"
             >
-              <div className="w-10 h-10 bg-zinc-950 rounded-dash-md flex items-center justify-center shadow-dash-sm group-hover:bg-red-600 group-hover:scale-105 transition-all duration-500">
+              <div className="w-10 h-10 bg-zinc-950 rounded-xl flex items-center justify-center shadow-dash-sm group-hover:bg-red-600 group-hover:scale-105 transition-all duration-500">
                 <Camera className="h-5 w-5 text-white" />
               </div>
               <div className="flex flex-col select-none leading-none">
@@ -100,12 +100,12 @@ export function Navbar() {
               <NavigationMenu>
                 <NavigationMenuList className="gap-2">
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="bg-transparent text-zinc-500 hover:!text-zinc-950 font-bold text-[15px] tracking-tight transition-all data-open:!text-red-600 data-open:!bg-transparent data-popup-open:!bg-transparent data-popup-open:!text-red-600 hover:!bg-transparent focus:!bg-transparent data-open:hover:!bg-transparent data-popup-open:hover:!bg-transparent data-active:!bg-transparent rounded-dash-sm h-10 px-4 border-none shadow-none outline-none">
+                    <NavigationMenuTrigger className="bg-transparent text-zinc-500 hover:!text-zinc-950 font-bold text-[15px] tracking-tight transition-all data-open:!text-red-600 data-open:!bg-transparent data-popup-open:!bg-transparent data-popup-open:!text-red-600 hover:!bg-transparent focus:!bg-transparent data-open:hover:!bg-transparent data-popup-open:hover:!bg-transparent data-active:!bg-transparent rounded-xl h-10 px-4 border-none shadow-none outline-none">
                       Thiết bị
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="p-0 border-none bg-transparent shadow-none">
-                      <div className="p-8 w-[720px] bg-white border border-zinc-100 rounded-dash-lg shadow-dash-lg flex gap-8">
-                        <div className="flex-1 bg-zinc-50 p-6 rounded-dash-md border border-zinc-200">
+                      <div className="p-8 w-[720px] bg-white border border-zinc-100 rounded-xl shadow-dash-lg flex gap-8">
+                        <div className="flex-1 bg-zinc-50 p-6 rounded-xl border border-zinc-200">
                           <Zap className="w-8 h-8 text-red-600 mb-4" />
                           <h4 className="text-[20px] font-semibold text-zinc-900 tracking-tight mb-3">
                             Kho thiết bị
@@ -121,7 +121,7 @@ export function Navbar() {
                         <div className="flex-1 grid grid-cols-1 gap-2">
                           <Link
                             href="/rentals"
-                            className="group flex items-center justify-between p-3 rounded-dash-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all"
+                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-50 hover:text-zinc-950 transition-all"
                           >
                             <div>
                               <p className="text-zinc-900 font-medium text-[15px] tracking-tight">
@@ -135,7 +135,7 @@ export function Navbar() {
                           </Link>
                           <Link
                             href="/rentals"
-                            className="group flex items-center justify-between p-3 rounded-dash-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all"
+                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-50 hover:text-zinc-950 transition-all"
                           >
                             <div>
                               <p className="text-zinc-900 font-medium text-[15px] tracking-tight">
@@ -149,7 +149,7 @@ export function Navbar() {
                           </Link>
                           <Link
                             href="/rentals"
-                            className="group flex items-center justify-between p-3 rounded-dash-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all"
+                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-50 hover:text-zinc-950 transition-all"
                           >
                             <div>
                               <p className="text-zinc-900 font-medium text-[15px] tracking-tight">
@@ -189,7 +189,7 @@ export function Navbar() {
           {/* Right Action Section */}
           <div className="flex items-center gap-2 sm:gap-4">
             {/* Desktop Search */}
-            <div className="hidden lg:flex items-center bg-zinc-50/80 border border-zinc-100 rounded-dash-sm px-4 h-11 gap-3 focus-within:bg-white focus-within:border-zinc-300 focus-within:shadow-dash-sm transition-all">
+            <div className="hidden lg:flex items-center bg-zinc-50/80 border border-zinc-100 rounded-xl px-4 h-11 gap-3 focus-within:bg-white focus-within:border-zinc-300 focus-within:shadow-dash-sm transition-all">
               <Search className="h-4 w-4 text-zinc-400" />
               <input
                 placeholder="Tìm kiếm..."
@@ -201,7 +201,7 @@ export function Navbar() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden w-9 h-9 rounded-dash-sm hover:bg-zinc-100 transition-all"
+              className="lg:hidden w-9 h-9 rounded-xl hover:bg-zinc-100 transition-all"
             >
               <Search className="h-4 w-4 text-zinc-500" />
             </Button>
@@ -211,7 +211,7 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative w-10 h-10 rounded-dash-sm bg-zinc-50/50 hover:bg-zinc-100 border border-transparent hover:border-zinc-200 transition-all group active:scale-95"
+                className="relative w-10 h-10 rounded-xl bg-zinc-50/50 hover:bg-zinc-100 border border-transparent hover:border-zinc-200 transition-all group active:scale-95"
               >
                 <ShoppingBag className="h-4 w-4 text-zinc-500 group-hover:text-red-600 transition-colors" />
                 <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-zinc-950 text-[9px] font-black text-white shadow-lg border-2 border-white">
@@ -226,12 +226,12 @@ export function Navbar() {
                 <div className="w-10 h-10 rounded-xl bg-zinc-100 animate-pulse" />
               ) : isAuthenticated && user ? (
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="w-10 h-10 rounded-dash-sm bg-zinc-50/50 hover:bg-zinc-100 border border-transparent hover:border-zinc-200 transition-all cursor-pointer flex items-center justify-center group active:scale-95 outline-none">
+                  <DropdownMenuTrigger className="w-10 h-10 rounded-xl bg-zinc-50/50 hover:bg-zinc-100 border border-transparent hover:border-zinc-200 transition-all cursor-pointer flex items-center justify-center group active:scale-95 outline-none">
                     <User className="h-4 w-4 text-zinc-500 group-hover:text-red-600 transition-colors" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
-                    className="w-64 bg-white border border-zinc-100 rounded-dash-md p-2 shadow-dash-lg"
+                    className="w-64 bg-white border border-zinc-100 rounded-xl p-2 shadow-dash-lg"
                   >
                     <div className="px-3 py-3 mb-1">
                       <p className="text-[14px] font-bold text-zinc-950 truncate">
@@ -292,7 +292,7 @@ export function Navbar() {
                 </DropdownMenu>
               ) : (
                 <Link href={Routers.LOGIN}>
-                  <Button className="h-10 rounded-dash-sm px-8 bg-zinc-950 text-white hover:bg-red-600 font-bold text-[13px] transition-all shadow-dash-sm active:scale-95 border-none">
+                  <Button className="h-10 rounded-xl px-8 bg-zinc-950 text-white hover:bg-red-600 font-bold text-[13px] transition-all shadow-dash-sm active:scale-95 border-none">
                     Đăng nhập
                   </Button>
                 </Link>
@@ -302,18 +302,18 @@ export function Navbar() {
             {/* Mobile Auth */}
             <div className="lg:hidden">
               {isLoading ? (
-                <div className="w-9 h-9 rounded-dash-sm bg-zinc-100 animate-pulse" />
+                <div className="w-9 h-9 rounded-xl bg-zinc-100 animate-pulse" />
               ) : isAuthenticated && user ? (
                 <Link
                   href="/profile"
-                  className="w-9 h-9 rounded-dash-sm hover:bg-zinc-100 transition-all flex items-center justify-center group"
+                  className="w-9 h-9 rounded-xl hover:bg-zinc-100 transition-all flex items-center justify-center group"
                 >
                   <User className="h-4 w-4 text-zinc-500 group-hover:text-zinc-900" />
                 </Link>
               ) : (
                 <Link
                   href={Routers.LOGIN}
-                  className="h-8 px-3.5 rounded-dash-sm bg-zinc-900 border border-zinc-800 text-white hover:bg-black font-black text-[10px] transition-all flex items-center"
+                  className="h-8 px-3.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white hover:bg-black font-black text-[10px] transition-all flex items-center"
                 >
                   Đăng nhập
                 </Link>
@@ -328,7 +328,7 @@ export function Navbar() {
             {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden w-9 h-9 rounded-dash-sm bg-zinc-100 flex items-center justify-center transition-all active:scale-95"
+              className="lg:hidden w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center transition-all active:scale-95"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? (
@@ -365,7 +365,7 @@ export function Navbar() {
             </span>
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="w-9 h-9 rounded-dash-sm bg-zinc-100 flex items-center justify-center transition-all active:scale-95"
+              className="w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center transition-all active:scale-95"
             >
               <X className="h-4 w-4 text-zinc-900" />
             </button>
@@ -375,7 +375,7 @@ export function Navbar() {
           {!isLoading && isAuthenticated && user && (
             <div className="px-5 py-5 border-b border-zinc-200">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-dash-md bg-red-600 flex items-center justify-center shrink-0 shadow-dash-md">
+                <div className="w-11 h-11 rounded-xl bg-red-600 flex items-center justify-center shrink-0 shadow-dash-md">
                   <span className="text-sm font-black text-white">
                     {user.email?.charAt(0) || "U"}
                   </span>
@@ -402,7 +402,7 @@ export function Navbar() {
               <Link
                 href="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
+                className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
               >
                 <Home className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
                 <span className="text-[14px] font-bold">Trang chủ</span>
@@ -412,7 +412,7 @@ export function Navbar() {
               <Link
                 href="/rentals"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
+                className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
               >
                 <Camera className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
                 <span className="text-[14px] font-bold">Thiết bị</span>
@@ -422,7 +422,7 @@ export function Navbar() {
               <Link
                 href="/inventory"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
+                className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
               >
                 <Package className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
                 <span className="text-[14px] font-bold">Sản phẩm mới</span>
@@ -432,7 +432,7 @@ export function Navbar() {
               <Link
                 href="/about"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
+                className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
               >
                 <Info className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
                 <span className="text-[14px] font-bold">Về chúng tôi</span>
@@ -451,7 +451,7 @@ export function Navbar() {
                   <Link
                     href={dashboardLink}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-3 rounded-dash-md text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
+                    className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
                   >
                     <LayoutDashboard className="w-4 h-4 text-red-600" />
                     <span className="text-[14px] font-bold">
@@ -464,7 +464,7 @@ export function Navbar() {
                 <Link
                   href="/profile"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
+                  className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
                 >
                   <User className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
                   <span className="text-[14px] font-bold">Tài khoản</span>
@@ -474,7 +474,7 @@ export function Navbar() {
                 <Link
                   href="/profile/settings"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-3 py-3 rounded-dash-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
+                  className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all group"
                 >
                   <Settings className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
                   <span className="text-[14px] font-bold">Cài đặt</span>
@@ -496,7 +496,7 @@ export function Navbar() {
                 </Button>
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center justify-center gap-2.5 h-11 rounded-dash-sm border border-red-500/20 text-red-500 hover:bg-red-50 font-bold text-[14px] transition-all"
+                  className="w-full flex items-center justify-center gap-2.5 h-11 rounded-xl border border-red-500/20 text-red-500 hover:bg-red-50 font-bold text-[14px] transition-all"
                 >
                   <LogOut className="w-4 h-4" />
                   Đăng Xuất
@@ -508,12 +508,12 @@ export function Navbar() {
                   href={Routers.LOGIN}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <Button className="w-full h-11 rounded-dash-sm bg-zinc-950 text-white hover:bg-black font-bold text-[14px] shadow-dash-md active:scale-[0.98] transition-all">
+                  <Button className="w-full h-11 rounded-xl bg-zinc-950 text-white hover:bg-black font-bold text-[14px] shadow-dash-md active:scale-[0.98] transition-all">
                     Đăng nhập
                   </Button>
                 </Link>
                 <Button
-                  className="w-full h-11 rounded-dash-sm bg-red-600 text-white hover:bg-red-700 font-bold text-[14px] shadow-dash-md active:scale-[0.98] transition-all mt-2"
+                  className="w-full h-11 rounded-xl bg-red-600 text-white hover:bg-red-700 font-bold text-[14px] shadow-dash-md active:scale-[0.98] transition-all mt-2"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Đặt Thuê Ngay

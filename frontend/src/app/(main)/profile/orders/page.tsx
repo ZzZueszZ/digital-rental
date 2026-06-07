@@ -304,7 +304,7 @@ export default function OrdersPage() {
           </p>
           <Button
             onClick={() => router.push("/")}
-            className="h-12 px-10 rounded-xl bg-red-600 hover:bg-zinc-950 text-white font-black text-xs uppercase transition-all shadow-xl shadow-red-100 border-none"
+            className="h-10 px-5 rounded-xl bg-red-600 hover:bg-zinc-900 text-white transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-red-100 border-none whitespace-nowrap active:scale-95"
           >
             Khám phá thiết bị ngay
           </Button>
@@ -323,7 +323,7 @@ export default function OrdersPage() {
           </p>
           <Button
             onClick={() => router.push("/")}
-            className="h-12 px-10 rounded-xl bg-red-600 hover:bg-zinc-950 text-white font-black text-xs uppercase transition-all shadow-xl shadow-red-100 border-none"
+            className="h-10 px-5 rounded-xl bg-red-600 hover:bg-zinc-900 text-white transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-red-100 border-none whitespace-nowrap active:scale-95"
           >
             Thuê thiết bị ảnh ngay
           </Button>

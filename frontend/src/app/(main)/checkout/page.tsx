@@ -319,7 +319,7 @@ export default function CheckoutPage() {
               className="group flex items-center gap-2 text-zinc-400 hover:text-zinc-950 transition-all"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span className="text-[11px] font-bold uppercase tracking-wider">
+              <span className="text-sm font-medium">
                 Quay lại
               </span>
             </button>
@@ -349,7 +349,7 @@ export default function CheckoutPage() {
                 />
                 <span
                   className={cn(
-                    "text-[10px] font-bold uppercase tracking-widest",
+                    "text-xs font-semibold",
                     currentStep === step.id ? "text-zinc-950" : "text-zinc-400",
                   )}
                 >
@@ -361,7 +361,7 @@ export default function CheckoutPage() {
 
           <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-100">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span className="text-[10px] font-bold uppercase tracking-wider">
+            <span className="text-xs font-semibold">
               Bảo mật 100%
             </span>
           </div>
@@ -378,11 +378,11 @@ export default function CheckoutPage() {
                 Chi tiết đơn hàng
               </h2>
             </div>
-            <div className="hidden sm:flex items-center gap-2 text-zinc-300">
-              <span className="text-[10px] font-bold uppercase tracking-widest">
+            <div className="hidden sm:flex items-center gap-2 text-zinc-400">
+              <span className="text-xs font-medium">
                 Tạm tính:
               </span>
-              <span className="text-[10px] font-black text-zinc-400 tracking-widest">
+              <span className="text-xs font-semibold text-zinc-500">
                 #{Math.random().toString(36).substring(7).toUpperCase()}
               </span>
             </div>
@@ -408,7 +408,7 @@ export default function CheckoutPage() {
                       className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute bottom-1 right-1">
-                      <span className="bg-zinc-950 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-widest">
+                      <span className="bg-zinc-950 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
                         Studio
                       </span>
                     </div>
@@ -417,12 +417,12 @@ export default function CheckoutPage() {
                   {/* Product Meta - Tighter */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-bold text-red-600 uppercase tracking-widest">
-                        {item.brand || "LENS HUB"}
+                      <span className="text-xs font-semibold text-red-600">
+                        {item.brand || "Lens Hub"}
                       </span>
                       <span className="text-zinc-200">•</span>
-                      <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-                        {item.categoryName || "THIẾT BỊ"}
+                      <span className="text-xs font-semibold text-zinc-500">
+                        {item.categoryName || "Thiết bị"}
                       </span>
                     </div>
                     <h3 className="text-lg font-bold text-zinc-950 truncate leading-tight mb-1">
@@ -437,14 +437,14 @@ export default function CheckoutPage() {
                     <div className="flex flex-wrap gap-3">
                       <div className="flex items-center gap-1.5 bg-zinc-50 px-2.5 py-1 rounded-xl border border-zinc-100">
                         <Calendar className="w-3 h-3 text-zinc-400" />
-                        <span className="text-[10px] font-bold text-zinc-950">
+                        <span className="text-xs font-semibold text-zinc-950">
                           SL: {item.quantity}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5 bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-100">
                         <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                        <span className="text-[10px] font-bold text-emerald-600">
-                          BẢO HIỂM
+                        <span className="text-[11px] font-semibold text-emerald-600">
+                          Bảo hiểm
                         </span>
                       </div>
                     </div>
@@ -452,7 +452,7 @@ export default function CheckoutPage() {
 
                   {/* Price focus - Compact */}
                   <div className="text-right border-l border-zinc-100 pl-6 hidden md:block">
-                    <p className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest mb-1">
+                    <p className="text-xs font-medium text-zinc-400 mb-1">
                       Đơn giá
                     </p>
                     <p className="text-xl font-bold tracking-tight text-zinc-950">
@@ -473,7 +473,7 @@ export default function CheckoutPage() {
                 <Ticket className="w-5 h-5 text-zinc-400" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest leading-none mb-1.5">
+                <p className="text-xs font-medium text-zinc-500 leading-none mb-1.5">
                   Giá trị tạm tính
                 </p>
                 <p className="text-lg font-bold text-zinc-950 leading-none tracking-tight">
@@ -484,16 +484,16 @@ export default function CheckoutPage() {
 
             <div className="flex items-center gap-6">
               <div className="text-right">
-                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest leading-none mb-1.5">
+                <p className="text-xs font-medium text-zinc-500 leading-none mb-1.5">
                   Bàn giao
                 </p>
-                <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest leading-none">
+                <p className="text-xs font-semibold text-emerald-600 leading-none">
                   Miễn phí
                 </p>
               </div>
               <div className="w-px h-8 bg-zinc-200" />
               <div className="text-right">
-                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest leading-none mb-1.5">
+                <p className="text-xs font-medium text-zinc-500 leading-none mb-1.5">
                   Tổng cộng
                 </p>
                 <p className="text-2xl font-bold text-zinc-950 leading-none tracking-tighter">
@@ -516,7 +516,7 @@ export default function CheckoutPage() {
               <h3 className="text-lg font-bold text-zinc-950 tracking-tight">
                 {steps.find((s) => s.id === currentStep)?.name}
               </h3>
-              <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest">
+              <p className="text-zinc-400 text-xs font-medium">
                 Cung cấp thông tin bắt buộc
               </p>
             </div>
@@ -528,12 +528,12 @@ export default function CheckoutPage() {
               <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                 <div className="space-y-6">
                   <div className="flex items-center justify-between px-1">
-                    <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">
+                    <span className="text-xs font-medium text-zinc-400">
                       Lựa chọn địa chỉ
                     </span>
                     <button
                       onClick={() => setUseManualAddress(!useManualAddress)}
-                      className="text-[10px] font-bold text-red-600 hover:text-zinc-950 transition-colors uppercase tracking-widest underline underline-offset-4 decoration-2"
+                      className="text-xs font-semibold text-red-600 hover:text-zinc-950 transition-colors underline underline-offset-4 decoration-2"
                     >
                       {useManualAddress ? "Sổ địa chỉ" : "Địa chỉ mới"}
                     </button>
@@ -543,7 +543,7 @@ export default function CheckoutPage() {
                     <div className="p-8 bg-white rounded-3xl border border-zinc-100 shadow-xl shadow-zinc-100/50 animate-in zoom-in-95 duration-300">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="space-y-2">
-                          <Label className="text-[11px] font-bold text-zinc-400 ml-1">
+                          <Label className="text-xs font-semibold text-zinc-500 ml-1">
                             Họ và tên người nhận
                           </Label>
                           <Input
@@ -555,11 +555,11 @@ export default function CheckoutPage() {
                                 name: e.target.value,
                               })
                             }
-                            className="h-12 bg-zinc-50 border-zinc-100 rounded-xl font-semibold text-sm focus-visible:ring-red-600/5 px-4"
+                            className="h-10 bg-zinc-50 border-zinc-100 rounded-xl font-semibold text-sm focus-visible:ring-red-600/5 px-4"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-[11px] font-bold text-zinc-400 ml-1">
+                          <Label className="text-xs font-semibold text-zinc-500 ml-1">
                             Số điện thoại liên hệ
                           </Label>
                           <Input
@@ -571,11 +571,11 @@ export default function CheckoutPage() {
                                 phone: e.target.value,
                               })
                             }
-                            className="h-12 bg-zinc-50 border-zinc-100 rounded-xl font-semibold text-sm focus-visible:ring-red-600/5 px-4"
+                            className="h-10 bg-zinc-50 border-zinc-100 rounded-xl font-semibold text-sm focus-visible:ring-red-600/5 px-4"
                           />
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                          <Label className="text-[11px] font-bold text-zinc-400 ml-1">
+                          <Label className="text-xs font-semibold text-zinc-500 ml-1">
                             Địa chỉ chi tiết
                           </Label>
                           <Input
@@ -595,16 +595,16 @@ export default function CheckoutPage() {
                   ) : (
                     <div className="grid grid-cols-1 gap-3">
                       {addresses.length === 0 ? (
-                        <div className="p-12 text-center border border-dashed border-zinc-200 rounded-3xl bg-zinc-50/50">
+                        <div className="p-12 text-center border border-dashed border-zinc-200 rounded-3xl bg-zinc-50/50 flex flex-col items-center justify-center">
                           <MapPin className="w-8 h-8 text-zinc-200 mx-auto mb-4" />
-                          <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest mb-6">
+                          <p className="text-xs font-semibold text-zinc-400 mb-6">
                             Chưa có thông tin địa chỉ
                           </p>
                           <Button
                             onClick={() => setUseManualAddress(true)}
-                            className="rounded-xl bg-zinc-950 text-white font-bold text-[11px] h-10 px-8 border-none hover:bg-red-600 transition-all"
+                            className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95"
                           >
-                            THIẾT LẬP NGAY
+                            Thiết lập ngay
                           </Button>
                         </div>
                       ) : (
@@ -633,7 +633,7 @@ export default function CheckoutPage() {
                                     {addr.receiverName}
                                   </span>
                                   {addr.isDefault && (
-                                    <span className="text-[8px] font-black bg-emerald-500 text-white px-1.5 py-0.5 rounded uppercase tracking-widest">
+                                    <span className="text-[9px] font-bold bg-emerald-500 text-white px-1.5 py-0.5 rounded">
                                       Mặc định
                                     </span>
                                   )}
@@ -713,7 +713,7 @@ export default function CheckoutPage() {
                         </span>
                         <p
                           className={cn(
-                            "text-[10px] font-bold uppercase tracking-widest opacity-60",
+                            "text-xs font-semibold opacity-60",
                             paymentMethod === method.id
                               ? "text-red-600"
                               : "text-zinc-400",
@@ -732,39 +732,39 @@ export default function CheckoutPage() {
             {currentStep === CheckoutStep.VOUCHER && (
               <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                 <div className="bg-zinc-50/50 p-8 rounded-3xl border border-zinc-100 mb-8">
-                  <p className="text-[10px] font-bold text-zinc-300 mb-6 text-center uppercase tracking-widest">
+                  <p className="text-xs font-medium text-zinc-400 mb-6 text-center">
                     Mã giảm giá độc quyền
                   </p>
                   <div className="flex gap-3">
                     <Input
-                      placeholder="MÃ CỦA BẠN..."
+                      placeholder="Nhập mã của bạn..."
                       value={voucherCode}
                       onChange={(e) =>
                         setVoucherCode(e.target.value.toUpperCase())
                       }
-                      className="h-12 bg-white border-zinc-100 rounded-xl text-lg font-bold px-6 focus-visible:ring-red-600/5 text-center flex-1"
+                      className="h-10 bg-white border-zinc-100 rounded-xl text-sm font-semibold px-4 focus-visible:ring-red-600/5 text-center flex-1"
                     />
                     <Button
                       onClick={() => handleApplyVoucher()}
                       disabled={isApplyingVoucher || !voucherCode}
-                      className="h-12 px-8 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-zinc-950 transition-all shadow-lg shadow-red-100"
+                      className="h-10 px-5 rounded-xl bg-red-600 text-white hover:bg-red-700 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 shadow-md shadow-red-100/50 whitespace-nowrap active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
                     >
                       {isApplyingVoucher ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
-                        "ÁP DỤNG"
+                        "Áp dụng"
                       )}
                     </Button>
                   </div>
                   {voucherData?.valid && (
                     <div className="mt-4 p-4 bg-emerald-500 text-white rounded-xl flex items-center justify-between shadow-lg shadow-emerald-100">
-                      <span className="text-[11px] font-black uppercase tracking-wider flex items-center gap-2">
+                      <span className="text-xs font-semibold flex items-center gap-2">
                         <Ticket className="w-4 h-4" /> -
                         {formatVND(voucherData.discountAmount)}
                       </span>
                       <button
                         onClick={handleRemoveVoucher}
-                        className="text-[10px] font-black uppercase tracking-widest underline underline-offset-4 decoration-2"
+                        className="text-xs font-bold underline underline-offset-4 decoration-2"
                       >
                         Gỡ bỏ
                       </button>
@@ -806,10 +806,10 @@ export default function CheckoutPage() {
                           </span>
                           <span
                             className={cn(
-                              "text-[10px] font-bold uppercase",
+                              "text-xs font-semibold",
                               voucherCode === v.code && voucherData?.valid
                                 ? "text-red-600"
-                                : "text-zinc-300",
+                                : "text-zinc-400",
                             )}
                           >
                             {v.type === "PERCENTAGE"
@@ -823,7 +823,7 @@ export default function CheckoutPage() {
                           "w-4 h-4",
                           voucherCode === v.code && voucherData?.valid
                             ? "text-red-400"
-                            : "opacity-20",
+                            : "opacity-40",
                         )}
                       />
                     </button>
@@ -841,13 +841,13 @@ export default function CheckoutPage() {
                       <MapPin className="w-5 h-5" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest mb-1.5">
+                      <p className="text-xs font-medium text-zinc-400 mb-1.5">
                         Địa điểm nhận
                       </p>
                       <p className="text-sm font-bold text-zinc-950 truncate mb-0.5">
                         {getAddressSummary()}
                       </p>
-                      <p className="text-[11px] text-zinc-400 font-medium italic truncate">
+                      <p className="text-xs text-zinc-400 font-medium italic truncate">
                         {useManualAddress
                           ? manualAddress.address
                           : addresses.find((a) => a.id === selectedAddressId)
@@ -860,7 +860,7 @@ export default function CheckoutPage() {
                       <CreditCard className="w-5 h-5" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest mb-1.5">
+                      <p className="text-xs font-medium text-zinc-400 mb-1.5">
                         Phương thức
                       </p>
                       <p className="text-sm font-bold text-zinc-950 mb-0.5">
@@ -868,7 +868,7 @@ export default function CheckoutPage() {
                           ? "Tiền mặt (COD)"
                           : "VNPAY Online"}
                       </p>
-                      <p className="text-[11px] text-emerald-500 font-bold uppercase">
+                      <p className="text-xs text-emerald-500 font-semibold">
                         Giao dịch an toàn
                       </p>
                     </div>
@@ -877,7 +877,7 @@ export default function CheckoutPage() {
 
                 <div className="p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex gap-4 items-center">
                   <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                  <p className="text-[11px] text-emerald-600 font-bold uppercase tracking-wider leading-relaxed">
+                  <p className="text-xs text-emerald-600 font-semibold leading-relaxed">
                     &ldquo;Dữ liệu của bạn được mã hóa an toàn qua cổng thanh toán
                     LensHub.&rdquo;
                   </p>
@@ -895,22 +895,19 @@ export default function CheckoutPage() {
                 }
                 disabled={isSubmitting}
                 className={cn(
-                  "h-12 rounded-xl text-white font-bold text-sm transition-all group flex-1",
-                  currentStep === CheckoutStep.REVIEW
-                    ? "bg-red-600 hover:bg-zinc-950 shadow-lg shadow-red-100"
-                    : "bg-red-600 hover:bg-zinc-950 shadow-lg shadow-red-100",
+                  "h-10 px-5 rounded-xl bg-red-600 text-white hover:bg-red-700 transition-all duration-200 font-semibold text-[14px] flex items-center justify-center gap-2 shadow-lg shadow-red-100 active:scale-95 flex-1 disabled:opacity-50 disabled:pointer-events-none"
                 )}
               >
                 {isSubmitting ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <>
-                    <span className="uppercase tracking-widest">
+                    <span>
                       {currentStep === CheckoutStep.REVIEW
                         ? "Xác nhận & Hoàn tất"
                         : "Tiếp tục"}
                     </span>
-                    <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </>
                 )}
               </Button>
@@ -919,7 +916,7 @@ export default function CheckoutPage() {
                 <Button
                   variant="ghost"
                   onClick={prevStep}
-                  className="h-12 rounded-xl bg-white border border-zinc-100 text-zinc-400 font-bold text-[10px] uppercase tracking-widest hover:bg-zinc-50 transition-all sm:w-32"
+                  className="h-10 px-5 rounded-xl bg-white border border-zinc-200 text-zinc-600 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 sm:w-32"
                 >
                   Quay lại
                 </Button>
@@ -927,7 +924,7 @@ export default function CheckoutPage() {
                 <Button
                   variant="ghost"
                   onClick={() => router.back()}
-                  className="h-12 rounded-xl bg-white border border-zinc-100 text-zinc-400 font-bold text-[10px] uppercase tracking-widest hover:bg-zinc-50 transition-all sm:w-32"
+                  className="h-10 px-5 rounded-xl bg-white border border-zinc-200 text-zinc-600 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 sm:w-32"
                 >
                   Hủy bỏ
                 </Button>
@@ -939,7 +936,7 @@ export default function CheckoutPage() {
               <ShieldCheck className="w-4 h-4 text-zinc-400" />
               <Truck className="w-4 h-4 text-zinc-400" />
               <Lock className="w-4 h-4 text-zinc-400" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
+              <span className="text-xs font-bold text-zinc-400">
                 LensHub Studio
               </span>
             </div>

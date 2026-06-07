@@ -175,14 +175,14 @@ export function UserForm({
                 variant="outline"
                 onClick={() => router.push(`/super-admin/users/${userId}`)}
                 disabled={isPending}
-                className="h-12 px-6 rounded-xl font-semibold text-[15px] transition-all text-zinc-900 bg-white border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950"
+                className="h-10 px-5 rounded-xl font-semibold text-[14px] transition-all text-zinc-900 bg-white border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-950 active:scale-95"
               >
                 Hủy
               </Button>
               <Button
                 onClick={handleSubmit}
                 disabled={isPending}
-                className="h-12 px-8 rounded-xl bg-zinc-950 text-white font-semibold text-[15px] shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 flex items-center gap-2 border-none"
+                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 border-none"
               >
                 {isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -195,7 +195,7 @@ export function UserForm({
           ) : (
             <Button
               onClick={() => router.push(`/super-admin/users/${userId}/edit`)}
-              className="h-12 px-6 rounded-xl bg-zinc-950 text-white font-semibold text-[15px] shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 flex items-center gap-2 border-none"
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 border-none"
             >
               <Edit2 className="w-4 h-4" />
               Chỉnh sửa

@@ -743,6 +743,36 @@ public class RentalServiceImpl implements RentalService {
         return deviceRepository.findByProductAndStatus(product, DeviceStatus.AVAILABLE).stream().map(this::mapToDeviceResponse).toList();
     }
 
+    @Override
+    @Transactional
+    public DeviceResponse updateDeviceStatus(Long id, DeviceStatusRequest request) {
+        Device device = deviceRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy thiết bị vật lý"));
+
+        device.setStatus(request.getStatus());
+        if (request.getConditionDetails() != null) {
+            device.setConditionDetails(request.getConditionDetails());
+        }
+
+        Device saved = deviceRepository.save(device);
+        return mapToDeviceResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public void deleteDevice(Long id) {
+        Device device = deviceRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy thiết bị vật lý"));
+
+        Product product = device.getProduct();
+        if (product.getRentalQuantity() > 0) {
+            product.setRentalQuantity(product.getRentalQuantity() - 1);
+            productRepository.save(product);
+        }
+
+        deviceRepository.delete(device);
+    }
+
     // Hand-written DTO Converters
     private RentalOrderResponse mapToResponse(RentalOrder order) {
         if (order == null) return null;

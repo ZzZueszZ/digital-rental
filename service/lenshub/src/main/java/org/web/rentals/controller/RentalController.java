@@ -232,4 +232,23 @@ public class RentalController {
         List<DeviceResponse> response = rentalService.getAvailableDevices(productId);
         return ResponseEntity.ok(ApiResponse.successfulResponse("Lấy danh sách thiết bị sẵn sàng thành công", response));
     }
+
+    @PatchMapping("/admin/devices/{id}/status")
+    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
+    public ResponseEntity<ApiResponse<DeviceResponse>> updateDeviceStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody DeviceStatusRequest request
+    ) {
+        DeviceResponse response = rentalService.updateDeviceStatus(id, request);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Cập nhật trạng thái thiết bị thành công", response));
+    }
+
+    @DeleteMapping("/admin/devices/{id}")
+    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
+    public ResponseEntity<ApiResponse<Void>> deleteDevice(
+            @PathVariable Long id
+    ) {
+        rentalService.deleteDevice(id);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Xóa thiết bị thành công", null));
+    }
 }

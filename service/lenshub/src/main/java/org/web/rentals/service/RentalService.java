@@ -54,4 +54,8 @@ public interface RentalService {
     List<DeviceResponse> getDevicesByProduct(Long productId);
 
     List<DeviceResponse> getAvailableDevices(Long productId);
+
+    DeviceResponse updateDeviceStatus(Long id, DeviceStatusRequest request);
+
+    void deleteDevice(Long id);
 }

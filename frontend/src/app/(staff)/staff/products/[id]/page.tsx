@@ -29,6 +29,7 @@ import Image from "next/image";
 import { useState, useMemo } from "react";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { ProductDialog } from "../components/ProductDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
   useUpdateProductInfo,
   useProduct,
@@ -39,7 +40,7 @@ import {
   useUpdateProductPrice,
 } from "@/services/product";
 import { useAdjustStock, useInventoryLogs } from "@/services/inventory";
-import { useGetDevicesByProduct, useCreateDevice, useUpdateDevice, DeviceResponse } from "@/services/rental";
+import { useGetDevicesByProduct, useCreateDevice, useUpdateDevice, useUpdateDeviceStatus, useDeleteDevice, DeviceResponse, DeviceStatus } from "@/services/rental";
 import { useCategories } from "@/services/category";
 import {
   ProductInfoUpdateRequest,
@@ -119,10 +120,17 @@ export default function ProductDetailPage({
   const devices = devicesRes?.data || [];
   const createDeviceMutation = useCreateDevice();
   const updateDeviceMutation = useUpdateDevice(productId);
+  const updateDeviceStatusMutation = useUpdateDeviceStatus(productId);
+  const deleteDeviceMutation = useDeleteDevice(productId);
   
   const [showDeviceForm, setShowDeviceForm] = useState(false);
   const [deviceSerial, setDeviceSerial] = useState("");
   const [deviceCondition, setDeviceCondition] = useState("");
+
+  const [selectedDevice, setSelectedDevice] = useState<DeviceResponse | null>(null);
+  const [editDeviceSerial, setEditDeviceSerial] = useState("");
+  const [editDeviceCondition, setEditDeviceCondition] = useState("");
+  const [editDeviceStatus, setEditDeviceStatus] = useState<DeviceStatus>(DeviceStatus.AVAILABLE);
 
   const handleBack = () => router.push("/staff/products");
 
@@ -233,15 +241,43 @@ export default function ProductDetailPage({
     }
   };
   
-  const handleUpdateDeviceStatus = async (deviceId: number, currentStatus: string) => {
-    if (currentStatus !== "AVAILABLE" && currentStatus !== "MAINTENANCE") return;
-    const nextStatus = currentStatus === "AVAILABLE" ? "MAINTENANCE" : "AVAILABLE";
+  const handleSaveDeviceEdit = async () => {
+    if (!selectedDevice) return;
     try {
-      await updateDeviceMutation.mutateAsync({ id: deviceId, req: { status: nextStatus, conditionDetails: "" } });
-      toast.success("Cập nhật trạng thái thành công");
-    } catch {
-      toast.error("Lỗi khi cập nhật trạng thái");
+      await updateDeviceMutation.mutateAsync({
+        id: selectedDevice.id,
+        req: {
+          serialNumber: editDeviceSerial.trim(),
+          conditionDetails: editDeviceCondition.trim(),
+          status: editDeviceStatus
+        }
+      });
+      toast.success("Cập nhật thiết bị thành công");
+      setSelectedDevice(null);
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Lỗi khi cập nhật thiết bị");
     }
+  };
+
+  const handleConfirmDeleteDevice = (deviceId: number) => {
+    setConfirmConfig({
+      open: true,
+      title: "Xóa thiết bị vật lý?",
+      description: "Hành động này sẽ xóa vĩnh viễn thiết bị vật lý khỏi hệ thống và giảm số lượng kho thuê tương ứng. Bạn có chắc chắn muốn tiếp tục?",
+      variant: "danger",
+      onConfirm: async () => {
+        try {
+          await deleteDeviceMutation.mutateAsync(deviceId);
+          toast.success("Xóa thiết bị thành công");
+          setSelectedDevice(null);
+          setConfirmConfig((prev) => ({ ...prev, open: false }));
+        } catch (error: unknown) {
+          const err = error as { response?: { data?: { message?: string } } };
+          toast.error(err.response?.data?.message || "Lỗi khi xóa thiết bị");
+        }
+      }
+    });
   };
 
   const handleAdjustRentalStock = async () => {
@@ -618,21 +654,37 @@ export default function ProductDetailPage({
                         <div className="text-xs text-center py-4 text-amber-600/70">Chưa có thiết bị nào.</div>
                       ) : (
                         devices.map((d: DeviceResponse) => (
-                          <div key={d.id} className="flex items-center justify-between bg-white border border-amber-100 rounded-dash-sm p-2 text-sm">
+                          <div
+                            key={d.id}
+                            onClick={() => {
+                              setSelectedDevice(d);
+                              setEditDeviceSerial(d.serialNumber);
+                              setEditDeviceCondition(d.conditionDetails || "");
+                              setEditDeviceStatus(d.status);
+                            }}
+                            className="flex items-center justify-between bg-white border border-amber-100 rounded-sm p-2 text-sm cursor-pointer hover:bg-amber-50/50 hover:border-amber-200 transition-all duration-150"
+                          >
                             <div className="flex flex-col">
                               <span className="font-semibold text-zinc-900">SN: {d.serialNumber}</span>
                               <span className="text-xs text-zinc-500 line-clamp-1">{d.conditionDetails}</span>
                             </div>
-                            <button
-                              onClick={() => handleUpdateDeviceStatus(d.id, d.status)}
-                              className={cn("text-[10px] font-bold px-2 py-1 rounded-md transition-colors", 
-                                d.status === "AVAILABLE" ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" :
-                                d.status === "RENTED" ? "bg-blue-100 text-blue-700" :
-                                "bg-red-100 text-red-700 hover:bg-red-200"
+                            <span
+                              className={cn(
+                                "text-[10px] font-bold px-2 py-1 rounded-sm border transition-all duration-150",
+                                d.status === "AVAILABLE" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                                d.status === "RESERVED" ? "bg-amber-50 text-amber-700 border-amber-100" :
+                                d.status === "RENTED" ? "bg-blue-50 text-blue-700 border-blue-100" :
+                                d.status === "MAINTENANCE" ? "bg-zinc-50 text-zinc-700 border-zinc-100" :
+                                d.status === "DAMAGED" ? "bg-rose-50 text-rose-700 border-rose-100" :
+                                "bg-red-50 text-red-700 border-red-100"
                               )}
                             >
-                              {d.status === "AVAILABLE" ? "Sẵn sàng" : d.status === "RENTED" ? "Đang cho thuê" : "Bảo trì"}
-                            </button>
+                              {d.status === "AVAILABLE" ? "Sẵn sàng" :
+                               d.status === "RESERVED" ? "Đặt trước" :
+                               d.status === "RENTED" ? "Thuê" :
+                               d.status === "MAINTENANCE" ? "Bảo trì" :
+                               d.status === "DAMAGED" ? "Hỏng" : "Mất"}
+                            </span>
                           </div>
                         ))
                       )}
@@ -858,6 +910,123 @@ export default function ProductDetailPage({
         }}
         isPending={updatePriceMutation.isPending}
       />
+
+      <Dialog open={!!selectedDevice} onOpenChange={(open) => !open && setSelectedDevice(null)}>
+        <DialogContent showCloseButton={false} className="sm:max-w-md !p-0 !gap-0 overflow-hidden border border-zinc-100 shadow-dash-overlay rounded-2xl bg-white">
+          <div className="p-6">
+            <DialogHeader className="text-left space-y-1">
+              <DialogTitle className="text-lg font-semibold tracking-tight text-zinc-950">Chỉnh sửa thiết bị vật lý</DialogTitle>
+              <p className="text-xs font-medium text-zinc-500">Mã thiết bị: #{selectedDevice?.id}</p>
+            </DialogHeader>
+
+            <div className="mt-4 space-y-4">
+              <label className="space-y-1 block">
+                <span className="text-xs font-semibold text-zinc-700">Số Serial (Serial Number)</span>
+                <input
+                  type="text"
+                  value={editDeviceSerial}
+                  onChange={(e) => setEditDeviceSerial(e.target.value)}
+                  placeholder="Nhập serial..."
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                />
+              </label>
+
+              <label className="space-y-1 block">
+                <span className="text-xs font-semibold text-zinc-700">Tình trạng (Condition Details)</span>
+                <input
+                  type="text"
+                  value={editDeviceCondition}
+                  onChange={(e) => setEditDeviceCondition(e.target.value)}
+                  placeholder="Ví dụ: Mới 99%, có trầy nhẹ..."
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                />
+              </label>
+
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-zinc-700 block">Trạng thái hiện tại</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.values(DeviceStatus).map((status) => {
+                    const isSelected = editDeviceStatus === status;
+                    let label = "";
+                    let colorClasses = "";
+                    switch (status) {
+                      case DeviceStatus.AVAILABLE:
+                        label = "Sẵn sàng";
+                        colorClasses = isSelected ? "bg-emerald-500 text-white border-emerald-500" : "bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50/50";
+                        break;
+                      case DeviceStatus.RESERVED:
+                        label = "Đặt trước";
+                        colorClasses = isSelected ? "bg-amber-500 text-white border-amber-500" : "bg-white text-amber-700 border-amber-200 hover:bg-amber-50/50";
+                        break;
+                      case DeviceStatus.RENTED:
+                        label = "Đang cho thuê";
+                        colorClasses = isSelected ? "bg-blue-500 text-white border-blue-500" : "bg-white text-blue-700 border-blue-200 hover:bg-blue-50/50";
+                        break;
+                      case DeviceStatus.MAINTENANCE:
+                        label = "Bảo trì";
+                        colorClasses = isSelected ? "bg-zinc-600 text-white border-zinc-600" : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50/50";
+                        break;
+                      case DeviceStatus.DAMAGED:
+                        label = "Hỏng hóc";
+                        colorClasses = isSelected ? "bg-rose-500 text-white border-rose-500" : "bg-white text-rose-700 border-rose-200 hover:bg-rose-50/50";
+                        break;
+                      case DeviceStatus.LOST:
+                        label = "Bị mất";
+                        colorClasses = isSelected ? "bg-red-600 text-white border-red-600" : "bg-white text-red-700 border-red-200 hover:bg-red-50/50";
+                        break;
+                    }
+                    return (
+                      <button
+                        key={status}
+                        type="button"
+                        onClick={() => setEditDeviceStatus(status)}
+                        className={cn(
+                          "px-3 py-2 text-xs font-semibold rounded-xl border text-center transition-all duration-150 active:scale-[0.98]",
+                          colorClasses
+                        )}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-between gap-3 m-0 rounded-b-2xl">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => selectedDevice && handleConfirmDeleteDevice(selectedDevice.id)}
+              disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
+              className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl font-bold h-10 px-4 transition-all"
+            >
+              <Trash2 className="w-4 h-4 mr-1.5" />
+              Xóa thiết bị
+            </Button>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setSelectedDevice(null)}
+                disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
+                className="rounded-xl font-bold border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-100 h-10 px-4 transition-all"
+              >
+                Hủy
+              </Button>
+              <Button
+                type="button"
+                onClick={handleSaveDeviceEdit}
+                disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
+                className="rounded-xl font-semibold h-10 px-5 shadow-sm text-white bg-red-600 hover:bg-red-700 shadow-md shadow-red-100 transition-all"
+              >
+                {updateDeviceMutation.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 mb-12">
         {/* Price History Section */}

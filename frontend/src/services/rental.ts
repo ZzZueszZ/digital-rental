@@ -305,8 +305,18 @@ export const rentalService = {
     return response.data;
   },
 
-  updateDevice: async (id: number, req: { status: "AVAILABLE" | "RENTED" | "MAINTENANCE" | "BROKEN"; conditionDetails: string }): Promise<{ success: boolean; data: DeviceResponse }> => {
+  updateDevice: async (id: number, req: { status?: DeviceStatus; conditionDetails?: string; serialNumber?: string }): Promise<{ success: boolean; data: DeviceResponse }> => {
     const response = await axios.put<{ success: boolean; data: DeviceResponse }>(`/rentals/admin/devices/${id}`, req);
+    return response.data;
+  },
+
+  updateDeviceStatus: async (id: number, req: { status: DeviceStatus; conditionDetails?: string }): Promise<{ success: boolean; data: DeviceResponse }> => {
+    const response = await axios.patch<{ success: boolean; data: DeviceResponse }>(`/rentals/admin/devices/${id}/status`, req);
+    return response.data;
+  },
+
+  deleteDevice: async (id: number): Promise<{ success: boolean; data: null }> => {
+    const response = await axios.delete<{ success: boolean; data: null }>(`/rentals/admin/devices/${id}`);
     return response.data;
   }
 };
@@ -445,5 +455,27 @@ export const useAvailableDevices = (productId: number) => {
     queryKey: ["devices", "available", productId],
     queryFn: () => rentalService.getAvailableDevices(productId),
     enabled: !!productId
+  });
+};
+
+export const useUpdateDeviceStatus = (productId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, req }: { id: number; req: { status: DeviceStatus; conditionDetails?: string } }) => rentalService.updateDeviceStatus(id, req),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["devices", productId] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    }
+  });
+};
+
+export const useDeleteDevice = (productId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => rentalService.deleteDevice(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["devices", productId] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    }
   });
 };

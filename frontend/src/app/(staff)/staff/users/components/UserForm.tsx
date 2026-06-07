@@ -36,6 +36,7 @@ import {
   TrustLevel,
   Role,
   UserResponse,
+  UserUpdateRequest,
 } from "@/types/user";
 
 const AVATAR_COLORS = [
@@ -112,11 +113,48 @@ export function UserForm({
 
   const handleSubmit = async () => {
     try {
-      await updateUser({ id: userId, payload: formData });
+      const changedData: UserUpdateRequest = {};
+      
+      if (formData.phone !== (user.phone || "")) {
+        changedData.phone = formData.phone;
+      }
+      if (formData.accountStatus !== user.accountStatus) {
+        changedData.accountStatus = formData.accountStatus;
+      }
+      if (formData.kycStatus !== user.kycStatus) {
+        changedData.kycStatus = formData.kycStatus;
+      }
+      if (formData.trustLevel !== user.trustLevel) {
+        changedData.trustLevel = formData.trustLevel;
+      }
+      if (formData.enabled !== user.enabled) {
+        changedData.enabled = formData.enabled;
+      }
+      if (formData.accountNonLocked !== user.accountNonLocked) {
+        changedData.accountNonLocked = formData.accountNonLocked;
+      }
+      
+      const originalRoles = [...(user.roles || [])].sort();
+      const currentRoles = [...formData.roles].sort();
+      const rolesChanged = originalRoles.length !== currentRoles.length || 
+                           originalRoles.some((val, index) => val !== currentRoles[index]);
+      if (rolesChanged) {
+        changedData.roles = formData.roles;
+      }
+
+      if (Object.keys(changedData).length === 0) {
+        toast.success("Không có thay đổi nào được lưu");
+        router.push(`/staff/users/${userId}`);
+        return;
+      }
+
+      await updateUser({ id: userId, payload: changedData });
       toast.success("Cập nhật tài khoản thành công");
       router.push(`/staff/users/${userId}`);
     } catch (error) {
-      toast.error("Cập nhật thất bại, vui lòng thử lại");
+      const err = error as { response?: { data?: { data?: string; message?: string } }; message?: string };
+      const serverErrorMsg = err.response?.data?.data || err.response?.data?.message || err.message;
+      toast.error(serverErrorMsg ? `Cập nhật thất bại: ${serverErrorMsg}` : "Cập nhật thất bại, vui lòng thử lại");
     }
   };
 

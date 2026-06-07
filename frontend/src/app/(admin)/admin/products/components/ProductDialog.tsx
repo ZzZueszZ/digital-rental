@@ -85,6 +85,45 @@ export function ProductDialog({
   >({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Reset form state when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setFormData(
+        product
+          ? {
+              name: product.name,
+              description: product.description || "",
+              brand: product.brand || "",
+              categoryId: product.categoryId,
+              rentPricePerDay: product.rentPricePerDay,
+              salePrice: product.salePrice,
+              isForRent: product.isForRent,
+              isForSale: product.isForSale,
+              specifications:
+                product.specifications?.map((s) => ({
+                  specKey: s.specKey,
+                  specValue: s.specValue,
+                })) || [],
+            }
+          : {
+              name: "",
+              description: "",
+              brand: "",
+              categoryId: undefined,
+              rentPricePerDay: 0,
+              salePrice: 0,
+              isForRent: true,
+              isForSale: false,
+              specifications: [],
+            },
+      );
+      setImageFile(null);
+      setImagePreview(product ? getImageUrl(product.mainImageUrl) : null);
+      setErrors({});
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }, [open]);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {

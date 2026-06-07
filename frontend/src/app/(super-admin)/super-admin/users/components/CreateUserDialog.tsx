@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserPlus, Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -34,6 +34,22 @@ export function CreateUserDialog({
     roles: ["CUSTOMER"],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Reset toàn bộ form khi dialog đóng
+  useEffect(() => {
+    if (!open) {
+      setForm({
+        email: "",
+        phone: "",
+        password: "",
+        firstName: "",
+        lastName: "",
+        roles: ["CUSTOMER"],
+      });
+      setErrors({});
+      setShowPassword(false);
+    }
+  }, [open]);
 
   const validate = () => {
     const errs: Record<string, string> = {};
@@ -130,6 +146,7 @@ export function CreateUserDialog({
         <Input
           type="email"
           placeholder="user@example.com"
+          autoComplete="off"
           value={form.email}
           onChange={(e) => {
             setForm((p) => ({ ...p, email: e.target.value }));
@@ -167,6 +184,7 @@ export function CreateUserDialog({
           <Input
             type={showPassword ? "text" : "password"}
             placeholder="Tối thiểu 6 ký tự"
+            autoComplete="new-password"
             value={form.password}
             onChange={(e) => {
               setForm((p) => ({ ...p, password: e.target.value }));

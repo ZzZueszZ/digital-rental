@@ -208,7 +208,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
       </div>
 
       <AdminAddressDialog
-        key={`${userId}-${selectedAddress?.id || "new"}`}
+        key={isDialogOpen ? `${userId}-${selectedAddress?.id || "new"}` : "closed"}
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         address={selectedAddress}

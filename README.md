@@ -1,96 +1,66 @@
-# Lenshub - Website Mua Bán và Cho Thuê Thiết Bị Máy Ảnh
+# LensHub CMS
 
-Lenshub là một nền tảng thương mại điện tử chuyên nghiệp hỗ trợ mua bán và cho thuê thiết bị máy ảnh. Hệ thống tích hợp quy trình xác thực danh tính **AI eKYC** và định hướng bảo mật **E2EE-SHIELD** để bảo vệ dữ liệu người dùng và giao dịch thuê thiết bị.
+## Documentation Maintenance
+**Last Updated:** 2026-06-06  
+**Document Version:** 1.0  
+**Maintained By:** Development Team
 
----
+LensHub is a camera equipment ecommerce and rental platform. This repository contains the main Spring Boot API, Next.js frontend, and supporting infrastructure/docs.
 
-## 📂 Cấu Trúc Dự Án
+## Project Structure
 
-Dự án được xây dựng theo mô hình Client-Server với các thư mục chính:
-
-*   **[frontend/](file:///d:/Nga/KLTN/digital-rental/frontend)**: Ứng dụng Next.js (FE) dành cho khách hàng, nhân viên (Staff) và quản trị viên (Admin/Super Admin).
-*   **[service/lenshub/](file:///d:/Nga/KLTN/digital-rental/service/lenshub)**: Dịch vụ API Spring Boot (BE) xử lý toàn bộ nghiệp vụ lõi (Catalog, Thuê/Mua, Thanh toán, eKYC, Inventory...).
-*   **[docker/](file:///d:/Nga/KLTN/digital-rental/docker)**: Cấu hình Docker Compose để khởi chạy nhanh các dịch vụ database (PostgreSQL, MySQL, Redis).
-
----
-
-## 🛠️ Yêu Cầu Hệ Thống
-
-Để chạy dự án local, máy tính của bạn cần cài đặt sẵn:
-1.  **Node.js** (Phiên bản v18 trở lên) & **pnpm** (Trình quản lý package của FE).
-2.  **Java SDK 17** (Để chạy Spring Boot Backend).
-3.  **Docker Desktop** (Để khởi chạy Database PostgreSQL và Redis).
-
----
-
-## 🚀 Hướng Dẫn Thiết Lập & Khởi Chạy
-
-Thực hiện lần lượt các bước dưới đây để cài đặt dự án trên máy cá nhân:
-
-### Bước 1: Khởi động CSDL và Redis (Docker)
-
-Hệ thống backend sử dụng PostgreSQL làm CSDL chính và Redis làm bộ nhớ đệm (cache/session). 
-
-Mở terminal tại thư mục gốc dự án (`digital-rental/`) và chạy:
-
-```bash
-docker compose -f docker/docker-compose.yml up -d lenshub-postgres lenshub-redis
+```text
+.
++-- service/lenshub/      # Spring Boot backend API
++-- frontend/             # Next.js frontend
++-- docs/                 # Project source-of-truth documentation
++-- deploy/               # Deployment support assets
++-- docker/               # Legacy/local compose assets
++-- migration/            # Legacy migration assets
++-- plans/                # Planning and agent reports
 ```
 
-*   **PostgreSQL** sẽ chạy tại cổng: `5433` (Username: `postgres`, Password: `123123`).
-*   **Redis** sẽ chạy tại cổng: `6379`.
+## Main Apps
 
----
+- Backend: Java 17, Spring Boot 4, Gradle, PostgreSQL, Redis, JWT auth, VNPay, SMTP mail.
+- Frontend: Next.js 16, React 19, TypeScript, Tailwind CSS 4, shadcn-style UI, TanStack Query, Zustand, axios.
 
-### Bước 2: Thiết lập và chạy Backend (Spring Boot)
+## Local Commands
 
-1.  Di chuyển vào thư mục backend:
-    ```bash
-    cd service/lenshub
-    ```
-2.  Tạo file cấu hình `.env` bằng cách copy từ file mẫu [env.example](file:///d:/Nga/KLTN/digital-rental/service/lenshub/.env.example):
-    *   *Windows (Cmd/PowerShell):* `copy .env.example .env`
-    *   *Linux/macOS:* `cp .env.example .env`
-3.  Mở file [.env](file:///d:/Nga/KLTN/digital-rental/service/lenshub/.env) và cập nhật các thông tin bảo mật/môi trường (JWT secret, Gmail SMTP, VNPAY API nếu cần). Cấu hình database mặc định đã khớp sẵn với Docker ở Bước 1.
-4.  Chạy ứng dụng Backend:
-    *   *Windows (cmd/powershell):*
-        ```bash
-        gradlew.bat bootRun
-        ```
-    *   *Linux/macOS:*
-        ```bash
-        chmod +x gradlew
-        ./gradlew bootRun
-        ```
-5.  Backend sẽ khởi động tại địa chỉ: `http://localhost:8080/api`
-    *   Tài liệu API Swagger UI có thể truy cập tại: [http://localhost:8080/api/swagger-ui/index.html](http://localhost:8080/api/swagger-ui/index.html)
+Backend:
 
----
+```powershell
+cd service/lenshub
+.\gradlew bootRun
+.\gradlew test
+```
 
-### Bước 3: Thiết lập và chạy Frontend (Next.js)
+Frontend:
 
-1.  Mở một cửa sổ terminal mới và di chuyển vào thư mục frontend:
-    ```bash
-    cd frontend
-    ```
-2.  Cài đặt các thư viện phụ thuộc:
-    ```bash
-    pnpm install
-    ```
-3.  Tạo file cấu hình môi trường `.env.local` tại thư mục `frontend/` để kết nối với API Backend:
-    ```env
-    NEXT_PUBLIC_API_URL=http://localhost:8080/api
-    ```
-4.  Khởi chạy Frontend ở chế độ phát triển (Development):
-    ```bash
-    pnpm dev
-    ```
-5.  Mở trình duyệt và truy cập: [http://localhost:3000](http://localhost:3000) để trải nghiệm giao diện khách hàng.
+```powershell
+cd frontend
+pnpm install
+pnpm dev
+pnpm lint
+pnpm build
+```
 
----
+Default backend URL is `http://localhost:8080/api`. Frontend API URL is controlled by `NEXT_PUBLIC_API_URL`.
 
-## 🔒 Các Lưu Ý Quan Trọng về Bảo Mật & eKYC
+## Documentation
 
-*   **Không log dữ liệu nhạy cảm**: Hạn chế in logs thông tin cá nhân của người dùng, tài liệu eKYC (hình ảnh khuôn mặt, CCCD) hoặc các JWT token trong console backend.
-*   **Tích hợp VNPAY**: Luôn đảm bảo giữ nguyên cơ chế xác minh chữ ký bảo mật (checksum) cho các callback thanh toán.
-*   **Quyền truy cập thư mục**: Luôn cấu hình chính xác quyền hạn cho các thư mục lưu trữ file upload (avatar, thiết bị, hợp đồng).
+Read these first:
+
+- `docs/project-overview-pdr.md`
+- `docs/codebase-summary.md`
+- `docs/code-standards.md`
+- `docs/system-architecture.md`
+- `docs/deployment-guide.md`
+- `docs/project-roadmap.md`
+- `docs/design-guidelines.md`
+
+## Known Setup Gaps
+
+- PostgreSQL compose for `service/lenshub` is not currently present in `docker/`.
+- `docker/docker-compose.yml` is a legacy MySQL CMS compose, not the active LensHub backend database setup.
+- Production deployment target and secrets policy still need final owner decisions.

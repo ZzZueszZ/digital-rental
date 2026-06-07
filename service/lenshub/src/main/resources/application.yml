@@ -3,12 +3,12 @@ server:
   servlet:
     context-path: /api
   tomcat:
-    max-http-form-post-size: 10MB
-    max-swallow-size: 10MB
+    max-http-form-post-size: 60MB
+    max-swallow-size: 60MB
     max-parameter-count: 5000
 
 vnpay:
-  pay-url: ${PAY_URL}
+  pay-url: ${PAY_URL:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
   tmn-code: ${TMN_CODE}
   hash-secret: ${SECRET_KEY}
   return-url: ${RETURN_URL}
@@ -19,8 +19,8 @@ vnpay:
 spring:
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 15MB
+      max-file-size: 50MB
+      max-request-size: 60MB
       enabled: true
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
@@ -66,12 +66,13 @@ spring:
 
 logging:
   level:
+    org.web.identity: debug
     org.hibernate.SQL: debug # log câu SQL
     org.hibernate.type.descriptor.sql.BasicBinder: trace # log giá trị parameter
 
 app:
   jwt:
-    secret: ${APP_JWT_SECRET}
+    secret: ${APP_JWT_SECRET:C5EH86/70awkZD1mEUtPvqsug4goTeED87QK+ZlFXo4=}
     expiration-ms: ${APP_JWT_EXPIRATION_MS:86400000}
     issuer: ${APP_JWT_ISSUER:zyna-app}
   activation:
@@ -93,3 +94,11 @@ app:
   inventory:
     low-stock:
       threshold: ${APP_INVENTORY_LOW_STOCK_THRESHOLD:5}
+  kyc:
+    provider: ${APP_KYC_PROVIDER:mock}
+    timeout-ms: ${APP_KYC_TIMEOUT_MS:10000}
+    fpt:
+      api-key: ${FPT_KYC_API_KEY:}
+      idr-url: ${FPT_KYC_IDR_URL:https://api.fpt.ai/vision/idr/vnm/}
+      facematch-url: ${FPT_KYC_FACEMATCH_URL:https://api.fpt.ai/dmp/checkface/v1}
+      liveness-url: ${FPT_KYC_LIVENESS_URL:https://api.fpt.ai/dmp/liveness/v3}

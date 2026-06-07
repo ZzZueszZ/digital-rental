@@ -1,6 +1,7 @@
 package org.web.identity.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,15 +14,16 @@ import org.web.identity.dto.response.KycSessionResponse;
 import org.web.identity.model.*;
 import org.web.identity.repository.*;
 import org.web.identity.service.IdentityService;
+import org.web.identity.service.KycVerificationProcessor;
 import org.web.users.model.User;
 import org.web.users.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class IdentityServiceImpl implements IdentityService {
 
     private final VerificationSessionRepository verificationSessionRepository;
@@ -31,6 +33,7 @@ public class IdentityServiceImpl implements IdentityService {
     private final VerificationResultRepository verificationResultRepository;
     private final RiskAssessmentRepository riskAssessmentRepository;
     private final UserRepository userRepository;
+    private final KycVerificationProcessor kycVerificationProcessor;
 
     @Override
     @Transactional
@@ -61,6 +64,7 @@ public class IdentityServiceImpl implements IdentityService {
     @Override
     @Transactional
     public KycSessionResponse submitKyc(User user, SubmitKycRequest request) {
+        log.info("KYC submit started: userId={}, email={}", user.getId(), user.getEmail());
         // Find active CREATED session or initiate new one
         List<VerificationSession> activeSessions = verificationSessionRepository.findByUserId(user.getId());
         VerificationSession session = activeSessions.stream()
@@ -76,69 +80,20 @@ public class IdentityServiceImpl implements IdentityService {
         session.setStatus(VerificationSessionStatus.PROCESSING);
         session.setSubmittedAt(LocalDateTime.now());
         session = verificationSessionRepository.save(session);
+        log.debug("KYC session marked PROCESSING: userId={}, sessionId={}", user.getId(), session.getId());
 
-        // 1. Save uploaded artifacts
-        saveArtifact(session, VerificationArtifactType.CCCD_FRONT, request.getFrontImageUrl());
-        saveArtifact(session, VerificationArtifactType.CCCD_BACK, request.getBackImageUrl());
-        saveArtifact(session, VerificationArtifactType.SELFIE_IMAGE, request.getSelfieImageUrl());
-
-        // 2. Perform Mock AI evaluation
-        boolean isFailureCase = request.getIdentityNumber().startsWith("999") || request.getIdentityNumber().toUpperCase().contains("FAIL");
-
-        double faceMatchScore = isFailureCase ? 0.65 : 0.95;
-        boolean faceMatchPassed = faceMatchScore >= 0.90;
-        double ocrConfidence = isFailureCase ? 0.60 : 0.96;
-        boolean ocrPassed = ocrConfidence >= 0.90;
-
-        // Save Face Verification Result
-        FaceVerificationResult faceRes = FaceVerificationResult.builder()
-                .verificationSession(session)
-                .faceMatchScore(faceMatchScore)
-                .faceMatchPassed(faceMatchPassed)
-                .livenessScore(0.98)
-                .livenessPassed(true)
-                .spoofDetected(false)
-                .multipleFacesDetected(false)
-                .faceQualityScore(0.92)
-                .build();
-        faceVerificationResultRepository.save(faceRes);
-
-        // Save OCR Verification Result
-        VerificationResult ocrRes = VerificationResult.builder()
-                .verificationSession(session)
-                .ocrProvider("MockAI")
-                .ocrConfidence(ocrConfidence)
-                .decisionSource(isFailureCase ? DecisionSource.AI_AUTO_REJECTED : DecisionSource.AI_AUTO_APPROVED)
-                .documentValid(ocrPassed)
-                .documentTampered(false)
-                .fieldsMatchProfile(true)
-                .extractedFullName(request.getFullName())
-                .extractedIdentityNumber(request.getIdentityNumber())
-                .extractedDateOfBirth(request.getDateOfBirth())
-                .extractedGender(request.getGender())
-                .extractedNationality(request.getNationality())
-                .extractedPlaceOfOrigin(request.getPlaceOfOrigin())
-                .extractedPlaceOfResidence(request.getPlaceOfResidence())
-                .extractedIssuedDate(request.getIssuedDate())
-                .extractedExpiryDate(request.getExpiryDate())
-                .build();
-        verificationResultRepository.save(ocrRes);
-
-        // Save Risk Assessment
-        RiskAssessment risk = RiskAssessment.builder()
-                .verificationSession(session)
-                .riskScore(isFailureCase ? 85.0 : 5.0)
-                .riskLevel(isFailureCase ? RiskLevel.HIGH_RISK : RiskLevel.LOW_RISK)
-                .deviceFingerprintMatch(true)
-                .ipRiskFlag(false)
-                .blacklistHit(false)
-                .manualReviewRequired(isFailureCase)
-                .build();
-        riskAssessmentRepository.save(risk);
+        try {
+            kycVerificationProcessor.process(session, user, request);
+        } catch (RuntimeException e) {
+            log.error("KYC verification processing failed: userId={}, sessionId={}, message={}",
+                    user.getId(), session.getId(), e.getMessage(), e);
+            throw e;
+        }
 
         // 3. Always set to PENDING_REVIEW for manual review by Admin/Staff (purely manual flow)
         session.setStatus(VerificationSessionStatus.PENDING_REVIEW);
         verificationSessionRepository.save(session);
+        log.info("KYC session moved to PENDING_REVIEW: userId={}, sessionId={}", user.getId(), session.getId());
 
         // Update user status to PENDING (waiting for manual approval)
         user.setKycStatus(KycStatus.PENDING);
@@ -194,17 +149,7 @@ public class IdentityServiceImpl implements IdentityService {
             // Save User Identity record from extracted OCR results
             VerificationResult ocrRes = verificationResultRepository.findByVerificationSessionId(session.getId()).orElse(null);
             if (ocrRes != null) {
-                SubmitKycRequest submitReq = new SubmitKycRequest();
-                submitReq.setIdentityNumber(ocrRes.getExtractedIdentityNumber());
-                submitReq.setFullName(ocrRes.getExtractedFullName());
-                submitReq.setDateOfBirth(ocrRes.getExtractedDateOfBirth());
-                submitReq.setGender(ocrRes.getExtractedGender());
-                submitReq.setNationality(ocrRes.getExtractedNationality());
-                submitReq.setPlaceOfOrigin(ocrRes.getExtractedPlaceOfOrigin());
-                submitReq.setPlaceOfResidence(ocrRes.getExtractedPlaceOfResidence());
-                submitReq.setIssuedDate(ocrRes.getExtractedIssuedDate());
-                submitReq.setExpiryDate(ocrRes.getExtractedExpiryDate());
-                saveUserIdentity(user, submitReq);
+                saveUserIdentity(user, ocrRes);
             }
         } else {
             session.setStatus(VerificationSessionStatus.REJECTED);
@@ -218,33 +163,20 @@ public class IdentityServiceImpl implements IdentityService {
         return mapToResponse(session);
     }
 
-    private void saveArtifact(VerificationSession session, VerificationArtifactType type, String url) {
-        VerificationArtifact artifact = VerificationArtifact.builder()
-                .verificationSession(session)
-                .artifactType(type)
-                .artifactStatus(VerificationArtifactStatus.UPLOADED)
-                .storageKey(url)
-                .originalFileName(url.substring(url.lastIndexOf('/') + 1))
-                .mimeType("image/jpeg")
-                .fileSize(1024L)
-                .build();
-        verificationArtifactRepository.save(artifact);
-    }
-
-    private void saveUserIdentity(User user, SubmitKycRequest request) {
+    private void saveUserIdentity(User user, VerificationResult ocrResult) {
         UserIdentity identity = userIdentityRepository.findByUserId(user.getId())
                 .orElseGet(() -> UserIdentity.builder().user(user).build());
 
         identity.setDocumentType(DocumentType.CITIZEN_ID_CARD);
-        identity.setIdentityNumber(request.getIdentityNumber());
-        identity.setFullName(request.getFullName());
-        identity.setDateOfBirth(request.getDateOfBirth());
-        identity.setGender(parseGender(request.getGender()));
-        identity.setNationality(request.getNationality());
-        identity.setPlaceOfOrigin(request.getPlaceOfOrigin());
-        identity.setPlaceOfResidence(request.getPlaceOfResidence());
-        identity.setIssuedDate(request.getIssuedDate());
-        identity.setExpiryDate(request.getExpiryDate());
+        identity.setIdentityNumber(ocrResult.getExtractedIdentityNumber());
+        identity.setFullName(ocrResult.getExtractedFullName());
+        identity.setDateOfBirth(ocrResult.getExtractedDateOfBirth());
+        identity.setGender(parseGender(ocrResult.getExtractedGender()));
+        identity.setNationality(ocrResult.getExtractedNationality());
+        identity.setPlaceOfOrigin(ocrResult.getExtractedPlaceOfOrigin());
+        identity.setPlaceOfResidence(ocrResult.getExtractedPlaceOfResidence());
+        identity.setIssuedDate(ocrResult.getExtractedIssuedDate());
+        identity.setExpiryDate(ocrResult.getExtractedExpiryDate());
         identity.setIdentityVerificationStatus(IdentityVerificationStatus.VERIFIED);
         identity.setOcrExtracted(true);
         identity.setManualVerified(true);
@@ -293,7 +225,19 @@ public class IdentityServiceImpl implements IdentityService {
         FaceVerificationResult faceRes = faceVerificationResultRepository.findByVerificationSessionId(session.getId()).orElse(null);
         if (faceRes != null) {
             builder.faceMatchScore(faceRes.getFaceMatchScore())
-                   .faceMatchPassed(faceRes.getFaceMatchPassed());
+                   .faceMatchPassed(faceRes.getFaceMatchPassed())
+                   .livenessScore(faceRes.getLivenessScore())
+                   .livenessPassed(faceRes.getLivenessPassed())
+                   .spoofDetected(faceRes.getSpoofDetected())
+                   .multipleFacesDetected(faceRes.getMultipleFacesDetected());
+        }
+
+        RiskAssessment risk = riskAssessmentRepository.findByVerificationSessionId(session.getId()).orElse(null);
+        if (risk != null) {
+            builder.riskScore(risk.getRiskScore())
+                    .riskLevel(risk.getRiskLevel())
+                    .riskReason(risk.getReason())
+                    .manualReviewRequired(risk.getManualReviewRequired());
         }
 
         // Fill in image urls if available
@@ -305,6 +249,8 @@ public class IdentityServiceImpl implements IdentityService {
                 builder.backImageUrl(art.getStorageKey());
             } else if (art.getArtifactType() == VerificationArtifactType.SELFIE_IMAGE) {
                 builder.selfieImageUrl(art.getStorageKey());
+            } else if (art.getArtifactType() == VerificationArtifactType.SELFIE_VIDEO) {
+                builder.livenessVideoUrl(art.getStorageKey());
             }
         }
 

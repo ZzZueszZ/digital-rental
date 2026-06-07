@@ -764,7 +764,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
         >
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+              <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
                 Tên nhân viên kiểm tra bàn giao
               </label>
               <input
@@ -777,19 +777,18 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
             </div>
 
             <div className="space-y-3">
-              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
-                Ghi nhận tình trạng thiết bị
+              <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+                Mô tả tình trạng
               </label>
               {selectedRental.items.map((item) => (
                 <div key={item.id} className="p-3 bg-zinc-50 rounded-xl space-y-2 border border-zinc-100">
                   <div className="text-xs font-bold text-zinc-900">
                     {item.productName} ({item.deviceSerialNumber})
                   </div>
-                  <input
-                    type="text"
+                  <textarea
                     value={itemConditions[item.id] || ""}
                     onChange={(e) => setItemConditions({ ...itemConditions, [item.id]: e.target.value })}
-                    className="w-full h-9 px-3 rounded-lg border border-zinc-200 bg-white text-xs font-medium"
+                    className="flex min-h-[80px] w-full rounded-xl border border-zinc-950/5 bg-white px-3 py-2 text-xs font-semibold text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-dash-card leading-relaxed"
                   />
                 </div>
               ))}
@@ -812,7 +811,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
         >
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+              <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
                 Tên nhân viên kiểm tra nhận trả
               </label>
               <input
@@ -825,7 +824,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+              <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
                 Phí phạt hỏng hóc phát sinh (VND)
               </label>
               <input
@@ -837,19 +836,18 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
             </div>
 
             <div className="space-y-3">
-              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
-                Ghi nhận tình trạng thiết bị
+              <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+                Mô tả tình trạng
               </label>
               {selectedRental.items.map((item) => (
                 <div key={item.id} className="p-3 bg-zinc-50 rounded-xl space-y-2 border border-zinc-100">
                   <div className="text-xs font-bold text-zinc-900">
                     {item.productName} ({item.deviceSerialNumber})
                   </div>
-                  <input
-                    type="text"
+                  <textarea
                     value={itemConditions[item.id] || ""}
                     onChange={(e) => setItemConditions({ ...itemConditions, [item.id]: e.target.value })}
-                    className="w-full h-9 px-3 rounded-lg border border-zinc-200 bg-white text-xs font-medium"
+                    className="flex min-h-[80px] w-full rounded-xl border border-zinc-950/5 bg-white px-3 py-2 text-xs font-semibold text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-dash-card leading-relaxed"
                   />
                 </div>
               ))}

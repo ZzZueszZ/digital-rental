@@ -946,7 +946,7 @@ export function RentalDetailDialog({
                     </p>
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">
+                    <label className="text-[11px] font-bold text-zinc-500 tracking-wide block mb-1">
                       Ký xác nhận (Nhập Họ tên đầy đủ của bạn)
                     </label>
                     <input
@@ -959,7 +959,7 @@ export function RentalDetailDialog({
                   </div>
                   <div>
                     <div className="flex justify-between items-center mb-1">
-                      <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                      <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
                         Mã OTP xác thực email
                       </label>
                       <button
@@ -981,19 +981,19 @@ export function RentalDetailDialog({
                   </div>
                   <div className="flex gap-3">
                     <Button
-                      variant="outline"
+                      type="button"
                       onClick={() => {
                         setShowSignForm(false);
                         setOtpCode("");
                       }}
-                      className="flex-1 h-10 rounded-xl text-xs font-bold"
+                      className="flex-1 h-10 rounded-xl text-xs font-bold border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
                     >
                       Hủy bỏ
                     </Button>
                     <Button
                       onClick={handleSignContract}
                       disabled={isSigning}
-                      className="flex-1 h-10 rounded-xl bg-zinc-950 text-white text-xs font-bold hover:bg-red-600 flex items-center justify-center"
+                      className="flex-1 h-10 rounded-xl bg-zinc-950 text-white text-xs font-bold hover:bg-red-600 flex items-center justify-center border-none"
                     >
                       {isSigning ? <Loader2 className="w-4 h-4 animate-spin" /> : "Xác nhận ký"}
                     </Button>

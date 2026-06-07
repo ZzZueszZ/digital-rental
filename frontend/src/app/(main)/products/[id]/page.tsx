@@ -418,7 +418,7 @@ export default function ProductDetailPage() {
               <div className="w-9 h-9 rounded-xl border border-black/5 flex items-center justify-center group-hover:bg-zinc-50 transition-all shadow-dash-card">
                 <ArrowLeft className="w-3.5 h-3.5" />
               </div>
-              <span className="text-[10px] font-bold tracking-[0.2em]">
+              <span className="text-sm font-semibold">
                 Quay lại
               </span>
             </button>
@@ -535,16 +535,13 @@ export default function ProductDetailPage() {
             {/* Right: Detailed Info & Actions */}
             <div className="lg:col-span-5 space-y-10">
               <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="px-3 py-1 rounded-xl bg-zinc-950 text-white text-[10px] font-bold">
-                    Studio Edition
-                  </span>
+                <div className="flex items-center gap-3 mb-4">
                   {reviewMeta && (
-                    <div className="flex items-center gap-1.5 text-zinc-950 text-xs font-semibold">
+                    <div className="flex items-center gap-1.5 text-zinc-700 text-xs font-semibold">
                       <Star className="w-3.5 h-3.5 fill-red-600 text-red-600" />
                       <span>{reviewMeta.averageRating.toFixed(1)}</span>
                       <span className="text-zinc-400 font-medium ml-1">
-                        ({reviewMeta.totalReviews} Đánh giá)
+                        ({reviewMeta.totalReviews} đánh giá)
                       </span>
                     </div>
                   )}
@@ -594,11 +591,11 @@ export default function ProductDetailPage() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between p-6 bg-zinc-50/50 rounded-2xl border border-black/5 border-dashed">
                   <div>
-                    <p className="text-[10px] font-bold text-zinc-400 tracking-widest mb-1">
-                      Số lượng thiết bị
+                    <p className="text-xs font-medium text-zinc-500 mb-0.5">
+                      Số lượng
                     </p>
-                    <p className="text-sm font-bold text-zinc-950">
-                      Quy mô tác nghiệp
+                    <p className="text-sm font-semibold text-zinc-950">
+                      Thiết bị cần thuê/mua
                     </p>
                   </div>
                   <div className="flex items-center gap-4 bg-white p-1.5 rounded-xl border border-black/5 shadow-dash-card">
@@ -623,34 +620,34 @@ export default function ProductDetailPage() {
                 {/* Pricing Cards */}
                 <div className="grid grid-cols-1 gap-5">
                   {product.forSale && (
-                    <div className="bg-white rounded-2xl p-8 border border-black/5 shadow-dash-card relative overflow-hidden group">
-                      <p className="text-[10px] font-bold text-zinc-400 mb-6 tracking-widest">
-                        Giá bán niêm yết
+                    <div className="bg-white rounded-2xl p-6 border border-black/5 shadow-dash-card relative overflow-hidden group">
+                      <p className="text-xs font-medium text-zinc-500 mb-4">
+                        Giá bán
                       </p>
-                      <div className="mb-8">
-                        <p className="text-4xl font-bold tracking-tight text-zinc-950 leading-none">
+                      <div className="mb-6">
+                        <p className="text-3xl font-bold tracking-tight text-zinc-950 leading-none">
                           {formatVND(product.salePrice).replace("₫", "")}
-                          <span className="text-xl ml-1 text-red-600 font-bold">
+                          <span className="text-lg ml-1 text-red-600 font-bold">
                             ₫
                           </span>
                         </p>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-3">
                         <Button
                           onClick={handleAddToCart}
                           disabled={isAddingToCart}
-                          className="h-14 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-bold text-sm transition-all shadow-dash-card"
+                          className="h-10 px-5 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white font-semibold text-[14px] transition-all duration-200 shadow-lg shadow-zinc-200 active:scale-95 flex items-center gap-2"
                         >
                           {isAddingToCart ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <Loader2 className="w-4 h-4 animate-spin" />
                           ) : (
-                            <ShoppingCart className="w-4 h-4 mr-2" />
+                            <ShoppingCart className="w-4 h-4" />
                           )}
-                          Thêm giỏ hàng
+                          Giỏ hàng
                         </Button>
                         <Button
                           onClick={handleBuyNow}
-                          className="h-14 rounded-xl bg-red-600 hover:bg-zinc-950 text-white font-bold text-sm transition-all shadow-dash-card"
+                          className="h-10 px-5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-[14px] transition-all duration-200 shadow-lg shadow-red-100 active:scale-95"
                         >
                           Mua ngay
                         </Button>
@@ -659,9 +656,9 @@ export default function ProductDetailPage() {
                   )}
 
                   {product.forRent && (
-                    <div className="bg-zinc-50/50 rounded-2xl p-8 border border-black/5 border-dashed relative group">
-                      <p className="text-[10px] font-bold text-zinc-400 mb-6 tracking-widest">
-                        Thông tin đặt thuê thiết bị
+                    <div className="bg-zinc-50/50 rounded-2xl p-6 border border-black/5 border-dashed relative group">
+                      <p className="text-xs font-medium text-zinc-500 mb-4">
+                        Đặt thuê thiết bị
                       </p>
 
                       {/* Price and Badges */}
@@ -680,8 +677,8 @@ export default function ProductDetailPage() {
                       {/* Date Pickers */}
                       <div className="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                          <label className="text-[10px] font-bold text-zinc-400 tracking-widest block mb-2">
-                            Ngày nhận máy
+                          <label className="text-xs font-medium text-zinc-500 block mb-1.5">
+                             Ngày nhận
                           </label>
                           <DateInput
                             min={new Date().toISOString().split("T")[0]}
@@ -691,8 +688,8 @@ export default function ProductDetailPage() {
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-bold text-zinc-400 tracking-widest block mb-2">
-                            Ngày trả máy
+                          <label className="text-xs font-medium text-zinc-500 block mb-1.5">
+                             Ngày trả
                           </label>
                           <DateInput
                             min={
@@ -731,8 +728,8 @@ export default function ProductDetailPage() {
                       {isAvailable === true && (
                         <>
                           <div className="mb-4">
-                            <label className="text-[10px] font-bold text-zinc-400 tracking-widest block mb-2">
-                              Khung giờ nhận máy tại cửa hàng
+                            <label className="text-xs font-medium text-zinc-500 block mb-1.5">
+                               Khung giờ nhận máy tại cửa hàng
                             </label>
                             <select
                               value={pickupTimeSlot}
@@ -755,8 +752,8 @@ export default function ProductDetailPage() {
 
                           {/* Payment Method Selector */}
                           <div className="mb-4">
-                            <label className="text-[10px] font-bold text-zinc-400 tracking-widest block mb-2">
-                              Phương thức thanh toán (Tiền cọc thu tại cửa hàng)
+                            <label className="text-xs font-medium text-zinc-500 block mb-1.5">
+                               Phương thức thanh toán
                             </label>
                             <div className="grid grid-cols-1 gap-3">
                               <button
@@ -811,18 +808,17 @@ export default function ProductDetailPage() {
                             rentalEndDate !== "" &&
                             isAvailable !== true)
                         }
-                        className="w-full h-12 mt-4 rounded-xl bg-red-600 hover:bg-zinc-950 text-white font-bold text-sm transition-all shadow-dash-card disabled:opacity-50"
+                        className="w-full h-10 mt-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-[14px] transition-all duration-200 shadow-lg shadow-red-100 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
                       >
                         {isSubmittingRental ? (
-                          <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                          <Loader2 className="w-4 h-4 animate-spin" />
                         ) : !rentalStartDate || !rentalEndDate ? (
                           <>Chọn ngày nhận & trả máy</>
                         ) : isAvailable === false ? (
                           <>Thiết bị không có sẵn</>
                         ) : (
                           <>
-                            <Calendar className="w-4 h-4 mr-2" /> Đặt lịch thuê
-                            ({days} ngày)
+                            <Calendar className="w-4 h-4" /> Đặt lịch thuê ({days} ngày)
                           </>
                         )}
                       </Button>
@@ -833,7 +829,7 @@ export default function ProductDetailPage() {
 
               {/* Technical Details */}
               <div className="pt-10 border-t border-zinc-100">
-                <h4 className="text-xs font-bold text-zinc-400 mb-6 tracking-wider">
+                <h4 className="text-sm font-semibold text-zinc-900 mb-4">
                   Thông số kỹ thuật
                 </h4>
                 <div className="grid grid-cols-1 gap-3">
@@ -858,12 +854,11 @@ export default function ProductDetailPage() {
           <div className="mt-16 pt-12 border-t border-zinc-100">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 mb-10">
               <div className="max-w-2xl">
-                <h2 className="text-2xl md:text-3xl font-bold text-zinc-950 tracking-tight mb-3">
-                  Đánh giá thực tế
+                <h2 className="text-2xl font-bold text-zinc-950 tracking-tight mb-2">
+                  Đánh giá
                 </h2>
-                <p className="text-zinc-500 font-medium text-base leading-relaxed">
-                  Trải nghiệm từ các nhiếp ảnh gia chuyên nghiệp đã trực tiếp sử
-                  dụng thiết bị này.
+                <p className="text-zinc-500 font-medium text-sm leading-relaxed">
+                  Nhận xét từ khách hàng đã trực tiếp sử dụng thiết bị.
                 </p>
               </div>
               {reviewMeta && (

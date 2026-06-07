@@ -121,7 +121,7 @@ export function CreateUserDialog({
             onChange={(e) =>
               setForm((p) => ({ ...p, lastName: e.target.value }))
             }
-            className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+            className="h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
           />
         </div>
         <div>
@@ -134,7 +134,7 @@ export function CreateUserDialog({
             onChange={(e) =>
               setForm((p) => ({ ...p, firstName: e.target.value }))
             }
-            className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+            className="h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
           />
         </div>
       </div>
@@ -153,7 +153,7 @@ export function CreateUserDialog({
             setErrors((p) => ({ ...p, email: "" }));
           }}
           className={cn(
-            "h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
+            "h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 outline-none",
             errors.email && "border-red-400 focus:ring-red-400/20",
           )}
         />
@@ -172,7 +172,7 @@ export function CreateUserDialog({
           placeholder="0376xxxxxx"
           value={form.phone}
           onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
-          className="h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
+          className="h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5"
         />
       </div>
 
@@ -191,7 +191,7 @@ export function CreateUserDialog({
               setErrors((p) => ({ ...p, password: "" }));
             }}
             className={cn(
-              "h-12 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 pr-10",
+              "h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[15px] shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5 pr-10 outline-none",
               errors.password && "border-red-400 focus:ring-red-400/20",
             )}
           />

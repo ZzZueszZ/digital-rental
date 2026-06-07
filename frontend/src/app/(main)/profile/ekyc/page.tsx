@@ -312,7 +312,7 @@ export default function EkycPage() {
               <Input
                 disabled
                 value={kycSession.identityNumber}
-                className="h-12 bg-zinc-50 border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-500 shadow-dash-card outline-none cursor-not-allowed"
+                className="h-10 bg-zinc-50 border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-500 shadow-dash-card outline-none cursor-not-allowed"
               />
             </div>
             <div className="space-y-2">
@@ -320,7 +320,7 @@ export default function EkycPage() {
               <Input
                 disabled
                 value={kycSession.fullName}
-                className="h-12 bg-zinc-50 border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-500 shadow-dash-card outline-none cursor-not-allowed"
+                className="h-10 bg-zinc-50 border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-500 shadow-dash-card outline-none cursor-not-allowed"
               />
             </div>
             <div className="space-y-2">
@@ -328,7 +328,7 @@ export default function EkycPage() {
               <Input
                 disabled
                 value={kycSession.dateOfBirth ? String(kycSession.dateOfBirth) : ""}
-                className="h-12 bg-zinc-50 border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-500 shadow-dash-card outline-none cursor-not-allowed"
+                className="h-10 bg-zinc-50 border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-500 shadow-dash-card outline-none cursor-not-allowed"
               />
             </div>
             <div className="space-y-2">
@@ -336,7 +336,7 @@ export default function EkycPage() {
               <Input
                 disabled
                 value={kycSession.gender === "MALE" ? "Nam" : kycSession.gender === "FEMALE" ? "Nữ" : "Khác"}
-                className="h-12 bg-zinc-50 border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-500 shadow-dash-card outline-none cursor-not-allowed"
+                className="h-10 bg-zinc-50 border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-500 shadow-dash-card outline-none cursor-not-allowed"
               />
             </div>
             <div className="space-y-2">
@@ -344,7 +344,7 @@ export default function EkycPage() {
               <Input
                 disabled
                 value={kycSession.nationality}
-                className="h-12 bg-zinc-50 border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-500 shadow-dash-card outline-none cursor-not-allowed"
+                className="h-10 bg-zinc-50 border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-500 shadow-dash-card outline-none cursor-not-allowed"
               />
             </div>
             <div className="space-y-2">
@@ -352,7 +352,7 @@ export default function EkycPage() {
               <Input
                 disabled
                 value={kycSession.placeOfResidence}
-                className="h-12 bg-zinc-50 border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-500 shadow-dash-card outline-none cursor-not-allowed"
+                className="h-10 bg-zinc-50 border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-500 shadow-dash-card outline-none cursor-not-allowed"
               />
             </div>
           </div>
@@ -474,11 +474,11 @@ export default function EkycPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-zinc-500 ml-1">Họ và tên</label>
-                <Input disabled value={kycSession.fullName} className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-500 shadow-sm cursor-not-allowed" />
+                <Input disabled value={kycSession.fullName} className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-500 shadow-sm cursor-not-allowed" />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium text-zinc-500 ml-1">Số CCCD</label>
-                <Input disabled value={kycSession.identityNumber} className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-500 shadow-sm cursor-not-allowed" />
+                <Input disabled value={kycSession.identityNumber} className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-500 shadow-sm cursor-not-allowed" />
               </div>
             </div>
           </div>
@@ -486,7 +486,7 @@ export default function EkycPage() {
           <div className="flex justify-center pt-4">
             <Button
               onClick={fetchKycStatus}
-              className="h-12 px-8 rounded-xl bg-zinc-950 text-white font-semibold text-sm shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 flex items-center gap-2"
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95"
             >
               <RefreshCw className="w-4 h-4 animate-spin-slow" /> Làm mới trạng thái
             </Button>
@@ -525,7 +525,7 @@ export default function EkycPage() {
           <div className="flex justify-center">
             <Button
               onClick={handleStartKyc}
-              className="h-12 px-8 rounded-xl bg-red-600 text-white font-semibold text-sm shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95"
+              className="h-10 px-5 rounded-xl bg-red-600 text-white font-semibold text-[14px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95"
             >
               Thử xác thực lại
             </Button>
@@ -586,7 +586,7 @@ export default function EkycPage() {
                 value={formData.identityNumber}
                 onChange={(e) => setFormData({ ...formData, identityNumber: e.target.value })}
                 placeholder="Ví dụ: 079098123456"
-                className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               />
             </div>
             <div className="space-y-2">
@@ -596,7 +596,7 @@ export default function EkycPage() {
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 placeholder="Ví dụ: NGUYỄN VĂN A"
-                className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               />
             </div>
             <div className="space-y-2">
@@ -605,6 +605,7 @@ export default function EkycPage() {
                 required
                 value={formData.dateOfBirth}
                 onChange={(v) => setFormData({ ...formData, dateOfBirth: v })}
+                className="h-10 text-[14px] px-4"
               />
             </div>
             <div className="space-y-2">
@@ -613,7 +614,7 @@ export default function EkycPage() {
                 value={formData.gender}
                 onValueChange={(v) => setFormData({ ...formData, gender: v || "MALE" })}
               >
-                <SelectTrigger className="w-full h-12! bg-white! border-black/5! rounded-xl px-5 font-semibold text-[15px] focus:border-red-600/30! transition-all duration-200 text-left shadow-dash-card outline-none">
+                <SelectTrigger className="w-full h-10! bg-white! border-black/5! rounded-xl px-4 font-semibold text-[14px] focus:border-red-600/30! transition-all duration-200 text-left shadow-dash-card outline-none">
                   <span className={cn(formData.gender ? "text-zinc-900" : "text-zinc-400")}>
                     {formData.gender === "MALE" ? "Nam" : formData.gender === "FEMALE" ? "Nữ" : "Khác"}
                   </span>
@@ -647,7 +648,7 @@ export default function EkycPage() {
                 value={formData.nationality}
                 onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
                 placeholder="Việt Nam"
-                className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               />
             </div>
             <div className="space-y-2">
@@ -657,7 +658,7 @@ export default function EkycPage() {
                 value={formData.placeOfOrigin}
                 onChange={(e) => setFormData({ ...formData, placeOfOrigin: e.target.value })}
                 placeholder="Ví dụ: Quận 1, TP. Hồ Chí Minh"
-                className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               />
             </div>
             <div className="space-y-2 md:col-span-2">
@@ -667,7 +668,7 @@ export default function EkycPage() {
                 value={formData.placeOfResidence}
                 onChange={(e) => setFormData({ ...formData, placeOfResidence: e.target.value })}
                 placeholder="Ví dụ: 123 Đường Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh"
-                className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+                className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               />
             </div>
             <div className="space-y-2">
@@ -676,6 +677,7 @@ export default function EkycPage() {
                 required
                 value={formData.issuedDate}
                 onChange={(v) => setFormData({ ...formData, issuedDate: v })}
+                className="h-10 text-[14px] px-4"
               />
             </div>
             <div className="space-y-2">
@@ -684,6 +686,7 @@ export default function EkycPage() {
                 required
                 value={formData.expiryDate}
                 onChange={(v) => setFormData({ ...formData, expiryDate: v })}
+                className="h-10 text-[14px] px-4"
               />
             </div>
           </div>
@@ -691,7 +694,7 @@ export default function EkycPage() {
           <div className="flex justify-end pt-6 border-t border-zinc-100">
             <Button
               type="submit"
-              className="h-12 px-8 rounded-xl bg-zinc-950 text-white font-semibold text-sm shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50"
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 disabled:opacity-50"
             >
               Tiếp tục: Mặt trước CCCD
             </Button>
@@ -720,10 +723,10 @@ export default function EkycPage() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <Button onClick={capturePhoto} className="h-11 px-6 rounded-xl bg-red-600 text-white font-semibold text-xs shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95">
+                <Button onClick={capturePhoto} className="h-10 px-5 rounded-xl bg-red-600 text-white font-semibold text-[14px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95">
                   Chụp ảnh
                 </Button>
-                <Button onClick={stopCamera} variant="outline" className="h-11 px-6 rounded-xl border border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95">
+                <Button onClick={stopCamera} variant="outline" className="h-10 px-5 rounded-xl border border-zinc-200 text-zinc-700 bg-white font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95">
                   Đóng Camera
                 </Button>
               </div>
@@ -759,13 +762,13 @@ export default function EkycPage() {
                       <UploadCloud className="w-12 h-12 text-zinc-300 mb-4" />
                       <span className="text-xs font-bold text-zinc-500 mb-4">Kéo thả file hoặc lựa chọn phương thức</span>
                       <div className="flex gap-3">
-                        <label className="h-10 px-4 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 shadow-lg shadow-zinc-200">
+                        <label className="h-10 px-5 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold text-[14px] flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 shadow-lg shadow-zinc-200">
                           <Upload className="w-4 h-4" /> Chọn file từ máy
                           <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, "front")} />
                         </label>
                         <Button
                           onClick={() => startCamera("front")}
-                          className="h-10 px-4 rounded-xl bg-white border border-zinc-200 text-zinc-800 hover:text-zinc-950 font-semibold text-xs flex items-center gap-2 shadow-sm transition-all active:scale-95"
+                          className="h-10 px-5 rounded-xl bg-white border border-zinc-200 text-zinc-800 hover:text-zinc-950 font-semibold text-[14px] flex items-center gap-2 shadow-sm transition-all active:scale-95"
                         >
                           <Camera className="w-4 h-4" /> Mở Camera chụp
                         </Button>
@@ -781,14 +784,14 @@ export default function EkycPage() {
             <Button
               variant="outline"
               onClick={() => setStep(1)}
-              className="h-12 px-6 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
+              className="h-10 px-5 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
             >
               Quay lại bước 1
             </Button>
             <Button
               onClick={handleStep2Submit}
               disabled={!frontImage || uploadingImage}
-              className="h-12 px-8 rounded-xl bg-zinc-950 text-white font-semibold text-sm shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50"
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 disabled:opacity-50"
             >
               Tiếp tục: Mặt sau CCCD
             </Button>
@@ -817,10 +820,10 @@ export default function EkycPage() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <Button onClick={capturePhoto} className="h-11 px-6 rounded-xl bg-red-600 text-white font-semibold text-xs shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95">
+                <Button onClick={capturePhoto} className="h-10 px-5 rounded-xl bg-red-600 text-white font-semibold text-[14px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95">
                   Chụp ảnh
                 </Button>
-                <Button onClick={stopCamera} variant="outline" className="h-11 px-6 rounded-xl border border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95">
+                <Button onClick={stopCamera} variant="outline" className="h-10 px-5 rounded-xl border border-zinc-200 text-zinc-700 bg-white font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95">
                   Đóng Camera
                 </Button>
               </div>
@@ -856,13 +859,13 @@ export default function EkycPage() {
                       <UploadCloud className="w-12 h-12 text-zinc-300 mb-4" />
                       <span className="text-xs font-bold text-zinc-500 mb-4">Kéo thả file hoặc lựa chọn phương thức</span>
                       <div className="flex gap-3">
-                        <label className="h-10 px-4 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 shadow-lg shadow-zinc-200">
+                        <label className="h-10 px-5 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold text-[14px] flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 shadow-lg shadow-zinc-200">
                           <Upload className="w-4 h-4" /> Chọn file từ máy
                           <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, "back")} />
                         </label>
                         <Button
                           onClick={() => startCamera("back")}
-                          className="h-10 px-4 rounded-xl bg-white border border-zinc-200 text-zinc-800 hover:text-zinc-950 font-semibold text-xs flex items-center gap-2 shadow-sm transition-all active:scale-95"
+                          className="h-10 px-5 rounded-xl bg-white border border-zinc-200 text-zinc-800 hover:text-zinc-950 font-semibold text-[14px] flex items-center gap-2 shadow-sm transition-all active:scale-95"
                         >
                           <Camera className="w-4 h-4" /> Mở Camera chụp
                         </Button>
@@ -878,14 +881,14 @@ export default function EkycPage() {
             <Button
               variant="outline"
               onClick={() => setStep(2)}
-              className="h-12 px-6 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
+              className="h-10 px-5 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
             >
               Quay lại bước 2
             </Button>
             <Button
               onClick={handleStep3Submit}
               disabled={!backImage || uploadingImage}
-              className="h-12 px-8 rounded-xl bg-zinc-950 text-white font-semibold text-sm shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50"
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 disabled:opacity-50"
             >
               Tiếp tục: Chụp chân dung Selfie
             </Button>
@@ -907,17 +910,17 @@ export default function EkycPage() {
             <div className="max-w-md mx-auto flex flex-col items-center gap-6 bg-zinc-50/50 p-6 rounded-2xl border border-zinc-200/60 shadow-sm">
               <div className="relative aspect-square w-full rounded-2xl border border-zinc-200/80 overflow-hidden bg-zinc-100 flex items-center justify-center shadow-inner">
                 <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
-                <div className="absolute inset-8 border-4 border-dashed border-red-600/20 rounded-full pointer-events-none flex items-center justify-center">
-                  <span className="text-[11px] text-zinc-700 bg-white/95 border border-zinc-200/80 px-3 py-1.5 rounded-full uppercase tracking-wider font-bold shadow-sm">
+                <div className="absolute inset-8 border-4 border-dashed border-red-600/10 rounded-full pointer-events-none flex items-center justify-center">
+                  <span className="text-xs text-zinc-700 bg-white/70 border border-zinc-200/50 px-5 py-2 rounded-full font-semibold whitespace-nowrap">
                     Đặt khuôn mặt vào vòng tròn
                   </span>
                 </div>
               </div>
               <div className="flex gap-3">
-                <Button onClick={capturePhoto} className="h-11 px-6 rounded-xl bg-red-600 text-white font-semibold text-xs shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95">
+                <Button onClick={capturePhoto} className="h-10 px-5 rounded-xl bg-red-600 text-white font-semibold text-[14px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95">
                   Chụp ngay
                 </Button>
-                <Button onClick={stopCamera} variant="outline" className="h-11 px-6 rounded-xl border border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95">
+                <Button onClick={stopCamera} variant="outline" className="h-10 px-5 rounded-xl border border-zinc-200 text-zinc-700 bg-white font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95">
                   Đóng Camera
                 </Button>
               </div>
@@ -936,7 +939,7 @@ export default function EkycPage() {
                   />
                   <button
                     onClick={() => setSelfieImage(null)}
-                    className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-zinc-900/80 text-white rounded-xl px-4 py-2 text-xs font-bold hover:bg-red-600 transition-colors shadow-md"
+                    className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900/80 text-white rounded-xl px-4 py-2 text-xs font-bold hover:bg-red-600 transition-colors shadow-md"
                   >
                     Chụp lại ảnh khác
                   </button>
@@ -956,7 +959,7 @@ export default function EkycPage() {
                       </span>
                       <Button
                         onClick={() => startCamera("selfie")}
-                        className="h-11 px-6 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-zinc-200 transition-all active:scale-95"
+                        className="h-10 px-5 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 transition-all active:scale-95"
                       >
                         <Camera className="w-4 h-4" /> Mở Camera chụp
                       </Button>
@@ -971,14 +974,14 @@ export default function EkycPage() {
             <Button
               variant="outline"
               onClick={() => setStep(3)}
-              className="h-12 px-6 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
+              className="h-10 px-5 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
             >
               Quay lại bước 3
             </Button>
             <Button
               onClick={handleStep4Submit}
               disabled={!selfieImage || uploadingImage}
-              className="h-12 px-8 rounded-xl bg-zinc-950 text-white font-semibold text-sm shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50"
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 disabled:opacity-50"
             >
               Tiếp tục: Kiểm tra & Gửi
             </Button>
@@ -1095,14 +1098,14 @@ export default function EkycPage() {
             <Button
               variant="outline"
               onClick={() => setStep(4)}
-              className="h-12 px-6 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
+              className="h-10 px-5 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
             >
               Quay lại bước 4
             </Button>
             <Button
               onClick={handleSubmitAll}
               disabled={submitting}
-              className="h-12 px-8 rounded-xl bg-zinc-950 text-white font-semibold text-sm shadow-lg shadow-zinc-200 hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50"
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 disabled:opacity-50"
             >
               {submitting ? (
                 <>

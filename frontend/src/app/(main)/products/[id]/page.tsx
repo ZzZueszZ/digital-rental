@@ -34,6 +34,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { DateInput } from "@/components/ui/date-input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -731,23 +738,26 @@ export default function ProductDetailPage() {
                             <label className="text-xs font-medium text-zinc-500 block mb-1.5">
                                Khung giờ nhận máy tại cửa hàng
                             </label>
-                            <select
-                              value={pickupTimeSlot}
-                              onChange={(e) =>
-                                setPickupTimeSlot(e.target.value)
-                              }
-                              className="w-full h-11 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 transition-all"
-                            >
-                              <option value="08:00 - 12:00">
-                                08:00 - 12:00 (Sáng)
-                              </option>
-                              <option value="13:00 - 17:00">
-                                13:00 - 17:00 (Chiều)
-                              </option>
-                              <option value="18:00 - 21:00">
-                                18:00 - 21:00 (Tối)
-                              </option>
-                            </select>
+                            <Select value={pickupTimeSlot} onValueChange={(v) => v && setPickupTimeSlot(v)}>
+                              <SelectTrigger className="w-full h-10 px-3 rounded-xl !border !border-zinc-200 !bg-white text-sm font-semibold text-zinc-800 !outline-none !ring-0 focus:!border-zinc-400 transition-all shadow-sm [&>span]:flex [&>span]:items-center">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="rounded-xl !border !border-zinc-100 shadow-xl !bg-white overflow-hidden p-1">
+                                {[
+                                  { value: "08:00 - 12:00", label: "08:00 - 12:00 (Sáng)" },
+                                  { value: "13:00 - 17:00", label: "13:00 - 17:00 (Chiều)" },
+                                  { value: "18:00 - 21:00", label: "18:00 - 21:00 (Tối)" },
+                                ].map((slot) => (
+                                  <SelectItem
+                                    key={slot.value}
+                                    value={slot.value}
+                                    className="text-sm font-semibold py-2.5 px-3 rounded-lg cursor-pointer !text-zinc-800 focus:!bg-zinc-100 focus:!text-zinc-950 data-[state=checked]:!text-zinc-950 transition-colors"
+                                  >
+                                    {slot.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           </div>
 
 

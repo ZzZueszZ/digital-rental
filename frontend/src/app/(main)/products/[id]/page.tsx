@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import axios, { isAxiosError } from "axios";
+import { useCallback, useEffect, useState } from "react";
+import { isAxiosError } from "axios";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -13,23 +13,14 @@ import {
   Star,
   ShieldCheck,
   Truck,
-  ChevronDown,
-  ChevronUp,
-  Video,
   Loader2,
-  MapPin,
   Plus,
   Minus,
   Box,
-  Layers,
-  Cpu,
-  Zap,
-  Shield,
   Flag,
   Edit,
   Trash2,
   MoreHorizontal,
-  Image as ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DateInput } from "@/components/ui/date-input";
@@ -57,7 +48,6 @@ import { useMyProfile } from "@/services/profile";
 import { ReviewResponse } from "@/types/review";
 import { api } from "@/services/api";
 import { useAddToCart } from "@/services/cart";
-import { useMyAddresses } from "@/services/address";
 import { useAuthStore } from "@/store/auth";
 import { toast } from "sonner";
 import { cn, getImageUrl, formatVND } from "@/lib/utils";
@@ -120,7 +110,6 @@ export default function ProductDetailPage() {
   const [mainImageUrl, setMainImageUrl] = useState<string | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("specs"); // 'specs' or 'terms'
   const [quantity, setQuantity] = useState(1);
   const [editingReview, setEditingReview] = useState<Review | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -131,12 +120,10 @@ export default function ProductDetailPage() {
   const [rentalEndDate, setRentalEndDate] = useState("");
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
-  const [availabilityChecked, setAvailabilityChecked] = useState(false);
   const [pickupTimeSlot, setPickupTimeSlot] = useState<string>("08:00 - 12:00");
-  const [paymentMethod, setPaymentMethod] = useState<"ONLINE">("ONLINE");
+  const paymentMethod = "ONLINE" as const;
   const [isSubmittingRental, setIsSubmittingRental] = useState(false);
   const [showKycDialog, setShowKycDialog] = useState(false);
-  const [kycStatus, setKycStatus] = useState<string | null>(null);
 
   const { accessToken } = useAuthStore();
   const { data: profileRes } = useMyProfile();
@@ -156,7 +143,7 @@ export default function ProductDetailPage() {
   const days = calculateDays();
 
   // Check device availability dynamically
-  const checkAvailability = async (start: string, end: string) => {
+  const checkAvailability = useCallback(async (start: string, end: string) => {
     if (!start || !end) return;
     try {
       setIsCheckingAvailability(true);
@@ -168,22 +155,20 @@ export default function ProductDetailPage() {
         },
       });
       setIsAvailable(res.data.data);
-      setAvailabilityChecked(true);
     } catch (err) {
       console.error(err);
     } finally {
       setIsCheckingAvailability(false);
     }
-  };
+  }, [id, quantity]);
 
   useEffect(() => {
     if (rentalStartDate && rentalEndDate) {
       checkAvailability(rentalStartDate, rentalEndDate);
     } else {
       setIsAvailable(null);
-      setAvailabilityChecked(false);
     }
-  }, [rentalStartDate, rentalEndDate, quantity]);
+  }, [checkAvailability, rentalStartDate, rentalEndDate]);
 
   const handleRentalSubmit = async () => {
     if (!accessToken) {
@@ -213,7 +198,6 @@ export default function ProductDetailPage() {
       // Check KYC status
       const kyc = await identityService.getKycStatus();
       if (kyc.status !== "APPROVED" && (kyc.status as string) !== "VERIFIED") {
-        setKycStatus(kyc.status);
         setShowKycDialog(true);
         return;
       }
@@ -248,7 +232,7 @@ export default function ProductDetailPage() {
             window.location.href = vnpayRes.data.data;
             return;
           }
-        } catch (e) {
+        } catch {
           toast.error(
             "Không thể khởi tạo thanh toán VNPay. Vui lòng thanh toán sau trong trang cá nhân.",
           );
@@ -275,9 +259,6 @@ export default function ProductDetailPage() {
   const deleteMutation = useDeleteReview();
 
   const { mutateAsync: addToCart, isPending: isAddingToCart } = useAddToCart();
-  const { data: addressesRes } = useMyAddresses();
-  const defaultAddress =
-    addressesRes?.data?.find((a) => a.isDefault) || addressesRes?.data?.[0];
 
   const handleAddToCart = async () => {
     if (!accessToken) {
@@ -414,47 +395,47 @@ export default function ProductDetailPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white pb-24 selection:bg-red-50">
-        <div className="container mx-auto px-4 lg:px-8 max-w-[1600px] pt-10">
+      <div className="min-h-screen bg-zinc-50/70 pb-20 selection:bg-red-50">
+        <div className="container mx-auto max-w-[1320px] px-4 pt-8 lg:px-8">
           {/* Header Actions */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="mb-6 flex items-center justify-between">
             <button
               onClick={() => router.back()}
-              className="group flex items-center gap-4 text-zinc-400 hover:text-zinc-950 transition-all"
+              className="group flex items-center gap-2.5 text-zinc-500 transition-colors hover:text-zinc-950"
             >
-              <div className="w-9 h-9 rounded-xl border border-black/5 flex items-center justify-center group-hover:bg-zinc-50 transition-all shadow-dash-card">
-                <ArrowLeft className="w-3.5 h-3.5" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-zinc-200 bg-white transition-colors group-hover:border-zinc-300">
+                <ArrowLeft className="h-3.5 w-3.5" />
               </div>
-              <span className="text-sm font-semibold">
+              <span className="text-sm font-medium">
                 Quay lại
               </span>
             </button>
 
             <div className="flex items-center gap-6">
               <div className="hidden sm:flex flex-col items-end">
-                <span className="text-xs font-semibold text-zinc-400 leading-none mb-1">
+                <span className="mb-1 text-xs font-normal text-zinc-400 leading-none">
                   Thương hiệu
                 </span>
-                <span className="text-sm font-bold text-zinc-950 tracking-tight">
+                <span className="text-sm font-medium text-zinc-900">
                   {product.brand}
                 </span>
               </div>
               <div className="w-px h-8 bg-zinc-100 hidden sm:block" />
               <div className="flex flex-col items-end">
-                <span className="text-xs font-semibold text-zinc-400 leading-none mb-1">
+                <span className="mb-1 text-xs font-normal text-zinc-400 leading-none">
                   Danh mục
                 </span>
-                <span className="text-sm font-bold text-red-600 tracking-tight">
+                <span className="text-sm font-medium text-red-600">
                   {product.categoryName}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
             {/* Left: Image Showcase */}
-            <div className="lg:col-span-7 space-y-10">
-              <div className="relative aspect-square w-full bg-white rounded-xl border border-black/5 overflow-hidden group flex items-center justify-center p-8 shadow-dash-card">
+            <div className="space-y-5 lg:col-span-7">
+              <div className="group relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-zinc-200 bg-white">
                 {/* Main Image */}
                 {mainImageUrl ? (
                   <Image
@@ -462,7 +443,7 @@ export default function ProductDetailPage() {
                     alt={product.name}
                     fill
                     unoptimized
-                    className="object-contain p-4 transition-transform duration-1000 group-hover:scale-105"
+                    className="object-contain p-8 transition-transform duration-500 group-hover:scale-[1.02]"
                     priority
                   />
                 ) : (
@@ -471,15 +452,15 @@ export default function ProductDetailPage() {
               </div>
 
               {/* Sub-gallery Cards */}
-              <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-4">
+              <div className="grid grid-cols-5 gap-3 sm:grid-cols-6 md:grid-cols-7">
                 {/* Main Image as first thumbnail */}
                 <button
                   onClick={() => setMainImageUrl(product.mainImageUrl)}
                   className={cn(
-                    "aspect-square rounded-xl border transition-all p-2 flex items-center justify-center bg-white overflow-hidden shadow-dash-card",
+                    "aspect-square overflow-hidden rounded-xl border bg-white p-2 transition-colors",
                     mainImageUrl === product.mainImageUrl
-                      ? "border-red-600 ring-2 ring-red-600/10 scale-105"
-                      : "border-black/5 hover:border-zinc-200",
+                      ? "border-zinc-400 bg-zinc-50"
+                      : "border-zinc-200 hover:border-zinc-300",
                   )}
                 >
                   <img
@@ -495,10 +476,10 @@ export default function ProductDetailPage() {
                     key={img.id}
                     onClick={() => setMainImageUrl(img.url)}
                     className={cn(
-                      "aspect-square rounded-xl border transition-all p-2 flex items-center justify-center bg-white overflow-hidden shadow-dash-card",
+                      "aspect-square overflow-hidden rounded-xl border bg-white p-2 transition-colors",
                       mainImageUrl === img.url
-                        ? "border-red-600 ring-2 ring-red-600/10 scale-105"
-                        : "border-black/5 hover:border-zinc-200",
+                        ? "border-zinc-400 bg-zinc-50"
+                        : "border-zinc-200 hover:border-zinc-300",
                     )}
                   >
                     <img
@@ -510,114 +491,104 @@ export default function ProductDetailPage() {
                 ))}
               </div>
 
-              {/* Features Spotlight */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-zinc-100/50">
-                <div className="space-y-4">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-950 text-white flex items-center justify-center shadow-dash-card">
-                    <Cpu className="w-5 h-5" />
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4">
+                  <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-600" />
+                  <div>
+                    <p className="text-sm font-medium text-zinc-900">Thiết bị chính hãng</p>
+                    <p className="mt-0.5 text-xs text-zinc-500">Kiểm tra trước khi giao</p>
                   </div>
-                  <h3 className="text-lg font-bold text-zinc-950 tracking-tight">
-                    Hiệu năng tối thượng
-                  </h3>
-                  <p className="text-zinc-500 text-[13px] font-medium leading-relaxed">
-                    Trang bị vi xử lý thế hệ mới nhất, mang lại khả năng xử lý
-                    hình ảnh vượt trội trong mọi điều kiện.
-                  </p>
                 </div>
-                <div className="space-y-4">
-                  <div className="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-dash-card">
-                    <Zap className="w-5 h-5" />
+                <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4">
+                  <Truck className="h-5 w-5 shrink-0 text-blue-600" />
+                  <div>
+                    <p className="text-sm font-medium text-zinc-900">Nhận hàng linh hoạt</p>
+                    <p className="mt-0.5 text-xs text-zinc-500">Mua giao tận nơi, thuê tại cửa hàng</p>
                   </div>
-                  <h3 className="text-lg font-bold text-zinc-950 tracking-tight">
-                    Tốc độ & Chính xác
-                  </h3>
-                  <p className="text-zinc-500 text-[13px] font-medium leading-relaxed">
-                    Hệ thống lấy nét tự động cực nhanh, đảm bảo bạn không bỏ lỡ
-                    bất kỳ khoảnh khắc quý giá nào.
-                  </p>
+                </div>
+                <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4">
+                  <Camera className="h-5 w-5 shrink-0 text-red-600" />
+                  <div>
+                    <p className="text-sm font-medium text-zinc-900">Hỗ trợ kỹ thuật</p>
+                    <p className="mt-0.5 text-xs text-zinc-500">Tư vấn trong suốt quá trình dùng</p>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Right: Detailed Info & Actions */}
-            <div className="lg:col-span-5 space-y-10">
-              <div>
-                <div className="flex items-center gap-3 mb-4">
+            <div className="self-start space-y-5 lg:col-span-5">
+              <div className="rounded-xl border border-zinc-200 bg-white p-5 sm:p-6">
+                <div className="mb-3 flex items-center gap-3">
                   {reviewMeta && (
-                    <div className="flex items-center gap-1.5 text-zinc-700 text-xs font-semibold">
-                      <Star className="w-3.5 h-3.5 fill-red-600 text-red-600" />
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-700">
+                      <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                       <span>{reviewMeta.averageRating.toFixed(1)}</span>
-                      <span className="text-zinc-400 font-medium ml-1">
+                      <span className="ml-1 font-normal text-zinc-400">
                         ({reviewMeta.totalReviews} đánh giá)
                       </span>
                     </div>
                   )}
                 </div>
 
-                <h1 className="text-3xl md:text-4xl font-bold text-zinc-950 tracking-tight leading-tight mb-6">
+                <h1 className="mb-3 text-3xl font-semibold leading-tight tracking-tight text-zinc-950 md:text-4xl">
                   {product.name}
                 </h1>
-                <p className="text-base text-zinc-500 font-medium leading-relaxed mb-8 italic border-l-2 border-red-600 pl-5">
-                  &ldquo;{product.description}&rdquo;
+                <p className="mb-5 text-sm font-normal leading-6 text-zinc-500">
+                  {product.description}
                 </p>
 
                 {/* Status Pills */}
-                <div className="flex flex-wrap gap-2 mb-8">
+                <div className="flex flex-wrap gap-2">
                   {product.forSale && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-50 border border-black/5">
-                      <Box className="w-3.5 h-3.5 text-zinc-400" />
-                      <span className="text-[11px] font-bold text-zinc-950">
+                    <div className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 px-2.5 py-1.5">
+                      <Box className="h-3.5 w-3.5 text-zinc-400" />
+                      <span className="text-xs font-normal text-zinc-600">
                         Tồn kho bán: {product.quantity}
                       </span>
                     </div>
                   )}
                   {product.forRent && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-50 border border-black/5">
-                      <Box className="w-3.5 h-3.5 text-zinc-400" />
-                      <span className="text-[11px] font-bold text-zinc-950">
+                    <div className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 px-2.5 py-1.5">
+                      <Box className="h-3.5 w-3.5 text-zinc-400" />
+                      <span className="text-xs font-normal text-zinc-600">
                         Tồn kho thuê: {product.rentalQuantity ?? 0}
                       </span>
                     </div>
                   )}
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-50 border border-black/5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                    <span className="text-[11px] font-bold text-zinc-950">
+                  <div className="flex items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 px-2.5 py-1.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                    <span className="text-xs font-normal text-emerald-700">
                       Chính hãng 100%
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-50 border border-black/5">
-                    <Shield className="w-3.5 h-3.5 text-blue-500" />
-                    <span className="text-[11px] font-bold text-zinc-950">
-                      Bảo hiểm mặc định
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Configuration / Quantity Selection */}
-              <div className="space-y-6">
-                <div className="flex items-center justify-between p-6 bg-zinc-50/50 rounded-xl border border-black/5 border-dashed">
+              <div className="space-y-5">
+                <div className="flex items-center justify-between rounded-xl border border-zinc-200 bg-white p-4">
                   <div>
-                    <p className="text-xs font-medium text-zinc-500 mb-0.5">
+                    <p className="mb-0.5 text-xs font-normal text-zinc-500">
                       Số lượng
                     </p>
-                    <p className="text-sm font-semibold text-zinc-950">
-                      Thiết bị cần thuê/mua
+                    <p className="text-sm font-medium text-zinc-900">
+                      Chọn số thiết bị
                     </p>
                   </div>
-                  <div className="flex items-center gap-4 bg-white p-1.5 rounded-xl border border-black/5 shadow-dash-card">
+                  <div className="flex items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50 p-1">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-8 h-8 rounded-xl flex items-center justify-center text-zinc-400 hover:text-red-600 hover:bg-zinc-50 transition-all active:scale-90"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 transition-colors hover:bg-white hover:text-zinc-950"
                     >
                       <Minus className="w-3.5 h-3.5" />
                     </button>
-                    <span className="w-6 text-center font-bold text-zinc-950 text-lg">
+                    <span className="w-7 text-center text-sm font-medium text-zinc-950">
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-8 h-8 rounded-xl flex items-center justify-center text-zinc-400 hover:text-red-600 hover:bg-zinc-50 transition-all active:scale-90"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 transition-colors hover:bg-white hover:text-zinc-950"
                     >
                       <Plus className="w-3.5 h-3.5" />
                     </button>
@@ -627,23 +598,28 @@ export default function ProductDetailPage() {
                 {/* Pricing Cards */}
                 <div className="grid grid-cols-1 gap-5">
                   {product.forSale && (
-                    <div className="bg-white rounded-xl p-6 border border-black/5 shadow-dash-card relative overflow-hidden group">
-                      <p className="text-xs font-medium text-zinc-500 mb-4">
-                        Giá bán
-                      </p>
-                      <div className="mb-6">
-                        <p className="text-3xl font-bold tracking-tight text-zinc-950 leading-none">
+                    <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-5">
+                      <div className="mb-5 flex items-end justify-between gap-4">
+                        <div>
+                          <p className="mb-2 text-xs font-normal text-zinc-500">
+                            Giá mua
+                          </p>
+                          <p className="text-2xl font-semibold leading-none tracking-tight text-zinc-950">
                           {formatVND(product.salePrice).replace("₫", "")}
-                          <span className="text-lg ml-1 text-red-600 font-bold">
+                          <span className="ml-1 text-base font-medium text-red-600">
                             ₫
                           </span>
-                        </p>
+                          </p>
+                        </div>
+                        <span className="text-xs font-normal text-zinc-400">
+                          Giao hàng toàn quốc
+                        </span>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <Button
                           onClick={handleAddToCart}
                           disabled={isAddingToCart}
-                          className="h-10 px-5 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white font-semibold text-[14px] transition-all duration-200 shadow-lg shadow-zinc-200 active:scale-95 flex items-center gap-2"
+                          className="h-10 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-800 shadow-none hover:bg-zinc-50"
                         >
                           {isAddingToCart ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -654,7 +630,7 @@ export default function ProductDetailPage() {
                         </Button>
                         <Button
                           onClick={handleBuyNow}
-                          className="h-10 px-5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-[14px] transition-all duration-200 shadow-lg shadow-red-100 active:scale-95"
+                          className="h-10 rounded-xl bg-zinc-950 px-4 text-sm font-medium text-white shadow-none hover:bg-zinc-800"
                         >
                           Mua ngay
                         </Button>
@@ -663,40 +639,40 @@ export default function ProductDetailPage() {
                   )}
 
                   {product.forRent && (
-                    <div className="bg-zinc-50/50 rounded-xl p-6 border border-black/5 border-dashed relative group">
-                      <p className="text-xs font-medium text-zinc-500 mb-4">
+                    <div className="relative rounded-xl border border-zinc-200 bg-white p-5">
+                      <p className="mb-3 text-xs font-normal text-zinc-500">
                         Đặt thuê thiết bị
                       </p>
 
                       {/* Price and Badges */}
-                      <div className="flex items-end justify-between mb-6">
-                        <p className="text-3xl font-bold tracking-tight text-amber-600 leading-none">
+                      <div className="mb-5 flex items-end justify-between">
+                        <p className="text-2xl font-semibold leading-none tracking-tight text-zinc-950">
                           {formatVND(product.rentPricePerDay).replace("₫", "")}
-                          <span className="text-lg ml-1 text-zinc-400 font-bold">
+                          <span className="ml-1 text-sm font-normal text-zinc-500">
                             ₫/ngày
                           </span>
                         </p>
-                        <span className="text-xs font-semibold text-zinc-400">
-                          Bảo hiểm trọn gói
+                        <span className="rounded-lg bg-amber-50 px-2 py-1 text-xs font-normal text-amber-700">
+                          Có bảo hiểm
                         </span>
                       </div>
 
                       {/* Date Pickers */}
-                      <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="mb-4 grid grid-cols-2 gap-3">
                         <div>
-                          <label className="text-xs font-medium text-zinc-500 block mb-1.5">
-                             Ngày nhận
+                          <label className="mb-1.5 block text-xs font-normal text-zinc-600">
+                            Ngày nhận
                           </label>
                           <DateInput
                             min={new Date().toISOString().split("T")[0]}
                             value={rentalStartDate}
                             onChange={(v) => setRentalStartDate(v)}
-                            className="w-full h-11 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 transition-all"
+                            className="h-10 w-full rounded-xl border border-zinc-200 bg-white px-3 text-xs font-normal text-zinc-800 outline-none transition-colors focus:border-zinc-400"
                           />
                         </div>
                         <div>
-                          <label className="text-xs font-medium text-zinc-500 block mb-1.5">
-                             Ngày trả
+                          <label className="mb-1.5 block text-xs font-normal text-zinc-600">
+                            Ngày trả
                           </label>
                           <DateInput
                             min={
@@ -705,7 +681,7 @@ export default function ProductDetailPage() {
                             }
                             value={rentalEndDate}
                             onChange={(v) => setRentalEndDate(v)}
-                            className="w-full h-11 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 transition-all"
+                            className="h-10 w-full rounded-xl border border-zinc-200 bg-white px-3 text-xs font-normal text-zinc-800 outline-none transition-colors focus:border-zinc-400"
                           />
                         </div>
                       </div>
@@ -714,17 +690,17 @@ export default function ProductDetailPage() {
                       {rentalStartDate && rentalEndDate && (
                         <div className="mb-4">
                           {isCheckingAvailability ? (
-                            <div className="flex items-center gap-2 text-xs font-semibold text-zinc-400">
+                            <div className="flex items-center gap-2 text-xs font-normal text-zinc-500">
                               <Loader2 className="w-4 h-4 animate-spin" /> Đang
                               kiểm tra lịch trống...
                             </div>
                           ) : isAvailable === true ? (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-100">
+                            <div className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 px-2.5 py-1.5 text-xs font-normal text-emerald-700">
                               <CheckCircle2 className="w-3.5 h-3.5" /> Thiết bị
                               có sẵn để thuê
                             </div>
                           ) : isAvailable === false ? (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold border border-red-100">
+                            <div className="inline-flex items-center gap-1.5 rounded-xl border border-red-100 bg-red-50 px-2.5 py-1.5 text-xs font-normal text-red-700">
                               Hết thiết bị trong khoảng thời gian này
                             </div>
                           ) : null}
@@ -735,14 +711,14 @@ export default function ProductDetailPage() {
                       {isAvailable === true && (
                         <>
                           <div className="mb-4">
-                            <label className="text-xs font-medium text-zinc-500 block mb-1.5">
-                               Khung giờ nhận máy tại cửa hàng
+                            <label className="mb-1.5 block text-xs font-normal text-zinc-600">
+                              Khung giờ nhận máy tại cửa hàng
                             </label>
                             <Select value={pickupTimeSlot} onValueChange={(v) => v && setPickupTimeSlot(v)}>
-                              <SelectTrigger className="w-full h-10 px-3 rounded-xl !border !border-zinc-200 !bg-white text-sm font-semibold text-zinc-800 !outline-none !ring-0 focus:!border-zinc-400 transition-all shadow-sm [&>span]:flex [&>span]:items-center">
+                              <SelectTrigger className="h-10 w-full rounded-xl !border !border-zinc-200 !bg-white px-3 text-sm font-normal text-zinc-800 shadow-none !outline-none !ring-0 transition-colors focus:!border-zinc-400 [&>span]:flex [&>span]:items-center">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="rounded-xl !border !border-zinc-100 shadow-xl !bg-white overflow-hidden p-1">
+                              <SelectContent className="overflow-hidden rounded-xl !border !border-zinc-200 !bg-white p-1 shadow-lg">
                                 {[
                                   { value: "08:00 - 12:00", label: "08:00 - 12:00 (Sáng)" },
                                   { value: "13:00 - 17:00", label: "13:00 - 17:00 (Chiều)" },
@@ -751,7 +727,7 @@ export default function ProductDetailPage() {
                                   <SelectItem
                                     key={slot.value}
                                     value={slot.value}
-                                    className="text-sm font-semibold py-2.5 px-3 rounded-xl cursor-pointer !text-zinc-800 focus:!bg-zinc-100 focus:!text-zinc-950 data-[state=checked]:!text-zinc-950 transition-colors"
+                                    className="cursor-pointer rounded-lg px-3 py-2.5 text-sm font-normal !text-zinc-800 transition-colors focus:!bg-zinc-100 focus:!text-zinc-950 data-[state=checked]:!text-zinc-950"
                                   >
                                     {slot.label}
                                   </SelectItem>
@@ -763,30 +739,30 @@ export default function ProductDetailPage() {
 
                           {/* Price Calculations */}
                           {days > 0 && (
-                            <div className="mt-6 pt-4 border-t border-black/5 space-y-2.5">
-                              <div className="flex justify-between text-xs font-semibold text-zinc-500">
-                                <span>Số ngày thuê:</span>
-                                <span className="text-zinc-950">
+                            <div className="mt-5 space-y-2.5 rounded-xl bg-zinc-50 p-4">
+                              <div className="flex justify-between text-xs font-normal text-zinc-500">
+                                <span>Số ngày thuê</span>
+                                <span className="font-medium text-zinc-900">
                                   {days} ngày
                                 </span>
                               </div>
-                              <div className="flex justify-between text-xs font-semibold text-zinc-500">
-                                <span>Tổng phí thuê (tạm tính):</span>
-                                <span className="font-bold text-zinc-950">
+                              <div className="flex justify-between text-xs font-normal text-zinc-500">
+                                <span>Phí thuê tạm tính</span>
+                                <span className="font-medium text-zinc-900">
                                   {formatVND(
                                     product.rentPricePerDay * days * quantity,
                                   )}
                                 </span>
                               </div>
-                              <div className="flex justify-between text-xs font-semibold text-zinc-500">
-                                <span>Tiền cọc thiết bị (20%):</span>
-                                <span className="font-bold text-amber-600">
+                              <div className="flex justify-between text-xs font-normal text-zinc-500">
+                                <span>Tiền cọc dự kiến (20%)</span>
+                                <span className="font-medium text-amber-700">
                                   {formatVND(
                                     product.salePrice * 0.2 * quantity,
                                   )}
                                 </span>
                               </div>
-                              <p className="text-[10px] text-zinc-400 font-medium leading-relaxed pt-1">
+                              <p className="pt-1 text-[11px] font-normal leading-relaxed text-zinc-400">
                                 * Tiền đặt cọc thực tế sẽ được nhân viên xác
                                 nhận và hoàn duyệt sau khi thẩm định hồ sơ eKYC.
                               </p>
@@ -804,7 +780,7 @@ export default function ProductDetailPage() {
                             rentalEndDate !== "" &&
                             isAvailable !== true)
                         }
-                        className="w-full h-10 mt-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-[14px] transition-all duration-200 shadow-lg shadow-red-100 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-red-600 text-sm font-medium text-white shadow-none transition-colors hover:bg-red-700 disabled:opacity-50"
                       >
                         {isSubmittingRental ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -824,20 +800,20 @@ export default function ProductDetailPage() {
               </div>
 
               {/* Technical Details */}
-              <div className="pt-10 border-t border-zinc-100">
-                <h4 className="text-sm font-semibold text-zinc-900 mb-4">
+              <div className="rounded-xl border border-zinc-200 bg-white p-5">
+                <h4 className="mb-3 text-sm font-medium text-zinc-900">
                   Thông số kỹ thuật
                 </h4>
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-1">
                   {product.specifications?.map((spec) => (
                     <div
                       key={spec.id}
-                      className="flex items-center justify-between py-4 border-b border-zinc-50 group"
+                      className="group flex items-center justify-between border-b border-zinc-100 py-3 last:border-0"
                     >
-                      <span className="text-xs font-semibold text-zinc-400 group-hover:text-zinc-950 transition-colors">
+                      <span className="text-xs font-normal text-zinc-500 transition-colors group-hover:text-zinc-900">
                         {spec.specKey}
                       </span>
-                      <span className="text-xs font-bold text-zinc-950">
+                      <span className="text-right text-xs font-medium text-zinc-900">
                         {spec.specValue}
                       </span>
                     </div>
@@ -847,20 +823,20 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          <div className="mt-16 pt-12 border-t border-zinc-100">
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 mb-10">
+          <div className="mt-14 border-t border-zinc-200 pt-10">
+            <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-center">
               <div className="max-w-2xl">
-                <h2 className="text-2xl font-bold text-zinc-950 tracking-tight mb-2">
+                <h2 className="mb-2 text-2xl font-semibold tracking-tight text-zinc-950">
                   Đánh giá
                 </h2>
-                <p className="text-zinc-500 font-medium text-sm leading-relaxed">
+                <p className="text-sm font-normal leading-relaxed text-zinc-500">
                   Nhận xét từ khách hàng đã trực tiếp sử dụng thiết bị.
                 </p>
               </div>
               {reviewMeta && (
-                <div className="flex items-center gap-8 bg-white p-6 rounded-xl border border-black/5 shadow-dash-card">
-                  <div className="text-center px-4">
-                    <p className="text-4xl font-bold text-zinc-950 leading-none mb-3">
+                <div className="flex items-center gap-6 rounded-xl border border-zinc-200 bg-white px-5 py-4">
+                  <div className="text-center">
+                    <p className="mb-2 text-3xl font-semibold leading-none text-zinc-950">
                       {reviewMeta.averageRating.toFixed(1)}
                     </p>
                     <div className="flex items-center gap-1 justify-center">
@@ -870,52 +846,57 @@ export default function ProductDetailPage() {
                           className={cn(
                             "w-3.5 h-3.5",
                             i < Math.round(reviewMeta.averageRating)
-                              ? "fill-red-600 text-red-600"
+                              ? "fill-amber-400 text-amber-400"
                               : "text-zinc-200",
                           )}
                         />
                       ))}
                     </div>
                   </div>
-                  <div className="w-px h-12 bg-zinc-100" />
-                  <div className="px-4">
-                    <p className="text-2xl font-bold text-zinc-950 leading-none mb-2">
+                  <div className="h-10 w-px bg-zinc-200" />
+                  <div>
+                    <p className="mb-1 text-xl font-medium leading-none text-zinc-950">
                       {reviewMeta.totalReviews}
                     </p>
-                    <p className="text-xs font-semibold text-zinc-400 tracking-wider">
-                      Đánh giá
+                    <p className="text-xs font-normal text-zinc-500">
+                      lượt đánh giá
                     </p>
                   </div>
                 </div>
               )}
             </div>
 
-            {reviews.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {isReviewsLoading ? (
+              <div className="flex min-h-40 items-center justify-center rounded-xl border border-zinc-200 bg-white">
+                <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+              </div>
+            ) : reviews.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {reviews.map((r) => (
                   <div
                     key={r.id}
-                    className="bg-white p-8 rounded-xl border border-black/5 shadow-dash-card hover:border-red-600/20 transition-all duration-300 group flex flex-col h-full"
+                    className="group flex h-full flex-col rounded-xl border border-zinc-200 bg-white p-5 transition-colors hover:border-zinc-300"
                   >
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-4">
+                    <div className="mb-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
                         {r.userAvatar ? (
-                          <div className="w-10 h-10 rounded-xl overflow-hidden border border-zinc-100 shadow-sm shrink-0">
+                          <div className="h-9 w-9 shrink-0 overflow-hidden rounded-xl border border-zinc-100">
                             <img
                               src={getImageUrlLocal(r.userAvatar)}
                               className="w-full h-full object-cover"
+                              alt={r.userName}
                             />
                           </div>
                         ) : (
-                          <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center font-bold text-zinc-950 text-sm shadow-sm group-hover:bg-red-50 group-hover:border-red-100 transition-colors shrink-0">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-50 text-sm font-medium text-zinc-800">
                             {r.userName.charAt(0).toUpperCase()}
                           </div>
                         )}
                         <div>
-                          <p className="font-bold text-zinc-950 text-[15px] line-clamp-1">
+                          <p className="line-clamp-1 text-sm font-medium text-zinc-900">
                             {r.userName}
                           </p>
-                          <p className="text-[10px] font-semibold text-zinc-400 tracking-widest">
+                          <p className="mt-0.5 text-xs font-normal text-zinc-400">
                             {new Date(r.createdAt).toLocaleDateString("vi-VN", {
                               day: "numeric",
                               month: "long",
@@ -933,7 +914,7 @@ export default function ProductDetailPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
                           align="end"
-                          className="w-44 bg-white rounded-xl border border-zinc-100 shadow-dash-overlay p-1.5"
+                          className="w-44 rounded-xl border border-zinc-200 bg-white p-1.5 shadow-lg"
                         >
                           {currentUser?.id === r.userId ? (
                             <>
@@ -942,13 +923,13 @@ export default function ProductDetailPage() {
                                   setEditingReview(r);
                                   setIsEditOpen(true);
                                 }}
-                                className="gap-3 text-[13px] font-bold py-3 rounded-xl cursor-pointer text-zinc-900 focus:bg-red-600 focus:text-white transition-all duration-200"
+                                className="cursor-pointer gap-3 rounded-lg py-2.5 text-[13px] font-normal text-zinc-900 focus:bg-zinc-100 focus:text-zinc-950"
                               >
                                 <Edit className="w-4 h-4" /> Chỉnh sửa
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => setDeletingReviewId(r.id)}
-                                className="gap-3 text-[13px] font-bold py-3 rounded-xl text-red-600 focus:bg-red-50 focus:text-red-700 cursor-pointer transition-all duration-200"
+                                className="cursor-pointer gap-3 rounded-lg py-2.5 text-[13px] font-normal text-red-600 focus:bg-red-50 focus:text-red-700"
                               >
                                 <Trash2 className="w-4 h-4" /> Xóa đánh giá
                               </DropdownMenuItem>
@@ -956,7 +937,7 @@ export default function ProductDetailPage() {
                           ) : (
                             <DropdownMenuItem
                               onClick={() => handleReportReview(r.id)}
-                              className="gap-3 text-[13px] font-bold py-3 rounded-xl text-amber-600 focus:bg-amber-50 focus:text-amber-700 cursor-pointer transition-all duration-200"
+                              className="cursor-pointer gap-3 rounded-lg py-2.5 text-[13px] font-normal text-amber-600 focus:bg-amber-50 focus:text-amber-700"
                             >
                               <Flag className="w-4 h-4" /> Báo cáo
                             </DropdownMenuItem>
@@ -965,22 +946,22 @@ export default function ProductDetailPage() {
                       </DropdownMenu>
                     </div>
 
-                    <div className="flex items-center gap-1 mb-5">
+                    <div className="mb-4 flex items-center gap-1">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star
                           key={i}
                           className={cn(
                             "w-3.5 h-3.5",
                             i < r.rating
-                              ? "fill-red-600 text-red-600"
+                              ? "fill-amber-400 text-amber-400"
                               : "text-zinc-200",
                           )}
                         />
                       ))}
                     </div>
 
-                    <p className="text-[15px] font-medium text-zinc-600 leading-relaxed italic border-l-2 border-zinc-100 pl-4 group-hover:border-red-200 transition-colors mb-6 flex-grow">
-                      &ldquo;{r.content}&rdquo;
+                    <p className="mb-5 flex-grow text-sm font-normal leading-6 text-zinc-600">
+                      {r.content}
                     </p>
 
                     {/* Review Images */}
@@ -989,11 +970,12 @@ export default function ProductDetailPage() {
                         {r.images.map((img, idx) => (
                           <div
                             key={idx}
-                            className="w-12 h-12 rounded-xl border border-zinc-100 overflow-hidden shadow-sm hover:scale-105 transition-transform cursor-pointer"
+                            className="h-12 w-12 cursor-pointer overflow-hidden rounded-xl border border-zinc-200"
                           >
                             <img
                               src={getImageUrlLocal(img)}
                               className="w-full h-full object-cover"
+                              alt={`Ảnh đánh giá ${idx + 1}`}
                             />
                           </div>
                         ))}
@@ -1003,9 +985,9 @@ export default function ProductDetailPage() {
                 ))}
               </div>
             ) : (
-              <div className="py-24 text-center bg-zinc-50/50 rounded-xl border-2 border-dashed border-zinc-100">
-                <Star className="w-16 h-16 text-zinc-100 mx-auto mb-6" />
-                <p className="text-xs font-semibold text-zinc-300">
+              <div className="rounded-xl border border-zinc-200 bg-white py-16 text-center">
+                <Star className="mx-auto mb-4 h-10 w-10 text-zinc-200" />
+                <p className="text-sm font-normal text-zinc-400">
                   Chưa có đánh giá nào
                 </p>
               </div>

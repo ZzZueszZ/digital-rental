@@ -90,7 +90,6 @@ export function UserProfileCard({
   const [showDeleteAvatarConfirm, setShowDeleteAvatarConfirm] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const avatarGradient = AVATAR_COLORS[(userId || 0) % AVATAR_COLORS.length];
   const displayName =
     profile?.fullName ||
     [profile?.firstName, profile?.lastName].filter(Boolean).join(" ") ||
@@ -190,13 +189,8 @@ export function UserProfileCard({
               className="w-24 h-24 rounded-xl object-cover shadow-inner border-4 border-zinc-50 bg-white"
             />
           ) : (
-            <div
-              className={cn(
-                "w-24 h-24 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-inner border-4 border-zinc-50",
-                avatarGradient,
-              )}
-            >
-              <span className="text-white font-bold text-4xl">
+            <div className="w-24 h-24 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center">
+              <span className="text-zinc-700 font-bold text-4xl">
                 {user.email.charAt(0).toUpperCase()}
               </span>
             </div>

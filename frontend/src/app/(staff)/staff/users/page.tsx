@@ -350,15 +350,8 @@ export default function UsersAdminPage() {
               >
                 <div className="flex items-center gap-3">
 
-                  <div
-                    className={cn(
-                      "w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0 shadow-sm",
-                      avatarColor.bg,
-                    )}
-                  >
-                    <span
-                      className={cn("font-black text-sm", avatarColor.text)}
-                    >
+                  <div className="w-10 h-10 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
+                    <span className="font-bold text-sm text-zinc-700">
                       {u.email.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -536,19 +529,8 @@ export default function UsersAdminPage() {
 
                     <td className="px-6 py-3">
                       <div className="flex items-center gap-3.5">
-                        <div
-                          className={cn(
-                            "w-9 h-9 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0",
-                            "shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md",
-                            avatarColor.bg,
-                          )}
-                        >
-                          <span
-                            className={cn(
-                              "font-black text-sm",
-                              avatarColor.text,
-                            )}
-                          >
+                        <div className="w-9 h-9 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
+                          <span className="font-bold text-sm text-zinc-700">
                             {u.email.charAt(0).toUpperCase()}
                           </span>
                         </div>

@@ -54,7 +54,7 @@ export default function InfoPage() {
     <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-[0_2px_6px_rgba(0,0,0,0.04)] animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12">
         <div>
-          <h1 className="text-[28px] font-semibold text-zinc-950 tracking-tight leading-tight">
+          <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
             Thông tin chi tiết
           </h1>
           <p className="text-sm text-zinc-500 font-medium mt-1">

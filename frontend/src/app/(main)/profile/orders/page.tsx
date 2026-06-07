@@ -1,31 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import {
-  useMyOrders,
-  useConfirmReceived,
-} from "@/services/order";
-import {
-  OrderStatus,
-  OrderResponse,
-} from "@/types/order";
+import { useMyOrders, useConfirmReceived } from "@/services/order";
+import { OrderStatus, OrderResponse } from "@/types/order";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Loader2, Info, Calendar, FileText, CheckCircle2 } from "lucide-react";
+import {
+  ShoppingBag,
+  Loader2,
+  Info,
+  Calendar,
+  FileText,
+  CheckCircle2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { cn, formatVND, getImageUrl, formatDate } from "@/lib/utils";
 import { OrderDetailDialog } from "@/components/common/OrderDetailDialog";
 import { ReviewFormDialog } from "@/components/common/ReviewFormDialog";
-import {
-  RentalOrderStatus,
-  useMyRentals,
-} from "@/services/rental";
+import { RentalOrderStatus, useMyRentals } from "@/services/rental";
 import { RentalDetailDialog } from "@/components/common/RentalDetailDialog";
 
 export default function OrdersPage() {
   const [orderType, setOrderType] = useState<"BUY" | "RENT">("BUY");
   const [activeTab, setActiveTab] = useState<OrderStatus | "ALL">("ALL");
-  const [activeRentalTab, setActiveRentalTab] = useState<RentalOrderStatus | "ALL">("ALL");
+  const [activeRentalTab, setActiveRentalTab] = useState<
+    RentalOrderStatus | "ALL"
+  >("ALL");
   const [page, setPage] = useState(0);
 
   // Buy Orders Query
@@ -40,13 +40,16 @@ export default function OrdersPage() {
   const { data: rentalsRes, isLoading: isRentalsLoading } = useMyRentals({
     page,
     size: 10,
-    status: activeRentalTab === "ALL" ? undefined : (activeRentalTab as RentalOrderStatus),
+    status:
+      activeRentalTab === "ALL"
+        ? undefined
+        : (activeRentalTab as RentalOrderStatus),
   });
   const rentals = rentalsRes?.data || [];
 
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  
+
   const [selectedRentalId, setSelectedRentalId] = useState<number | null>(null);
   const [isRentalDetailOpen, setIsRentalDetailOpen] = useState(false);
 
@@ -215,7 +218,7 @@ export default function OrdersPage() {
             "pb-2 text-sm font-bold border-b-2 transition-all duration-300 relative",
             orderType === "BUY"
               ? "border-red-600 text-red-600"
-              : "border-transparent text-zinc-400 hover:text-zinc-900"
+              : "border-transparent text-zinc-400 hover:text-zinc-900",
           )}
         >
           Đơn mua hàng
@@ -230,7 +233,7 @@ export default function OrdersPage() {
             "pb-2 text-sm font-bold border-b-2 transition-all duration-300 relative",
             orderType === "RENT"
               ? "border-red-600 text-red-600"
-              : "border-transparent text-zinc-400 hover:text-zinc-900"
+              : "border-transparent text-zinc-400 hover:text-zinc-900",
           )}
         >
           Đơn thuê thiết bị
@@ -296,7 +299,8 @@ export default function OrdersPage() {
             Danh sách trống
           </h3>
           <p className="text-sm text-zinc-400 font-medium max-w-xs mb-10">
-            Hiện chưa có đơn mua hàng nào trong mục này. Hãy bắt đầu trải nghiệm ngay.
+            Hiện chưa có đơn mua hàng nào trong mục này. Hãy bắt đầu trải nghiệm
+            ngay.
           </p>
           <Button
             onClick={() => router.push("/")}
@@ -314,7 +318,8 @@ export default function OrdersPage() {
             Danh sách thuê trống
           </h3>
           <p className="text-sm text-zinc-400 font-medium max-w-xs mb-10">
-            Hiện chưa có đơn thuê thiết bị nào trong mục này. Hãy bắt đầu trải nghiệm ngay.
+            Hiện chưa có đơn thuê thiết bị nào trong mục này. Hãy bắt đầu trải
+            nghiệm ngay.
           </p>
           <Button
             onClick={() => router.push("/")}
@@ -452,7 +457,8 @@ export default function OrdersPage() {
                       Thời hạn thuê
                     </span>
                     <span className="text-xs font-bold text-zinc-500">
-                      {rental.startDate.split("T")[0]} &rarr; {rental.endDate.split("T")[0]}
+                      {rental.startDate.split("T")[0]} &rarr;{" "}
+                      {rental.endDate.split("T")[0]}
                     </span>
                   </div>
                 </div>
@@ -471,7 +477,9 @@ export default function OrdersPage() {
                   <div key={item.id} className="flex gap-4 items-center h-12">
                     <div className="w-12 h-12 rounded-xl border border-zinc-50 bg-white p-1.5 flex items-center justify-center shrink-0">
                       <img
-                        src={item.productMainImageUrl || "/placeholder-camera.jpg"}
+                        src={
+                          item.productMainImageUrl || "/placeholder-camera.jpg"
+                        }
                         alt={item.productName}
                         className="w-full h-full object-contain"
                       />
@@ -497,7 +505,13 @@ export default function OrdersPage() {
                     {formatVND(rental.rentalFee)}
                   </span>
                   <span className="text-xs text-zinc-400 font-semibold">
-                    (Cọc dự kiến: {formatVND(rental.finalDepositAmount ?? rental.estimatedDepositAmount ?? 0)})
+                    (Cọc dự kiến:{" "}
+                    {formatVND(
+                      rental.finalDepositAmount ??
+                        rental.estimatedDepositAmount ??
+                        0,
+                    )}
+                    )
                   </span>
                 </div>
                 <div className="flex gap-3">
@@ -544,4 +558,3 @@ export default function OrdersPage() {
     </div>
   );
 }
-

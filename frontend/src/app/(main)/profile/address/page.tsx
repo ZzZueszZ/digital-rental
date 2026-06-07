@@ -47,7 +47,7 @@ export default function AddressPage() {
     <div className="space-y-12 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-[28px] font-semibold text-zinc-950 tracking-tight mb-2">
+          <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight mb-2">
             Địa chỉ nhận hàng
           </h1>
           <p className="text-sm text-zinc-500 font-medium">
@@ -56,7 +56,7 @@ export default function AddressPage() {
         </div>
         <Button
           onClick={() => handleOpenDialog()}
-          className="h-12 px-6 rounded-xl bg-zinc-950 text-white font-semibold text-[14px] flex items-center gap-2 hover:bg-red-600 border-none transition-all shadow-lg shadow-zinc-200 active:scale-95"
+          className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95"
         >
           <Plus className="w-4 h-4" /> Thêm địa chỉ mới
         </Button>
@@ -249,7 +249,7 @@ function AddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, receiverName: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               placeholder="Họ và tên"
             />
           </div>
@@ -262,7 +262,7 @@ function AddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, receiverPhone: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               placeholder="09xx xxx xxx"
             />
           </div>
@@ -279,7 +279,7 @@ function AddressDialog({
                 setFormData({ ...formData, province: v as City })
               }
             >
-              <SelectTrigger className="w-full !h-12 !bg-white !border-black/5 rounded-xl px-5 font-semibold text-[15px] focus:!border-red-600/30 transition-all duration-200 text-left shadow-dash-card outline-none">
+              <SelectTrigger className="w-full h-10! bg-white! border-black/5! rounded-xl px-4 font-semibold text-[14px] focus:border-red-600/30! transition-all duration-200 text-left shadow-dash-card outline-none">
                 <span
                   className={cn(
                     formData.province ? "text-zinc-900" : "text-zinc-400",
@@ -312,7 +312,7 @@ function AddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, district: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               placeholder="Nhập Quận/Huyện"
             />
           </div>
@@ -328,7 +328,7 @@ function AddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, ward: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               placeholder="Nhập Phường/Xã"
             />
           </div>
@@ -341,7 +341,7 @@ function AddressDialog({
               onChange={(e) =>
                 setFormData({ ...formData, detailAddress: e.target.value })
               }
-              className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+              className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
               placeholder="Số nhà, ngõ, tên đường..."
             />
           </div>
@@ -356,7 +356,7 @@ function AddressDialog({
             onChange={(e) =>
               setFormData({ ...formData, fullAddress: e.target.value })
             }
-            className="h-12 bg-white border border-black/5 rounded-xl px-5 font-semibold text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+            className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
             placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
           />
         </div>

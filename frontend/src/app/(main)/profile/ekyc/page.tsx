@@ -288,7 +288,7 @@ export default function EkycPage() {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12 pb-8 border-b border-zinc-100">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-[28px] font-semibold text-zinc-950 tracking-tight leading-tight">
+              <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
                 Định danh đã xác thực
               </h1>
               <span className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-[10px] font-bold text-emerald-600 uppercase tracking-wider animate-pulse">
@@ -452,7 +452,7 @@ export default function EkycPage() {
       <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm animate-in fade-in slide-in-from-right-4 duration-500">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12 pb-8 border-b border-zinc-100">
           <div>
-            <h1 className="text-[28px] font-semibold text-zinc-950 tracking-tight leading-tight">
+            <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
               Hồ sơ đang chờ phê duyệt
             </h1>
             <p className="text-sm text-zinc-500 font-medium mt-1">
@@ -502,7 +502,7 @@ export default function EkycPage() {
       <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm animate-in fade-in slide-in-from-right-4 duration-500">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12 pb-8 border-b border-zinc-100">
           <div>
-            <h1 className="text-[28px] font-semibold text-zinc-950 tracking-tight leading-tight">
+            <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
               Xác thực bị từ chối
             </h1>
             <p className="text-sm text-zinc-500 font-medium mt-1">
@@ -540,7 +540,7 @@ export default function EkycPage() {
     <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 pb-8 border-b border-zinc-100">
         <div>
-          <h1 className="text-[28px] font-semibold text-zinc-950 tracking-tight leading-tight">
+          <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
             Xác thực định danh (eKYC)
           </h1>
           <p className="text-sm text-zinc-500 font-medium mt-1">

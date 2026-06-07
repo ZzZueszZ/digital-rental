@@ -233,7 +233,7 @@ export function UserForm({
                         }))
                       }
                     >
-                      <SelectTrigger className="w-full! !h-12 rounded-xl !border-black/5 !bg-white text-[15px] font-semibold text-zinc-900 focus:!border-red-600/30 transition-all duration-200 shadow-dash-card outline-none">
+                      <SelectTrigger className="w-full! !h-10 rounded-xl !border-black/5 !bg-white text-[14px] font-semibold text-zinc-900 focus:!border-red-600/30 transition-all duration-200 shadow-dash-card outline-none">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">

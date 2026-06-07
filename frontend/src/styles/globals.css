@@ -32,6 +32,10 @@
   --radius-md: 12px;
   --radius-sm: 8px;
 
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+
   /* Dashboard Radius & Shadow Tokens */
   --spacing-dash-gap: 1.25rem; /* 20px */
   --spacing-dash-card-p: 1rem; /* 16px */
@@ -39,12 +43,12 @@
   --radius-dash-sm: 8px;
   --radius-dash-md: 12px;
   --radius-dash-lg: 16px;
-  --shadow-dash-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
-  --shadow-dash-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-dash-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --shadow-dash-card: var(--shadow-dash-sm);
-  --shadow-dash-hover: var(--shadow-dash-md);
-  --shadow-dash-overlay: var(--shadow-dash-lg);
+  --shadow-dash-sm: var(--shadow-sm);
+  --shadow-dash-md: var(--shadow-md);
+  --shadow-dash-lg: var(--shadow-lg);
+  --shadow-dash-card: var(--shadow-sm);
+  --shadow-dash-hover: var(--shadow-md);
+  --shadow-dash-overlay: var(--shadow-lg);
 
   /* Sidebar/Navbar Dimensions */
   --dash-sidebar-w: 240px;

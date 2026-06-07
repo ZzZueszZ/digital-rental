@@ -367,8 +367,8 @@ export default function OrdersPage() {
 
               <div className="px-5 py-4 space-y-3">
                 {order.items.slice(0, 2).map((item) => (
-                  <div key={item.id} className="flex gap-4 items-center h-12">
-                    <div className="w-12 h-12 rounded-xl border border-zinc-50 bg-white p-1.5 flex items-center justify-center shrink-0">
+                  <div key={item.id} className="flex gap-4 items-center h-16">
+                    <div className="w-16 h-16 rounded-xl border border-zinc-100 bg-white p-1.5 flex items-center justify-center shrink-0">
                       <img
                         src={
                           getImageUrl(item.productMainImage) ||
@@ -474,11 +474,12 @@ export default function OrdersPage() {
 
               <div className="px-5 py-4 space-y-3">
                 {rental.items.map((item) => (
-                  <div key={item.id} className="flex gap-4 items-center h-12">
-                    <div className="w-12 h-12 rounded-xl border border-zinc-50 bg-white p-1.5 flex items-center justify-center shrink-0">
+                  <div key={item.id} className="flex gap-4 items-center h-16">
+                    <div className="w-16 h-16 rounded-xl border border-zinc-100 bg-white p-1.5 flex items-center justify-center shrink-0">
                       <img
                         src={
-                          item.productMainImageUrl || "/placeholder-camera.jpg"
+                          getImageUrl(item.productMainImageUrl) ||
+                          "/placeholder-camera.jpg"
                         }
                         alt={item.productName}
                         className="w-full h-full object-contain"

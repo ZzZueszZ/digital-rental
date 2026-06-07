@@ -18,7 +18,7 @@ import {
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { cn, formatVND, formatDate } from "@/lib/utils";
+import { cn, formatVND, formatDate, getImageUrl } from "@/lib/utils";
 import {
   RentalOrderStatus,
   useRentalDetail,
@@ -732,7 +732,7 @@ export function RentalDetailDialog({
                   <div className="flex gap-4 items-center">
                     <div className="w-12 h-12 rounded-xl bg-zinc-50 p-1 flex items-center justify-center border border-zinc-100 overflow-hidden shrink-0">
                       <img
-                        src={item.productMainImageUrl || "/placeholder-camera.jpg"}
+                        src={getImageUrl(item.productMainImageUrl) || "/placeholder-camera.jpg"}
                         alt={item.productName}
                         className="w-full h-full object-contain"
                       />

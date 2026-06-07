@@ -60,6 +60,7 @@ import {
   RentalOrderResponse
 } from "@/services/rental";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 
 export function RentalManageView({ portalType }: { portalType: "admin" | "staff" | "super-admin" }) {
   const [page, setPage] = useState(0);
@@ -93,6 +94,19 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   const [isReturnOpen, setIsReturnOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [detailRentalId, setDetailRentalId] = useState<number | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void | Promise<void>;
+    isLoading?: boolean;
+    variant?: "danger" | "warning" | "info";
+  }>({
+    open: false,
+    title: "",
+    description: "",
+    onConfirm: () => {},
+  });
 
   const handleOpenDetail = (id: number) => {
     setDetailRentalId(id);
@@ -164,19 +178,33 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   // handleOpenReject and handleRejectSubmit removed because reject logic was removed
 
   const handlePayDeposit = async (id: number, amount: number) => {
-    try {
-      await collectDepositMutation.mutateAsync({
-        id: id,
-        req: {
-          amount: amount,
-          paymentMethod: "CASH"
+    const rental = rentals.find((r) => r.id === id);
+    const code = rental?.code || "";
+    setConfirmDialog({
+      open: true,
+      title: "Xác nhận thu tiền cọc",
+      description: `Xác nhận đã thu tiền cọc offline số tiền ${formatVND(amount)} của đơn thuê #${code}?`,
+      variant: "info",
+      onConfirm: async () => {
+        try {
+          setConfirmDialog((prev) => ({ ...prev, isLoading: true }));
+          await collectDepositMutation.mutateAsync({
+            id: id,
+            req: {
+              amount: amount,
+              paymentMethod: "CASH"
+            }
+          });
+          toast.success("Xác nhận thu tiền cọc offline thành công!");
+          setConfirmDialog((prev) => ({ ...prev, open: false }));
+        } catch (err: unknown) {
+          const error = err as { response?: { data?: { message?: string } } };
+          toast.error(error.response?.data?.message || "Lỗi thanh toán cọc");
+        } finally {
+          setConfirmDialog((prev) => ({ ...prev, isLoading: false }));
         }
-      });
-      toast.success("Xác nhận thu tiền cọc offline thành công!");
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      toast.error(error.response?.data?.message || "Lỗi thanh toán cọc");
-    }
+      }
+    });
   };
 
   const handleOpenHandover = (rental: RentalOrderResponse) => {
@@ -263,30 +291,58 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   };
 
   const handleSettle = async (id: number) => {
-    try {
-      await completeMutation.mutateAsync({
-        id: id,
-        req: {
-          refundMethod: "CASH",
-          note: "Hoàn tất hợp đồng"
+    const rental = rentals.find((r) => r.id === id);
+    const code = rental?.code || "";
+    setConfirmDialog({
+      open: true,
+      title: "Xác nhận quyết toán & hoàn cọc",
+      description: `Xác nhận quyết toán đơn thuê #${code} và thực hiện hoàn trả tiền đặt cọc offline cho khách hàng?`,
+      variant: "info",
+      onConfirm: async () => {
+        try {
+          setConfirmDialog((prev) => ({ ...prev, isLoading: true }));
+          await completeMutation.mutateAsync({
+            id: id,
+            req: {
+              refundMethod: "CASH",
+              note: "Hoàn tất hợp đồng"
+            }
+          });
+          toast.success("Quyết toán đơn thuê và hoàn cọc thành công!");
+          setConfirmDialog((prev) => ({ ...prev, open: false }));
+        } catch (err: unknown) {
+          const error = err as { response?: { data?: { message?: string } } };
+          toast.error(error.response?.data?.message || "Lỗi quyết toán");
+        } finally {
+          setConfirmDialog((prev) => ({ ...prev, isLoading: false }));
         }
-      });
-      toast.success("Quyết toán đơn thuê và hoàn cọc thành công!");
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      toast.error(error.response?.data?.message || "Lỗi quyết toán");
-    }
+      }
+    });
   };
 
 
   const handleHandoverDevices = async (id: number) => {
-    try {
-      await handoverMutation.mutateAsync({ id });
-      toast.success("Đã thực hiện bàn giao thiết bị thành công!");
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      toast.error(error.response?.data?.message || "Lỗi bàn giao thiết bị");
-    }
+    const rental = rentals.find((r) => r.id === id);
+    const code = rental?.code || "";
+    setConfirmDialog({
+      open: true,
+      title: "Xác nhận bàn giao thiết bị",
+      description: `Xác nhận tiến hành bàn giao thiết bị vật lý cho đơn thuê #${code}? Trạng thái đơn sẽ được cập nhật sang 'Đang thuê'.`,
+      variant: "info",
+      onConfirm: async () => {
+        try {
+          setConfirmDialog((prev) => ({ ...prev, isLoading: true }));
+          await handoverMutation.mutateAsync({ id });
+          toast.success("Đã thực hiện bàn giao thiết bị thành công!");
+          setConfirmDialog((prev) => ({ ...prev, open: false }));
+        } catch (err: unknown) {
+          const error = err as { response?: { data?: { message?: string } } };
+          toast.error(error.response?.data?.message || "Lỗi bàn giao thiết bị");
+        } finally {
+          setConfirmDialog((prev) => ({ ...prev, isLoading: false }));
+        }
+      }
+    });
   };
 
   const getStatusColor = (status: RentalOrderStatus) => {
@@ -868,6 +924,16 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
           portalType={portalType}
         />
       )}
+
+      <ConfirmDialog
+        open={confirmDialog.open}
+        onOpenChange={(open) => setConfirmDialog((prev) => ({ ...prev, open }))}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        onConfirm={confirmDialog.onConfirm}
+        isLoading={confirmDialog.isLoading}
+        variant={confirmDialog.variant || "info"}
+      />
     </div>
   );
 }

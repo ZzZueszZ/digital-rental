@@ -1,19 +1,18 @@
 "use client";
 
-import { useMyProfile } from "@/services/profile";
-import { useMyAddresses } from "@/services/address";
-import { useMyCart } from "@/services/cart";
-import { Button } from "@/components/ui/button";
 import {
+  ArrowRight,
+  CheckCircle2,
   MapPin,
+  ShieldCheck,
   ShoppingBag,
   ShoppingCart,
   User,
-  Star,
-  ChevronRight,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { useMyProfile } from "@/services/profile";
+import { useMyAddresses } from "@/services/address";
+import { useMyCart } from "@/services/cart";
 
 export default function OverviewPage() {
   const router = useRouter();
@@ -25,152 +24,161 @@ export default function OverviewPage() {
   const addresses = addressesRes?.data || [];
   const cartItemsCount = cartRes?.data?.length || 0;
 
-  const onNavigate = (path: string) => {
-    router.push(path);
-  };
+  const cards = [
+    {
+      icon: User,
+      label: "Hồ sơ cá nhân",
+      value: profile?.fullName || "Chưa cập nhật",
+      description: "Thông tin tài khoản",
+      href: "/profile/info",
+    },
+    {
+      icon: MapPin,
+      label: "Sổ địa chỉ",
+      value: `${addresses.length} địa chỉ`,
+      description: "Điểm giao nhận đã lưu",
+      href: "/profile/address",
+    },
+    {
+      icon: ShoppingCart,
+      label: "Giỏ hàng",
+      value: `${cartItemsCount} sản phẩm`,
+      description: "Đang chờ thanh toán",
+      href: "/profile/cart",
+    },
+    {
+      icon: ShoppingBag,
+      label: "Đơn hàng",
+      value: "Xem lịch sử",
+      description: "Giao dịch mua và thuê",
+      href: "/profile/orders",
+    },
+  ];
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="bg-white border border-zinc-100 rounded-xl p-6 md:p-8 shadow-sm relative overflow-hidden">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-          <div>
-            <h1 className="text-[36px] font-bold text-zinc-950 tracking-tight mb-4 leading-[1.2]">
-              Mừng bạn trở lại, <br className="hidden md:block" />{" "}
-              {profile?.fullName || "Người dùng"}!
-            </h1>
-            <p className="text-base text-zinc-500 font-medium max-w-md leading-relaxed">
-              Chào mừng bạn quay trở lại. Hãy quản lý các thiết bị nhiếp ảnh và
-              đơn hàng của bạn ngay tại đây.
+    <div className="space-y-6">
+      <section className="rounded-xl border border-zinc-200 bg-white p-5 sm:p-7">
+        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
+          <div className="max-w-2xl">
+            <p className="mb-2 text-sm font-medium text-red-600">
+              Tài khoản của bạn
+            </p>
+            <h2 className="text-3xl font-semibold tracking-tight text-zinc-950">
+              Chào {profile?.fullName || "bạn"}.
+            </h2>
+            <p className="mt-3 text-sm font-normal leading-6 text-zinc-500">
+              Quản lý thông tin cá nhân, địa chỉ, đơn hàng và hồ sơ xác minh tại
+              một nơi.
             </p>
           </div>
-          <div className="flex gap-3">
-            <Button
-              onClick={() => onNavigate("/profile/info")}
-              className="h-10 px-5 rounded-xl bg-zinc-950 text-white font-semibold text-[14px] hover:bg-red-600 transition-all border-none shadow-lg shadow-zinc-200 hover:shadow-red-200"
-            >
-              Xem hồ sơ
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => onNavigate("/profile/orders")}
-              className="h-10 px-5 rounded-xl border-zinc-200 bg-white text-zinc-950 font-semibold text-[14px] hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all shadow-sm"
-            >
-              Đơn hàng
-            </Button>
-          </div>
-        </div>
-        {/* Subtle decorative background */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/5 rounded-full blur-[80px] -mr-32 -mt-32" />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <OverviewCard
-          icon={<MapPin className="w-6 h-6" />}
-          label="Sổ địa chỉ"
-          value={`${addresses.length} địa chỉ`}
-          color="bg-blue-600"
-          onClick={() => onNavigate("/profile/address")}
-        />
-        <OverviewCard
-          icon={<ShoppingBag className="w-6 h-6" />}
-          label="Đơn hàng"
-          value="0 đơn hàng"
-          color="bg-amber-500"
-          onClick={() => onNavigate("/profile/orders")}
-        />
-        <OverviewCard
-          icon={<ShoppingCart className="w-6 h-6" />}
-          label="Giỏ hàng"
-          value={`${cartItemsCount} sản phẩm`}
-          color="bg-red-600"
-          onClick={() => onNavigate("/profile/cart")}
-        />
-        <OverviewCard
-          icon={<User className="w-6 h-6" />}
-          label="Trust Level"
-          value="Elite Member"
-          color="bg-zinc-900"
-          onClick={() => onNavigate("/profile/info")}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2 bg-white border border-zinc-100 rounded-xl p-8 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[20px] font-semibold text-zinc-950 tracking-tight">
-              Hoạt động gần đây
-            </h3>
+          <div className="flex flex-col gap-3 sm:flex-row">
             <button
-              onClick={() => onNavigate("/profile/orders")}
-              className="text-sm font-semibold text-red-600 hover:text-zinc-950 transition-colors"
+              type="button"
+              onClick={() => router.push("/profile/info")}
+              className="inline-flex h-10 items-center justify-center rounded-xl bg-zinc-950 px-5 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
             >
-              Xem toàn bộ nhật ký
+              <span style={{ color: "#ffffff" }}>Cập nhật hồ sơ</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/profile/orders")}
+              className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-5 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50"
+            >
+              Xem đơn hàng
             </button>
           </div>
-          <div className="py-20 flex flex-col items-center justify-center text-center bg-zinc-50/50 rounded-xl border border-dashed border-zinc-200">
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-sm mb-6">
-              <ShoppingBag className="w-8 h-8 text-zinc-200" />
+        </div>
+      </section>
+
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {cards.map((card) => (
+          <button
+            key={card.label}
+            type="button"
+            onClick={() => router.push(card.href)}
+            className="group rounded-xl border border-zinc-200 bg-white p-5 text-left transition-colors hover:border-zinc-300"
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-50 text-red-600">
+                <card.icon className="h-5 w-5" />
+              </div>
+              <ArrowRight className="h-4 w-4 text-zinc-300 transition-colors group-hover:text-zinc-600" />
             </div>
-            <p className="text-sm font-bold text-zinc-400">
-              Chưa có hoạt động giao dịch nào được ghi nhận
+            <p className="text-xs font-normal text-zinc-500">{card.label}</p>
+            <p className="mt-1 truncate text-lg font-medium text-zinc-950">
+              {card.value}
+            </p>
+            <p className="mt-1 text-xs font-normal text-zinc-400">
+              {card.description}
+            </p>
+          </button>
+        ))}
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-[1.35fr_0.65fr]">
+        <div className="rounded-xl border border-zinc-200 bg-white p-5 sm:p-6">
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-medium text-zinc-950">
+                Hoạt động gần đây
+              </h3>
+              <p className="mt-1 text-xs font-normal text-zinc-400">
+                Các thay đổi và giao dịch mới nhất
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => router.push("/profile/orders")}
+              className="text-xs font-medium text-red-600 hover:text-red-700"
+            >
+              Xem tất cả
+            </button>
+          </div>
+          <div className="flex min-h-52 flex-col items-center justify-center rounded-xl bg-zinc-50 p-6 text-center">
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white text-zinc-300">
+              <ShoppingBag className="h-5 w-5" />
+            </div>
+            <p className="text-sm font-medium text-zinc-600">
+              Chưa có hoạt động mới
+            </p>
+            <p className="mt-1 text-xs font-normal text-zinc-400">
+              Đơn mua và lịch thuê sẽ xuất hiện tại đây.
             </p>
           </div>
         </div>
 
-        <div className="bg-white border border-zinc-100 rounded-xl p-8 text-zinc-950 shadow-[0_4px_20px_rgba(0,0,0,0.05)] relative overflow-hidden group hover:scale-[1.01] transition-all">
-          <div className="relative z-10">
-            <div className="w-16 h-16 rounded-xl bg-amber-50 flex items-center justify-center mb-8 border border-amber-100 shadow-sm">
-              <Star className="w-8 h-8 text-amber-500 fill-amber-500" />
-            </div>
-            <h3 className="text-xl font-black mb-2 leading-tight text-zinc-950">
-              Hội viên <br /> LensHub Pro
-            </h3>
-            <p className="text-sm text-zinc-500 font-medium leading-relaxed mb-8">
-              Mở khóa tất cả các đặc quyền: Miễn phí vận chuyển, Bảo hiểm thiết
-              bị và Ưu tiên đặt lịch thuê máy.
-            </p>
-            <Button className="w-full h-10 bg-zinc-950 text-white font-semibold text-sm rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-zinc-200">
-              Nâng cấp ngay
-            </Button>
+        <div className="rounded-xl border border-zinc-200 bg-white p-5 sm:p-6">
+          <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+            <ShieldCheck className="h-5 w-5" />
           </div>
-          {/* Subtle decorative background elements */}
-          <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-zinc-50 rounded-full blur-3xl group-hover:bg-red-50 transition-all" />
-          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl" />
+          <h3 className="text-lg font-medium text-zinc-950">
+            Hoàn thiện hồ sơ thuê
+          </h3>
+          <p className="mt-2 text-sm font-normal leading-6 text-zinc-500">
+            Xác minh eKYC giúp quá trình đặt thuê và xét duyệt thiết bị nhanh
+            hơn.
+          </p>
+          <div className="mt-5 space-y-2.5">
+            {[
+              "Thông tin cá nhân",
+              "Giấy tờ định danh",
+              "Xác thực khuôn mặt",
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-2 text-xs">
+                <CheckCircle2 className="h-3.5 w-3.5 text-zinc-300" />
+                <span className="font-normal text-zinc-500">{item}</span>
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => router.push("/profile/ekyc")}
+            className="mt-6 inline-flex h-10 w-full items-center justify-center rounded-xl bg-zinc-950 px-5 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
+          >
+            <span style={{ color: "#ffffff" }}>Kiểm tra trạng thái eKYC</span>
+          </button>
         </div>
-      </div>
+      </section>
     </div>
-  );
-}
-
-function OverviewCard({
-  icon,
-  label,
-  value,
-  color,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  color: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="group bg-white border border-zinc-100 rounded-xl p-6 shadow-[0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all text-left flex flex-col justify-between h-44 active:scale-95"
-    >
-      <div
-        className={`w-14 h-14 rounded-xl ${color} text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform`}
-      >
-        {icon}
-      </div>
-      <div>
-        <p className="text-[14px] font-medium text-zinc-400 mb-1">{label}</p>
-        <p className="text-[22px] font-semibold text-zinc-950 tracking-tight">
-          {value}
-        </p>
-      </div>
-    </button>
   );
 }

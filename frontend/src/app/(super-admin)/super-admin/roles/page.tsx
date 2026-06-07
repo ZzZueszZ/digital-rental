@@ -12,7 +12,6 @@ import {
   Check,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -29,7 +28,11 @@ import { Pagination } from "../components/Pagination";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { EmptyState } from "../users/components/EmptyState";
-import { StatCard } from "../components/StatCard";
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  const apiError = error as { response?: { data?: { message?: string } } };
+  return apiError.response?.data?.message || fallback;
+};
 
 export default function RolesSuperAdminPage() {
   const [page, setPage] = useState(0);
@@ -115,9 +118,8 @@ export default function RolesSuperAdminPage() {
         toast.success("Tạo vai trò mới thành công");
       }
       setIsRoleDialogOpen(false);
-    } catch (error: any) {
-      const message = error?.response?.data?.message || "Đã xảy ra lỗi";
-      toast.error(message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Đã xảy ra lỗi"));
     }
   };
 
@@ -139,9 +141,8 @@ export default function RolesSuperAdminPage() {
           await deleteMutation.mutateAsync(role.id);
           toast.success("Xóa vai trò thành công");
           setConfirmConfig((prev) => ({ ...prev, open: false }));
-        } catch (error: any) {
-          const message = error?.response?.data?.message || "Không thể xóa vai trò";
-          toast.error(message);
+        } catch (error: unknown) {
+          toast.error(getErrorMessage(error, "Không thể xóa vai trò"));
         }
       },
     });
@@ -173,77 +174,70 @@ export default function RolesSuperAdminPage() {
       });
       toast.success(`Cập nhật quyền hạn cho vai trò ${selectedRole.code} thành công`);
       setIsAssignDialogOpen(false);
-    } catch (error: any) {
-      const message = error?.response?.data?.message || "Đã xảy ra lỗi";
-      toast.error(message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Đã xảy ra lỗi"));
     }
   };
 
   return (
-    <div className="flex-1 space-y-4 lg:space-y-6">
-      {/* KPI Stats */}
-      <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard
-          title="Tổng vai trò"
-          value={totalElements}
-          trend={0}
-          icon={Shield}
-          accent="bg-red-600"
-        />
-        <StatCard
-          title="Vai trò hệ thống"
-          value={4}
-          trend={0}
-          icon={ShieldAlert}
-          accent="bg-zinc-950"
-        />
-        <StatCard
-          title="Quyền hệ thống"
-          value={allPermissions.length}
-          trend={0}
-          icon={Shield}
-          accent="bg-emerald-500"
-        />
+    <div className="space-y-5">
+      <div className="grid gap-3 sm:grid-cols-3">
+        {[
+          { label: "Tổng vai trò", value: totalElements, icon: Shield },
+          { label: "Vai trò hệ thống", value: 4, icon: ShieldAlert },
+          {
+            label: "Quyền đang có",
+            value: allPermissions.length,
+            icon: Check,
+          },
+        ].map((item) => (
+          <div
+            key={item.label}
+            className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4"
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-50 text-red-600">
+              <item.icon className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold tracking-tight text-zinc-950">
+                {item.value}
+              </p>
+              <p className="text-xs font-normal text-zinc-500">{item.label}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Main Table Card */}
-      <div className="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden">
-        {/* Header */}
-        <div className="px-5 py-4 sm:py-5 border-b border-zinc-50">
-          <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
-            {/* Left: Title */}
+      <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+        <div className="border-b border-zinc-200 p-5">
+          <div className="flex flex-col justify-between gap-5 xl:flex-row xl:items-center">
             <div>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100">
-                  <Shield className="w-4.5 h-4.5 text-white" strokeWidth={2} />
-                </div>
-                <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
-                  Quản lý vai trò (Roles)
-                </h2>
-              </div>
-              <p className="text-[14px] text-zinc-500 font-medium ml-12">
-                Định nghĩa các nhóm vai trò và gán phân quyền chi tiết cho nhân sự hệ thống
+              <h2 className="text-xl font-semibold tracking-tight text-zinc-950">
+                Danh sách vai trò
+              </h2>
+              <p className="mt-1 text-sm font-normal text-zinc-500">
+                Tạo nhóm vai trò và thiết lập các quyền được phép sử dụng.
               </p>
             </div>
 
-            {/* Right: Search & Add */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="relative flex-1 xl:w-72 group">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors duration-200" />
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="relative flex-1 sm:w-72">
+                <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
                 <Input
                   placeholder="Tìm vai trò..."
-                  className="pl-10 h-10 rounded-xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:border-red-500/30 transition-all text-xs font-medium text-zinc-900 placeholder:text-zinc-400"
+                  className="h-10 rounded-xl border-zinc-200 bg-zinc-50 pl-9 text-sm font-normal text-zinc-900 shadow-none placeholder:text-zinc-400 focus-visible:border-zinc-400 focus-visible:ring-0"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
-              <Button
+              <button
+                type="button"
                 onClick={() => handleOpenRoleDialog()}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-150 font-semibold text-[14px] flex items-center gap-2 shadow-sm whitespace-nowrap active:scale-95"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-zinc-950 px-4 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
               >
                 <Plus className="w-4 h-4" />
-                Thêm vai trò
-              </Button>
+                <span style={{ color: "#ffffff" }}>Thêm vai trò</span>
+              </button>
             </div>
           </div>
         </div>
@@ -252,7 +246,7 @@ export default function RolesSuperAdminPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-zinc-50/50 border-b border-zinc-100">
+              <tr className="border-b border-zinc-200 bg-zinc-50">
                 <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">ID</th>
                 <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Mã vai trò</th>
                 <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Mô tả</th>
@@ -260,7 +254,7 @@ export default function RolesSuperAdminPage() {
                 <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400 text-right">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-50">
+            <tbody className="divide-y divide-zinc-100">
               {rolesQuery.isLoading ? (
                 Array.from({ length: 4 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
@@ -282,14 +276,14 @@ export default function RolesSuperAdminPage() {
                 filteredRoles.map((role) => {
                   const isSystem = ["SUPER_ADMIN", "ADMIN", "CUSTOMER", "STAFF"].includes(role.code);
                   return (
-                    <tr key={role.id} className="group hover:bg-zinc-50/50 transition-colors duration-200">
-                      <td className="px-6 py-4 text-xs font-semibold text-zinc-400">
+                    <tr key={role.id} className="transition-colors hover:bg-zinc-50/70">
+                      <td className="px-6 py-4 text-xs font-normal text-zinc-400">
                         #{role.id.toString().padStart(3, "0")}
                       </td>
                       <td className="px-6 py-4">
                         <span
                           className={cn(
-                            "inline-block text-xs font-bold px-2.5 py-1 rounded-xl border",
+                            "inline-block rounded-lg border px-2.5 py-1 text-xs font-medium",
                             isSystem
                               ? "bg-red-50 text-red-700 border-red-200"
                               : "bg-zinc-50 text-zinc-700 border-zinc-200"
@@ -298,13 +292,13 @@ export default function RolesSuperAdminPage() {
                           {role.code}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-[13px] font-medium text-zinc-600 max-w-[200px] truncate">
+                      <td className="max-w-[240px] truncate px-6 py-4 text-[13px] font-normal text-zinc-600">
                         {role.description || "(Không có mô tả)"}
                       </td>
                       <td className="px-6 py-4">
                         {role.code === "SUPER_ADMIN" ? (
-                          <span className="text-xs font-bold text-red-600 bg-red-50/50 px-2.5 py-1 rounded-full border border-red-100">
-                            Full Quyền Hạn
+                          <span className="rounded-lg border border-red-100 bg-red-50 px-2.5 py-1 text-xs font-normal text-red-700">
+                            Toàn bộ quyền
                           </span>
                         ) : (
                           <div className="flex flex-wrap gap-1 max-w-[400px]">
@@ -314,14 +308,14 @@ export default function RolesSuperAdminPage() {
                               role.permissions?.slice(0, 4).map((p) => (
                                 <span
                                   key={p.id}
-                                  className="text-[10px] font-bold px-2 py-0.5 rounded-xl bg-zinc-100 text-zinc-600 border border-zinc-200"
+                                  className="rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[10px] font-normal text-zinc-600"
                                 >
                                   {p.name}
                                 </span>
                               ))
                             )}
                             {role.permissions?.length > 4 && (
-                              <span className="text-[10px] font-black px-1.5 py-0.5 rounded-xl bg-zinc-950 text-white">
+                              <span className="rounded-lg bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium text-zinc-600">
                                 +{role.permissions.length - 4}
                               </span>
                             )}
@@ -334,17 +328,18 @@ export default function RolesSuperAdminPage() {
                             onClick={() => handleOpenAssignDialog(role)}
                             disabled={role.code === "SUPER_ADMIN"}
                             className={cn(
-                              "text-xs font-bold px-3 py-1.5 rounded-xl border transition-all active:scale-95 shadow-sm",
+                              "rounded-xl border px-3 py-1.5 text-xs font-medium transition-colors",
                               role.code === "SUPER_ADMIN"
                                 ? "bg-zinc-50 border-zinc-100 text-zinc-300 cursor-not-allowed"
-                                : "bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-950 hover:text-white hover:border-zinc-950"
+                                : "bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300"
                             )}
                           >
                             Phân quyền
                           </button>
                           <button
                             onClick={() => handleOpenRoleDialog(role)}
-                            className="p-2 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600 hover:text-zinc-950 transition-colors shadow-sm active:scale-90"
+                            className="rounded-xl border border-zinc-200 bg-white p-2 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-950"
+                            aria-label={`Chỉnh sửa ${role.code}`}
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
@@ -352,11 +347,12 @@ export default function RolesSuperAdminPage() {
                             onClick={() => handleDeleteRole(role)}
                             disabled={isSystem}
                             className={cn(
-                              "p-2 rounded-xl border transition-colors shadow-sm active:scale-90",
+                              "rounded-xl border p-2 transition-colors",
                               isSystem
                                 ? "bg-zinc-50 border-zinc-100 text-zinc-300 cursor-not-allowed"
-                                : "border-red-100 bg-red-50/50 hover:bg-red-600 text-red-600 hover:text-white"
+                                : "border-red-100 bg-red-50 text-red-600 hover:bg-red-100"
                             )}
+                            aria-label={`Xóa ${role.code}`}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -393,7 +389,7 @@ export default function RolesSuperAdminPage() {
       >
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="roleCode" className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
+            <Label htmlFor="roleCode" className="text-xs font-normal text-zinc-600">
               Mã vai trò <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -402,16 +398,16 @@ export default function RolesSuperAdminPage() {
               value={roleCode}
               onChange={(e) => setRoleCode(e.target.value)}
               disabled={!!selectedRole} // Do not allow changing role code for existing roles to prevent breaking system relations
-              className="h-11 rounded-xl border-zinc-200 focus:border-red-500/30 text-sm font-medium"
+              className="h-10 rounded-xl border-zinc-200 text-sm font-normal shadow-none focus-visible:border-zinc-400 focus-visible:ring-0"
             />
             {selectedRole && (
-              <p className="text-[10px] text-zinc-400 font-medium">
+              <p className="text-xs font-normal text-zinc-400">
                 Mã vai trò không thể thay đổi sau khi đã được định nghĩa.
               </p>
             )}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="roleDesc" className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
+            <Label htmlFor="roleDesc" className="text-xs font-normal text-zinc-600">
               Mô tả chi tiết
             </Label>
             <Input
@@ -419,7 +415,7 @@ export default function RolesSuperAdminPage() {
               placeholder="Mô tả chức năng hoặc giới hạn của vai trò này"
               value={roleDesc}
               onChange={(e) => setRoleDesc(e.target.value)}
-              className="h-11 rounded-xl border-zinc-200 focus:border-red-500/30 text-sm font-medium"
+              className="h-10 rounded-xl border-zinc-200 text-sm font-normal shadow-none focus-visible:border-zinc-400 focus-visible:ring-0"
             />
           </div>
         </div>
@@ -443,11 +439,11 @@ export default function RolesSuperAdminPage() {
             <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
           </div>
         ) : allPermissions.length === 0 ? (
-          <p className="text-center text-sm font-semibold text-zinc-400 py-6">
+          <p className="py-6 text-center text-sm font-normal text-zinc-400">
             Không tìm thấy quyền hạn nào trong hệ thống.
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+          <div className="grid max-h-[400px] grid-cols-1 gap-3 overflow-y-auto pr-2 md:grid-cols-2">
             {allPermissions.map((perm) => {
               const isChecked = selectedPermissionIds.includes(perm.id);
               return (
@@ -455,25 +451,25 @@ export default function RolesSuperAdminPage() {
                   key={perm.id}
                   onClick={() => togglePermission(perm.id)}
                   className={cn(
-                    "flex items-start gap-3 p-3 rounded-xl border transition-all cursor-pointer select-none",
+                    "flex cursor-pointer select-none items-start gap-3 rounded-xl border p-3 transition-colors",
                     isChecked
-                      ? "border-red-500 bg-red-50/20 shadow-[0_2px_8px_rgba(239,68,68,0.05)]"
-                      : "border-zinc-100 hover:border-zinc-200 hover:bg-zinc-50/30"
+                      ? "border-red-200 bg-red-50"
+                      : "border-zinc-200 hover:bg-zinc-50"
                   )}
                 >
                   <div
                     className={cn(
-                      "w-4 h-4 rounded-xl mt-0.5 border flex items-center justify-center shrink-0 transition-colors",
+                      "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors",
                       isChecked ? "bg-red-600 border-red-600 text-white" : "border-zinc-300 bg-white"
                     )}
                   >
                     {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-zinc-900 leading-none mb-1">
+                    <p className="mb-1 text-xs font-medium leading-none text-zinc-900">
                       {perm.name}
                     </p>
-                    <p className="text-[10px] text-zinc-400 font-semibold leading-normal">
+                    <p className="text-[10px] font-normal leading-normal text-zinc-400">
                       {perm.description}
                     </p>
                   </div>

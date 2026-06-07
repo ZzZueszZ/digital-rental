@@ -1,14 +1,5 @@
-"use client";
+import OverviewPage from "./overview/page";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-
-export default function ProfilePage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace("/profile/overview");
-  }, [router]);
-
-  return null;
+export default function ProfileIndexPage() {
+  return <OverviewPage />;
 }

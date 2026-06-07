@@ -10,9 +10,7 @@ import {
   Lock,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   usePermissions,
@@ -25,7 +23,11 @@ import { Pagination } from "../components/Pagination";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { EmptyState } from "../users/components/EmptyState";
-import { StatCard } from "../components/StatCard";
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  const apiError = error as { response?: { data?: { message?: string } } };
+  return apiError.response?.data?.message || fallback;
+};
 
 export default function PermissionsSuperAdminPage() {
   const [page, setPage] = useState(0);
@@ -103,9 +105,8 @@ export default function PermissionsSuperAdminPage() {
         toast.success("Tạo quyền hạn mới thành công");
       }
       setIsDialogOpen(false);
-    } catch (error: any) {
-      const message = error?.response?.data?.message || "Đã xảy ra lỗi";
-      toast.error(message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Đã xảy ra lỗi"));
     }
   };
 
@@ -120,79 +121,72 @@ export default function PermissionsSuperAdminPage() {
           await deleteMutation.mutateAsync(permission.id);
           toast.success("Xóa quyền hạn thành công");
           setConfirmConfig((prev) => ({ ...prev, open: false }));
-        } catch (error: any) {
-          const message = error?.response?.data?.message || "Không thể xóa quyền hạn";
-          toast.error(message);
+        } catch (error: unknown) {
+          toast.error(getErrorMessage(error, "Không thể xóa quyền hạn"));
         }
       },
     });
   };
 
   return (
-    <div className="flex-1 space-y-4 lg:space-y-6">
-      {/* KPI Stats */}
-      <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard
-          title="Tổng số quyền"
-          value={totalElements}
-          trend={0}
-          icon={Key}
-          accent="bg-red-600"
-        />
-        <StatCard
-          title="Xem trang hiện tại"
-          value={filteredPermissions.length}
-          trend={0}
-          icon={Lock}
-          accent="bg-zinc-950"
-        />
-        <StatCard
-          title="Trạng thái phân quyền"
-          value="Đang hoạt động"
-          trend={0}
-          icon={Key}
-          accent="bg-emerald-500"
-        />
+    <div className="space-y-5">
+      <div className="grid gap-3 sm:grid-cols-3">
+        {[
+          { label: "Tổng số quyền", value: totalElements, icon: Key },
+          {
+            label: "Hiển thị trên trang",
+            value: filteredPermissions.length,
+            icon: Lock,
+          },
+          { label: "Trạng thái", value: "Hoạt động", icon: Key },
+        ].map((item) => (
+          <div
+            key={item.label}
+            className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4"
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-50 text-red-600">
+              <item.icon className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold tracking-tight text-zinc-950">
+                {item.value}
+              </p>
+              <p className="text-xs font-normal text-zinc-500">{item.label}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Main Table Card */}
-      <div className="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden">
-        {/* Header */}
-        <div className="px-5 py-4 sm:py-5 border-b border-zinc-50">
-          <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
-            {/* Left: Title */}
+      <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+        <div className="border-b border-zinc-200 p-5">
+          <div className="flex flex-col justify-between gap-5 xl:flex-row xl:items-center">
             <div>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100">
-                  <Key className="w-4.5 h-4.5 text-white" strokeWidth={2} />
-                </div>
-                <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
-                  Quản lý quyền hạn (Permissions)
-                </h2>
-              </div>
-              <p className="text-[14px] text-zinc-500 font-medium ml-12">
-                Quản lý danh sách các quyền hạn chức năng cụ thể trong toàn bộ hệ thống API
+              <h2 className="text-xl font-semibold tracking-tight text-zinc-950">
+                Danh sách quyền hạn
+              </h2>
+              <p className="mt-1 text-sm font-normal text-zinc-500">
+                Quản lý các quyền chức năng được sử dụng để cấu hình vai trò.
               </p>
             </div>
 
-            {/* Right: Search & Add */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="relative flex-1 xl:w-72 group">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors duration-200" />
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="relative flex-1 sm:w-72">
+                <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
                 <Input
                   placeholder="Tìm quyền hạn..."
-                  className="pl-10 h-10 rounded-xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:border-red-500/30 transition-all text-xs font-medium text-zinc-900 placeholder:text-zinc-400"
+                  className="h-10 rounded-xl border-zinc-200 bg-zinc-50 pl-9 text-sm font-normal text-zinc-900 shadow-none placeholder:text-zinc-400 focus-visible:border-zinc-400 focus-visible:ring-0"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
-              <Button
+              <button
+                type="button"
                 onClick={() => handleOpenDialog()}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-150 font-semibold text-[14px] flex items-center gap-2 shadow-sm whitespace-nowrap active:scale-95"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-zinc-950 px-4 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
               >
                 <Plus className="w-4 h-4" />
-                Thêm quyền hạn
-              </Button>
+                <span style={{ color: "#ffffff" }}>Thêm quyền hạn</span>
+              </button>
             </div>
           </div>
         </div>
@@ -201,14 +195,14 @@ export default function PermissionsSuperAdminPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-zinc-50/50 border-b border-zinc-100">
+              <tr className="border-b border-zinc-200 bg-zinc-50">
                 <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">ID</th>
                 <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Tên quyền</th>
                 <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">Mô tả</th>
                 <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400 text-right">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-50">
+            <tbody className="divide-y divide-zinc-100">
               {permissionsQuery.isLoading ? (
                 Array.from({ length: 4 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
@@ -228,29 +222,31 @@ export default function PermissionsSuperAdminPage() {
                 </tr>
               ) : (
                 filteredPermissions.map((perm) => (
-                  <tr key={perm.id} className="group hover:bg-zinc-50/50 transition-colors duration-200">
-                    <td className="px-6 py-4 text-xs font-semibold text-zinc-400">
+                  <tr key={perm.id} className="transition-colors hover:bg-zinc-50/70">
+                    <td className="px-6 py-4 text-xs font-normal text-zinc-400">
                       #{perm.id.toString().padStart(3, "0")}
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-mono text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-xl border border-red-100">
+                      <span className="rounded-lg border border-red-100 bg-red-50 px-2 py-1 font-mono text-xs font-medium text-red-700">
                         {perm.name}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-[13px] font-medium text-zinc-600 max-w-[400px] truncate">
+                    <td className="max-w-[400px] truncate px-6 py-4 text-[13px] font-normal text-zinc-600">
                       {perm.description || "(Không có mô tả)"}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2.5">
                         <button
                           onClick={() => handleOpenDialog(perm)}
-                          className="p-2 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600 hover:text-zinc-950 transition-colors shadow-sm active:scale-90"
+                          className="rounded-xl border border-zinc-200 bg-white p-2 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-950"
+                          aria-label={`Chỉnh sửa ${perm.name}`}
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDelete(perm)}
-                          className="p-2 rounded-xl border border-red-100 bg-red-50/50 hover:bg-red-600 text-red-600 hover:text-white transition-colors shadow-sm active:scale-90"
+                          className="rounded-xl border border-red-100 bg-red-50 p-2 text-red-600 transition-colors hover:bg-red-100"
+                          aria-label={`Xóa ${perm.name}`}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -286,7 +282,7 @@ export default function PermissionsSuperAdminPage() {
       >
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="permName" className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
+            <Label htmlFor="permName" className="text-xs font-normal text-zinc-600">
               Tên quyền hạn <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -295,16 +291,16 @@ export default function PermissionsSuperAdminPage() {
               value={permName}
               onChange={(e) => setPermName(e.target.value)}
               disabled={!!selectedPermission} // Prevent editing name of existing permission to keep keys in sync
-              className="h-11 rounded-xl border-zinc-200 focus:border-red-500/30 text-sm font-medium"
+              className="h-10 rounded-xl border-zinc-200 text-sm font-normal shadow-none focus-visible:border-zinc-400 focus-visible:ring-0"
             />
             {selectedPermission && (
-              <p className="text-[10px] text-zinc-400 font-medium">
+              <p className="text-xs font-normal text-zinc-400">
                 Tên quyền hạn không thể thay đổi sau khi đã được định nghĩa.
               </p>
             )}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="permDesc" className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
+            <Label htmlFor="permDesc" className="text-xs font-normal text-zinc-600">
               Mô tả chi tiết
             </Label>
             <Input
@@ -312,7 +308,7 @@ export default function PermissionsSuperAdminPage() {
               placeholder="Mô tả chức năng hoặc phạm vi của quyền này"
               value={permDesc}
               onChange={(e) => setPermDesc(e.target.value)}
-              className="h-11 rounded-xl border-zinc-200 focus:border-red-500/30 text-sm font-medium"
+              className="h-10 rounded-xl border-zinc-200 text-sm font-normal shadow-none focus-visible:border-zinc-400 focus-visible:ring-0"
             />
           </div>
         </div>

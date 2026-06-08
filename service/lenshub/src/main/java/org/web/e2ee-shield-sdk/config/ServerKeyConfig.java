@@ -1,19 +1,20 @@
-package com.shield.spring_server.config;
+package org.web.e2ee.config;
 
-import com.shield.spring_server.security.EcJwkUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.security.*;
-import java.security.interfaces.ECPublicKey;
-import java.security.spec.*;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.Map;
 
-@Slf4j
 @Configuration
+@ConditionalOnProperty(name = "app.e2ee.enabled", havingValue = "true")
 public class ServerKeyConfig {
 
     @Value("${SERVER_IDENTITY_PRIV_B64}")
@@ -25,24 +26,18 @@ public class ServerKeyConfig {
     @Bean
     public KeyPair serverIdentityKeyPair() throws Exception {
         try {
-            // 🧩 Giải mã PEM (đã Base64 hóa và có BEGIN/END)
             String privPem = new String(Base64.getDecoder().decode(privPemB64));
             String pubPem = new String(Base64.getDecoder().decode(pubPemB64));
 
             byte[] privBytes = extractKey(privPem, "PRIVATE KEY");
             byte[] pubBytes = extractKey(pubPem, "PUBLIC KEY");
 
-            KeyFactory kf = KeyFactory.getInstance("EC");
-            PrivateKey priv = kf.generatePrivate(new PKCS8EncodedKeySpec(privBytes));
-            PublicKey pub = kf.generatePublic(new X509EncodedKeySpec(pubBytes));
-
-            // 🟢 Log JWK public key để FE dễ copy
-            Map<String, Object> jwk = EcJwkUtil.exportPublicJwk((ECPublicKey) pub);
-            log.info("✅ [SERVER] Identity keypair loaded successfully.");
-            log.info("🔑 [SERVER] Public JWK for FE: x={}, y={}", jwk.get("x"), jwk.get("y"));
-            return new KeyPair(pub, priv);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("⚠️ Error loading identity keypair: " + e.getMessage(), e);
+            KeyFactory keyFactory = KeyFactory.getInstance("EC");
+            PrivateKey privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(privBytes));
+            PublicKey publicKey = keyFactory.generatePublic(new X509EncodedKeySpec(pubBytes));
+            return new KeyPair(publicKey, privateKey);
+        } catch (Exception exception) {
+            throw new IllegalArgumentException("Error loading E2EE server identity keypair", exception);
         }
     }
 

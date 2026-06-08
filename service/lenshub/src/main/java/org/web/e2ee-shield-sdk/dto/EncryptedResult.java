@@ -1,4 +1,4 @@
-package com.shield.spring_server.dto;
+package org.web.e2ee.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,4 +13,5 @@ public class EncryptedResult {
     private String cipherText;
     private String tag;
 }
+
 

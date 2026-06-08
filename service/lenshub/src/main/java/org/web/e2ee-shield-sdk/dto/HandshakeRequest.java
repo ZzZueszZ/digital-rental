@@ -1,4 +1,4 @@
-package com.shield.spring_server.dto;
+package org.web.e2ee.dto;
 
 import lombok.Data;
 
@@ -9,3 +9,4 @@ public class HandshakeRequest {
     private Map<String, Object> clientPubJwk;
     private String clientNonce;
 }
+

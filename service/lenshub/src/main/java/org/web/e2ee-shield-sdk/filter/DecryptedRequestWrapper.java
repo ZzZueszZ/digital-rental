@@ -1,4 +1,4 @@
-package com.shield.spring_server.filter;
+package org.web.e2ee.filter;
 
 import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;
@@ -48,3 +48,4 @@ public class DecryptedRequestWrapper extends HttpServletRequestWrapper {
         );
     }
 }
+

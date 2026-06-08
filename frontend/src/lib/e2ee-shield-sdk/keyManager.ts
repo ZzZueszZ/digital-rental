@@ -1,10 +1,11 @@
 import { b64u } from "./base64url";
 import { deriveSessionKey, genClientEphemeral, Session } from "./crypto";
 
-const BE_BASE = process.env.NEXT_PUBLIC_BE || "http://localhost:8080";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
 let currentSession: Session | null = null;
 let expiresAt = 0;
+let pendingHandshake: Promise<Session> | null = null;
 
 // ✅ Public key định danh của server load từ .env.local
 const SERVER_IDENTITY_JWK: JsonWebKey = {
@@ -15,10 +16,14 @@ const SERVER_IDENTITY_JWK: JsonWebKey = {
 };
 
 async function doHandshake(): Promise<Session> {
+  if (!SERVER_IDENTITY_JWK.x || !SERVER_IDENTITY_JWK.y) {
+    throw new Error("Missing E2EE server identity public key");
+  }
+
   const { kp, pubJwk } = await genClientEphemeral();
   const clientNonce = crypto.getRandomValues(new Uint8Array(16));
 
-  const res = await fetch(`${BE_BASE}/shield/handshake`, {
+  const res = await fetch(`${API_BASE}/shield/handshake`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
@@ -50,8 +55,7 @@ async function doHandshake(): Promise<Session> {
     payloadBytes as BufferSource
   );
 
-  if (!valid) throw new Error("❌ Invalid server signature — possible MITM!");
-  console.info("✅ Server signature verified.");
+  if (!valid) throw new Error("Invalid E2EE server signature");
 
   // Derive session key
   const serverNonce = b64u.dec(body.serverNonceB64u);
@@ -74,10 +78,16 @@ async function doHandshake(): Promise<Session> {
 
 export async function getSession(): Promise<Session> {
   if (currentSession && Date.now() < expiresAt) return currentSession;
-  return doHandshake();
+  if (!pendingHandshake) {
+    pendingHandshake = doHandshake().finally(() => {
+      pendingHandshake = null;
+    });
+  }
+  return pendingHandshake;
 }
 
 export function clearSession() {
   currentSession = null;
   expiresAt = 0;
+  pendingHandshake = null;
 }

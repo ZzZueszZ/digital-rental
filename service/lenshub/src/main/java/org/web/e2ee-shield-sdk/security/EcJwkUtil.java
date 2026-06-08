@@ -1,4 +1,4 @@
-package com.shield.spring_server.security;
+package org.web.e2ee.security;
 
 import java.math.BigInteger;
 import java.security.*;
@@ -39,7 +39,7 @@ public class EcJwkUtil {
 
     private static String b64u(BigInteger v) {
         byte[] b = v.toByteArray();
-        // chuẩn hóa 32 byte
+        // chuáº©n hÃ³a 32 byte
         if (b.length == 33 && b[0] == 0) {
             byte[] t = new byte[32];
             System.arraycopy(b, 1, t, 0, 32);
@@ -56,3 +56,4 @@ public class EcJwkUtil {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(b);
     }
 }
+

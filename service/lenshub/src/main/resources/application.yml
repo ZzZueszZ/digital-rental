@@ -71,6 +71,8 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: trace # log giá trị parameter
 
 app:
+  e2ee:
+    enabled: ${APP_E2EE_ENABLED:false}
   jwt:
     secret: ${APP_JWT_SECRET:C5EH86/70awkZD1mEUtPvqsug4goTeED87QK+ZlFXo4=}
     expiration-ms: ${APP_JWT_EXPIRATION_MS:86400000}

@@ -1,4 +1,4 @@
-package com.shield.spring_server.dto;
+package org.web.e2ee.dto;
 
 import lombok.Data;
 

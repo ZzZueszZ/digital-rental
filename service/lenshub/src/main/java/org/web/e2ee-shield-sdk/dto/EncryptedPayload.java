@@ -1,4 +1,4 @@
-package com.shield.spring_server.dto;
+package org.web.e2ee.dto;
 
 import lombok.Data;
 
@@ -10,3 +10,4 @@ public class EncryptedPayload {
     private String cipherText;
     private String tag;
 }
+

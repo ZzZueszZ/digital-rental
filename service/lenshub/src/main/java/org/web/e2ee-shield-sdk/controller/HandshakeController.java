@@ -1,108 +1,91 @@
-package com.shield.spring_server.controller;
+package org.web.e2ee.controller;
 
-import com.shield.spring_server.dto.HandshakeRequest;
-import com.shield.spring_server.dto.HandshakeResponse;
-import com.shield.spring_server.security.EcJwkUtil;
-import com.shield.spring_server.security.HkdfUtil;
-import com.shield.spring_server.security.SessionKeyStore;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.web.e2ee.dto.HandshakeRequest;
+import org.web.e2ee.dto.HandshakeResponse;
+import org.web.e2ee.security.EcJwkUtil;
+import org.web.e2ee.security.HkdfUtil;
+import org.web.e2ee.security.SessionKeyStore;
 
 import javax.crypto.KeyAgreement;
+import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
+import java.security.Signature;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
 import java.util.Base64;
 import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping("/shield")
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "app.e2ee.enabled", havingValue = "true")
 public class HandshakeController {
 
-    private final KeyPair serverIdentityKeyPair; // Inject từ ServerKeyConfig
+    private final KeyPair serverIdentityKeyPair;
 
     @PostMapping("/handshake")
-    public ResponseEntity<HandshakeResponse> handshake(@RequestBody HandshakeRequest req) throws Exception {
-        log.info("🤝 [HANDSHAKE] From FE crv={}, x.len={}, y.len={}",
-                req.getClientPubJwk().get("crv"),
-                ((String) req.getClientPubJwk().get("x")).length(),
-                ((String) req.getClientPubJwk().get("y")).length()
-        );
+    public ResponseEntity<HandshakeResponse> handshake(@RequestBody HandshakeRequest request) throws Exception {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC");
+        keyPairGenerator.initialize(new ECGenParameterSpec("secp256r1"));
+        KeyPair serverEphemeral = keyPairGenerator.generateKeyPair();
 
-        // Sinh cặp khóa ECDH tạm
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
-        kpg.initialize(new ECGenParameterSpec("secp256r1"));
-        KeyPair serverEphemeral = kpg.generateKeyPair();
+        ECPublicKey clientPublicKey = EcJwkUtil.importPublicJwk(request.getClientPubJwk());
+        KeyAgreement keyAgreement = KeyAgreement.getInstance("ECDH");
+        keyAgreement.init(serverEphemeral.getPrivate());
+        keyAgreement.doPhase(clientPublicKey, true);
+        byte[] sharedSecret = keyAgreement.generateSecret();
 
-        // Parse public key client
-        ECPublicKey clientPub = EcJwkUtil.importPublicJwk(req.getClientPubJwk());
-
-        // Derive shared secret
-        KeyAgreement ka = KeyAgreement.getInstance("ECDH");
-        ka.init(serverEphemeral.getPrivate());
-        ka.doPhase(clientPub, true);
-        byte[] shared = ka.generateSecret();
-
-        // Nonce + salt
-        byte[] clientNonce = Base64.getUrlDecoder().decode(req.getClientNonce());
+        byte[] clientNonce = Base64.getUrlDecoder().decode(request.getClientNonce());
         byte[] serverNonce = SecureRandom.getInstanceStrong().generateSeed(16);
         byte[] salt = new byte[clientNonce.length + serverNonce.length];
         System.arraycopy(clientNonce, 0, salt, 0, clientNonce.length);
         System.arraycopy(serverNonce, 0, salt, clientNonce.length, serverNonce.length);
 
-        // HKDF derive AES key
-        byte[] sessionKey = HkdfUtil.deriveKey(shared, salt, "E2EE-SHIELD/v1", 32);
+        byte[] sessionKey = HkdfUtil.deriveKey(sharedSecret, salt, "E2EE-SHIELD/v1", 32);
         String sessionId = SessionKeyStore.put(sessionKey);
 
-        // Xuất public JWK + nonce
         Map<String, Object> serverJwk = EcJwkUtil.exportPublicJwk((ECPublicKey) serverEphemeral.getPublic());
         String serverNonceB64u = Base64.getUrlEncoder().withoutPadding().encodeToString(serverNonce);
+        String payload = sessionId + "." + serverNonceB64u + "." + serverJwk.get("x") + "." + serverJwk.get("y");
 
-        // Tạo payload cần ký
-        String payload = sessionId + "." + serverNonceB64u + "." +
-                serverJwk.get("x") + "." + serverJwk.get("y");
-        log.info("📝 Signing payload = {}", payload);
-
-        // Ký payload bằng private key (ECDSA)
         Signature ecdsa = Signature.getInstance("SHA256withECDSA");
         ecdsa.initSign(serverIdentityKeyPair.getPrivate());
         ecdsa.update(payload.getBytes(StandardCharsets.UTF_8));
-        byte[] derSig = ecdsa.sign();
-        byte[] rawSig = derToConcat(derSig, 32); // convert DER → raw (r||s)
-        String signatureB64u = Base64.getUrlEncoder().withoutPadding().encodeToString(rawSig);
+        byte[] rawSignature = derToConcat(ecdsa.sign(), 32);
+        String signatureB64u = Base64.getUrlEncoder().withoutPadding().encodeToString(rawSignature);
 
-        log.info("✅ [HANDSHAKE] Done → sessionId={}, signature.len={}, derivedKey.len={}",
-                sessionId, rawSig.length, sessionKey.length
-        );
-
-        HandshakeResponse resp = new HandshakeResponse(
-                sessionId, serverJwk, serverNonceB64u, signatureB64u
-        );
-        return ResponseEntity.ok(resp);
+        return ResponseEntity.ok(new HandshakeResponse(
+                sessionId,
+                serverJwk,
+                serverNonceB64u,
+                signatureB64u
+        ));
     }
 
-    /**
-     * Chuyển chữ ký DER (ASN.1) sang raw (r||s) 64 bytes để FE verify được
-     */
-    private static byte[] derToConcat(byte[] derSig, int size) throws Exception {
-        java.io.ByteArrayInputStream in = new java.io.ByteArrayInputStream(derSig);
-        if (in.read() != 0x30) throw new IllegalArgumentException("Invalid DER signature");
-        in.read(); // tổng độ dài
-        if (in.read() != 0x02) throw new IllegalArgumentException("Invalid DER format (r)");
-        int rLen = in.read();
-        byte[] r = in.readNBytes(rLen);
-        if (in.read() != 0x02) throw new IllegalArgumentException("Invalid DER format (s)");
-        int sLen = in.read();
-        byte[] s = in.readNBytes(sLen);
+    private static byte[] derToConcat(byte[] derSignature, int size) throws Exception {
+        ByteArrayInputStream input = new ByteArrayInputStream(derSignature);
+        if (input.read() != 0x30) throw new IllegalArgumentException("Invalid DER signature");
+        input.read();
+        if (input.read() != 0x02) throw new IllegalArgumentException("Invalid DER format (r)");
+        int rLength = input.read();
+        byte[] r = input.readNBytes(rLength);
+        if (input.read() != 0x02) throw new IllegalArgumentException("Invalid DER format (s)");
+        int sLength = input.read();
+        byte[] s = input.readNBytes(sLength);
 
-        byte[] out = new byte[size * 2];
-        System.arraycopy(r, Math.max(0, r.length - size), out, size - Math.min(size, r.length), Math.min(size, r.length));
-        System.arraycopy(s, Math.max(0, s.length - size), out, 2 * size - Math.min(size, s.length), Math.min(size, s.length));
-        return out;
+        byte[] output = new byte[size * 2];
+        System.arraycopy(r, Math.max(0, r.length - size), output, size - Math.min(size, r.length), Math.min(size, r.length));
+        System.arraycopy(s, Math.max(0, s.length - size), output, 2 * size - Math.min(size, s.length), Math.min(size, s.length));
+        return output;
     }
 }

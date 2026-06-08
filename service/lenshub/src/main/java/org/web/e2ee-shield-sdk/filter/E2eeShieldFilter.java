@@ -1,26 +1,31 @@
-package com.shield.spring_server.filter;
+package org.web.e2ee.filter;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shield.spring_server.dto.EncryptedPayload;
-import com.shield.spring_server.dto.EncryptedResult;
-import com.shield.spring_server.security.SessionKeyStore;
-import com.shield.spring_server.util.CryptoUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+import org.web.e2ee.dto.EncryptedPayload;
+import org.web.e2ee.dto.EncryptedResult;
+import org.web.e2ee.policy.E2eeRoutePolicy;
+import org.web.e2ee.security.SessionKeyStore;
+import org.web.e2ee.util.CryptoUtil;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Map;
 
-@Slf4j
 public class E2eeShieldFilter extends OncePerRequestFilter {
+
+    private static final Duration MAX_CLOCK_SKEW = Duration.ofMinutes(2);
+    private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {};
 
     private final ObjectMapper objectMapper;
 
@@ -30,13 +35,7 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-
-        // Bỏ qua handshake và các route không cần mã hóa
-        if (path.startsWith("/shield/handshake")) return true;
-
-        // Ở bản demo: chỉ áp dụng cho /api/**
-        return !path.startsWith("/api/");
+        return E2eeRoutePolicy.resolve(request.getMethod(), request.getServletPath()).isEmpty();
     }
 
     @Override
@@ -45,104 +44,140 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-
-        // 1. Đọc raw body (EncryptedPayload) từ request
-        String rawBody = StreamUtils.copyToString(
-                request.getInputStream(), StandardCharsets.UTF_8
-        );
-
-        if (rawBody == null || rawBody.isBlank()) {
-            // Không có body, cho qua luôn
-            filterChain.doFilter(request, response);
+        String rawBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
+        if (rawBody.isBlank()) {
+            writeError(response, HttpServletResponse.SC_BAD_REQUEST, "e2ee_payload_required");
             return;
         }
 
-        EncryptedPayload encPayload;
+        EncryptedPayload encryptedPayload;
         try {
-            encPayload = objectMapper.readValue(rawBody, EncryptedPayload.class);
-        } catch (Exception e) {
-            log.warn("❌ [E2EE] Request không đúng format EncryptedPayload, bỏ qua filter");
-            filterChain.doFilter(request, response);
+            encryptedPayload = objectMapper.readValue(rawBody, EncryptedPayload.class);
+            validateEnvelope(encryptedPayload);
+        } catch (Exception exception) {
+            writeError(response, HttpServletResponse.SC_BAD_REQUEST, "invalid_e2ee_payload");
             return;
         }
 
-        // 2. Lấy sessionKey từ SessionKeyStore
-        byte[] sessionKey = SessionKeyStore.get(encPayload.getSessionId());
+        byte[] sessionKey = SessionKeyStore.get(encryptedPayload.getSessionId());
         if (sessionKey == null) {
-            log.warn("⚠️ [E2EE] Invalid/expired sessionId={}", encPayload.getSessionId());
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            objectMapper.writeValue(response.getOutputStream(),
-                    Map.of("error", "invalid_or_expired_session"));
+            writeError(response, HttpServletResponse.SC_UNAUTHORIZED, "invalid_or_expired_e2ee_session");
             return;
         }
 
         try {
-            // 3. Decode Base64URL các trường
-            byte[] aad = b64uDecode(encPayload.getAad());
-            byte[] iv  = b64uDecode(encPayload.getIv());
-            byte[] ct  = b64uDecode(encPayload.getCipherText());
-            byte[] tag = b64uDecode(encPayload.getTag());
+            byte[] aad = b64uDecode(encryptedPayload.getAad());
+            validateAad(request, encryptedPayload.getSessionId(), aad);
 
-            // 4. Giải mã payload → plaintext JSON bytes
-            byte[] plainBytes = CryptoUtil.decrypt(sessionKey, aad, iv, ct, tag);
+            byte[] plainBytes = CryptoUtil.decrypt(
+                    sessionKey,
+                    aad,
+                    b64uDecode(encryptedPayload.getIv()),
+                    b64uDecode(encryptedPayload.getCipherText()),
+                    b64uDecode(encryptedPayload.getTag())
+            );
 
-            log.info("🔓 [E2EE-REQ] Decrypted plaintext: {}",
-                    new String(plainBytes, StandardCharsets.UTF_8));
-
-            // 5. Bọc request lại để controller thấy body = plaintext
-            DecryptedRequestWrapper decryptedRequest =
-                    new DecryptedRequestWrapper(request, plainBytes);
-
-            // 6. Bọc response để bắt plaintext mà controller trả về
-            ContentCachingResponseWrapper cachingResponse =
-                    new ContentCachingResponseWrapper(response);
-
-            // 7. Cho request đi tiếp vào chain (controller, service, ...)
+            DecryptedRequestWrapper decryptedRequest = new DecryptedRequestWrapper(request, plainBytes);
+            ContentCachingResponseWrapper cachingResponse = new ContentCachingResponseWrapper(response);
             filterChain.doFilter(decryptedRequest, cachingResponse);
 
-            // 8. Lấy body plaintext mà controller đã ghi ra
-            byte[] respPlain = cachingResponse.getContentAsByteArray();
-            if (respPlain.length == 0) {
-                // Không có body, copy lại y như cũ
+            byte[] responseBody = cachingResponse.getContentAsByteArray();
+            if (responseBody.length == 0) {
                 cachingResponse.copyBodyToResponse();
                 return;
             }
 
-            // 9. Tạo AAD response (ví dụ: "resp:<sessionId>")
-            byte[] respAad = ("resp:" + encPayload.getSessionId())
-                    .getBytes(StandardCharsets.UTF_8);
-
-            CryptoUtil.AesSeal seal = CryptoUtil.encrypt(sessionKey, respAad, respPlain);
-
-            EncryptedResult encResult = new EncryptedResult(
-                    b64uEncode(respAad),
+            byte[] responseAad = objectMapper.writeValueAsBytes(Map.of(
+                    "sessionId", encryptedPayload.getSessionId(),
+                    "method", request.getMethod(),
+                    "path", request.getRequestURI(),
+                    "timestamp", Instant.now().toEpochMilli(),
+                    "direction", "response"
+            ));
+            CryptoUtil.AesSeal seal = CryptoUtil.encrypt(sessionKey, responseAad, responseBody);
+            EncryptedResult encryptedResult = new EncryptedResult(
+                    b64uEncode(responseAad),
                     b64uEncode(seal.iv),
                     b64uEncode(seal.ct),
                     b64uEncode(seal.tag)
             );
 
-            log.info("📤 [E2EE-RESP] Encrypted → iv={}, tag={}",
-                    encResult.getIv(), encResult.getTag());
-
-            // 10. Ghi EncryptedResult ra response thật
             response.setStatus(cachingResponse.getStatus());
             response.setContentType("application/json;charset=UTF-8");
-            byte[] jsonOut = objectMapper.writeValueAsBytes(encResult);
-            response.getOutputStream().write(jsonOut);
-
-        } catch (Exception e) {
-            log.error("❌ [E2EE] Lỗi decrypt/encrypt: {}", e.getMessage(), e);
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(response.getOutputStream(),
-                    Map.of("error", "e2ee_processing_failed"));
+            objectMapper.writeValue(response.getOutputStream(), encryptedResult);
+        } catch (SecurityException exception) {
+            writeError(response, HttpServletResponse.SC_BAD_REQUEST, exception.getMessage());
+        } catch (Exception exception) {
+            writeError(response, HttpServletResponse.SC_BAD_REQUEST, "e2ee_processing_failed");
         }
+    }
+
+    private void validateEnvelope(EncryptedPayload payload) {
+        if (isBlank(payload.getSessionId())
+                || isBlank(payload.getAad())
+                || isBlank(payload.getIv())
+                || isBlank(payload.getCipherText())
+                || isBlank(payload.getTag())) {
+            throw new IllegalArgumentException("Missing encrypted payload field");
+        }
+    }
+
+    private void validateAad(HttpServletRequest request, String sessionId, byte[] aadBytes) throws IOException {
+        Map<String, Object> aad = objectMapper.readValue(aadBytes, MAP_TYPE);
+        String aadSessionId = asString(aad.get("sessionId"));
+        String aadMethod = asString(aad.get("method"));
+        String aadPath = asString(aad.get("path"));
+        String nonce = asString(aad.get("nonce"));
+        long timestamp = asLong(aad.get("timestamp"));
+
+        if (!sessionId.equals(aadSessionId)) {
+            throw new SecurityException("e2ee_session_mismatch");
+        }
+        if (!request.getMethod().equalsIgnoreCase(aadMethod)) {
+            throw new SecurityException("e2ee_method_mismatch");
+        }
+        if (!request.getRequestURI().equals(aadPath)) {
+            throw new SecurityException("e2ee_path_mismatch");
+        }
+
+        long age = Math.abs(Instant.now().toEpochMilli() - timestamp);
+        if (age > MAX_CLOCK_SKEW.toMillis()) {
+            throw new SecurityException("e2ee_timestamp_expired");
+        }
+        if (!SessionKeyStore.markNonce(sessionId, nonce)) {
+            throw new SecurityException("e2ee_replay_detected");
+        }
+    }
+
+    private void writeError(HttpServletResponse response, int status, String error) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json;charset=UTF-8");
+        objectMapper.writeValue(response.getOutputStream(), Map.of("error", error));
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
+    private static String asString(Object value) {
+        if (!(value instanceof String stringValue) || stringValue.isBlank()) {
+            throw new SecurityException("invalid_e2ee_aad");
+        }
+        return stringValue;
+    }
+
+    private static long asLong(Object value) {
+        if (value instanceof Number number) {
+            return number.longValue();
+        }
+        throw new SecurityException("invalid_e2ee_aad");
     }
 
     private static String b64uEncode(byte[] data) {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(data);
     }
 
-    private static byte[] b64uDecode(String s) {
-        return Base64.getUrlDecoder().decode(s);
+    private static byte[] b64uDecode(String value) {
+        return Base64.getUrlDecoder().decode(value);
     }
 }

@@ -1,5 +1,9 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 
+import { b64u } from "@/lib/e2ee-shield-sdk/base64url";
+import { aesGcmDecrypt, aesGcmEncrypt, type Session } from "@/lib/e2ee-shield-sdk/crypto";
+import { shouldEncryptRequest } from "@/lib/e2ee-shield-sdk/e2eeRoutePolicy";
+import { getSession } from "@/lib/e2ee-shield-sdk/keyManager";
 import {
   removeRefreshTokenCookie,
   persistRefreshTokenCookie,
@@ -17,6 +21,12 @@ export const http = axios.create({
     Accept: "application/json",
   },
 });
+
+const isE2eeEnabled = process.env.NEXT_PUBLIC_E2EE_ENABLED === "true";
+
+type E2eeRequestConfig = InternalAxiosRequestConfig & {
+  _e2eeSession?: Session;
+};
 
 // Separate axios instance for refresh – avoids interceptor loops
 const refreshClient = axios.create({
@@ -74,13 +84,44 @@ export const refreshAccessToken = async () => {
 
 // ── Request interceptor ──
 http.interceptors.request.use(
-  (config) => {
+  async (config) => {
     useLoadingStore.getState().startLoading();
 
     const token = getAccessToken();
     if (token) {
       config.headers = config.headers ?? {};
       config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    if (shouldApplyE2ee(config)) {
+      const session = await getSession();
+      const method = (config.method || "GET").toUpperCase();
+      const path = resolveRequestPath(config);
+      const nonce = crypto.getRandomValues(new Uint8Array(16));
+      const aad = {
+        sessionId: session.sessionId,
+        method,
+        path,
+        timestamp: Date.now(),
+        nonce: b64u.enc(nonce),
+      };
+      const { iv, ct, tag, aadBytes } = await aesGcmEncrypt(
+        session.key,
+        config.data ?? {},
+        aad,
+      );
+
+      (config as E2eeRequestConfig)._e2eeSession = session;
+      config.data = {
+        sessionId: session.sessionId,
+        aad: b64u.enc(aadBytes),
+        iv: b64u.enc(iv),
+        cipherText: b64u.enc(ct),
+        tag: b64u.enc(tag),
+      };
+      config.headers = config.headers ?? {};
+      config.headers["Content-Type"] = "application/json";
+      config.headers["X-E2EE-Enabled"] = "true";
     }
 
     return config;
@@ -93,7 +134,17 @@ http.interceptors.request.use(
 
 // ── Response interceptor ──
 http.interceptors.response.use(
-  (response) => {
+  async (response) => {
+    if (isEncryptedEnvelope(response.data)) {
+      const session = (response.config as E2eeRequestConfig)._e2eeSession ?? await getSession();
+      response.data = await aesGcmDecrypt(
+        session.key,
+        b64u.dec(response.data.iv),
+        b64u.dec(response.data.cipherText),
+        b64u.dec(response.data.tag),
+        b64u.dec(response.data.aad),
+      );
+    }
     useLoadingStore.getState().stopLoading();
     return response;
   },
@@ -142,3 +193,28 @@ http.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+const shouldApplyE2ee = (config: InternalAxiosRequestConfig) => {
+  if (!isE2eeEnabled || typeof window === "undefined") return false;
+  if (config.data instanceof FormData) return false;
+  const method = (config.method || "GET").toUpperCase();
+  return shouldEncryptRequest(method, resolveRequestPath(config));
+};
+
+const resolveRequestPath = (config: InternalAxiosRequestConfig) => {
+  const url = new URL(config.url || "/", config.baseURL || apiBaseUrl);
+  return url.pathname;
+};
+
+const isEncryptedEnvelope = (
+  value: unknown,
+): value is { aad: string; iv: string; cipherText: string; tag: string } => {
+  if (!isE2eeEnabled || !value || typeof value !== "object") return false;
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate.aad === "string" &&
+    typeof candidate.iv === "string" &&
+    typeof candidate.cipherText === "string" &&
+    typeof candidate.tag === "string"
+  );
+};

@@ -1,4 +1,4 @@
-package com.shield.spring_server.security;
+package org.web.e2ee.security;
 
 import java.time.Instant;
 import java.util.Map;
@@ -10,6 +10,7 @@ public class SessionKeyStore {
     public static class Entry {
         public final byte[] key;       // 32 bytes AES-256
         public final Instant expiresAt;
+        private final Map<String, Instant> usedNonces = new ConcurrentHashMap<>();
 
         public Entry(byte[] key, Instant expiresAt) {
             this.key = key;
@@ -18,7 +19,7 @@ public class SessionKeyStore {
     }
 
     private static final Map<String, Entry> STORE = new ConcurrentHashMap<>();
-    // TTL tạm: 30 phút
+    // TTL táº¡m: 30 phÃºt
     private static final long TTL_SECONDS = 30 * 60;
 
     public static String put(byte[] key) {
@@ -37,8 +38,25 @@ public class SessionKeyStore {
         return e.key;
     }
 
+    public static boolean markNonce(String sessionId, String nonce) {
+        if (nonce == null || nonce.isBlank()) return false;
+        Entry e = STORE.get(sessionId);
+        if (e == null || Instant.now().isAfter(e.expiresAt)) {
+            STORE.remove(sessionId);
+            return false;
+        }
+        cleanupNonces(e);
+        return e.usedNonces.putIfAbsent(nonce, Instant.now()) == null;
+    }
+
     public static void revoke(String sessionId) {
         STORE.remove(sessionId);
     }
+
+    private static void cleanupNonces(Entry e) {
+        Instant cutoff = Instant.now().minusSeconds(TTL_SECONDS);
+        e.usedNonces.entrySet().removeIf(entry -> entry.getValue().isBefore(cutoff));
+    }
 }
+
 

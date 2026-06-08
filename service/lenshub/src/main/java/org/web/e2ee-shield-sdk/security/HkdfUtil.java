@@ -1,4 +1,4 @@
-package com.shield.spring_server.security;
+package org.web.e2ee.security;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -38,3 +38,4 @@ public class HkdfUtil {
         return okm;
     }
 }
+

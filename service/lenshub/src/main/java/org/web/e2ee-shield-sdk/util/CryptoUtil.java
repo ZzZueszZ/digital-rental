@@ -1,4 +1,4 @@
-package com.shield.spring_server.util;
+package org.web.e2ee.util;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -51,4 +51,5 @@ public class CryptoUtil {
         return cipher.doFinal(sealed);
     }
 }
+
 

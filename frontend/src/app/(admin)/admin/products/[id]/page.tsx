@@ -4,7 +4,7 @@ import { use } from "react";
 import {
   ArrowLeft,
   Package,
-    Tag,
+  Tag,
   Edit2,
   Trash2,
   RotateCcw,
@@ -17,6 +17,7 @@ import {
   TrendingUp,
   ChevronLeft,
   ChevronRight,
+  Image as ImageIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,7 @@ import { InventoryAuditResponse } from "@/types/inventory";
 import { useQueryClient } from "@tanstack/react-query";
 import { StockAdjustmentDialog } from "../components/StockAdjustmentDialog";
 import { ProductPriceDialog } from "../components/ProductPriceDialog";
+import { ProductGalleryDialog } from "../components/ProductGalleryDialog";
 
 export default function ProductDetailPage({
   params,
@@ -108,6 +110,7 @@ export default function ProductDetailPage({
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isStockDialogOpen, setIsStockDialogOpen] = useState(false);
   const [isPriceDialogOpen, setIsPriceDialogOpen] = useState(false);
+  const [isGalleryDialogOpen, setIsGalleryDialogOpen] = useState(false);
   const [stockTab, setStockTab] = useState<"sale" | "rental" | null>(null);
   const [saleStockInput, setSaleStockInput] = useState("");
   const [rentalStockInput, setRentalStockInput] = useState("");
@@ -388,19 +391,26 @@ export default function ProductDetailPage({
           </div>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
           {!isDeleted ? (
             <>
               <Button
+                onClick={() => setIsGalleryDialogOpen(true)}
+                variant="outline"
+                className="w-full sm:w-auto h-11 rounded-xl border-zinc-200 bg-white text-zinc-800 hover:bg-red-50 hover:border-red-200 hover:text-red-600 font-semibold px-5 transition-colors gap-2"
+              >
+                <ImageIcon className="w-4 h-4" /> Thư viện ảnh
+              </Button>
+              <Button
                 onClick={() => setIsEditDialogOpen(true)}
-                className="flex-1 sm:flex-none h-11 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold px-6 transition-colors gap-2"
+                className="w-full sm:w-auto h-11 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold px-6 transition-colors gap-2"
               >
                 <Edit2 className="w-4 h-4" /> Chỉnh sửa
               </Button>
               <Button
                 onClick={handleDelete}
                 variant="ghost"
-                className="flex-1 sm:flex-none h-11 rounded-xl bg-white border border-red-100 text-red-600 hover:bg-red-600 hover:text-white font-semibold px-6 transition-colors gap-2"
+                className="w-full sm:w-auto h-11 rounded-xl bg-white border border-red-100 text-red-600 hover:bg-red-600 hover:text-white font-semibold px-6 transition-colors gap-2"
               >
                 <Trash2 className="w-4 h-4" /> Vô hiệu hóa
               </Button>
@@ -409,7 +419,7 @@ export default function ProductDetailPage({
             <Button
               onClick={handleRestore}
               variant="ghost"
-              className="flex-1 sm:flex-none h-11 rounded-xl bg-white border border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white font-semibold px-6 transition-colors gap-2"
+              className="w-full sm:w-auto h-11 rounded-xl bg-white border border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white font-semibold px-6 transition-colors gap-2"
             >
               <RotateCcw className="w-4 h-4" /> Khôi phục
             </Button>
@@ -437,6 +447,17 @@ export default function ProductDetailPage({
                 </span>
               </div>
             </div>
+            {!isDeleted && (
+              <Button
+                type="button"
+                onClick={() => setIsGalleryDialogOpen(true)}
+                variant="outline"
+                className="absolute right-4 top-4 h-10 rounded-xl border-zinc-200 bg-white/95 px-4 text-xs font-semibold text-zinc-800 shadow-sm backdrop-blur hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+              >
+                <ImageIcon className="mr-2 h-4 w-4" />
+                Thư viện ảnh
+              </Button>
+            )}
           </div>
 
           <div className="flex gap-4 overflow-x-auto p-2 scrollbar-hide">
@@ -746,6 +767,11 @@ export default function ProductDetailPage({
           }
         }}
         isPending={updatePriceMutation.isPending}
+      />
+      <ProductGalleryDialog
+        open={isGalleryDialogOpen}
+        onOpenChange={setIsGalleryDialogOpen}
+        product={product || null}
       />
 
       <Dialog open={!!selectedDevice} onOpenChange={(open) => !open && setSelectedDevice(null)}>

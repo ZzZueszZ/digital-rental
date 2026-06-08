@@ -467,7 +467,7 @@ export default function DevicesPage({
                 setCreateForm((f) => ({ ...f, serialNumber: e.target.value }))
               }
               placeholder="Ví dụ: SN-2024-001"
-              className="h-11 rounded-xl border-zinc-200 focus:border-red-500 focus:ring-red-500/20 focus-visible:ring-2 focus-visible:ring-red-500/20 focus-visible:border-red-500 text-sm font-semibold transition-all"
+              className="h-11 rounded-xl border-zinc-200 bg-zinc-50/70 text-sm font-medium text-zinc-900 placeholder:text-zinc-400 transition-all focus:border-red-500/40 focus:bg-white focus:ring-red-500/10 focus-visible:border-red-500/40 focus-visible:ring-2 focus-visible:ring-red-500/10"
               autoFocus
             />
           </div>
@@ -482,7 +482,7 @@ export default function DevicesPage({
                 setCreateForm((f) => ({ ...f, conditionDetails: e.target.value }))
               }
               placeholder="Ví dụ: Mới 99%, chưa qua sử dụng..."
-              className="rounded-xl border-zinc-200 focus:border-red-500 focus:ring-red-500/20 focus-visible:ring-2 focus-visible:ring-red-500/20 focus-visible:border-red-500 text-sm resize-none min-h-[90px] transition-all"
+              className="min-h-[90px] resize-none rounded-xl border-zinc-200 bg-zinc-50/70 text-sm font-medium text-zinc-900 placeholder:text-zinc-400 transition-all focus:border-red-500/40 focus:bg-white focus:ring-red-500/10 focus-visible:border-red-500/40 focus-visible:ring-2 focus-visible:ring-red-500/10"
             />
           </div>
         </div>
@@ -510,7 +510,7 @@ export default function DevicesPage({
               onChange={(e) =>
                 setEditForm((f) => ({ ...f, serialNumber: e.target.value }))
               }
-              className="h-11 rounded-xl border-zinc-200 focus:border-red-500 focus:ring-red-500/20 focus-visible:ring-2 focus-visible:ring-red-500/20 focus-visible:border-red-500 text-sm font-semibold transition-all"
+              className="h-11 rounded-xl border-zinc-200 bg-zinc-50/70 text-sm font-medium text-zinc-900 placeholder:text-zinc-400 transition-all focus:border-red-500/40 focus:bg-white focus:ring-red-500/10 focus-visible:border-red-500/40 focus-visible:ring-2 focus-visible:ring-red-500/10"
             />
           </div>
           <div className="space-y-1.5">
@@ -524,7 +524,7 @@ export default function DevicesPage({
                 setEditForm((f) => ({ ...f, conditionDetails: e.target.value }))
               }
               placeholder="Ví dụ: Mới 99%, có trầy nhẹ ở mặt kính..."
-              className="rounded-xl border-zinc-200 focus:border-red-500 focus:ring-red-500/20 focus-visible:ring-2 focus-visible:ring-red-500/20 focus-visible:border-red-500 text-sm resize-none min-h-[90px] transition-all"
+              className="min-h-[90px] resize-none rounded-xl border-zinc-200 bg-zinc-50/70 text-sm font-medium text-zinc-900 placeholder:text-zinc-400 transition-all focus:border-red-500/40 focus:bg-white focus:ring-red-500/10 focus-visible:border-red-500/40 focus-visible:ring-2 focus-visible:ring-red-500/10"
             />
           </div>
         </div>

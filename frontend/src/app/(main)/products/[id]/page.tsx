@@ -1038,7 +1038,7 @@ export default function ProductDetailPage() {
                 <Button
                   variant="outline"
                   onClick={() => setShowKycDialog(false)}
-                  className="flex-1 h-11 rounded-xl border-zinc-200 text-zinc-700 font-semibold text-xs"
+                  className="flex-1 h-11 rounded-xl border border-zinc-200 bg-white text-xs font-medium text-zinc-700 shadow-none hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-950 focus-visible:ring-2 focus-visible:ring-red-500/15"
                 >
                   Hủy bỏ
                 </Button>

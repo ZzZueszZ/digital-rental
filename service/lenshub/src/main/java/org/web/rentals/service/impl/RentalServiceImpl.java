@@ -280,11 +280,7 @@ public class RentalServiceImpl implements RentalService {
         RentalContract contract = RentalContract.builder()
                 .rentalOrder(order)
                 .contractNumber("CTR-" + order.getCode())
-                .termsAndConditions("HỢP ĐỒNG THUÊ THIẾT BỊ HÌNH ẢNH KỸ THUẬT SỐ\n\n"
-                        + "Điều 1: Bên thuê có trách nhiệm tự kiểm tra và bàn giao đúng tình trạng như biên bản nhận.\n"
-                        + "Điều 2: Tiền cọc sẽ được hoàn lại đầy đủ sau khi thiết bị được trả và hoàn tất thẩm định không có lỗi/hư hỏng.\n"
-                        + "Điều 3: Trường hợp trả trễ hạn, mức phạt là 150% phí thuê hàng ngày của mỗi ngày trễ hạn.\n"
-                        + "Điều 4: Mọi tranh chấp sẽ được ưu tiên thương lượng giữa 2 bên.")
+                .termsAndConditions(buildRentalContractTerms(order))
                 .lessorSignature("Cửa hàng Digital Rental")
                 .lessorSignedAt(LocalDateTime.now())
                 .isLocked(false)
@@ -353,38 +349,7 @@ public class RentalServiceImpl implements RentalService {
         order.setRiskLevel(request.getRiskLevel() != null ? request.getRiskLevel() : org.web.common.enums.RiskLevel.LOW_RISK);
         order.setDepositStatus(org.web.common.enums.DepositStatus.NOT_COLLECTED);
 
-        // Build contract terms dynamically
-        StringBuilder terms = new StringBuilder();
-        terms.append("HỢP ĐỒNG THUÊ THIẾT BỊ HÌNH ẢNH KỸ THUẬT SỐ\n");
-        terms.append("Mã hợp đồng: CTR-").append(order.getCode()).append("\n\n");
-        terms.append("BÊN CHO THUÊ: Cửa hàng Digital Rental\n");
-        terms.append("BÊN THUÊ:\n");
-        terms.append("- Họ tên / Email: ").append(order.getUser().getEmail()).append("\n");
-        terms.append("- Số điện thoại: ").append(order.getShippingPhone()).append("\n\n");
-        
-        terms.append("THÔNG TIN THIẾT BỊ THUÊ:\n");
-        for (RentalOrderItem item : order.getItems()) {
-            terms.append("- ").append(item.getProduct().getName());
-            if (item.getDevice() != null) {
-                terms.append(" (Số Serial: ").append(item.getDevice().getSerialNumber())
-                     .append(" - Tình trạng: ").append(item.getDevice().getConditionDetails() != null ? item.getDevice().getConditionDetails() : "Mới 99%")
-                     .append(")");
-            }
-            terms.append("\n");
-        }
-        terms.append("\n");
-        
-        terms.append("ĐIỀU KHOẢN CHI TIẾT:\n");
-        terms.append("- Thời gian thuê: Từ ").append(order.getStartDate().toString().split("T")[0])
-             .append(" đến ").append(order.getEndDate().toString().split("T")[0]).append("\n");
-        terms.append("- Tổng phí thuê: ").append(order.getRentalFee()).append(" VND (Đã thanh toán Online)\n");
-        terms.append("- Tiền cọc thiết bị: ").append(order.getEstimatedDepositAmount()).append(" VND (Thanh toán trực tiếp tại cửa hàng)\n");
-        terms.append("- Đánh giá mức độ rủi ro: ").append(order.getRiskLevel()).append("\n\n");
-        
-        terms.append("Điều 1: Bên thuê có trách nhiệm tự kiểm tra và bàn giao đúng tình trạng như biên bản nhận.\n");
-        terms.append("Điều 2: Tiền cọc sẽ được hoàn lại đầy đủ sau khi thiết bị được trả và hoàn tất thẩm định không có lỗi/hư hỏng.\n");
-        terms.append("Điều 3: Trường hợp trả trễ hạn, mức phạt là 150% phí thuê hàng ngày của mỗi ngày trễ hạn.\n");
-        terms.append("Điều 4: Mọi tranh chấp sẽ được ưu tiên thương lượng giữa 2 bên.");
+        String terms = buildRentalContractTerms(order);
 
         // Generate or update contract draft
         RentalContract contract = order.getContract();
@@ -392,7 +357,7 @@ public class RentalServiceImpl implements RentalService {
             contract = RentalContract.builder()
                     .rentalOrder(order)
                     .contractNumber("CONTRACT-" + order.getCode())
-                    .termsAndConditions(terms.toString())
+                    .termsAndConditions(terms)
                     .status(org.web.common.enums.ContractStatus.DRAFT)
                     .generatedAt(LocalDateTime.now())
                     .lessorSignature("Cửa hàng Digital Rental")
@@ -400,7 +365,7 @@ public class RentalServiceImpl implements RentalService {
                     .isLocked(false)
                     .build();
         } else {
-            contract.setTermsAndConditions(terms.toString());
+            contract.setTermsAndConditions(terms);
             contract.setGeneratedAt(LocalDateTime.now());
             contract.setStatus(org.web.common.enums.ContractStatus.DRAFT);
             contract.setLessorSignature("Cửa hàng Digital Rental");
@@ -771,6 +736,79 @@ public class RentalServiceImpl implements RentalService {
         }
 
         deviceRepository.delete(device);
+    }
+
+    private String buildRentalContractTerms(RentalOrder order) {
+        String renterName = resolveRenterName(order);
+        String renterEmail = order.getUser() != null ? order.getUser().getEmail() : "Chưa cập nhật";
+        String renterIdentity = renterName.equals(renterEmail)
+                ? renterEmail
+                : renterName + " (" + renterEmail + ")";
+        String renterPhone = StringUtils.hasText(order.getShippingPhone())
+                ? order.getShippingPhone()
+                : "Chưa cập nhật";
+        String receiveAddress = StringUtils.hasText(order.getShippingAddress())
+                ? order.getShippingAddress()
+                : "Nhận tại cửa hàng Digital Rental";
+        BigDecimal depositAmount = order.getFinalDepositAmount() != null
+                ? order.getFinalDepositAmount()
+                : (order.getEstimatedDepositAmount() != null ? order.getEstimatedDepositAmount() : BigDecimal.ZERO);
+        String paymentNote = order.getPaymentMethod() == PaymentMethod.ONLINE
+                ? "Đã thanh toán Online"
+                : "Thanh toán theo phương thức " + order.getPaymentMethod();
+
+        StringBuilder terms = new StringBuilder();
+        terms.append("HỢP ĐỒNG THUÊ THIẾT BỊ HÌNH ẢNH KỸ THUẬT SỐ\n");
+        terms.append("Mã hợp đồng: CTR-").append(order.getCode()).append("\n\n");
+
+        terms.append("BÊN CHO THUÊ: Cửa hàng Digital Rental\n");
+        terms.append("BÊN THUÊ:\n");
+        terms.append("- Họ tên / Email: ").append(renterIdentity).append("\n");
+        terms.append("- Số điện thoại: ").append(renterPhone).append("\n");
+        terms.append("- Địa điểm nhận thiết bị: ").append(receiveAddress).append("\n\n");
+
+        terms.append("THÔNG TIN THIẾT BỊ THUÊ:\n");
+        for (RentalOrderItem item : order.getItems()) {
+            Product product = item.getProduct();
+            Device device = item.getDevice();
+            terms.append("- ").append(product != null ? product.getName() : "Thiết bị");
+            if (device != null) {
+                terms.append(" (Số Serial: ").append(device.getSerialNumber())
+                        .append(" - Tình trạng: ")
+                        .append(StringUtils.hasText(device.getConditionDetails()) ? device.getConditionDetails() : "Chưa cập nhật")
+                        .append(")");
+            } else {
+                terms.append(" (Số Serial: sẽ được cập nhật khi bàn giao)");
+            }
+            terms.append("\n");
+        }
+        terms.append("\n");
+
+        terms.append("ĐIỀU KHOẢN CHI TIẾT:\n");
+        terms.append("- Thời gian thuê: Từ ").append(order.getStartDate().toLocalDate())
+                .append(" đến ").append(order.getEndDate().toLocalDate()).append("\n");
+        terms.append("- Tổng phí thuê: ").append(order.getRentalFee()).append(" VND (").append(paymentNote).append(")\n");
+        terms.append("- Tiền cọc thiết bị: ").append(depositAmount).append(" VND (Thanh toán trực tiếp tại cửa hàng)\n");
+        terms.append("- Đánh giá mức độ rủi ro: ").append(order.getRiskLevel() != null ? order.getRiskLevel() : "Chưa đánh giá").append("\n\n");
+
+        terms.append("Điều 1: Bên thuê có trách nhiệm tự kiểm tra và bàn giao đúng tình trạng như biên bản nhận.\n");
+        terms.append("Điều 2: Tiền cọc sẽ được hoàn lại đầy đủ sau khi thiết bị được trả và hoàn tất thẩm định không có lỗi/hư hỏng.\n");
+        terms.append("Điều 3: Trường hợp trả trễ hạn, mức phạt là 150% phí thuê hàng ngày của mỗi ngày trễ hạn.\n");
+        terms.append("Điều 4: Mọi tranh chấp sẽ được ưu tiên thương lượng giữa 2 bên.");
+        return terms.toString();
+    }
+
+    private String resolveRenterName(RentalOrder order) {
+        if (StringUtils.hasText(order.getShippingName())) {
+            return order.getShippingName();
+        }
+        if (order.getUser() == null) {
+            return "Chưa cập nhật";
+        }
+        return userProfileRepository.findById(order.getUser().getId())
+                .map(UserProfile::getFullName)
+                .filter(StringUtils::hasText)
+                .orElse(order.getUser().getEmail());
     }
 
     // Hand-written DTO Converters

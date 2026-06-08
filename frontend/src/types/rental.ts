@@ -47,6 +47,7 @@ export interface RentalOrderResponse {
   id: number;
   code: string;
   userId: number;
+  userFullName?: string;
   userEmail: string;
   userPhone: string;
   

@@ -12,7 +12,7 @@ import {
   FileText,
   FilePenLine,
   ShieldCheck,
-  Download
+  Download,
 } from "lucide-react";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ import {
   rentalService,
   useSignContract,
   useStaffRentalDetail,
-  useSendSigningOtp
+  useSendSigningOtp,
 } from "@/services/rental";
 
 interface RentalDetailDialogProps {
@@ -40,18 +40,26 @@ export function RentalDetailDialog({
   onClose,
   rentalId,
   hideSignAction = false,
-  portalType = "customer"
+  portalType = "customer",
 }: RentalDetailDialogProps) {
-  const isStaffPortal = portalType === "admin" || portalType === "staff" || portalType === "super-admin";
+  const isStaffPortal =
+    portalType === "admin" ||
+    portalType === "staff" ||
+    portalType === "super-admin";
 
   const customerDetailQuery = useRentalDetail(!isStaffPortal ? rentalId : 0);
   const staffDetailQuery = useStaffRentalDetail(isStaffPortal ? rentalId : 0);
 
-  const rentalRes = isStaffPortal ? staffDetailQuery.data : customerDetailQuery.data;
-  const isLoading = isStaffPortal ? staffDetailQuery.isLoading : customerDetailQuery.isLoading;
+  const rentalRes = isStaffPortal
+    ? staffDetailQuery.data
+    : customerDetailQuery.data;
+  const isLoading = isStaffPortal
+    ? staffDetailQuery.isLoading
+    : customerDetailQuery.isLoading;
 
   const { mutateAsync: signContract, isPending: isSigning } = useSignContract();
-  const { mutateAsync: sendSigningOtp, isPending: isSendingOtp } = useSendSigningOtp();
+  const { mutateAsync: sendSigningOtp, isPending: isSendingOtp } =
+    useSendSigningOtp();
   const rental = rentalRes?.data;
   const [showSignForm, setShowSignForm] = useState(false);
   const [signatureText, setSignatureText] = useState("");
@@ -80,7 +88,9 @@ export function RentalDetailDialog({
       setShowSignForm(true);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
-      toast.error(error.response?.data?.message || "Lỗi gửi mã OTP. Vui lòng thử lại.");
+      toast.error(
+        error.response?.data?.message || "Lỗi gửi mã OTP. Vui lòng thử lại.",
+      );
     }
   };
 
@@ -90,7 +100,9 @@ export function RentalDetailDialog({
       toast.success("Đã gửi lại mã OTP mới về email của bạn!");
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
-      toast.error(error.response?.data?.message || "Lỗi gửi mã OTP. Vui lòng thử lại.");
+      toast.error(
+        error.response?.data?.message || "Lỗi gửi mã OTP. Vui lòng thử lại.",
+      );
     }
   };
 
@@ -101,10 +113,11 @@ export function RentalDetailDialog({
       toast.error("Vui lòng cho phép mở popup để tải hợp đồng");
       return;
     }
-    
-    const terms = rental.contract.termsAndConditions || "";
+
     const signature = rental.contract.contractHash || "";
-    const signedAtStr = rental.contract.signedAt ? formatDate(rental.contract.signedAt) : "";
+    const signedAtStr = rental.contract.signedAt
+      ? formatDate(rental.contract.signedAt)
+      : "";
     const formatContractDate = (date: string) =>
       new Date(date).toLocaleDateString("vi-VN", {
         day: "2-digit",
@@ -122,7 +135,7 @@ export function RentalDetailDialog({
         (new Date(rental.endDate).getTime() -
           new Date(rental.startDate).getTime()) /
           (1000 * 60 * 60 * 24),
-      ),
+      ) + 1,
     );
     const productGroups = rental.items.reduce<
       Record<
@@ -170,6 +183,16 @@ export function RentalDetailDialog({
         `,
       )
       .join("");
+    const legalTerms = [
+      "Bên thuê có trách nhiệm kiểm tra thiết bị khi nhận và bàn giao đúng tình trạng trong biên bản nhận.",
+      "Tiền cọc sẽ được hoàn lại sau khi thiết bị được trả và thẩm định không có lỗi, hư hỏng hoặc thiếu phụ kiện.",
+      "Trường hợp trả trễ hạn, mức phạt là 150% phí thuê hằng ngày của mỗi ngày trễ hạn.",
+      "Mọi tranh chấp sẽ được ưu tiên thương lượng giữa hai bên.",
+    ]
+      .map(
+        (term, index) => `<p><strong>Điều ${index + 1}:</strong> ${term}</p>`,
+      )
+      .join("");
 
     printWindow.document.write(`
       <html>
@@ -201,8 +224,10 @@ export function RentalDetailDialog({
               text-align: center;
             }
             .content-box {
-              white-space: pre-wrap;
               text-align: justify;
+            }
+            .content-box p {
+              margin: 5px 0;
             }
             .section-title {
               margin: 22px 0 8px;
@@ -376,9 +401,7 @@ export function RentalDetailDialog({
             <div class="summary-row">
               <span>Tiền cọc dự kiến:</span>
               <strong>${formatVND(
-                rental.finalDepositAmount ??
-                  rental.estimatedDepositAmount ??
-                  0,
+                rental.finalDepositAmount ?? rental.estimatedDepositAmount ?? 0,
               )}</strong>
             </div>
             <div class="summary-row summary-total">
@@ -389,7 +412,7 @@ export function RentalDetailDialog({
 
           <div class="section-title">IV. Điều khoản hợp đồng</div>
           <div class="content-box">
-            ${terms}
+            ${legalTerms}
           </div>
 
           <div class="signatures-container">
@@ -398,22 +421,26 @@ export function RentalDetailDialog({
               <div class="signature-box lessor">
                 ĐÃ KÝ ĐIỆN TỬ<br>
                 Đại diện: ${rental.contract.lessorSignature || "Digital Rental"}<br>
-                Thời gian: ${rental.contract.lessorSignedAt ? formatDate(rental.contract.lessorSignedAt) : (signedAtStr || formatDate(rental.contract.generatedAt || new Date().toISOString()))}
+                Thời gian: ${rental.contract.lessorSignedAt ? formatDate(rental.contract.lessorSignedAt) : signedAtStr || formatDate(rental.contract.generatedAt || new Date().toISOString())}
               </div>
             </div>
             <div class="signature-col">
               <div class="signature-title">BÊN THUÊ (Ký tên)</div>
-              ${(rental.contract.isLocked || rental.contract.locked) ? `
+              ${
+                rental.contract.isLocked || rental.contract.locked
+                  ? `
                 <div class="signature-box">
                   ĐÃ KÝ ĐIỆN TỬ<br>
                   Khách hàng: ${renterName}<br>
                   Thời gian: ${signedAtStr}
                 </div>
-              ` : `
+              `
+                  : `
                 <div class="signature-box unassigned" style="display: flex; align-items: center; justify-content: center;">
                   CHƯA KÝ TRỰC TUYẾN
                 </div>
-              `}
+              `
+              }
             </div>
           </div>
 
@@ -437,16 +464,22 @@ export function RentalDetailDialog({
       return;
     }
 
-    const itemsHtml = rental.items.map(item => `
+    const itemsHtml = rental.items
+      .map(
+        (item) => `
       <tr>
         <td style="border: 1px solid #000; padding: 8px;">${item.productName}</td>
         <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.deviceSerialNumber || "N/A"}</td>
         <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatVND(item.pricePerDay)}/ngày</td>
         <td style="border: 1px solid #000; padding: 8px;">${item.conditionBeforeHandover || "Bình thường"}</td>
       </tr>
-    `).join("");
+    `,
+      )
+      .join("");
 
-    const signedAtStr = rental.handoverReport.createdAt ? formatDate(rental.handoverReport.createdAt) : "";
+    const signedAtStr = rental.handoverReport.createdAt
+      ? formatDate(rental.handoverReport.createdAt)
+      : "";
 
     printWindow.document.write(`
       <html>
@@ -616,17 +649,25 @@ export function RentalDetailDialog({
       return;
     }
 
-    const itemsHtml = rental.items.map(item => `
+    const itemsHtml = rental.items
+      .map(
+        (item) => `
       <tr>
         <td style="border: 1px solid #000; padding: 8px;">${item.productName}</td>
         <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.deviceSerialNumber || "N/A"}</td>
         <td style="border: 1px solid #000; padding: 8px;">${item.conditionBeforeHandover || "Bình thường"}</td>
         <td style="border: 1px solid #000; padding: 8px;">${item.conditionAfterReturn || "Bình thường"}</td>
       </tr>
-    `).join("");
+    `,
+      )
+      .join("");
 
-    const returnDateStr = rental.returnReport.returnDate ? formatDate(rental.returnReport.returnDate) : "";
-    const createdAtStr = rental.returnReport.createdAt ? formatDate(rental.returnReport.createdAt) : "";
+    const returnDateStr = rental.returnReport.returnDate
+      ? formatDate(rental.returnReport.returnDate)
+      : "";
+    const createdAtStr = rental.returnReport.createdAt
+      ? formatDate(rental.returnReport.createdAt)
+      : "";
 
     printWindow.document.write(`
       <html>
@@ -901,7 +942,7 @@ export function RentalDetailDialog({
               <div
                 className={cn(
                   "px-3 py-1 rounded-xl text-[13px] font-bold border",
-                  getStatusColor(rental.status)
+                  getStatusColor(rental.status),
                 )}
               >
                 {getStatusLabel(rental.status)}
@@ -911,7 +952,9 @@ export function RentalDetailDialog({
                   Phương thức cọc
                 </span>
                 <span className="text-xs font-bold text-zinc-600">
-                  {rental.paymentMethod === "ONLINE" ? "VNPay Online" : "Tiền mặt / COD"}
+                  {rental.paymentMethod === "ONLINE"
+                    ? "VNPay Online"
+                    : "Tiền mặt / COD"}
                 </span>
               </div>
             </div>
@@ -921,7 +964,8 @@ export function RentalDetailDialog({
               </span>
               <span className="text-xs font-bold text-zinc-950 flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5 text-zinc-400" />
-                {rental.startDate.split("T")[0]} &rarr; {rental.endDate.split("T")[0]}
+                {rental.startDate.split("T")[0]} &rarr;{" "}
+                {rental.endDate.split("T")[0]}
               </span>
             </div>
           </div>
@@ -943,7 +987,10 @@ export function RentalDetailDialog({
                   <div className="flex gap-4 items-center">
                     <div className="w-12 h-12 rounded-xl bg-zinc-50 p-1 flex items-center justify-center border border-zinc-100 overflow-hidden shrink-0">
                       <img
-                        src={getImageUrl(item.productMainImageUrl) || "/placeholder-camera.jpg"}
+                        src={
+                          getImageUrl(item.productMainImageUrl) ||
+                          "/placeholder-camera.jpg"
+                        }
                         alt={item.productName}
                         className="w-full h-full object-contain"
                       />
@@ -962,19 +1009,31 @@ export function RentalDetailDialog({
                   {item.deviceSerialNumber && (
                     <div className="p-3 bg-zinc-50 rounded-xl space-y-2 text-xs border border-black/5">
                       <div className="flex justify-between items-center">
-                        <span className="font-semibold text-zinc-500">Số Serial gán máy:</span>
-                        <span className="font-bold text-zinc-900 bg-white px-2 py-0.5 rounded-xl border border-black/5">{item.deviceSerialNumber}</span>
+                        <span className="font-semibold text-zinc-500">
+                          Số Serial gán máy:
+                        </span>
+                        <span className="font-bold text-zinc-900 bg-white px-2 py-0.5 rounded-xl border border-black/5">
+                          {item.deviceSerialNumber}
+                        </span>
                       </div>
                       {item.conditionBeforeHandover && (
                         <div className="flex justify-between items-start pt-1">
-                          <span className="font-semibold text-zinc-500">Tình trạng bàn giao:</span>
-                          <span className="font-semibold text-amber-700 text-right">{item.conditionBeforeHandover}</span>
+                          <span className="font-semibold text-zinc-500">
+                            Tình trạng bàn giao:
+                          </span>
+                          <span className="font-semibold text-amber-700 text-right">
+                            {item.conditionBeforeHandover}
+                          </span>
                         </div>
                       )}
                       {item.conditionAfterReturn && (
                         <div className="flex justify-between items-start pt-1 border-t border-dashed border-zinc-200">
-                          <span className="font-semibold text-zinc-500">Tình trạng lúc trả:</span>
-                          <span className="font-semibold text-zinc-800 text-right">{item.conditionAfterReturn}</span>
+                          <span className="font-semibold text-zinc-500">
+                            Tình trạng lúc trả:
+                          </span>
+                          <span className="font-semibold text-zinc-800 text-right">
+                            {item.conditionAfterReturn}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -1021,31 +1080,43 @@ export function RentalDetailDialog({
               </div>
               <div className="p-4 bg-zinc-50/50 border border-zinc-100 rounded-xl space-y-3 flex-1">
                 <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-zinc-400">Trạng thái cọc</span>
+                  <span className="text-[10px] font-bold text-zinc-400">
+                    Trạng thái cọc
+                  </span>
                   <span
                     className={cn(
                       "text-[10px] font-bold px-2 py-0.5 rounded-xl uppercase border",
-                    rental.depositStatus === "PAID" || rental.depositStatus === "PARTIALLY_DEDUCTED" || rental.depositStatus === "FULLY_DEDUCTED" || rental.depositStatus === "REFUNDED"
+                      rental.depositStatus === "PAID" ||
+                        rental.depositStatus === "PARTIALLY_DEDUCTED" ||
+                        rental.depositStatus === "FULLY_DEDUCTED" ||
+                        rental.depositStatus === "REFUNDED"
                         ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                        : "bg-amber-50 text-amber-600 border-amber-100"
+                        : "bg-amber-50 text-amber-600 border-amber-100",
                     )}
                   >
-                    {rental.depositStatus === "PAID" || rental.depositStatus === "PARTIALLY_DEDUCTED" || rental.depositStatus === "FULLY_DEDUCTED" || rental.depositStatus === "REFUNDED"
+                    {rental.depositStatus === "PAID" ||
+                    rental.depositStatus === "PARTIALLY_DEDUCTED" ||
+                    rental.depositStatus === "FULLY_DEDUCTED" ||
+                    rental.depositStatus === "REFUNDED"
                       ? "Đã đặt cọc"
                       : "Chưa cọc"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-zinc-200/50">
-                  <span className="text-[10px] font-bold text-zinc-400">Hoàn tiền cọc</span>
+                  <span className="text-[10px] font-bold text-zinc-400">
+                    Hoàn tiền cọc
+                  </span>
                   <span
                     className={cn(
                       "text-[10px] font-bold px-2 py-0.5 rounded-xl uppercase border",
                       rental.refundStatus === "SUCCESS"
                         ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                        : "bg-zinc-50 text-zinc-500 border-zinc-100"
+                        : "bg-zinc-50 text-zinc-500 border-zinc-100",
                     )}
                   >
-                    {rental.refundStatus === "SUCCESS" ? "Đã hoàn trả" : "Chưa hoàn"}
+                    {rental.refundStatus === "SUCCESS"
+                      ? "Đã hoàn trả"
+                      : "Chưa hoàn"}
                   </span>
                 </div>
               </div>
@@ -1072,7 +1143,11 @@ export function RentalDetailDialog({
               <div className="flex justify-between text-xs font-semibold text-zinc-400">
                 <span>Tiền cọc thiết bị (dự kiến/đã đóng):</span>
                 <span className="text-amber-600 font-bold">
-                  {formatVND(rental.finalDepositAmount ?? rental.estimatedDepositAmount ?? 0)}
+                  {formatVND(
+                    rental.finalDepositAmount ??
+                      rental.estimatedDepositAmount ??
+                      0,
+                  )}
                 </span>
               </div>
             </div>
@@ -1118,11 +1193,17 @@ export function RentalDetailDialog({
               <div className="flex items-center justify-between border-b border-black/5 pb-2">
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-zinc-500" />
-                  <span className="text-xs font-bold text-zinc-800">Hợp đồng điện tử: {rental.contract.contractNumber}</span>
+                  <span className="text-xs font-bold text-zinc-800">
+                    Hợp đồng điện tử: {rental.contract.contractNumber}
+                  </span>
                 </div>
-                {(rental.contract.isLocked || rental.contract.locked) ? (
+                {rental.contract.isLocked || rental.contract.locked ? (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-xl bg-emerald-50 text-emerald-600 text-[10px] font-bold border border-emerald-100">
-                    <ShieldCheck className="w-3 h-3" /> {rental.contract.contractHash === "OFFLINE_PHYSICAL_SIGNATURE" ? "Đã ký (HĐ Giấy)" : "Đã ký điện tử"}
+                    <ShieldCheck className="w-3 h-3" />{" "}
+                    {rental.contract.contractHash ===
+                    "OFFLINE_PHYSICAL_SIGNATURE"
+                      ? "Đã ký (HĐ Giấy)"
+                      : "Đã ký điện tử"}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-xl bg-amber-50 text-amber-600 text-[10px] font-bold border border-amber-100">
@@ -1135,12 +1216,23 @@ export function RentalDetailDialog({
                 {rental.contract.termsAndConditions}
               </div>
 
-              {(rental.contract.isLocked || rental.contract.locked) ? (
+              {rental.contract.isLocked || rental.contract.locked ? (
                 <div className="space-y-3 pt-2">
                   <div className="flex justify-between items-center text-xs font-semibold text-zinc-500">
-                    <span>{rental.contract.contractHash === "OFFLINE_PHYSICAL_SIGNATURE" ? "Hình thức ký:" : "Chữ ký bên thuê:"}</span>
-                    <span className="font-bold text-zinc-950 font-mono italic underline text-right truncate max-w-[200px]" title={rental.contract.contractHash}>
-                      {rental.contract.contractHash === "OFFLINE_PHYSICAL_SIGNATURE" ? "Ký trực tiếp tại cửa hàng (Bản giấy)" : rental.contract.contractHash}
+                    <span>
+                      {rental.contract.contractHash ===
+                      "OFFLINE_PHYSICAL_SIGNATURE"
+                        ? "Hình thức ký:"
+                        : "Chữ ký bên thuê:"}
+                    </span>
+                    <span
+                      className="font-bold text-zinc-950 font-mono italic underline text-right truncate max-w-[200px]"
+                      title={rental.contract.contractHash}
+                    >
+                      {rental.contract.contractHash ===
+                      "OFFLINE_PHYSICAL_SIGNATURE"
+                        ? "Ký trực tiếp tại cửa hàng (Bản giấy)"
+                        : rental.contract.contractHash}
                     </span>
                   </div>
                   <Button
@@ -1151,7 +1243,8 @@ export function RentalDetailDialog({
                   </Button>
                 </div>
               ) : (
-                !showSignForm && !hideSignAction && (
+                !showSignForm &&
+                !hideSignAction && (
                   <Button
                     onClick={handleOpenSignForm}
                     disabled={isSendingOtp}
@@ -1171,7 +1264,8 @@ export function RentalDetailDialog({
                 <div className="space-y-3 pt-2 border-t border-black/5 animate-in slide-in-from-bottom-2 duration-300">
                   <div className="bg-zinc-50 border border-black/5 p-3 rounded-xl space-y-1">
                     <p className="text-[10px] font-semibold text-zinc-600">
-                      Mã xác thực OTP đã được gửi đến email đăng ký của bạn. Vui lòng nhập mã OTP và Họ tên để hoàn tất ký hợp đồng.
+                      Mã xác thực OTP đã được gửi đến email đăng ký của bạn. Vui
+                      lòng nhập mã OTP và Họ tên để hoàn tất ký hợp đồng.
                     </p>
                   </div>
                   <div>
@@ -1203,7 +1297,11 @@ export function RentalDetailDialog({
                     <input
                       type="text"
                       value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      onChange={(e) =>
+                        setOtpCode(
+                          e.target.value.replace(/\D/g, "").slice(0, 6),
+                        )
+                      }
                       placeholder="Nhập mã OTP 6 chữ số"
                       className="w-full h-10 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 text-center tracking-[0.25em]"
                     />
@@ -1224,7 +1322,11 @@ export function RentalDetailDialog({
                       disabled={isSigning}
                       className="flex-1 h-10 rounded-xl bg-zinc-950 text-white text-xs font-bold hover:bg-red-600 flex items-center justify-center border-none"
                     >
-                      {isSigning ? <Loader2 className="w-4 h-4 animate-spin" /> : "Xác nhận ký"}
+                      {isSigning ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        "Xác nhận ký"
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -1238,7 +1340,9 @@ export function RentalDetailDialog({
               <div className="flex items-center justify-between border-b border-black/5 pb-2">
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-blue-600" />
-                  <span className="text-xs font-bold text-zinc-800">Biên bản bàn giao: {rental.handoverReport.serialNumber}</span>
+                  <span className="text-xs font-bold text-zinc-800">
+                    Biên bản bàn giao: {rental.handoverReport.serialNumber}
+                  </span>
                 </div>
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold border border-blue-100">
                   Đã bàn giao
@@ -1246,12 +1350,20 @@ export function RentalDetailDialog({
               </div>
               <div className="grid grid-cols-2 gap-4 text-xs font-medium text-zinc-600">
                 <div>
-                  <span className="text-[10px] text-zinc-400 block mb-0.5 uppercase tracking-wider">Nhân viên bàn giao</span>
-                  <span className="font-bold text-zinc-900">{rental.handoverReport.staffName || "N/A"}</span>
+                  <span className="text-[10px] text-zinc-400 block mb-0.5 uppercase tracking-wider">
+                    Nhân viên bàn giao
+                  </span>
+                  <span className="font-bold text-zinc-900">
+                    {rental.handoverReport.staffName || "N/A"}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-zinc-400 block mb-0.5 uppercase tracking-wider">Tiền cọc thực tế</span>
-                  <span className="font-bold text-amber-600">{formatVND(rental.handoverReport.finalDepositAmount)}</span>
+                  <span className="text-[10px] text-zinc-400 block mb-0.5 uppercase tracking-wider">
+                    Tiền cọc thực tế
+                  </span>
+                  <span className="font-bold text-amber-600">
+                    {formatVND(rental.handoverReport.finalDepositAmount)}
+                  </span>
                 </div>
               </div>
               <Button
@@ -1269,7 +1381,9 @@ export function RentalDetailDialog({
               <div className="flex items-center justify-between border-b border-black/5 pb-2">
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-purple-600" />
-                  <span className="text-xs font-bold text-zinc-800">Biên bản nhận trả máy</span>
+                  <span className="text-xs font-bold text-zinc-800">
+                    Biên bản nhận trả máy
+                  </span>
                 </div>
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[10px] font-bold border border-purple-100">
                   Đã nhận trả
@@ -1277,12 +1391,20 @@ export function RentalDetailDialog({
               </div>
               <div className="grid grid-cols-2 gap-4 text-xs font-medium text-zinc-600">
                 <div>
-                  <span className="text-[10px] text-zinc-400 block mb-0.5 uppercase tracking-wider">Nhân viên nhận trả</span>
-                  <span className="font-bold text-zinc-900">{rental.returnReport.staffName || "N/A"}</span>
+                  <span className="text-[10px] text-zinc-400 block mb-0.5 uppercase tracking-wider">
+                    Nhân viên nhận trả
+                  </span>
+                  <span className="font-bold text-zinc-900">
+                    {rental.returnReport.staffName || "N/A"}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-zinc-400 block mb-0.5 uppercase tracking-wider">Phí phạt & trễ hạn</span>
-                  <span className="font-bold text-red-600">{formatVND(rental.returnReport.totalPenalty)}</span>
+                  <span className="text-[10px] text-zinc-400 block mb-0.5 uppercase tracking-wider">
+                    Phí phạt & trễ hạn
+                  </span>
+                  <span className="font-bold text-red-600">
+                    {formatVND(rental.returnReport.totalPenalty)}
+                  </span>
                 </div>
               </div>
               <Button

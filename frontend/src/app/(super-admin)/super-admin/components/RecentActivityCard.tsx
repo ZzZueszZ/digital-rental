@@ -94,7 +94,7 @@ export function RecentActivityCard() {
           onClick={() => router.push("/super-admin/audit-logs")}
           variant="ghost"
           size="sm"
-          className="h-8 gap-1 rounded-xl px-3 text-[13px] font-medium text-zinc-500 hover:text-zinc-950"
+          className="h-8 gap-1 rounded-xl border border-transparent px-3 text-[13px] font-medium text-zinc-500 transition-colors hover:border-zinc-950 hover:bg-zinc-950 hover:text-white"
         >
           Tất cả <ArrowRight className="h-3.5 w-3.5" />
         </Button>

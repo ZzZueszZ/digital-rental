@@ -81,7 +81,9 @@ export function StockAdjustmentDialog({
           {/* Header of the card */}
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h4 className="text-sm font-semibold text-emerald-950">kho bán</h4>
+              <h4 className="text-sm font-semibold text-emerald-950">
+                Kho bán
+              </h4>
               <p className="text-xs font-medium text-emerald-700/70">
                 Nhập số lượng cần cộng thêm hoặc trừ bớt.
               </p>
@@ -104,7 +106,7 @@ export function StockAdjustmentDialog({
                   : "text-zinc-500 hover:bg-emerald-50 hover:text-emerald-700",
               )}
             >
-              nhập thêm
+              Nhập thêm
             </button>
             <button
               type="button"
@@ -117,14 +119,14 @@ export function StockAdjustmentDialog({
                   : "text-zinc-500 hover:bg-red-50 hover:text-red-600",
               )}
             >
-              trừ bớt
+              Trừ bớt
             </button>
           </div>
 
           {/* Quantity Input */}
           <label className="space-y-1 block">
             <span className="text-xs font-semibold text-zinc-700">
-              số lượng {action === "IMPORT" ? "nhập thêm" : "trừ bớt"}
+              Số lượng {action === "IMPORT" ? "nhập thêm" : "trừ bớt"}
             </span>
             <input
               type="number"
@@ -139,7 +141,9 @@ export function StockAdjustmentDialog({
 
           {/* Reason Input */}
           <label className="space-y-1 block">
-            <span className="text-xs font-semibold text-zinc-700">lý do chỉnh kho bán</span>
+            <span className="text-xs font-semibold text-zinc-700">
+              Lý do chỉnh kho bán
+            </span>
             <input
               type="text"
               value={reason}
@@ -170,7 +174,8 @@ export function StockAdjustmentDialog({
         <div className="flex gap-2.5 p-3.5 bg-zinc-50 rounded-xl border border-zinc-100 shadow-sm">
           <Info className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
           <p className="text-[11px] font-medium text-zinc-500 leading-relaxed">
-            Hành động này sẽ thay đổi trực tiếp tồn kho bán của sản phẩm trên website và được ghi nhận lại trong lịch sử kho.
+            Hành động này sẽ thay đổi trực tiếp tồn kho bán của sản phẩm trên
+            website và được ghi nhận lại trong lịch sử kho.
           </p>
         </div>
       </div>

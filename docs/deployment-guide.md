@@ -1,7 +1,7 @@
 # Deployment Guide
 
 ## Documentation Maintenance
-**Last Updated:** 2026-06-06  
+**Last Updated:** 2026-06-08  
 **Document Version:** 1.0  
 **Maintained By:** Development Team
 
@@ -45,6 +45,9 @@ Required/important environment variables:
 | `APP_SCHEDULER_BIRTHDAY_*` | Birthday scheduler settings. |
 | `APP_SCHEDULER_VOUCHER_EXPIRING_*` | Voucher expiry scheduler settings. |
 | `APP_INVENTORY_LOW_STOCK_THRESHOLD` | Low-stock alert threshold. |
+| `APP_E2EE_ENABLED` | Enables the E2EE Shield handshake and protected route filter. Must match the frontend flag. |
+| `SERVER_IDENTITY_PRIV_B64` | Base64-encoded PKCS#8 EC P-256 private identity key. Store only in a secret manager. |
+| `SERVER_IDENTITY_PUB_B64` | Base64-encoded X.509 EC P-256 public identity key. |
 
 Current Redis host and port are hardcoded to `localhost:6379` in `application.yml`; make these configurable before production deployment.
 
@@ -54,9 +57,18 @@ Frontend API base URL is controlled by:
 
 ```text
 NEXT_PUBLIC_API_URL=http://localhost:8080/api
+NEXT_PUBLIC_E2EE_ENABLED=true
+NEXT_PUBLIC_SERVER_JWK_X=<server-public-jwk-x>
+NEXT_PUBLIC_SERVER_JWK_Y=<server-public-jwk-y>
 ```
 
 If unset, `frontend/src/lib/http.ts` uses `http://localhost:8080/api`.
+
+The frontend JWK coordinates must come from the backend identity public key.
+Enable or disable E2EE on both applications together, then restart both
+processes. The current SDK protects policy-selected requests with JSON bodies.
+Multipart uploads and VNPay callbacks remain outside the E2EE filter. Sensitive
+GET responses still rely on HTTPS and JWT authorization.
 
 ## Local Run
 
@@ -96,6 +108,7 @@ pnpm build
 ## Production Readiness Checklist
 
 - Externalize all secrets from committed config.
+- Remove tracked `.env` files from Git and rotate credentials already present in repository history.
 - Add `.env.example` files for backend and frontend.
 - Make Redis host, port, and password environment-driven.
 - Replace `spring.jpa.hibernate.ddl-auto: update` with controlled migrations for production.

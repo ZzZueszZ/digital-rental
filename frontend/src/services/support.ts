@@ -29,7 +29,6 @@ export const SUPPORT_KEYS = {
 export const useSubmitTicket = () => {
   return useMutation({
     mutationFn: async (request: SupportTicketRequest) => {
-      console.log("Calling API POST /support/tickets with:", request);
       const { data } = await http.post<IBackendRes<void>>("/support/tickets", request);
       return data;
     },

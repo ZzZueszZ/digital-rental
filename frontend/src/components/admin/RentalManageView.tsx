@@ -19,7 +19,7 @@ import {
   MoreHorizontal,
   CreditCard,
   FileText,
-  Check
+  Check,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -57,20 +57,30 @@ import {
   rentalService,
   DeviceResponse,
   RiskLevel,
-  RentalOrderResponse
+  RentalOrderResponse,
 } from "@/services/rental";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 
-export function RentalManageView({ portalType }: { portalType: "admin" | "staff" | "super-admin" }) {
+export function RentalManageView({
+  portalType,
+}: {
+  portalType: "admin" | "staff" | "super-admin";
+}) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<RentalOrderStatus | "ALL">("ALL");
+  const [statusFilter, setStatusFilter] = useState<RentalOrderStatus | "ALL">(
+    "ALL",
+  );
 
-  const { data: rentalsRes, isLoading, refetch } = useStaffRentals({
+  const {
+    data: rentalsRes,
+    isLoading,
+    refetch,
+  } = useStaffRentals({
     page,
     size: 10,
-    status: statusFilter === "ALL" ? undefined : statusFilter
+    status: statusFilter === "ALL" ? undefined : statusFilter,
   });
 
   const prepareMutation = usePrepareRental();
@@ -85,8 +95,9 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   const totalPages = rentalsRes?.meta?.totalPages || 1;
   const totalElements = rentalsRes?.meta?.totalElements || rentals.length;
 
-  const [selectedRental, setSelectedRental] = useState<RentalOrderResponse | null>(null);
-  
+  const [selectedRental, setSelectedRental] =
+    useState<RentalOrderResponse | null>(null);
+
   // Modals state
   const [isApproveOpen, setIsApproveOpen] = useState(false);
   const [isRejectOpen, setIsRejectOpen] = useState(false);
@@ -117,12 +128,18 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
   const [rejectReason, setRejectReason] = useState("");
   const [depositAmount, setDepositAmount] = useState<number>(0);
   const [riskLevel, setRiskLevel] = useState<RiskLevel>(RiskLevel.LOW_RISK);
-  const [deviceAssignments, setDeviceAssignments] = useState<Record<number, number | undefined>>({}); // itemId -> deviceId
-  const [availableDevicesMap, setAvailableDevicesMap] = useState<Record<number, DeviceResponse[]>>({});
+  const [deviceAssignments, setDeviceAssignments] = useState<
+    Record<number, number | undefined>
+  >({}); // itemId -> deviceId
+  const [availableDevicesMap, setAvailableDevicesMap] = useState<
+    Record<number, DeviceResponse[]>
+  >({});
   const [loadingDevices, setLoadingDevices] = useState(false);
 
   const [inspectorName, setInspectorName] = useState("");
-  const [itemConditions, setItemConditions] = useState<Record<number, string>>({});
+  const [itemConditions, setItemConditions] = useState<Record<number, string>>(
+    {},
+  );
   const [damageFee, setDamageFee] = useState<number>(0);
 
   const handleOpenApprove = async (rental: RentalOrderResponse) => {
@@ -164,8 +181,8 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
         req: {
           itemDeviceAssignments: deviceAssignments as Record<number, number>,
           estimatedDepositAmount: depositAmount,
-          riskLevel: riskLevel
-        }
+          riskLevel: riskLevel,
+        },
       });
       toast.success("Duyệt đơn thuê và gán thiết bị thành công!");
       setIsApproveOpen(false);
@@ -192,8 +209,8 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
             id: id,
             req: {
               amount: amount,
-              paymentMethod: "CASH"
-            }
+              paymentMethod: "CASH",
+            },
           });
           toast.success("Xác nhận thu tiền cọc offline thành công!");
           setConfirmDialog((prev) => ({ ...prev, open: false }));
@@ -203,7 +220,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
         } finally {
           setConfirmDialog((prev) => ({ ...prev, isLoading: false }));
         }
-      }
+      },
     });
   };
 
@@ -236,8 +253,8 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
           riskLevel: selectedRental.riskLevel || RiskLevel.LOW_RISK,
           finalDepositAmount: selectedRental.finalDepositAmount || 0,
           note: `Nhân viên kiểm tra: ${inspectorName}`,
-          itemConditions: itemConditions
-        }
+          itemConditions: itemConditions,
+        },
       });
       toast.success("Đã tạo biên bản bàn giao thành công!");
       setIsHandoverOpen(false);
@@ -279,8 +296,8 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
           damageFee: damageFee,
           missingAccessoryFee: 0,
           note: `Nhân viên kiểm tra: ${inspectorName}`,
-          itemConditions: itemConditions
-        }
+          itemConditions: itemConditions,
+        },
       });
       toast.success("Nhận trả thiết bị thành công!");
       setIsReturnOpen(false);
@@ -305,8 +322,8 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
             id: id,
             req: {
               refundMethod: "CASH",
-              note: "Hoàn tất hợp đồng"
-            }
+              note: "Hoàn tất hợp đồng",
+            },
           });
           toast.success("Quyết toán đơn thuê và hoàn cọc thành công!");
           setConfirmDialog((prev) => ({ ...prev, open: false }));
@@ -316,10 +333,9 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
         } finally {
           setConfirmDialog((prev) => ({ ...prev, isLoading: false }));
         }
-      }
+      },
     });
   };
-
 
   const handleHandoverDevices = async (id: number) => {
     const rental = rentals.find((r) => r.id === id);
@@ -341,7 +357,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
         } finally {
           setConfirmDialog((prev) => ({ ...prev, isLoading: false }));
         }
-      }
+      },
     });
   };
 
@@ -391,7 +407,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
     (r) =>
       r.code.toLowerCase().includes(search.toLowerCase()) ||
       r.userEmail.toLowerCase().includes(search.toLowerCase()) ||
-      r.shippingName.toLowerCase().includes(search.toLowerCase())
+      r.shippingName.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -407,19 +423,28 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
         />
         <StatCard
           title="Chờ chuẩn bị"
-          value={rentals.filter((r) => r.status === RentalOrderStatus.PAID_RENTAL_FEE).length}
+          value={
+            rentals.filter(
+              (r) => r.status === RentalOrderStatus.PAID_RENTAL_FEE,
+            ).length
+          }
           icon={Clock}
           accent="bg-amber-500"
         />
         <StatCard
           title="Đang thuê máy"
-          value={rentals.filter((r) => r.status === RentalOrderStatus.RENTING).length}
+          value={
+            rentals.filter((r) => r.status === RentalOrderStatus.RENTING).length
+          }
           icon={Truck}
           accent="bg-indigo-500"
         />
         <StatCard
           title="Chờ quyết toán"
-          value={rentals.filter((r) => r.status === RentalOrderStatus.RETURNED).length}
+          value={
+            rentals.filter((r) => r.status === RentalOrderStatus.RETURNED)
+              .length
+          }
           icon={CheckCircle2}
           accent="bg-emerald-500"
         />
@@ -433,14 +458,18 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
-                  <Calendar className="w-4.5 h-4.5 text-white" strokeWidth={2} />
+                  <Calendar
+                    className="w-4.5 h-4.5 text-white"
+                    strokeWidth={2}
+                  />
                 </div>
-                <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
+                <h2 className="text-2xl text-zinc-950 tracking-tight leading-tight">
                   Quản lý thuê máy ảnh
                 </h2>
               </div>
               <p className="text-[14px] text-zinc-500 font-medium ml-12">
-                Duyệt hồ sơ, bàn giao/nhận trả thiết bị vật lý và ký kết hợp đồng điện tử
+                Duyệt hồ sơ, bàn giao/nhận trả thiết bị vật lý và ký kết hợp
+                đồng điện tử
               </p>
             </div>
 
@@ -521,12 +550,24 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
           <table className="w-full text-left">
             <thead>
               <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">Đơn thuê</th>
-                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">Khách hàng</th>
-                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">Thời hạn thuê</th>
-                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">Phí thuê & Cọc</th>
-                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">Trạng thái</th>
-                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400 text-right">Thao tác</th>
+                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                  Đơn thuê
+                </th>
+                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                  Khách hàng
+                </th>
+                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                  Thời hạn thuê
+                </th>
+                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                  Phí thuê & Cọc
+                </th>
+                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                  Trạng thái
+                </th>
+                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400 text-right">
+                  Thao tác
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-50">
@@ -556,7 +597,9 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                   >
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold text-zinc-950">#{rental.code}</span>
+                        <span className="text-sm font-bold text-zinc-950">
+                          #{rental.code}
+                        </span>
                         <span className="text-[10px] text-zinc-400 font-semibold mt-1">
                           {rental.items.length} thiết bị
                         </span>
@@ -564,8 +607,12 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="text-xs font-bold text-zinc-950">{rental.shippingName}</span>
-                        <span className="text-[11px] text-zinc-400 mt-0.5">{rental.userEmail}</span>
+                        <span className="text-xs font-bold text-zinc-950">
+                          {rental.shippingName}
+                        </span>
+                        <span className="text-[11px] text-zinc-400 mt-0.5">
+                          {rental.userEmail}
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -577,21 +624,33 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="text-xs font-bold text-red-600">{formatVND(rental.rentalFee)}</span>
+                        <span className="text-xs font-bold text-red-600">
+                          {formatVND(rental.rentalFee)}
+                        </span>
                         <span className="text-[10px] text-amber-600 font-semibold mt-0.5">
-                          Cọc: {formatVND(rental.finalDepositAmount ?? rental.estimatedDepositAmount ?? 0)}
+                          Cọc:{" "}
+                          {formatVND(
+                            rental.finalDepositAmount ??
+                              rental.estimatedDepositAmount ??
+                              0,
+                          )}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={cn(
-                        "px-2.5 py-1 rounded-xl text-[11px] font-bold border",
-                        getStatusColor(rental.status)
-                      )}>
+                      <span
+                        className={cn(
+                          "px-2.5 py-1 rounded-xl text-[11px] font-bold border",
+                          getStatusColor(rental.status),
+                        )}
+                      >
                         {getStatusLabel(rental.status)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                    <td
+                      className="px-6 py-4 text-right"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <DropdownMenu>
                         <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-xl hover:bg-zinc-100 outline-none transition-colors duration-200">
                           <MoreHorizontal className="w-4 h-4 text-zinc-500" />
@@ -606,43 +665,83 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                               Tác vụ quản trị
                             </DropdownMenuLabel>
 
-                            <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={() => handleOpenDetail(rental.id)}>
-                              <Eye className="w-3.5 h-3.5 text-zinc-400" /> Chi tiết
+                            <DropdownMenuItem
+                              className="cursor-pointer flex items-center gap-2"
+                              onClick={() => handleOpenDetail(rental.id)}
+                            >
+                              <Eye className="w-3.5 h-3.5 text-zinc-400" /> Chi
+                              tiết
                             </DropdownMenuItem>
 
                             {/* PAID_RENTAL_FEE: Prepare devices */}
-                            {rental.status === RentalOrderStatus.PAID_RENTAL_FEE && (
-                              <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={() => handleOpenApprove(rental)}>
-                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Chuẩn bị thiết bị
+                            {rental.status ===
+                              RentalOrderStatus.PAID_RENTAL_FEE && (
+                              <DropdownMenuItem
+                                className="cursor-pointer flex items-center gap-2"
+                                onClick={() => handleOpenApprove(rental)}
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />{" "}
+                                Chuẩn bị thiết bị
                               </DropdownMenuItem>
                             )}
 
                             {/* WAITING_PICKUP actions */}
-                            {rental.status === RentalOrderStatus.WAITING_PICKUP && (
+                            {rental.status ===
+                              RentalOrderStatus.WAITING_PICKUP && (
                               <>
                                 {/* Case 1: Contract not signed/locked */}
-                                {(!rental.contract || !(rental.contract.isLocked || rental.contract.locked)) ? (
-                                  <DropdownMenuItem className="flex items-center gap-2 text-amber-600 focus:text-amber-600 focus:bg-amber-50/50 bg-amber-50/30" disabled>
-                                    <Clock className="w-3.5 h-3.5 text-amber-500" /> Chờ khách ký HĐ (Online)
+                                {!rental.contract ||
+                                !(
+                                  rental.contract.isLocked ||
+                                  rental.contract.locked
+                                ) ? (
+                                  <DropdownMenuItem
+                                    className="flex items-center gap-2 text-amber-600 focus:text-amber-600 focus:bg-amber-50/50 bg-amber-50/30"
+                                    disabled
+                                  >
+                                    <Clock className="w-3.5 h-3.5 text-amber-500" />{" "}
+                                    Chờ khách ký HĐ (Online)
                                   </DropdownMenuItem>
                                 ) : (
                                   <>
                                     {/* Case 2: Handover report not created yet (finalDepositAmount is null/undefined) */}
-                                    {(!rental.finalDepositAmount && rental.finalDepositAmount !== 0) ? (
-                                      <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={() => handleOpenHandover(rental)}>
-                                        <FileText className="w-3.5 h-3.5 text-blue-500" /> Lập BB bàn giao
+                                    {!rental.finalDepositAmount &&
+                                    rental.finalDepositAmount !== 0 ? (
+                                      <DropdownMenuItem
+                                        className="cursor-pointer flex items-center gap-2"
+                                        onClick={() =>
+                                          handleOpenHandover(rental)
+                                        }
+                                      >
+                                        <FileText className="w-3.5 h-3.5 text-blue-500" />{" "}
+                                        Lập BB bàn giao
                                       </DropdownMenuItem>
                                     ) : (
                                       <>
                                         {/* Case 3: Deposit not collected */}
                                         {rental.depositStatus !== "PAID" ? (
-                                          <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={() => handlePayDeposit(rental.id, rental.finalDepositAmount || 0)}>
-                                            <CreditCard className="w-3.5 h-3.5 text-indigo-500" /> Thu tiền cọc
+                                          <DropdownMenuItem
+                                            className="cursor-pointer flex items-center gap-2"
+                                            onClick={() =>
+                                              handlePayDeposit(
+                                                rental.id,
+                                                rental.finalDepositAmount || 0,
+                                              )
+                                            }
+                                          >
+                                            <CreditCard className="w-3.5 h-3.5 text-indigo-500" />{" "}
+                                            Thu tiền cọc
                                           </DropdownMenuItem>
                                         ) : (
                                           /* Case 4: Ready to handover */
-                                          <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={() => handleHandoverDevices(rental.id)}>
-                                            <Check className="w-3.5 h-3.5 text-emerald-500" /> Bàn giao máy
+                                          <DropdownMenuItem
+                                            className="cursor-pointer flex items-center gap-2"
+                                            onClick={() =>
+                                              handleHandoverDevices(rental.id)
+                                            }
+                                          >
+                                            <Check className="w-3.5 h-3.5 text-emerald-500" />{" "}
+                                            Bàn giao máy
                                           </DropdownMenuItem>
                                         )}
                                       </>
@@ -654,15 +753,23 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
 
                             {/* RENTING: Return Devices */}
                             {rental.status === RentalOrderStatus.RENTING && (
-                              <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={() => handleOpenReturn(rental)}>
-                                <FileText className="w-3.5 h-3.5 text-purple-500" /> Nhận trả máy
+                              <DropdownMenuItem
+                                className="cursor-pointer flex items-center gap-2"
+                                onClick={() => handleOpenReturn(rental)}
+                              >
+                                <FileText className="w-3.5 h-3.5 text-purple-500" />{" "}
+                                Nhận trả máy
                               </DropdownMenuItem>
                             )}
 
                             {/* RETURNED: Complete / Settle */}
                             {rental.status === RentalOrderStatus.RETURNED && (
-                              <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={() => handleSettle(rental.id)}>
-                                <Check className="w-3.5 h-3.5 text-emerald-500" /> Quyết toán & Hoàn cọc
+                              <DropdownMenuItem
+                                className="cursor-pointer flex items-center gap-2"
+                                onClick={() => handleSettle(rental.id)}
+                              >
+                                <Check className="w-3.5 h-3.5 text-emerald-500" />{" "}
+                                Quyết toán & Hoàn cọc
                               </DropdownMenuItem>
                             )}
                           </DropdownMenuGroup>
@@ -701,7 +808,9 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
           {loadingDevices ? (
             <div className="py-10 flex flex-col items-center">
               <Loader2 className="w-8 h-8 text-red-600 animate-spin mb-4" />
-              <p className="text-xs text-zinc-400 font-bold">Đang tải danh sách thiết bị vật lý...</p>
+              <p className="text-xs text-zinc-400 font-bold">
+                Đang tải danh sách thiết bị vật lý...
+              </p>
             </div>
           ) : (
             <div className="space-y-5">
@@ -758,14 +867,22 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                 {selectedRental.items.map((item) => {
                   const devs = availableDevicesMap[item.productId] || [];
                   return (
-                    <div key={item.id} className="p-3 bg-zinc-50 border border-zinc-100 rounded-xl space-y-2">
-                      <div className="text-xs font-bold text-zinc-900">{item.productName}</div>
+                    <div
+                      key={item.id}
+                      className="p-3 bg-zinc-50 border border-zinc-100 rounded-xl space-y-2"
+                    >
+                      <div className="text-xs font-bold text-zinc-900">
+                        {item.productName}
+                      </div>
                       <Select
-                        value={deviceAssignments[item.id]?.toString() || "empty"}
+                        value={
+                          deviceAssignments[item.id]?.toString() || "empty"
+                        }
                         onValueChange={(val) => {
                           setDeviceAssignments({
                             ...deviceAssignments,
-                            [item.id]: val === "empty" ? undefined : Number(val),
+                            [item.id]:
+                              val === "empty" ? undefined : Number(val),
                           });
                         }}
                       >
@@ -785,14 +902,16 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                               value={d.id.toString()}
                               className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[13px] transition-colors"
                             >
-                              {d.serialNumber} ({d.conditionDetails || "Bình thường"})
+                              {d.serialNumber} (
+                              {d.conditionDetails || "Bình thường"})
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                       {devs.length === 0 && (
                         <p className="text-[10px] text-red-500 font-bold flex items-center gap-1">
-                          <AlertTriangle className="w-3 h-3" /> Hết thiết bị sẵn sàng trong kho!
+                          <AlertTriangle className="w-3 h-3" /> Hết thiết bị sẵn
+                          sàng trong kho!
                         </p>
                       )}
                     </div>
@@ -804,7 +923,7 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
         </AdminFormDialog>
       )}
 
-          {/* Reject modal removed */}
+      {/* Reject modal removed */}
 
       {/* Handover Modal */}
       {selectedRental && (
@@ -837,13 +956,21 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                 Mô tả tình trạng
               </label>
               {selectedRental.items.map((item) => (
-                <div key={item.id} className="p-3 bg-zinc-50 rounded-xl space-y-2 border border-zinc-100">
+                <div
+                  key={item.id}
+                  className="p-3 bg-zinc-50 rounded-xl space-y-2 border border-zinc-100"
+                >
                   <div className="text-xs font-bold text-zinc-900">
                     {item.productName} ({item.deviceSerialNumber})
                   </div>
                   <textarea
                     value={itemConditions[item.id] || ""}
-                    onChange={(e) => setItemConditions({ ...itemConditions, [item.id]: e.target.value })}
+                    onChange={(e) =>
+                      setItemConditions({
+                        ...itemConditions,
+                        [item.id]: e.target.value,
+                      })
+                    }
                     className="flex min-h-[80px] w-full rounded-xl border border-zinc-950/5 bg-white px-3 py-2 text-xs font-semibold text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-dash-card leading-relaxed"
                   />
                 </div>
@@ -896,13 +1023,21 @@ export function RentalManageView({ portalType }: { portalType: "admin" | "staff"
                 Mô tả tình trạng
               </label>
               {selectedRental.items.map((item) => (
-                <div key={item.id} className="p-3 bg-zinc-50 rounded-xl space-y-2 border border-zinc-100">
+                <div
+                  key={item.id}
+                  className="p-3 bg-zinc-50 rounded-xl space-y-2 border border-zinc-100"
+                >
                   <div className="text-xs font-bold text-zinc-900">
                     {item.productName} ({item.deviceSerialNumber})
                   </div>
                   <textarea
                     value={itemConditions[item.id] || ""}
-                    onChange={(e) => setItemConditions({ ...itemConditions, [item.id]: e.target.value })}
+                    onChange={(e) =>
+                      setItemConditions({
+                        ...itemConditions,
+                        [item.id]: e.target.value,
+                      })
+                    }
                     className="flex min-h-[80px] w-full rounded-xl border border-zinc-950/5 bg-white px-3 py-2 text-xs font-semibold text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 focus:ring-4 focus:ring-red-600/5 focus-visible:outline-none transition-all duration-200 resize-none shadow-dash-card leading-relaxed"
                   />
                 </div>

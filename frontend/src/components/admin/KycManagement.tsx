@@ -16,7 +16,7 @@ import {
   RefreshCw,
   Search,
   ShieldCheck,
-  Fingerprint
+  Fingerprint,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -50,10 +50,13 @@ export default function KycManagement() {
     totalElements: number;
   } | null>(null);
 
-  const [selectedSession, setSelectedSession] = useState<KycSessionResponse | null>(null);
+  const [selectedSession, setSelectedSession] =
+    useState<KycSessionResponse | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isResolveOpen, setIsResolveOpen] = useState(false);
-  const [resolveAction, setResolveAction] = useState<"approve" | "reject" | null>(null);
+  const [resolveAction, setResolveAction] = useState<
+    "approve" | "reject" | null
+  >(null);
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -110,7 +113,7 @@ export default function KycManagement() {
       toast.success(
         resolveAction === "approve"
           ? "Đã phê duyệt eKYC thành công!"
-          : "Đã từ chối eKYC của khách hàng!"
+          : "Đã từ chối eKYC của khách hàng!",
       );
       setIsResolveOpen(false);
       setIsDetailOpen(false);
@@ -144,10 +147,13 @@ export default function KycManagement() {
             {/* Left: Title + Subtitle */}
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
-                <ShieldCheck className="w-4.5 h-4.5 text-white" strokeWidth={2} />
+                <ShieldCheck
+                  className="w-4.5 h-4.5 text-white"
+                  strokeWidth={2}
+                />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
+                <h2 className="text-2xl text-zinc-950 tracking-tight leading-tight">
                   Duyệt hồ sơ eKYC
                 </h2>
                 <p className="text-[14px] text-zinc-500 font-medium ml-1">
@@ -186,15 +192,21 @@ export default function KycManagement() {
         {loading ? (
           <div className="p-16 flex flex-col items-center justify-center gap-4">
             <Loader2 className="w-8 h-8 text-red-600 animate-spin" />
-            <p className="text-xs font-bold text-zinc-400">Đang tải danh sách hồ sơ...</p>
+            <p className="text-xs font-bold text-zinc-400">
+              Đang tải danh sách hồ sơ...
+            </p>
           </div>
         ) : filteredSessions.length === 0 ? (
           <div className="p-20 text-center">
             <div className="w-16 h-16 rounded-full bg-zinc-50 flex items-center justify-center mx-auto mb-4 border border-zinc-100">
               <Fingerprint className="w-8 h-8 text-zinc-400" />
             </div>
-            <p className="text-sm font-bold text-zinc-900">Không có hồ sơ nào đang chờ duyệt</p>
-            <p className="text-xs text-zinc-400 font-medium mt-1">Toàn bộ yêu cầu eKYC đã được giải quyết.</p>
+            <p className="text-sm font-bold text-zinc-900">
+              Không có hồ sơ nào đang chờ duyệt
+            </p>
+            <p className="text-xs text-zinc-400 font-medium mt-1">
+              Toàn bộ yêu cầu eKYC đã được giải quyết.
+            </p>
           </div>
         ) : (
           <>
@@ -210,13 +222,13 @@ export default function KycManagement() {
                       "OCR Confidence",
                       "Risk",
                       "Thời gian gửi",
-                      "Thao tác"
+                      "Thao tác",
                     ].map((col, i) => (
                       <th
                         key={i}
                         className={cn(
                           "px-6 py-4 text-[13px] font-semibold text-zinc-400 whitespace-nowrap",
-                          col === "Thao tác" && "text-right"
+                          col === "Thao tác" && "text-right",
                         )}
                       >
                         {col}
@@ -233,8 +245,12 @@ export default function KycManagement() {
                     >
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
-                          <span className="font-bold text-zinc-900 text-sm">{session.fullName || "Chưa cập nhật"}</span>
-                          <span className="text-xs text-zinc-400 font-medium">{session.userEmail}</span>
+                          <span className="font-bold text-zinc-900 text-sm">
+                            {session.fullName || "Chưa cập nhật"}
+                          </span>
+                          <span className="text-xs text-zinc-400 font-medium">
+                            {session.userEmail}
+                          </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 font-bold text-zinc-700 text-sm">
@@ -243,7 +259,10 @@ export default function KycManagement() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-bold text-zinc-800">
-                            {((session.faceMatchScore ?? 0.95) * 100).toFixed(0)}%
+                            {((session.faceMatchScore ?? 0.95) * 100).toFixed(
+                              0,
+                            )}
+                            %
                           </span>
                           <Badge
                             variant="outline"
@@ -253,7 +272,9 @@ export default function KycManagement() {
                                 : "bg-red-50 text-red-700 border-red-100 font-bold"
                             }
                           >
-                            {(session.faceMatchPassed ?? true) ? "Hợp lệ" : "Lỗi khớp"}
+                            {(session.faceMatchPassed ?? true)
+                              ? "Hợp lệ"
+                              : "Lỗi khớp"}
                           </Badge>
                         </div>
                       </td>
@@ -265,7 +286,9 @@ export default function KycManagement() {
                       </td>
                       <td className="px-6 py-4 text-xs text-zinc-400 font-semibold">
                         {session.submittedAt
-                          ? new Date(session.submittedAt).toLocaleString("vi-VN")
+                          ? new Date(session.submittedAt).toLocaleString(
+                              "vi-VN",
+                            )
                           : "Vừa xong"}
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -297,8 +320,12 @@ export default function KycManagement() {
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="text-sm font-bold text-zinc-900">{session.fullName || "Chưa cập nhật"}</p>
-                      <p className="text-xs text-zinc-400 font-medium">{session.userEmail}</p>
+                      <p className="text-sm font-bold text-zinc-900">
+                        {session.fullName || "Chưa cập nhật"}
+                      </p>
+                      <p className="text-xs text-zinc-400 font-medium">
+                        {session.userEmail}
+                      </p>
                     </div>
                     <Button
                       onClick={(e) => {
@@ -317,13 +344,16 @@ export default function KycManagement() {
                     <span className="bg-zinc-50 border border-zinc-200/50 text-zinc-600 px-2 py-0.5 rounded-xl font-semibold">
                       CCCD: {session.identityNumber}
                     </span>
-                    <span className={cn(
-                      "px-2 py-0.5 rounded-xl font-bold border",
-                      (session.faceMatchPassed ?? true)
-                        ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                        : "bg-red-50 text-red-700 border-red-100"
-                    )}>
-                      AI Match: {((session.faceMatchScore ?? 0.95) * 100).toFixed(0)}%
+                    <span
+                      className={cn(
+                        "px-2 py-0.5 rounded-xl font-bold border",
+                        (session.faceMatchPassed ?? true)
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                          : "bg-red-50 text-red-700 border-red-100",
+                      )}
+                    >
+                      AI Match:{" "}
+                      {((session.faceMatchScore ?? 0.95) * 100).toFixed(0)}%
                     </span>
                     <span className="bg-zinc-50 border border-zinc-200/50 text-zinc-500 px-2 py-0.5 rounded-xl font-semibold">
                       OCR: {((session.ocrConfidence ?? 0.96) * 100).toFixed(0)}%
@@ -332,7 +362,10 @@ export default function KycManagement() {
                   </div>
 
                   <p className="text-[10px] text-zinc-400 font-semibold">
-                    Gửi lúc: {session.submittedAt ? new Date(session.submittedAt).toLocaleString("vi-VN") : "Vừa xong"}
+                    Gửi lúc:{" "}
+                    {session.submittedAt
+                      ? new Date(session.submittedAt).toLocaleString("vi-VN")
+                      : "Vừa xong"}
                   </p>
                 </div>
               ))}
@@ -368,56 +401,137 @@ export default function KycManagement() {
             {/* Left Column: OCR Fields */}
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-semibold text-zinc-700 mb-4">Thông tin OCR trích xuất</h3>
+                <h3 className="text-sm font-semibold text-zinc-700 mb-4">
+                  Thông tin OCR trích xuất
+                </h3>
                 <div className="bg-zinc-50 p-6 rounded-xl border border-black/5 space-y-4">
-                  <DetailRow label="Số CCCD" value={selectedSession.identityNumber} />
-                  <DetailRow label="Họ và tên" value={selectedSession.fullName} />
-                  <DetailRow label="Ngày sinh" value={selectedSession.dateOfBirth ? String(selectedSession.dateOfBirth) : ""} />
-                  <DetailRow label="Giới tính" value={selectedSession.gender === "MALE" ? "Nam" : selectedSession.gender === "FEMALE" ? "Nữ" : "Khác"} />
-                  <DetailRow label="Quốc tịch" value={selectedSession.nationality} />
-                  <DetailRow label="Quê quán" value={selectedSession.placeOfOrigin} />
-                  <DetailRow label="Nơi thường trú" value={selectedSession.placeOfResidence} />
-                  <DetailRow label="Ngày cấp" value={selectedSession.issuedDate ? String(selectedSession.issuedDate) : ""} />
-                  <DetailRow label="Ngày hết hạn" value={selectedSession.expiryDate ? String(selectedSession.expiryDate) : ""} />
+                  <DetailRow
+                    label="Số CCCD"
+                    value={selectedSession.identityNumber}
+                  />
+                  <DetailRow
+                    label="Họ và tên"
+                    value={selectedSession.fullName}
+                  />
+                  <DetailRow
+                    label="Ngày sinh"
+                    value={
+                      selectedSession.dateOfBirth
+                        ? String(selectedSession.dateOfBirth)
+                        : ""
+                    }
+                  />
+                  <DetailRow
+                    label="Giới tính"
+                    value={
+                      selectedSession.gender === "MALE"
+                        ? "Nam"
+                        : selectedSession.gender === "FEMALE"
+                          ? "Nữ"
+                          : "Khác"
+                    }
+                  />
+                  <DetailRow
+                    label="Quốc tịch"
+                    value={selectedSession.nationality}
+                  />
+                  <DetailRow
+                    label="Quê quán"
+                    value={selectedSession.placeOfOrigin}
+                  />
+                  <DetailRow
+                    label="Nơi thường trú"
+                    value={selectedSession.placeOfResidence}
+                  />
+                  <DetailRow
+                    label="Ngày cấp"
+                    value={
+                      selectedSession.issuedDate
+                        ? String(selectedSession.issuedDate)
+                        : ""
+                    }
+                  />
+                  <DetailRow
+                    label="Ngày hết hạn"
+                    value={
+                      selectedSession.expiryDate
+                        ? String(selectedSession.expiryDate)
+                        : ""
+                    }
+                  />
                 </div>
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-zinc-700 mb-4">Đánh giá khớp mặt AI</h3>
+                <h3 className="text-sm font-semibold text-zinc-700 mb-4">
+                  Đánh giá khớp mặt AI
+                </h3>
                 <div className="bg-zinc-50 p-6 rounded-xl border border-black/5 space-y-3">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-zinc-500">Độ khớp mặt selfie vs ảnh CCCD:</span>
-                    <span className="font-bold text-red-600">{((selectedSession.faceMatchScore ?? 0.95) * 100).toFixed(1)}%</span>
+                    <span className="font-semibold text-zinc-500">
+                      Độ khớp mặt selfie vs ảnh CCCD:
+                    </span>
+                    <span className="font-bold text-red-600">
+                      {((selectedSession.faceMatchScore ?? 0.95) * 100).toFixed(
+                        1,
+                      )}
+                      %
+                    </span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-zinc-500">Trạng thái so sánh khuôn mặt:</span>
-                    <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-100 font-bold">
-                      {(selectedSession.faceMatchPassed ?? true) ? "Hợp lệ (Pass)" : "Không hợp lệ"}
+                    <span className="font-semibold text-zinc-500">
+                      Trạng thái so sánh khuôn mặt:
+                    </span>
+                    <Badge
+                      variant="outline"
+                      className="bg-emerald-50 text-emerald-700 border-emerald-100 font-bold"
+                    >
+                      {(selectedSession.faceMatchPassed ?? true)
+                        ? "Hợp lệ (Pass)"
+                        : "Không hợp lệ"}
                     </Badge>
                   </div>
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-zinc-700 mb-4">AI risk scoring</h3>
+                <h3 className="text-sm font-semibold text-zinc-700 mb-4">
+                  AI risk scoring
+                </h3>
                 <div className="bg-zinc-50 p-6 rounded-2xl border border-black/5 space-y-3">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-zinc-500">Risk level:</span>
+                    <span className="font-semibold text-zinc-500">
+                      Risk level:
+                    </span>
                     <RiskBadge session={selectedSession} />
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-zinc-500">Risk score:</span>
-                    <span className="font-bold text-zinc-800">{formatPercent(selectedSession.riskScore)}</span>
+                    <span className="font-semibold text-zinc-500">
+                      Risk score:
+                    </span>
+                    <span className="font-bold text-zinc-800">
+                      {formatPercent(selectedSession.riskScore)}
+                    </span>
                   </div>
                   <div className="text-xs">
-                    <span className="font-semibold text-zinc-500 block mb-1">Reason:</span>
-                    <p className="font-medium text-zinc-700 leading-relaxed">{selectedSession.riskReason || "---"}</p>
+                    <span className="font-semibold text-zinc-500 block mb-1">
+                      Reason:
+                    </span>
+                    <p className="font-medium text-zinc-700 leading-relaxed">
+                      {selectedSession.riskReason || "---"}
+                    </p>
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-zinc-500">Liveness score:</span>
-                    <span className="font-bold text-red-600">{formatPercent(selectedSession.livenessScore)}</span>
+                    <span className="font-semibold text-zinc-500">
+                      Liveness score:
+                    </span>
+                    <span className="font-bold text-red-600">
+                      {formatPercent(selectedSession.livenessScore)}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-zinc-500">Liveness status:</span>
+                    <span className="font-semibold text-zinc-500">
+                      Liveness status:
+                    </span>
                     <Badge
                       variant="outline"
                       className={
@@ -426,13 +540,18 @@ export default function KycManagement() {
                           : "bg-amber-50 text-amber-700 border-amber-100 font-bold"
                       }
                     >
-                      {(selectedSession.livenessPassed ?? false) ? "Pass" : "Needs review"}
+                      {(selectedSession.livenessPassed ?? false)
+                        ? "Pass"
+                        : "Needs review"}
                     </Badge>
                   </div>
-                  {(selectedSession.spoofDetected || selectedSession.multipleFacesDetected) && (
+                  {(selectedSession.spoofDetected ||
+                    selectedSession.multipleFacesDetected) && (
                     <div className="text-xs font-semibold text-red-700 bg-red-50 border border-red-100 rounded-xl p-3">
                       {selectedSession.spoofDetected ? "Spoof detected. " : ""}
-                      {selectedSession.multipleFacesDetected ? "Multiple faces detected." : ""}
+                      {selectedSession.multipleFacesDetected
+                        ? "Multiple faces detected."
+                        : ""}
                     </div>
                   )}
                 </div>
@@ -441,52 +560,100 @@ export default function KycManagement() {
 
             {/* Right Column: Visual Images */}
             <div className="space-y-6">
-              <h3 className="text-sm font-semibold text-zinc-700">Hình ảnh tài liệu đã tải lên</h3>
+              <h3 className="text-sm font-semibold text-zinc-700">
+                Hình ảnh tài liệu đã tải lên
+              </h3>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <span className="text-[11px] font-bold text-zinc-500 block text-center">Mặt trước CCCD</span>
+                  <span className="text-[11px] font-bold text-zinc-500 block text-center">
+                    Mặt trước CCCD
+                  </span>
                   <div className="aspect-[1.6/1] rounded-xl overflow-hidden border border-black/5 bg-zinc-100 flex items-center justify-center relative">
                     {selectedSession.frontImageUrl ? (
-                      <a href={getImageUrl(selectedSession.frontImageUrl)} target="_blank" rel="noopener noreferrer" className="w-full h-full">
-                        <img src={getImageUrl(selectedSession.frontImageUrl)} className="w-full h-full object-contain hover:scale-105 transition-transform" alt="Front" />
+                      <a
+                        href={getImageUrl(selectedSession.frontImageUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full h-full"
+                      >
+                        <img
+                          src={getImageUrl(selectedSession.frontImageUrl)}
+                          className="w-full h-full object-contain hover:scale-105 transition-transform"
+                          alt="Front"
+                        />
                       </a>
                     ) : (
-                      <span className="text-xs text-zinc-400">Không có ảnh</span>
+                      <span className="text-xs text-zinc-400">
+                        Không có ảnh
+                      </span>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <span className="text-[11px] font-bold text-zinc-500 block text-center">Mặt sau CCCD</span>
+                  <span className="text-[11px] font-bold text-zinc-500 block text-center">
+                    Mặt sau CCCD
+                  </span>
                   <div className="aspect-[1.6/1] rounded-xl overflow-hidden border border-black/5 bg-zinc-100 flex items-center justify-center relative">
                     {selectedSession.backImageUrl ? (
-                      <a href={getImageUrl(selectedSession.backImageUrl)} target="_blank" rel="noopener noreferrer" className="w-full h-full">
-                        <img src={getImageUrl(selectedSession.backImageUrl)} className="w-full h-full object-contain hover:scale-105 transition-transform" alt="Back" />
+                      <a
+                        href={getImageUrl(selectedSession.backImageUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full h-full"
+                      >
+                        <img
+                          src={getImageUrl(selectedSession.backImageUrl)}
+                          className="w-full h-full object-contain hover:scale-105 transition-transform"
+                          alt="Back"
+                        />
                       </a>
                     ) : (
-                      <span className="text-xs text-zinc-400">Không có ảnh</span>
+                      <span className="text-xs text-zinc-400">
+                        Không có ảnh
+                      </span>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-2 col-span-2 flex flex-col items-center">
-                  <span className="text-[11px] font-bold text-zinc-500 block">Ảnh Selfie chân dung</span>
+                  <span className="text-[11px] font-bold text-zinc-500 block">
+                    Ảnh Selfie chân dung
+                  </span>
                   <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-white shadow bg-zinc-100 flex items-center justify-center relative">
                     {selectedSession.selfieImageUrl ? (
-                      <a href={getImageUrl(selectedSession.selfieImageUrl)} target="_blank" rel="noopener noreferrer" className="w-full h-full">
-                        <img src={getImageUrl(selectedSession.selfieImageUrl)} className="w-full h-full object-cover hover:scale-105 transition-transform" alt="Selfie" />
+                      <a
+                        href={getImageUrl(selectedSession.selfieImageUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full h-full"
+                      >
+                        <img
+                          src={getImageUrl(selectedSession.selfieImageUrl)}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform"
+                          alt="Selfie"
+                        />
                       </a>
                     ) : (
-                      <span className="text-xs text-zinc-400">Không có ảnh</span>
+                      <span className="text-xs text-zinc-400">
+                        Không có ảnh
+                      </span>
                     )}
                   </div>
                 </div>
                 <div className="space-y-2 col-span-2">
-                  <span className="text-[11px] font-bold text-zinc-500 block text-center">Liveness video</span>
+                  <span className="text-[11px] font-bold text-zinc-500 block text-center">
+                    Liveness video
+                  </span>
                   <div className="rounded-xl border border-black/5 bg-zinc-100 flex items-center justify-center p-3">
                     {selectedSession.livenessVideoUrl ? (
-                      <a href={getImageUrl(selectedSession.livenessVideoUrl)} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-red-600 hover:text-zinc-950">
+                      <a
+                        href={getImageUrl(selectedSession.livenessVideoUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-bold text-red-600 hover:text-zinc-950"
+                      >
                         Open liveness video
                       </a>
                     ) : (
@@ -530,9 +697,21 @@ export default function KycManagement() {
         open={isResolveOpen}
         onOpenChange={setIsResolveOpen}
         icon={resolveAction === "approve" ? CheckCircle2 : XCircle}
-        iconClassName={resolveAction === "approve" ? "bg-emerald-600 text-white shadow-emerald-100 shadow-lg" : "bg-red-600 text-white shadow-red-100 shadow-lg"}
-        title={resolveAction === "approve" ? "Phê duyệt hồ sơ eKYC" : "Từ chối hồ sơ eKYC"}
-        description={resolveAction === "approve" ? "Hồ sơ của khách hàng sẽ được phê duyệt. Trạng thái của khách hàng sẽ đổi thành VERIFIED." : "Vui lòng nhập lý do từ chối hồ sơ eKYC để gửi thông báo lại cho khách hàng."}
+        iconClassName={
+          resolveAction === "approve"
+            ? "bg-emerald-600 text-white shadow-emerald-100 shadow-lg"
+            : "bg-red-600 text-white shadow-red-100 shadow-lg"
+        }
+        title={
+          resolveAction === "approve"
+            ? "Phê duyệt hồ sơ eKYC"
+            : "Từ chối hồ sơ eKYC"
+        }
+        description={
+          resolveAction === "approve"
+            ? "Hồ sơ của khách hàng sẽ được phê duyệt. Trạng thái của khách hàng sẽ đổi thành VERIFIED."
+            : "Vui lòng nhập lý do từ chối hồ sơ eKYC để gửi thông báo lại cho khách hàng."
+        }
         onSubmit={(e) => {
           e.preventDefault();
           handleResolveSubmit();
@@ -546,7 +725,11 @@ export default function KycManagement() {
           <Textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder={resolveAction === "approve" ? "Nhập ghi chú phê duyệt (tùy chọn)" : "Lý do ảnh mờ, thông tin không trùng khớp..."}
+            placeholder={
+              resolveAction === "approve"
+                ? "Nhập ghi chú phê duyệt (tùy chọn)"
+                : "Lý do ảnh mờ, thông tin không trùng khớp..."
+            }
             className="min-h-[100px] bg-zinc-50 border-black/5 focus:bg-white focus-visible:ring-red-600/20 focus-visible:border-red-600 transition-all text-xs font-medium rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.04)] resize-none text-zinc-800 placeholder:text-zinc-400"
           />
         </div>
@@ -558,7 +741,8 @@ export default function KycManagement() {
 function getImageUrl(url: string | null | undefined) {
   if (!url) return "";
   if (url.startsWith("http")) return url;
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+  const apiBaseUrl =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
   const baseUrl = apiBaseUrl.replace(/\/api$/, "");
   const cleanUrl = url.startsWith("/") ? url : `/${url}`;
   return `${baseUrl}${cleanUrl}`;
@@ -569,10 +753,17 @@ function formatPercent(value: number | null | undefined) {
   return `${(value * 100).toFixed(0)}%`;
 }
 
-function RiskBadge({ session }: { session: Pick<KycSessionResponse, "riskLevel" | "riskScore"> }) {
+function RiskBadge({
+  session,
+}: {
+  session: Pick<KycSessionResponse, "riskLevel" | "riskScore">;
+}) {
   if (!session.riskLevel) {
     return (
-      <Badge variant="outline" className="bg-zinc-50 text-zinc-500 border-zinc-200 font-bold">
+      <Badge
+        variant="outline"
+        className="bg-zinc-50 text-zinc-500 border-zinc-200 font-bold"
+      >
         N/A
       </Badge>
     );
@@ -591,7 +782,9 @@ function DetailRow({ label, value }: { label: string; value?: string }) {
   return (
     <div className="flex justify-between items-center py-2.5 border-b border-zinc-200/50 last:border-0">
       <span className="text-xs font-medium text-zinc-500">{label}</span>
-      <span className="text-xs font-extrabold text-zinc-800 text-right max-w-[65%] truncate">{value || "---"}</span>
+      <span className="text-xs font-extrabold text-zinc-800 text-right max-w-[65%] truncate">
+        {value || "---"}
+      </span>
     </div>
   );
 }

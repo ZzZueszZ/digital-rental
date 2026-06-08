@@ -419,12 +419,12 @@ export default function ProductDetailPage({
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
         {/* Left Column: Gallery & Visuals */}
         <div className="xl:col-span-7 space-y-6">
-          <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-zinc-50 border border-zinc-100 shadow-sm group">
+          <div className="relative flex min-h-[520px] items-center justify-center overflow-hidden rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
             <Image
               src={getImageUrl(currentImage)}
               alt={product.name}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className="object-contain p-8"
               unoptimized
             />
             {/* Overlay Badges */}
@@ -454,7 +454,7 @@ export default function ProductDetailPage({
                   src={getImageUrl(img)}
                   alt={`Gallery ${idx}`}
                   fill
-                  className="object-cover"
+                  className="object-contain p-2"
                   unoptimized
                 />
               </button>

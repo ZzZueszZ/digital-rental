@@ -1,28 +1,27 @@
 "use client";
 
 import {
-  AreaChart,
   Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip as RechartsTooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
 } from "recharts";
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
 import {
-  RevenueDashboardResponse,
   DailyOrderStatResponse,
+  RevenueDashboardResponse,
 } from "@/services/dashboard";
 
 interface DashboardChartsProps {
@@ -30,35 +29,41 @@ interface DashboardChartsProps {
   dailyOrders: DailyOrderStatResponse[];
 }
 
+const tooltipStyle = {
+  borderRadius: "12px",
+  border: "1px solid #e4e4e7",
+  boxShadow: "0 10px 24px rgba(15,23,42,0.06)",
+  padding: "10px 12px",
+};
+
 export function DashboardCharts({
   revenueData,
   dailyOrders,
 }: DashboardChartsProps) {
   return (
-    <div className="grid gap-5 sm:gap-6 grid-cols-1 xl:grid-cols-7">
-      {/* Revenue Area Chart */}
-      <Card className="xl:col-span-4 rounded-xl border-zinc-200 overflow-hidden bg-white shadow-sm">
-        <CardHeader className="border-b border-zinc-50 py-4 px-5">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="grid grid-cols-1 gap-5 xl:grid-cols-7">
+      <Card className="overflow-hidden rounded-xl border-zinc-200/80 bg-white shadow-none xl:col-span-4">
+        <CardHeader className="border-b border-zinc-100 px-5 py-4">
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div>
-              <CardTitle className="text-[22px] font-semibold tracking-tight text-zinc-950">
-                Biểu đồ dòng tiền
+              <CardTitle className="text-xl font-semibold tracking-tight text-zinc-950">
+                Dòng tiền
               </CardTitle>
-              <CardDescription className="text-[14px] font-medium text-zinc-500">
-                Hoạt động doanh thu 30 ngày qua
+              <CardDescription className="text-sm font-medium text-zinc-500">
+                Doanh thu trong 30 ngày gần nhất
               </CardDescription>
             </div>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-xl h-10 px-5 text-[14px] font-semibold border-zinc-200 hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-all duration-150"
+              className="h-9 rounded-xl border-zinc-200 bg-white px-4 text-[13px] font-medium text-zinc-700 hover:bg-zinc-950 hover:text-white"
             >
               Xuất báo cáo
             </Button>
           </div>
         </CardHeader>
         <CardContent className="p-4 sm:p-5">
-          <div className="h-[280px] sm:h-[350px] w-full mt-4">
+          <div className="mt-2 h-[280px] w-full sm:h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={revenueData?.dailyStats || []}
@@ -66,7 +71,7 @@ export function DashboardCharts({
               >
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.15} />
+                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.16} />
                     <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                   </linearGradient>
                 </defs>
@@ -76,16 +81,14 @@ export function DashboardCharts({
                   axisLine={false}
                   tickFormatter={(val) => val.split("-").slice(2).join("/")}
                   stroke="#a1a1aa"
-                  fontSize={10}
-                  fontWeight={600}
+                  fontSize={11}
                   dy={10}
                 />
                 <YAxis
                   tickLine={false}
                   axisLine={false}
                   stroke="#a1a1aa"
-                  fontSize={10}
-                  fontWeight={600}
+                  fontSize={11}
                   tickFormatter={(val) => `${val / 1000000}M`}
                 />
                 <CartesianGrid
@@ -94,21 +97,15 @@ export function DashboardCharts({
                   stroke="#e4e4e7"
                 />
                 <RechartsTooltip
-                  contentStyle={{
-                    borderRadius: "1rem",
-                    border: "none",
-                    boxShadow: "0 20px 40px -10px rgba(0,0,0,0.1)",
-                    padding: "12px 16px",
-                  }}
+                  contentStyle={tooltipStyle}
                   itemStyle={{
                     color: "#18181b",
-                    fontWeight: 800,
-                    fontSize: "14px",
+                    fontWeight: 600,
+                    fontSize: "13px",
                   }}
                   labelStyle={{
                     color: "#71717a",
                     fontSize: "12px",
-                    fontWeight: 600,
                     marginBottom: "4px",
                   }}
                 />
@@ -116,7 +113,7 @@ export function DashboardCharts({
                   type="monotone"
                   dataKey="revenue"
                   stroke="#ef4444"
-                  strokeWidth={3}
+                  strokeWidth={2.5}
                   fillOpacity={1}
                   fill="url(#colorRevenue)"
                 />
@@ -126,18 +123,17 @@ export function DashboardCharts({
         </CardContent>
       </Card>
 
-      {/* Daily Orders Bar Chart */}
-      <Card className="xl:col-span-3 rounded-xl border-zinc-200 overflow-hidden bg-white shadow-sm">
-        <CardHeader className="border-b border-zinc-50 py-4 px-5">
-          <CardTitle className="text-[22px] font-semibold tracking-tight text-zinc-950">
+      <Card className="overflow-hidden rounded-xl border-zinc-200/80 bg-white shadow-none xl:col-span-3">
+        <CardHeader className="border-b border-zinc-100 px-5 py-4">
+          <CardTitle className="text-xl font-semibold tracking-tight text-zinc-950">
             Đơn hàng mới
           </CardTitle>
-          <CardDescription className="text-[14px] font-medium text-zinc-500">
+          <CardDescription className="text-sm font-medium text-zinc-500">
             Tần suất giao dịch mỗi ngày
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4 sm:p-5">
-          <div className="h-[280px] sm:h-[350px] w-full mt-4">
+          <div className="mt-2 h-[280px] w-full sm:h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={dailyOrders}
@@ -149,16 +145,14 @@ export function DashboardCharts({
                   axisLine={false}
                   tickFormatter={(val) => val.split("-").slice(2).join("/")}
                   stroke="#a1a1aa"
-                  fontSize={10}
-                  fontWeight={600}
+                  fontSize={11}
                   dy={10}
                 />
                 <YAxis
                   tickLine={false}
                   axisLine={false}
                   stroke="#a1a1aa"
-                  fontSize={10}
-                  fontWeight={600}
+                  fontSize={11}
                 />
                 <CartesianGrid
                   vertical={false}
@@ -167,29 +161,23 @@ export function DashboardCharts({
                 />
                 <RechartsTooltip
                   cursor={{ fill: "#f4f4f5", radius: 8 }}
-                  contentStyle={{
-                    borderRadius: "1rem",
-                    border: "none",
-                    boxShadow: "0 20px 40px -10px rgba(0,0,0,0.1)",
-                    padding: "12px 16px",
-                  }}
+                  contentStyle={tooltipStyle}
                   itemStyle={{
                     color: "#18181b",
-                    fontWeight: 800,
-                    fontSize: "14px",
+                    fontWeight: 600,
+                    fontSize: "13px",
                   }}
                   labelStyle={{
                     color: "#71717a",
                     fontSize: "12px",
-                    fontWeight: 600,
                     marginBottom: "4px",
                   }}
                 />
                 <Bar
                   dataKey="count"
                   fill="#18181b"
-                  radius={[4, 4, 0, 0]}
-                  barSize={15}
+                  radius={[6, 6, 0, 0]}
+                  barSize={16}
                 />
               </BarChart>
             </ResponsiveContainer>

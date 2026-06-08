@@ -28,7 +28,7 @@ export function BulkActionToolbar({
         >
           <CheckSquare className="w-4 h-4" />
         </button>
-        <span className="text-xs font-bold text-white">
+        <span className="text-xs font-semibold text-white">
           Đã chọn <span className="text-red-400">{count}</span> tài khoản
         </span>
       </div>
@@ -37,7 +37,7 @@ export function BulkActionToolbar({
         {viewMode === "ACTIVE" ? (
           <button
             onClick={onDeleteMany}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold transition-colors"
           >
             <Trash2 className="w-3.5 h-3.5" />
             Vô hiệu hóa ({count})
@@ -45,7 +45,7 @@ export function BulkActionToolbar({
         ) : (
           <button
             onClick={onRestoreMany}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Khôi phục ({count})
@@ -53,7 +53,7 @@ export function BulkActionToolbar({
         )}
         <button
           onClick={onClearSelection}
-          className="px-3 py-1.5 rounded-xl text-zinc-400 hover:text-white text-xs font-bold transition-colors"
+          className="px-3 py-1.5 rounded-xl text-zinc-400 hover:text-white text-xs font-semibold transition-colors"
         >
           Bỏ chọn
         </button>

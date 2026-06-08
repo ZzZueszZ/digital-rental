@@ -90,12 +90,12 @@ export function CategoryMobileCard({
           </div>
           <div>
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+              <span className="text-[10px] font-semibold  tracking-tight text-zinc-400">
                 {category.code}
               </span>
               <Badge
                 className={cn(
-                  "rounded-xl px-1.5 py-0 text-[8px] font-black uppercase border-0 ring-0",
+                  "rounded-xl px-1.5 py-0 text-[8px] font-semibold  border-0 ring-0",
                   category.isActive
                     ? "bg-emerald-50 text-emerald-600"
                     : "bg-zinc-900 text-white",
@@ -104,7 +104,7 @@ export function CategoryMobileCard({
                 {category.isActive ? "HĐ" : "Vô hiệu"}
               </Badge>
             </div>
-            <h3 className="text-sm font-black text-zinc-950 tracking-tight">
+            <h3 className="text-sm font-semibold text-zinc-950 tracking-tight">
               {category.name}
             </h3>
           </div>
@@ -118,7 +118,7 @@ export function CategoryMobileCard({
       <div className="pt-3 border-t border-zinc-50 flex items-center justify-between">
         <div className="flex items-center gap-1.5 text-zinc-400">
           <Calendar className="w-3 h-3" />
-          <span className="text-[10px] font-bold">
+          <span className="text-[10px] font-semibold">
             {format(new Date(category.createdAt), "dd/MM/yyyy", { locale: vi })}
           </span>
         </div>

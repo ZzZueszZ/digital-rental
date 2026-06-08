@@ -199,7 +199,7 @@ export function UserProfileCard({
             />
           ) : (
             <div className="w-24 h-24 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center">
-              <span className="text-zinc-700 font-bold text-4xl">
+              <span className="text-zinc-700 font-semibold text-4xl">
                 {user.email.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -260,7 +260,7 @@ export function UserProfileCard({
                   type="button"
                   onClick={() => toggleRole(role)}
                   className={cn(
-                    "text-[10px] font-bold px-3 py-1.5 rounded-xl uppercase tracking-tight border transition-all",
+                    "text-[10px] font-semibold px-3 py-1.5 rounded-xl  tracking-tight border transition-all",
                     roles.includes(role)
                       ? "bg-zinc-950 text-white border-zinc-950"
                       : "bg-white text-zinc-400 border-zinc-200 hover:border-zinc-300",
@@ -276,7 +276,7 @@ export function UserProfileCard({
                 <span
                   key={role}
                   className={cn(
-                    "text-[10px] font-bold px-3 py-1.5 rounded-xl uppercase tracking-tight border bg-white text-zinc-500 border-zinc-200",
+                    "text-[10px] font-semibold px-3 py-1.5 rounded-xl  tracking-tight border bg-white text-zinc-500 border-zinc-200",
                   )}
                 >
                   {role}
@@ -342,7 +342,7 @@ export function UserProfileCard({
       {/* ── PROFILE DETAILS ─────────────────────────────────────── */}
       <div className="px-6 py-4">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-[18px] font-bold text-zinc-950 tracking-tight">
+          <p className="text-[18px] font-semibold text-zinc-950 tracking-tight">
             Hồ sơ cá nhân
           </p>
           {!isEditing &&
@@ -358,7 +358,7 @@ export function UserProfileCard({
                   size="sm"
                   onClick={handleProfileSave}
                   disabled={updateMutation.isPending}
-                  className="h-10 px-6 text-[14px] rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold transition-all flex items-center gap-2 shadow-md shadow-zinc-200 border-none"
+                  className="h-10 px-6 text-[14px] rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold transition-all flex items-center gap-2  border-none"
                 >
                   {updateMutation.isPending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -433,7 +433,7 @@ export function UserProfileCard({
                     className={cn(
                       "flex-1 h-10 rounded-xl text-[13px] font-semibold border transition-all",
                       form.gender === g.value
-                        ? "bg-zinc-950 text-white border-zinc-950 shadow-lg shadow-zinc-200"
+                        ? "bg-zinc-950 text-white border-zinc-950 "
                         : "bg-white text-zinc-500 border-black/5 hover:border-zinc-300 shadow-dash-card",
                     )}
                   >

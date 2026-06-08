@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { PackageOpen, TrendingUp } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface TopProduct {
   productId: number;
@@ -26,56 +25,60 @@ export function TopProductsCard({ products }: TopProductsCardProps) {
   };
 
   return (
-    <div className="admin-card flex flex-col h-full !p-0 rounded-xl">
-      <div className="p-4 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/20">
+    <div className="admin-card flex h-full flex-col !p-0">
+      <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-4">
         <div className="flex items-center gap-2">
-           <PackageOpen className="w-4 h-4 text-zinc-400" />
-           <span className="text-[15px] font-semibold text-zinc-900 tracking-tight">Sản phẩm tiêu biểu</span>
+          <PackageOpen className="h-4 w-4 text-zinc-500" />
+          <span className="text-[15px] font-semibold tracking-tight text-zinc-900">
+            Thiết bị nổi bật
+          </span>
         </div>
-        <TrendingUp className="w-4 h-4 text-emerald-500" />
+        <TrendingUp className="h-4 w-4 text-emerald-500" />
       </div>
 
-      <div className="p-2 overflow-y-auto">
+      <div className="flex-1 p-2">
         <div className="space-y-1">
           {products.length === 0 ? (
-            <div className="py-12 text-center text-xs text-zinc-400 italic">Chưa có dữ liệu bán hàng</div>
+            <div className="py-12 text-center text-sm font-medium text-zinc-400">
+              Chưa có dữ liệu bán hàng
+            </div>
           ) : (
-            products.map((p, i) => (
+            products.map((product, index) => (
               <div
-                key={p.productId}
-                className="flex items-center justify-between group p-2 rounded-xl transition-all border border-transparent hover:border-zinc-100 hover:bg-zinc-50/50"
+                key={product.productId}
+                className="group flex items-center justify-between rounded-xl border border-transparent p-2 transition-all hover:border-zinc-200 hover:bg-zinc-50/70"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl border border-zinc-100 overflow-hidden relative flex-shrink-0 bg-white shadow-sm">
-                    {p.imageUrl ? (
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-white">
+                    {product.imageUrl ? (
                       <Image
-                        src={getImageUrl(p.imageUrl)}
-                        alt={p.productName}
+                        src={getImageUrl(product.imageUrl)}
+                        alt={product.productName}
                         fill
-                        className="object-contain p-1 group-hover:scale-110 transition-transform duration-500"
+                        className="object-contain p-1 transition-transform duration-500 group-hover:scale-105"
                         unoptimized
                       />
                     ) : (
-                      <div className="w-full h-full bg-zinc-50 flex items-center justify-center font-bold text-zinc-300 text-xs">
-                        {i + 1}
+                      <div className="flex h-full w-full items-center justify-center bg-zinc-50 text-xs font-semibold text-zinc-300">
+                        {index + 1}
                       </div>
                     )}
                   </div>
-                  <div className="min-w-0 flex flex-col">
-                    <p className="text-[13px] font-bold text-zinc-950 truncate leading-tight mb-0.5">
-                      {p.productName}
+                  <div className="min-w-0">
+                    <p className="truncate text-[13px] font-semibold leading-tight text-zinc-950">
+                      {product.productName}
                     </p>
-                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider truncate">
-                      {p.brand}
+                    <p className="mt-1 truncate text-[12px] font-medium text-zinc-400">
+                      {product.brand}
                     </p>
                   </div>
                 </div>
-                <div className="text-right flex flex-col items-end pr-1">
-                  <div className="font-bold text-[15px] text-zinc-950 leading-none">
-                    {p.totalSold}
+                <div className="text-right">
+                  <div className="text-[15px] font-semibold leading-none text-zinc-950">
+                    {product.totalSold}
                   </div>
-                  <div className="text-[10px] font-bold text-zinc-300 uppercase mt-1">
-                    Sales
+                  <div className="mt-1 text-[11px] font-medium text-zinc-400">
+                    lượt bán
                   </div>
                 </div>
               </div>

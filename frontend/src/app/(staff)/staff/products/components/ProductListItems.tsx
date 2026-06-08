@@ -84,7 +84,7 @@ export function ProductTableRow({
             <Badge
               variant="outline"
               className={cn(
-                "text-[10px] font-bold px-1.5 py-0 border-0 shadow-none",
+                "text-[10px] font-semibold px-1.5 py-0 border-0 shadow-none",
                 product.isForRent
                   ? "bg-amber-100/50 text-amber-700"
                   : "bg-zinc-100 text-zinc-400",
@@ -101,7 +101,7 @@ export function ProductTableRow({
             <Badge
               variant="outline"
               className={cn(
-                "text-[10px] font-bold px-1.5 py-0 border-0 shadow-none",
+                "text-[10px] font-semibold px-1.5 py-0 border-0 shadow-none",
                 product.isForSale
                   ? "bg-blue-100/50 text-blue-700"
                   : "bg-zinc-100 text-zinc-400",
@@ -209,12 +209,12 @@ export function ProductMobileCard({
           </div>
           <div className="overflow-hidden">
             <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 bg-zinc-100 px-1.5 rounded-xl">
+              <span className="text-[10px] font-semibold  tracking-tight text-zinc-400 bg-zinc-100 px-1.5 rounded-xl">
                 #{product.id}
               </span>
               <Badge
                 className={cn(
-                  "rounded-full px-2 py-0 text-[9px] font-black uppercase tracking-widest border-0",
+                  "rounded-full px-2 py-0 text-[9px] font-semibold  tracking-tight border-0",
                   !isDeleted
                     ? product.active
                       ? "bg-emerald-50 text-emerald-600"
@@ -227,7 +227,7 @@ export function ProductMobileCard({
             </div>
             <h3
               onClick={() => onView(product.id)}
-              className="text-sm font-black text-zinc-950 tracking-tight truncate max-w-full cursor-pointer hover:text-indigo-600"
+              className="text-sm font-semibold text-zinc-950 tracking-tight truncate max-w-full cursor-pointer hover:text-indigo-600"
             >
               {product.name}
             </h3>
@@ -253,7 +253,7 @@ export function ProductMobileCard({
 
       <div className="grid grid-cols-2 gap-3 p-3 bg-zinc-50 rounded-xl">
         <div className="flex flex-col">
-          <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest mb-1 flex items-center gap-1">
+          <span className="text-[9px] font-semibold  text-zinc-400 tracking-tight mb-1 flex items-center gap-1">
             <div
               className={cn(
                 "w-1.5 h-1.5 rounded-full",
@@ -262,12 +262,12 @@ export function ProductMobileCard({
             />{" "}
             Thuê ({product.rentalQuantity ?? 0})
           </span>
-          <span className="text-sm font-bold text-zinc-950">
+          <span className="text-sm font-semibold text-zinc-950">
             {product.rentPricePerDay?.toLocaleString("vi-VN")} ₫
           </span>
         </div>
         <div className="flex flex-col pl-3 border-l border-zinc-200">
-          <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest mb-1 flex items-center gap-1">
+          <span className="text-[9px] font-semibold  text-zinc-400 tracking-tight mb-1 flex items-center gap-1">
             <div
               className={cn(
                 "w-1.5 h-1.5 rounded-full",
@@ -276,7 +276,7 @@ export function ProductMobileCard({
             />{" "}
             Bán ({product.quantity})
           </span>
-          <span className="text-sm font-bold text-zinc-950">
+          <span className="text-sm font-semibold text-zinc-950">
             {product.salePrice?.toLocaleString("vi-VN")} ₫
           </span>
         </div>
@@ -285,7 +285,7 @@ export function ProductMobileCard({
       <div className="pt-2 border-t border-zinc-50 flex items-center justify-between">
         <div className="flex items-center gap-1.5 text-zinc-400">
           <Calendar className="w-3.5 h-3.5" />
-          <span className="text-[10px] font-bold">
+          <span className="text-[10px] font-semibold">
             {format(new Date(product.createdAt), "dd/MM/yyyy", { locale: vi })}
           </span>
         </div>
@@ -294,7 +294,7 @@ export function ProductMobileCard({
             onClick={() => onView(product.id)}
             className="p-1.5 rounded-xl bg-zinc-50 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-all flex items-center gap-1 px-3"
           >
-            <span className="text-[10px] font-bold text-zinc-600">
+            <span className="text-[10px] font-semibold text-zinc-600">
               Chi tiết
             </span>
             <ChevronRight className="w-3.5 h-3.5" />

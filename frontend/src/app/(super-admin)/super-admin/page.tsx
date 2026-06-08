@@ -1,22 +1,21 @@
 "use client";
 
-import { DollarSign, ShoppingCart, Users, AlertTriangle } from "lucide-react";
+import { AlertTriangle, DollarSign, ShoppingCart, Users } from "lucide-react";
 import {
-  useRevenueStats,
-  useOrderStats,
-  useUserSummaryStats,
-  useTopProductsStats,
-  useLowStockStats,
   useDailyOrderStats,
+  useLowStockStats,
+  useOrderStats,
+  useRevenueStats,
+  useTopProductsStats,
+  useUserSummaryStats,
 } from "@/services/dashboard";
-import { StatCard } from "./components/StatCard";
 import { DashboardCharts } from "./components/DashboardCharts";
-import { TopProductsCard } from "./components/TopProductsCard";
 import { LowStockCard } from "./components/LowStockCard";
 import { RecentActivityCard } from "./components/RecentActivityCard";
+import { StatCard } from "./components/StatCard";
+import { TopProductsCard } from "./components/TopProductsCard";
 
 export default function AdminDashboardPage() {
-  // Fetch data
   const { data: revenueRes } = useRevenueStats();
   const { data: orderRes } = useOrderStats();
   const { data: userSummaryRes } = useUserSummaryStats();
@@ -32,20 +31,52 @@ export default function AdminDashboardPage() {
   const dailyOrders = dailyOrdersRes?.data || [];
 
   return (
-    <div className="flex-1 space-y-4 lg:space-y-6">
-      {/* KPI Stats Grid */}
-      <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="flex-1 space-y-5 lg:space-y-6">
+      <section className="rounded-xl border border-zinc-200/80 bg-white p-5 sm:p-6">
+        <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+          <div className="max-w-2xl">
+            <span className="mb-3 inline-flex rounded-full border border-red-100 bg-red-50 px-3 py-1 text-[13px] font-medium text-red-600">
+              Bảng điều phối
+            </span>
+            <h2 className="text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">
+              Theo dõi vận hành Digital Rental.
+            </h2>
+            <p className="mt-2 text-sm font-medium leading-6 text-zinc-500">
+              Nắm nhanh doanh thu, đơn hàng, người dùng và tình trạng kho trong
+              một màn hình gọn gàng.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-sm sm:min-w-[320px]">
+            <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3">
+              <p className="text-xs font-medium text-zinc-500">Đơn hàng</p>
+              <p className="mt-1 text-lg font-semibold text-zinc-950">
+                {orderData?.totalOrders || 0}
+              </p>
+            </div>
+            <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3">
+              <p className="text-xs font-medium text-zinc-500">Chờ duyệt</p>
+              <p className="mt-1 text-lg font-semibold text-zinc-950">
+                {userSummary?.pendingUsers || 0}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Doanh thu (30 ngày)"
-          value={revenueData?.totalRevenue
-            ? new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              }).format(revenueData.totalRevenue)
-            : "0 ₫"}
+          title="Doanh thu 30 ngày"
+          value={
+            revenueData?.totalRevenue
+              ? new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(revenueData.totalRevenue)
+              : "0 ₫"
+          }
           trend={revenueData?.growthRate ?? 0}
           icon={DollarSign}
-          accent="bg-red-500"
+          accent="bg-red-600"
         />
         <StatCard
           title="Người dùng mới"
@@ -70,19 +101,14 @@ export default function AdminDashboardPage() {
         />
       </div>
 
-      {/* Charts Section */}
       <DashboardCharts revenueData={revenueData} dailyOrders={dailyOrders} />
 
-      {/* Bottom Grid: Inventory Alerts & Popular Items */}
-      <div className="grid gap-5 grid-cols-1 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         <LowStockCard products={lowStock} />
         <TopProductsCard products={topProducts} />
       </div>
 
-      {/* System Activity: Full Width for maximum detail */}
-      <div className="w-full">
-        <RecentActivityCard />
-      </div>
+      <RecentActivityCard />
     </div>
   );
 }

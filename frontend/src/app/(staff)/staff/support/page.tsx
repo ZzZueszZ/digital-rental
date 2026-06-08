@@ -72,13 +72,13 @@ export default function AdminSupportPage() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-8">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
+                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center ">
                     <MessageSquare
                       className="w-4.5 h-4.5 text-white"
                       strokeWidth={2}
                     />
                   </div>
-                  <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
+                  <h2 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
                     Hỗ trợ khách hàng
                   </h2>
                 </div>

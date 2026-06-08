@@ -34,6 +34,7 @@ export function CategoryDialog({
 
   // Reset form when dialog opens or closes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFormData({
       code: category?.code || "",
       name: category?.name || "",
@@ -65,7 +66,7 @@ export function CategoryDialog({
       open={open}
       onOpenChange={onOpenChange}
       icon={Tag}
-      iconClassName="bg-red-600 text-white shadow-lg shadow-red-100/20"
+      iconClassName="bg-red-600 text-white "
       title={category ? "Cập nhật danh mục" : "Tạo danh mục mới"}
       description={
         category
@@ -89,7 +90,7 @@ export function CategoryDialog({
           disabled={!!category}
           placeholder="LAPTOP, CAMERA..."
           className={cn(
-            "h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[14px] uppercase shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
+            "h-10 rounded-xl bg-zinc-50/50 border border-zinc-950/5 focus:bg-white focus:border-red-600/30 font-semibold text-[14px]  shadow-dash-card transition-all duration-200 ease-in-out focus:ring-4 focus:ring-red-600/5",
             errors.code && "border-red-400 focus:ring-red-400/20",
           )}
         />

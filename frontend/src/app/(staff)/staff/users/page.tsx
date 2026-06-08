@@ -268,10 +268,10 @@ export default function UsersAdminPage() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-6">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
+                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center ">
                     <Users className="w-4.5 h-4.5 text-white" strokeWidth={2} />
                   </div>
-                  <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
+                  <h2 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
                     {viewMode === "ACTIVE" ? "Quản lý thành viên" : "Thùng rác"}
                   </h2>
                 </div>
@@ -324,7 +324,7 @@ export default function UsersAdminPage() {
               <div className="w-16 h-16 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
                 <Aperture className="w-7 h-7 text-zinc-300" />
               </div>
-              <p className="text-sm font-bold text-zinc-400">
+              <p className="text-sm font-semibold text-zinc-400">
                 Không tìm thấy thành viên
               </p>
               <p className="text-xs text-zinc-300">
@@ -351,7 +351,7 @@ export default function UsersAdminPage() {
                 <div className="flex items-center gap-3">
 
                   <div className="w-10 h-10 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
-                    <span className="font-bold text-sm text-zinc-700">
+                    <span className="font-semibold text-sm text-zinc-700">
                       {u.email.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -429,7 +429,7 @@ export default function UsersAdminPage() {
                     <span
                       key={role}
                       className={cn(
-                        "inline-block text-xs font-bold px-2 py-0.5 rounded-xl border",
+                        "inline-block text-xs font-semibold px-2 py-0.5 rounded-xl border",
                         role === "SUPER_ADMIN" || role === "ADMIN"
                           ? "bg-red-50 text-red-700 border-red-200"
                           : "bg-zinc-50 text-zinc-600 border-zinc-200",
@@ -501,7 +501,7 @@ export default function UsersAdminPage() {
                       <div className="w-16 h-16 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
                         <Aperture className="w-7 h-7 text-zinc-300" />
                       </div>
-                      <p className="text-sm font-bold text-zinc-400">
+                      <p className="text-sm font-semibold text-zinc-400">
                         Không tìm thấy thành viên
                       </p>
                       <p className="text-xs text-zinc-300">
@@ -530,7 +530,7 @@ export default function UsersAdminPage() {
                     <td className="px-6 py-3">
                       <div className="flex items-center gap-3.5">
                         <div className="w-9 h-9 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
-                          <span className="font-bold text-sm text-zinc-700">
+                          <span className="font-semibold text-sm text-zinc-700">
                             {u.email.charAt(0).toUpperCase()}
                           </span>
                         </div>
@@ -564,7 +564,7 @@ export default function UsersAdminPage() {
                             <span
                               key={role}
                               className={cn(
-                                "inline-block text-xs font-bold px-2 py-0.5 rounded-xl border",
+                                "inline-block text-xs font-semibold px-2 py-0.5 rounded-xl border",
                                 isSpecial
                                   ? "bg-red-50 text-red-700 border-red-200"
                                   : "bg-zinc-50 text-zinc-600 border-zinc-200",

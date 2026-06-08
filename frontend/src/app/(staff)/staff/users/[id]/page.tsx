@@ -30,7 +30,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-20 gap-4">
         <XCircle className="w-12 h-12 text-red-500" />
-        <h2 className="text-xl font-bold text-zinc-950">Không tìm thấy tài khoản</h2>
+        <h2 className="text-xl font-semibold text-zinc-950">Không tìm thấy tài khoản</h2>
         <Button variant="outline" onClick={() => router.back()} className="mt-4 rounded-xl">Quay lại</Button>
       </div>
     );

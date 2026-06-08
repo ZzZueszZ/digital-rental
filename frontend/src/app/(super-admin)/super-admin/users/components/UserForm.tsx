@@ -188,7 +188,7 @@ export function UserForm({
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div className="space-y-0.5">
-            <h1 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
+            <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
               {isEditing ? "Chỉnh sửa hồ sơ" : "Hồ sơ người dùng"}
             </h1>
             <p className="text-[14px] font-medium text-zinc-500">
@@ -220,7 +220,7 @@ export function UserForm({
               <Button
                 onClick={handleSubmit}
                 disabled={isPending}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 border-none"
+                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2  whitespace-nowrap active:scale-95 border-none"
               >
                 {isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -233,7 +233,7 @@ export function UserForm({
           ) : (
             <Button
               onClick={() => router.push(`/super-admin/users/${userId}/edit`)}
-              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 border-none"
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2  whitespace-nowrap active:scale-95 border-none"
             >
               <Edit2 className="w-4 h-4" />
               Chỉnh sửa
@@ -279,7 +279,7 @@ export function UserForm({
               )}
             />
             <CardHeader className="px-6 pt-6 pb-4">
-              <CardTitle className="text-[18px] font-bold text-zinc-950 flex items-center gap-2 tracking-tight">
+              <CardTitle className="text-[18px] font-semibold text-zinc-950 flex items-center gap-2 tracking-tight">
                 <ShieldCheck className="w-5 h-5 text-red-600" />
                 Trạng thái bảo mật
               </CardTitle>
@@ -311,7 +311,7 @@ export function UserForm({
                       <SelectTrigger className="w-full! !h-10 rounded-xl !border-black/5 !bg-white text-[14px] font-semibold text-zinc-900 focus:!border-red-600/30 transition-all duration-200 shadow-dash-card outline-none">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-xl">
+                      <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-none">
                         <SelectItem
                           className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
                           value={AccountStatus.ACTIVE}
@@ -422,7 +422,7 @@ export function UserForm({
                 {isEditing && (
                   <div className="rounded-xl p-4 border bg-white border-zinc-200 sm:col-span-2 flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-bold text-zinc-900">
+                      <p className="text-sm font-semibold text-zinc-900">
                         Kích hoạt tài khoản
                       </p>
                       <p className="text-[11px] text-zinc-500 font-medium">
@@ -458,7 +458,7 @@ export function UserForm({
               )}
             />
             <CardHeader className="px-6 pt-6 pb-4">
-              <CardTitle className="text-[18px] font-bold text-zinc-950 flex items-center gap-2 tracking-tight">
+              <CardTitle className="text-[18px] font-semibold text-zinc-950 flex items-center gap-2 tracking-tight">
                 <Clock className="w-5 h-5 text-zinc-400" />
                 Lịch sử hoạt động
               </CardTitle>

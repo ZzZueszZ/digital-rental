@@ -381,7 +381,7 @@ export default function ProductDetailPage({
                 {!isDeleted ? "Hoạt động" : "Đã xóa"}
               </Badge>
             </div>
-            <h1 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight truncate">
+            <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight truncate">
               {product.name}
             </h1>
           </div>
@@ -559,10 +559,10 @@ export default function ProductDetailPage({
 
               {showStockForm && (
                 <div className="grid gap-3">
-                  <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
+                  <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out  hover:shadow-dash-md">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <h4 className="text-sm font-bold text-emerald-950">kho bán</h4>
+                        <h4 className="text-sm font-semibold text-emerald-950">kho bán</h4>
                         <p className="text-xs font-medium text-emerald-700/70">
                           Nhập số lượng cần cộng thêm hoặc trừ bớt.
                         </p>
@@ -578,7 +578,7 @@ export default function ProductDetailPage({
                         onClick={() => setSaleStockAction("IMPORT")}
                         disabled={adjustStockMutation.isPending}
                         className={cn(
-                          "h-9 rounded-xl text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
+                          "h-9 rounded-xl text-xs font-semibold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
                           saleStockAction === "IMPORT"
                             ? "bg-emerald-600 text-white"
                             : "text-zinc-500 hover:bg-emerald-50 hover:text-emerald-700",
@@ -591,7 +591,7 @@ export default function ProductDetailPage({
                         onClick={() => setSaleStockAction("EXPORT")}
                         disabled={adjustStockMutation.isPending}
                         className={cn(
-                          "h-9 rounded-xl text-xs font-bold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
+                          "h-9 rounded-xl text-xs font-semibold transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
                           saleStockAction === "EXPORT"
                             ? "bg-red-600 text-white"
                             : "text-zinc-500 hover:bg-red-50 hover:text-red-600",
@@ -636,10 +636,10 @@ export default function ProductDetailPage({
                     </Button>
                   </div>
 
-                  <div className="rounded-xl border border-amber-100 bg-amber-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-dash-md">
+                  <div className="rounded-xl border border-amber-100 bg-amber-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out  hover:shadow-dash-md">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <h4 className="text-sm font-bold text-amber-950">Quản lý kho thuê (Serial)</h4>
+                        <h4 className="text-sm font-semibold text-amber-950">Quản lý kho thuê (Serial)</h4>
                         <p className="text-xs font-medium text-amber-700/70">
                           Quản lý độc lập từng thiết bị cho thuê.
                         </p>
@@ -670,7 +670,7 @@ export default function ProductDetailPage({
                             </div>
                             <span
                               className={cn(
-                                "text-[10px] font-bold px-2 py-1 rounded-xl border transition-all duration-150",
+                                "text-[10px] font-semibold px-2 py-1 rounded-xl border transition-all duration-150",
                                 d.status === "AVAILABLE" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
                                 d.status === "RESERVED" ? "bg-amber-50 text-amber-700 border-amber-100" :
                                 d.status === "RENTED" ? "bg-blue-50 text-blue-700 border-blue-100" :
@@ -1000,7 +1000,7 @@ export default function ProductDetailPage({
               variant="ghost"
               onClick={() => selectedDevice && handleConfirmDeleteDevice(selectedDevice.id)}
               disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
-              className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl font-bold h-10 px-4 transition-all"
+              className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl font-semibold h-10 px-4 transition-all"
             >
               <Trash2 className="w-4 h-4 mr-1.5" />
               Xóa thiết bị
@@ -1011,7 +1011,7 @@ export default function ProductDetailPage({
                 variant="outline"
                 onClick={() => setSelectedDevice(null)}
                 disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
-                className="rounded-xl font-bold border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-100 h-10 px-4 transition-all"
+                className="rounded-xl font-semibold border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-100 h-10 px-4 transition-all"
               >
                 Hủy
               </Button>
@@ -1019,7 +1019,7 @@ export default function ProductDetailPage({
                 type="button"
                 onClick={handleSaveDeviceEdit}
                 disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
-                className="rounded-xl font-semibold h-10 px-5 shadow-sm text-white bg-red-600 hover:bg-red-700 shadow-md shadow-red-100 transition-all"
+                className="rounded-xl font-semibold h-10 px-5 shadow-sm text-white bg-red-600 hover:bg-red-700  transition-all"
               >
                 {updateDeviceMutation.isPending ? "Đang lưu..." : "Lưu thay đổi"}
               </Button>

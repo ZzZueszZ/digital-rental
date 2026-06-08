@@ -138,13 +138,13 @@ export function StockAdjustmentDialog({
               <Icon className={cn("w-5 h-5", accentClass)} />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-zinc-900">{title}</h3>
+              <h3 className="text-sm font-semibold text-zinc-900">{title}</h3>
               <p className="text-xs text-zinc-500 mt-1">{description}</p>
             </div>
           </div>
           <div className="text-right shrink-0">
             <p className="text-xs font-medium text-zinc-500">hiện có</p>
-            <p className="text-lg font-black text-zinc-950">
+            <p className="text-lg font-semibold text-zinc-950">
               {currentStock} <span className="text-xs font-semibold text-zinc-400">sản phẩm</span>
             </p>
           </div>
@@ -162,7 +162,7 @@ export function StockAdjustmentDialog({
             onClick={() => updateForm(stockType, "action", "IMPORT")}
             disabled={isPending}
             className={cn(
-              "flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all disabled:cursor-not-allowed disabled:opacity-60",
+              "flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60",
               form.action === "IMPORT"
                 ? "bg-emerald-50 text-emerald-600 shadow-dash-sm"
                 : "text-zinc-500 hover:text-zinc-800",
@@ -176,7 +176,7 @@ export function StockAdjustmentDialog({
             onClick={() => updateForm(stockType, "action", "EXPORT")}
             disabled={isPending}
             className={cn(
-              "flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all disabled:cursor-not-allowed disabled:opacity-60",
+              "flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60",
               form.action === "EXPORT"
                 ? "bg-red-50 text-red-600 shadow-dash-sm"
                 : "text-zinc-500 hover:text-zinc-800",
@@ -195,7 +195,7 @@ export function StockAdjustmentDialog({
                 type="number"
                 value={form.quantity}
                 onChange={(e) => updateForm(stockType, "quantity", e.target.value)}
-                className="h-11 bg-white border-black/5 focus:ring-red-600/20 focus:border-red-600 text-sm font-bold rounded-xl pl-10 shadow-dash-sm"
+                className="h-11 bg-white border-black/5 focus:ring-red-600/20 focus:border-red-600 text-sm font-semibold rounded-xl pl-10 shadow-dash-sm"
                 placeholder="0"
                 min="1"
                 disabled={isPending}
@@ -230,7 +230,7 @@ export function StockAdjustmentDialog({
             type="button"
             onClick={() => handleSubmit(stockType)}
             disabled={isPending}
-            className="h-10 px-5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm shadow-md shadow-red-100"
+            className="h-10 px-5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm "
           >
             <Send className="w-4 h-4 mr-2" />
             {isActive ? "Đang cập nhật..." : `Cập nhật ${stockType === "RENTAL" ? "kho thuê" : "kho bán"}`}
@@ -275,7 +275,7 @@ export function StockAdjustmentDialog({
         <div className="flex gap-3 p-4 bg-red-50/50 rounded-xl border border-red-100/50 shadow-dash-sm">
           <Info className="w-5 h-5 text-red-600 shrink-0" />
           <p className="text-[11px] font-medium text-red-900 leading-relaxed">
-            Mỗi form sẽ gửi đúng loại kho tương ứng lên backend bằng <span className="font-bold">type SALE</span> hoặc <span className="font-bold">type RENTAL</span>. Hành động được ghi vào lịch sử kho của hệ thống.
+            Mỗi form sẽ gửi đúng loại kho tương ứng lên backend bằng <span className="font-semibold">type SALE</span> hoặc <span className="font-semibold">type RENTAL</span>. Hành động được ghi vào lịch sử kho của hệ thống.
           </p>
         </div>
       </div>

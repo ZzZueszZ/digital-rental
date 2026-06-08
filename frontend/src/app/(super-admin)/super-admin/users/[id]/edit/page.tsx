@@ -20,7 +20,7 @@ export default function UserEditPage({ params }: { params: Promise<{ id: string 
       <div className="flex-1 flex items-center justify-center p-20">
         <div className="animate-pulse flex flex-col items-center gap-4">
           <div className="w-10 h-10 rounded-full border-4 border-red-200 border-t-red-600 animate-spin" />
-          <p className="text-zinc-500 font-bold text-sm uppercase tracking-widest">Đang tải dữ liệu...</p>
+          <p className="text-zinc-500 font-semibold text-sm  tracking-tight">Đang tải dữ liệu...</p>
         </div>
       </div>
     );
@@ -30,7 +30,7 @@ export default function UserEditPage({ params }: { params: Promise<{ id: string 
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-20 gap-4">
         <XCircle className="w-12 h-12 text-red-500" />
-        <h2 className="text-xl font-bold text-zinc-950">Không tìm thấy tài khoản</h2>
+        <h2 className="text-xl font-semibold text-zinc-950">Không tìm thấy tài khoản</h2>
         <Button variant="outline" onClick={() => router.back()} className="mt-4 rounded-xl">Quay lại</Button>
       </div>
     );

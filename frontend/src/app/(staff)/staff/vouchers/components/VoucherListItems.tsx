@@ -108,7 +108,7 @@ export function VoucherTableRow({
           <div className="flex items-center gap-2">
             <Badge
               className={cn(
-                "rounded-xl px-2.5 py-1 text-[10px] font-bold border-0 ring-0 shadow-none",
+                "rounded-xl px-2.5 py-1 text-[10px] font-semibold border-0 ring-0 shadow-none",
                 status.className,
               )}
             >
@@ -174,7 +174,7 @@ export function VoucherTableRow({
             className="w-56 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
           >
             <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-[10px] font-bold text-zinc-500 px-3 py-1.5">
+              <DropdownMenuLabel className="text-[10px] font-semibold text-zinc-500 px-3 py-1.5">
                 Tác vụ Voucher
               </DropdownMenuLabel>
               {voucher.status !== "ACTIVE" && (
@@ -233,10 +233,10 @@ export function VoucherMobileCard({
             <Ticket className="w-4 h-4" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xs font-black text-zinc-950 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-zinc-950 tracking-tight">
               {voucher.code}
             </span>
-            <span className="text-[10px] font-bold text-zinc-400">
+            <span className="text-[10px] font-semibold text-zinc-400">
               {voucher.name}
             </span>
           </div>
@@ -244,7 +244,7 @@ export function VoucherMobileCard({
         <Badge
           variant="outline"
           className={cn(
-            "text-[9px] uppercase font-black px-2 py-0.5 border-0",
+            "text-[9px]  font-semibold px-2 py-0.5 border-0",
             status.className,
           )}
         >
@@ -254,20 +254,20 @@ export function VoucherMobileCard({
 
       <div className="grid grid-cols-2 gap-3 p-3 bg-zinc-50 rounded-xl">
         <div className="flex flex-col">
-          <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest mb-1 flex items-center gap-1">
+          <span className="text-[9px] font-semibold  text-zinc-400 tracking-tight mb-1 flex items-center gap-1">
             <Tag className="w-3 h-3" /> Ưu đãi
           </span>
-          <span className="text-xs font-bold text-zinc-950">
+          <span className="text-xs font-semibold text-zinc-950">
             {voucher.type === "PERCENTAGE"
               ? `${voucher.discountValue}%`
               : `${voucher.discountValue.toLocaleString()} ₫`}
           </span>
         </div>
         <div className="flex flex-col">
-          <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest mb-1 flex items-center gap-1">
+          <span className="text-[9px] font-semibold  text-zinc-400 tracking-tight mb-1 flex items-center gap-1">
             <Calendar className="w-3 h-3" /> Hết hạn
           </span>
-          <span className="text-xs font-bold text-zinc-950">
+          <span className="text-xs font-semibold text-zinc-950">
             {voucher.endDate
               ? format(new Date(voucher.endDate), "dd/MM/yy")
               : "∞"}
@@ -280,7 +280,7 @@ export function VoucherMobileCard({
           <Button
             variant="outline"
             onClick={() => onDeactivate(voucher.id)}
-            className="flex-1 h-10 rounded-xl text-[10px] font-black uppercase tracking-widest border-zinc-100 text-red-600 hover:bg-red-50"
+            className="flex-1 h-10 rounded-xl text-[10px] font-semibold  tracking-tight border-zinc-100 text-red-600 hover:bg-red-50"
           >
             Vô hiệu
           </Button>
@@ -288,7 +288,7 @@ export function VoucherMobileCard({
           <Button
             variant="outline"
             onClick={() => onActivate(voucher.id)}
-            className="flex-1 h-10 rounded-xl text-[10px] font-black uppercase tracking-widest border-zinc-100 text-emerald-600 hover:bg-emerald-50"
+            className="flex-1 h-10 rounded-xl text-[10px] font-semibold  tracking-tight border-zinc-100 text-emerald-600 hover:bg-emerald-50"
           >
             Mở
           </Button>

@@ -40,7 +40,7 @@ export default function AuditLogsPage() {
             <div className="w-8 h-8 rounded-xl bg-zinc-950 flex items-center justify-center shadow-sm">
               <Terminal className="w-4 h-4 text-white" />
             </div>
-            <h2 className="text-lg font-bold text-zinc-950 tracking-tight">
+            <h2 className="text-lg font-semibold text-zinc-950 tracking-tight">
               Nhật ký hệ thống
             </h2>
           </div>
@@ -124,7 +124,7 @@ export default function AuditLogsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="space-y-1">
-                        <span className="inline-flex px-2 py-0.5 rounded-xl bg-zinc-950 text-white text-[10px] font-bold">
+                        <span className="inline-flex px-2 py-0.5 rounded-xl bg-zinc-950 text-white text-[10px] font-semibold">
                           {log.action}
                         </span>
                         <p
@@ -177,7 +177,7 @@ export default function AuditLogsPage() {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-between">
-            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+            <p className="text-xs font-semibold text-zinc-400 tracking-tight">
               Trang {page + 1} / {totalPages}
             </p>
             <div className="flex items-center gap-2">

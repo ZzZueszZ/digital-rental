@@ -38,6 +38,7 @@ export function CreateUserDialog({
   // Reset toàn bộ form khi dialog đóng
   useEffect(() => {
     if (!open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         email: "",
         phone: "",
@@ -102,7 +103,7 @@ export function CreateUserDialog({
       open={open}
       onOpenChange={onOpenChange}
       icon={UserPlus}
-      iconClassName="bg-red-600 text-white shadow-lg shadow-red-100"
+      iconClassName="bg-red-600 text-white "
       title="Tạo tài khoản mới"
       description="Thiết lập tài khoản người dùng hoặc nhân viên mới cho hệ thống"
       onSubmit={handleSubmit}
@@ -227,9 +228,9 @@ export function CreateUserDialog({
                 type="button"
                 onClick={() => toggleRole(role.value)}
                 className={cn(
-                  "px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border shadow-dash-card",
+                  "px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 border shadow-dash-card",
                   selected
-                    ? "bg-red-600 text-white border-red-600 shadow-lg shadow-red-100"
+                    ? "bg-red-600 text-white border-red-600 "
                     : "bg-zinc-50/50 text-zinc-500 border-zinc-950/5 hover:border-zinc-300 hover:text-zinc-900",
                 )}
               >

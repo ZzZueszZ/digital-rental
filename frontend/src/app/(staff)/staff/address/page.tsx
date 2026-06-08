@@ -102,7 +102,7 @@ export default function AdminAddressPage() {
                         <UserIcon className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-zinc-950">
+                        <p className="text-sm font-semibold text-zinc-950">
                           {user.email}
                         </p>
                         <p className="text-xs font-medium text-zinc-400">
@@ -184,7 +184,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
     return (
       <div className="py-20 flex flex-col items-center justify-center">
         <Loader2 className="w-8 h-8 text-red-600 animate-spin mb-4" />
-        <p className="text-sm font-bold text-zinc-400">
+        <p className="text-sm font-semibold text-zinc-400">
           Đang tải danh sách địa chỉ...
         </p>
       </div>
@@ -195,7 +195,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-zinc-950 tracking-tight">
+          <h2 className="text-2xl font-semibold text-zinc-950 tracking-tight">
             Danh sách địa chỉ ({addresses.length})
           </h2>
         </div>
@@ -242,7 +242,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
                 "bg-white border p-6 rounded-xl shadow-dash-card transition-all group relative",
                 addr.isDefault
                   ? "border-red-600/30 bg-red-50/10"
-                  : "border-zinc-950/5 hover:border-red-600/20 hover:shadow-dash-hover hover:-translate-y-0.5",
+                  : "border-zinc-950/5 hover:border-red-600/20 hover:shadow-none ",
               )}
             >
               <div className="flex justify-between items-start mb-6">
@@ -251,7 +251,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
                     className={cn(
                       "w-10 h-10 rounded-xl flex items-center justify-center transition-all",
                       addr.isDefault
-                        ? "bg-red-600 text-white shadow-lg shadow-red-100"
+                        ? "bg-red-600 text-white "
                         : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-950 group-hover:text-white",
                     )}
                   >
@@ -259,7 +259,7 @@ function AdminAddressManagement({ userId }: { userId: number }) {
                   </div>
                   {addr.isDefault && (
                     <div className="flex flex-col">
-                      <span className="text-[13px] font-bold text-red-600">
+                      <span className="text-[13px] font-semibold text-red-600">
                         Địa chỉ mặc định
                       </span>
                     </div>

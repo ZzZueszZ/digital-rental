@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { cn } from "@/lib/utils";
+import { cn, getImageUrl } from "@/lib/utils";
 import { toast } from "sonner";
 import { useMyAddresses } from "@/services/address";
 import { useMyCart } from "@/services/cart";
@@ -879,7 +879,7 @@ export default function CheckoutPage() {
                         <img
                           src={
                             item.productImage
-                              ? `http://localhost:8080${item.productImage}`
+                              ? getImageUrl(item.productImage)
                               : "/placeholder-camera.jpg"
                           }
                           alt={item.productName}

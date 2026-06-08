@@ -18,7 +18,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { cn, getImageUrl } from "@/lib/utils";
 
 export default function InfoPage() {
   const { data: profileRes } = useMyProfile();
@@ -66,7 +66,7 @@ export default function InfoPage() {
             <AvatarImage
               src={
                 profile?.avatarUrl
-                  ? `http://localhost:8080${profile.avatarUrl}`
+                  ? getImageUrl(profile.avatarUrl)
                   : undefined
               }
             />

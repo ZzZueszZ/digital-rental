@@ -16,12 +16,23 @@ export function getValidRedirectUrl(searchParams: URLSearchParams) {
 }
 
 export function getImageUrl(url: string | null | undefined): string {
-  if (!url) return "";
-  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("blob:")) {
-    return url;
+  const rawUrl = url?.trim();
+  if (!rawUrl) return "";
+  if (
+    rawUrl.startsWith("http://") ||
+    rawUrl.startsWith("https://") ||
+    rawUrl.startsWith("blob:") ||
+    rawUrl.startsWith("data:")
+  ) {
+    return rawUrl;
   }
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:8082";
-  return `${baseUrl}${url}`;
+
+  const apiBaseUrl =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+  const origin = apiBaseUrl.replace(/\/api\/?$/, "").replace(/\/$/, "");
+  const path = rawUrl.startsWith("/") ? rawUrl : `/${rawUrl}`;
+
+  return `${origin}${path}`;
 }
 
 export function formatVND(amount: number): string {

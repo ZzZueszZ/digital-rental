@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { cn, formatVND } from "@/lib/utils";
+import { cn, formatVND, getImageUrl } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 
 export default function CartPage() {
@@ -205,7 +205,7 @@ export default function CartPage() {
               <div className="w-24 h-24 shrink-0 bg-zinc-50 rounded-xl overflow-hidden border border-zinc-100 p-2 flex items-center justify-center group-hover:bg-white transition-colors">
                 {item.productImage ? (
                   <img
-                    src={`http://localhost:8080${item.productImage}`}
+                    src={getImageUrl(item.productImage)}
                     alt={item.productName}
                     className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500"
                   />

@@ -11,7 +11,6 @@ import {
   Calendar,
   FileText,
   FilePenLine,
-  User,
   ShieldCheck,
   Download
 } from "lucide-react";
@@ -22,6 +21,7 @@ import { cn, formatVND, formatDate, getImageUrl } from "@/lib/utils";
 import {
   RentalOrderStatus,
   useRentalDetail,
+  rentalService,
   useSignContract,
   useStaffRentalDetail,
   useSendSigningOtp
@@ -56,6 +56,22 @@ export function RentalDetailDialog({
   const [showSignForm, setShowSignForm] = useState(false);
   const [signatureText, setSignatureText] = useState("");
   const [otpCode, setOtpCode] = useState("");
+  const [isRetryingPayment, setIsRetryingPayment] = useState(false);
+
+  const handleRetryPayment = async () => {
+    try {
+      setIsRetryingPayment(true);
+      const response = await rentalService.createVnPayUrl(rentalId);
+      window.location.assign(response.data);
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(
+        error.response?.data?.message ||
+          "Không thể tạo lại phiên thanh toán phí thuê. Vui lòng thử lại.",
+      );
+      setIsRetryingPayment(false);
+    }
+  };
 
   const handleOpenSignForm = async () => {
     try {
@@ -882,6 +898,24 @@ export function RentalDetailDialog({
               </div>
             </div>
           </div>
+
+          {!isStaffPortal &&
+            rental.paymentMethod === "ONLINE" &&
+            rental.paymentStatus !== "SUCCESS" &&
+            rental.status === RentalOrderStatus.PENDING_PAYMENT && (
+              <Button
+                onClick={handleRetryPayment}
+                disabled={isRetryingPayment}
+                className="h-11 w-full rounded-xl bg-red-600 text-sm font-medium text-white shadow-none hover:bg-red-700"
+              >
+                {isRetryingPayment ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <CreditCard className="h-4 w-4" />
+                )}
+                Thanh toán lại phí thuê qua VNPay
+              </Button>
+            )}
 
           {/* Electronic Rental Contract Section */}
           {rental.contract && (

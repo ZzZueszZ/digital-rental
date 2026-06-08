@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { http as axios } from "@/lib/http";
-import { IBackendRes } from "@/types/global";
 
 export enum RentalOrderStatus {
   PENDING_PAYMENT = "PENDING_PAYMENT",
@@ -243,6 +242,15 @@ export const rentalService = {
 
   signContract: async (id: number, data: { signature: string; otpCode: string }): Promise<{ success: boolean; data: RentalOrderResponse }> => {
     const response = await axios.post<{ success: boolean; data: RentalOrderResponse }>(`/rentals/${id}/contract/sign`, data);
+    return response.data;
+  },
+
+  createVnPayUrl: async (rentalOrderId: number): Promise<{ success: boolean; data: string }> => {
+    const response = await axios.post<{ success: boolean; data: string }>(
+      "/payments/vnpay/rental-fee/create",
+      null,
+      { params: { rentalOrderId } }
+    );
     return response.data;
   },
 

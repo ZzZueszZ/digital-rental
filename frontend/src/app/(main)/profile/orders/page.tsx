@@ -1,23 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { useMyOrders, useConfirmReceived } from "@/services/order";
-import { OrderStatus, OrderResponse } from "@/types/order";
+import { useMyOrders, useConfirmReceived, orderService } from "@/services/order";
+import {
+  OrderStatus,
+  OrderResponse,
+  PaymentMethod,
+  PaymentStatus,
+} from "@/types/order";
 import { Button } from "@/components/ui/button";
 import {
   ShoppingBag,
   Loader2,
   Info,
   Calendar,
-  FileText,
-  CheckCircle2,
+  CreditCard,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { cn, formatVND, getImageUrl, formatDate } from "@/lib/utils";
 import { OrderDetailDialog } from "@/components/common/OrderDetailDialog";
 import { ReviewFormDialog } from "@/components/common/ReviewFormDialog";
-import { RentalOrderStatus, useMyRentals } from "@/services/rental";
+import {
+  RentalOrderStatus,
+  rentalService,
+  useMyRentals,
+} from "@/services/rental";
 import { RentalDetailDialog } from "@/components/common/RentalDetailDialog";
 
 export default function OrdersPage() {
@@ -56,6 +64,7 @@ export default function OrdersPage() {
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [selectedOrderForReview, setSelectedOrderForReview] =
     useState<OrderResponse | null>(null);
+  const [payingOrderKey, setPayingOrderKey] = useState<string | null>(null);
   const router = useRouter();
 
   const { mutateAsync: confirmReceived } = useConfirmReceived();
@@ -83,6 +92,38 @@ export default function OrdersPage() {
       const message =
         error instanceof Error ? error.message : "Không thể xác nhận nhận hàng";
       toast.error(message);
+    }
+  };
+
+  const handleRetryOrderPayment = async (orderId: number) => {
+    const key = `order-${orderId}`;
+    try {
+      setPayingOrderKey(key);
+      const response = await orderService.createVnPayUrl(orderId);
+      window.location.assign(response.data);
+    } catch (error: unknown) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      toast.error(
+        apiError.response?.data?.message ||
+          "Không thể tạo lại phiên thanh toán. Vui lòng thử lại.",
+      );
+      setPayingOrderKey(null);
+    }
+  };
+
+  const handleRetryRentalPayment = async (rentalId: number) => {
+    const key = `rental-${rentalId}`;
+    try {
+      setPayingOrderKey(key);
+      const response = await rentalService.createVnPayUrl(rentalId);
+      window.location.assign(response.data);
+    } catch (error: unknown) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      toast.error(
+        apiError.response?.data?.message ||
+          "Không thể tạo lại phiên thanh toán phí thuê. Vui lòng thử lại.",
+      );
+      setPayingOrderKey(null);
     }
   };
 
@@ -405,6 +446,22 @@ export default function OrdersPage() {
                   </span>
                 </div>
                 <div className="flex gap-3">
+                  {order.paymentMethod === PaymentMethod.ONLINE &&
+                    order.paymentStatus !== PaymentStatus.SUCCESS &&
+                    order.status !== OrderStatus.CANCELED && (
+                      <Button
+                        onClick={() => handleRetryOrderPayment(order.id)}
+                        disabled={payingOrderKey !== null}
+                        className="h-10 rounded-xl bg-red-600 px-5 text-[14px] font-medium text-white shadow-none hover:bg-red-700"
+                      >
+                        {payingOrderKey === `order-${order.id}` ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <CreditCard className="h-4 w-4" />
+                        )}
+                        Thanh toán lại
+                      </Button>
+                    )}
                   <Button
                     variant="ghost"
                     className="h-10 px-5 rounded-xl border border-zinc-100 text-[14px] font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50 transition-all shadow-none"
@@ -516,6 +573,22 @@ export default function OrdersPage() {
                   </span>
                 </div>
                 <div className="flex gap-3">
+                  {rental.paymentMethod === "ONLINE" &&
+                    rental.paymentStatus !== "SUCCESS" &&
+                    rental.status === RentalOrderStatus.PENDING_PAYMENT && (
+                      <Button
+                        onClick={() => handleRetryRentalPayment(rental.id)}
+                        disabled={payingOrderKey !== null}
+                        className="h-10 rounded-xl bg-red-600 px-5 text-[14px] font-medium text-white shadow-none hover:bg-red-700"
+                      >
+                        {payingOrderKey === `rental-${rental.id}` ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <CreditCard className="h-4 w-4" />
+                        )}
+                        Thanh toán lại
+                      </Button>
+                    )}
                   <Button
                     variant="ghost"
                     className="h-10 px-5 rounded-xl border border-zinc-100 text-[14px] font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50 transition-all shadow-none"

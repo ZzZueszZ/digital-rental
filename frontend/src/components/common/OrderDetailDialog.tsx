@@ -7,17 +7,20 @@ import {
   CheckCircle2,
   X,
   Loader2,
-  Clock,
-  User,
   ShoppingBag,
 } from "lucide-react";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { OrderResponse, OrderStatus, PaymentStatus, PaymentMethod } from "@/types/order";
-import { useOrderDetail, useConfirmReceived } from "@/services/order";
+import {
+  useOrderDetail,
+  useConfirmReceived,
+  orderService,
+} from "@/services/order";
 import { formatVND, getImageUrl, formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 interface OrderDetailDialogProps {
   isOpen: boolean;
@@ -41,6 +44,7 @@ export function OrderDetailDialog({
   );
   const { mutateAsync: confirmReceived, isPending: isConfirming } =
     useConfirmReceived();
+  const [isRetryingPayment, setIsRetryingPayment] = useState(false);
 
   const order = initialOrder || orderRes?.data;
   const isLoading = initialLoading || (!!orderId && isFetching);
@@ -55,6 +59,22 @@ export function OrderDetailDialog({
       const message =
         error instanceof Error ? error.message : "Không thể xác nhận nhận hàng";
       toast.error(message);
+    }
+  };
+
+  const handleRetryPayment = async () => {
+    if (!order) return;
+    try {
+      setIsRetryingPayment(true);
+      const response = await orderService.createVnPayUrl(order.id);
+      window.location.assign(response.data);
+    } catch (error: unknown) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      toast.error(
+        apiError.response?.data?.message ||
+          "Không thể tạo lại phiên thanh toán. Vui lòng thử lại.",
+      );
+      setIsRetryingPayment(false);
     }
   };
   return (
@@ -262,6 +282,24 @@ export function OrderDetailDialog({
               </div>
             </div>
           </div>
+
+          {!isAdminView &&
+            order.paymentMethod === PaymentMethod.ONLINE &&
+            order.paymentStatus !== PaymentStatus.SUCCESS &&
+            order.status !== OrderStatus.CANCELED && (
+              <Button
+                onClick={handleRetryPayment}
+                disabled={isRetryingPayment}
+                className="h-11 w-full rounded-xl bg-red-600 text-sm font-medium text-white shadow-none hover:bg-red-700"
+              >
+                {isRetryingPayment ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <CreditCard className="h-4 w-4" />
+                )}
+                Thanh toán lại qua VNPay
+              </Button>
+            )}
 
           {/* Action Button for Confirmation - ONLY for Customer View */}
           {!isAdminView && order.status === OrderStatus.DELIVERED && (

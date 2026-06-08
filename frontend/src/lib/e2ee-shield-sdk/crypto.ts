@@ -1,84 +1,88 @@
-// src/libs/ts-sdk/crypto.ts
-const te = new TextEncoder();
-const td = new TextDecoder();
+const textEncoder = new TextEncoder();
+const textDecoder = new TextDecoder();
 
 export type Session = {
   sessionId: string;
-  key: CryptoKey; // AES-GCM 256
+  key: CryptoKey;
 };
 
-// Tạo keypair ECDH P-256 phía client
-export async function genClientEphemeral() {
-  const subtle = crypto.subtle;
+export type EncryptedEnvelope = {
+  sessionId: string;
+  aad: string;
+  iv: string;
+  cipherText: string;
+  tag: string;
+};
 
-  const kp = await subtle.generateKey(
+type ExpectedResponseAad = {
+  sessionId: string;
+  method: string;
+  path: string;
+};
+
+const MAX_CLOCK_SKEW_MS = 2 * 60 * 1000;
+const usedResponseNonces = new Map<string, number>();
+
+export async function genClientEphemeral() {
+  const keyPair = await crypto.subtle.generateKey(
     { name: "ECDH", namedCurve: "P-256" },
     true,
-    ["deriveBits", "deriveKey"]
+    ["deriveBits", "deriveKey"],
   );
-  const pubJwk = await subtle.exportKey("jwk", kp.publicKey);
-  return { kp, pubJwk } as const;
+  const publicJwk = await crypto.subtle.exportKey("jwk", keyPair.publicKey);
+  return { kp: keyPair, pubJwk: publicJwk } as const;
 }
 
-// HKDF-SHA256 → derive AES-GCM key
 export async function deriveSessionKey(
   clientPrivateKey: CryptoKey,
   serverPubJwk: JsonWebKey,
   salt: Uint8Array,
-  info: string
+  info: string,
 ): Promise<CryptoKey> {
-  const subtle = crypto.subtle;
-
-  const serverPubKey = await subtle.importKey(
+  const serverPublicKey = await crypto.subtle.importKey(
     "jwk",
     serverPubJwk,
     { name: "ECDH", namedCurve: "P-256" },
     false,
-    []
+    [],
   );
 
-  const sharedBits = await subtle.deriveBits(
-    { name: "ECDH", public: serverPubKey },
+  const sharedBits = await crypto.subtle.deriveBits(
+    { name: "ECDH", public: serverPublicKey },
     clientPrivateKey,
-    256
+    256,
+  );
+  const hkdfKey = await crypto.subtle.importKey(
+    "raw",
+    new Uint8Array(sharedBits),
+    "HKDF",
+    false,
+    ["deriveKey"],
   );
 
-  const ikm = new Uint8Array(sharedBits);
-  const hkdfKey = await subtle.importKey("raw", ikm, "HKDF", false, [
-    "deriveKey",
-  ]);
-
-  const infoBytes = te.encode(info);
-
-  const aesKey = await subtle.deriveKey(
+  return crypto.subtle.deriveKey(
     {
       name: "HKDF",
       hash: "SHA-256",
       salt: salt as BufferSource,
-      info: infoBytes as BufferSource,
+      info: textEncoder.encode(info) as BufferSource,
     },
     hkdfKey,
     { name: "AES-GCM", length: 256 },
     false,
-    ["encrypt", "decrypt"]
+    ["encrypt", "decrypt"],
   );
-
-  return aesKey;
 }
 
-// Encrypt JSON payload bằng AES-GCM + AAD
 export async function aesGcmEncrypt(
   key: CryptoKey,
   payload: unknown,
-  aadObj: unknown
+  aadObject: unknown,
 ) {
-  const subtle = crypto.subtle;
-
-  const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit
-  const ptBytes = te.encode(JSON.stringify(payload));
-  const aadBytes = te.encode(JSON.stringify(aadObj));
-
-  const enc = await subtle.encrypt(
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const plaintext = textEncoder.encode(JSON.stringify(payload));
+  const aadBytes = textEncoder.encode(JSON.stringify(aadObject));
+  const encrypted = await crypto.subtle.encrypt(
     {
       name: "AES-GCM",
       iv: iv as BufferSource,
@@ -86,31 +90,30 @@ export async function aesGcmEncrypt(
       tagLength: 128,
     },
     key,
-    ptBytes as BufferSource
+    plaintext as BufferSource,
   );
 
-  const out = new Uint8Array(enc);
-  const tag = out.slice(out.length - 16);
-  const ct = out.slice(0, out.length - 16);
-
-  return { iv, ct, tag, aadBytes };
+  const output = new Uint8Array(encrypted);
+  return {
+    iv,
+    ct: output.slice(0, output.length - 16),
+    tag: output.slice(output.length - 16),
+    aadBytes,
+  };
 }
 
-// Decrypt JSON payload
 export async function aesGcmDecrypt(
   key: CryptoKey,
   iv: Uint8Array,
-  ct: Uint8Array,
+  cipherText: Uint8Array,
   tag: Uint8Array,
-  aadBytes: Uint8Array
-): Promise<any> {
-  const subtle = crypto.subtle;
+  aadBytes: Uint8Array,
+): Promise<unknown> {
+  const sealed = new Uint8Array(cipherText.length + tag.length);
+  sealed.set(cipherText, 0);
+  sealed.set(tag, cipherText.length);
 
-  const sealed = new Uint8Array(ct.length + tag.length);
-  sealed.set(ct, 0);
-  sealed.set(tag, ct.length);
-
-  const dec = await subtle.decrypt(
+  const decrypted = await crypto.subtle.decrypt(
     {
       name: "AES-GCM",
       iv: iv as BufferSource,
@@ -118,9 +121,79 @@ export async function aesGcmDecrypt(
       tagLength: 128,
     },
     key,
-    sealed as BufferSource
+    sealed as BufferSource,
   );
+  return JSON.parse(textDecoder.decode(decrypted));
+}
 
-  const jsonStr = td.decode(dec);
-  return JSON.parse(jsonStr);
+export async function decryptE2eeResponse(
+  key: CryptoKey,
+  envelope: EncryptedEnvelope,
+  expected: ExpectedResponseAad,
+): Promise<unknown> {
+  if (envelope.sessionId !== expected.sessionId) {
+    throw new Error("E2EE response session mismatch");
+  }
+
+  const aadBytes = decodeBase64Url(envelope.aad);
+  const payload = await aesGcmDecrypt(
+    key,
+    decodeBase64Url(envelope.iv),
+    decodeBase64Url(envelope.cipherText),
+    decodeBase64Url(envelope.tag),
+    aadBytes,
+  );
+  validateResponseAad(aadBytes, expected);
+  return payload;
+}
+
+function validateResponseAad(
+  aadBytes: Uint8Array,
+  expected: ExpectedResponseAad,
+) {
+  let aad: Record<string, unknown>;
+  try {
+    aad = JSON.parse(textDecoder.decode(aadBytes)) as Record<string, unknown>;
+  } catch {
+    throw new Error("Invalid E2EE response AAD");
+  }
+
+  if (
+    aad.sessionId !== expected.sessionId ||
+    aad.method !== expected.method.toUpperCase() ||
+    aad.path !== expected.path ||
+    aad.direction !== "response" ||
+    typeof aad.timestamp !== "number" ||
+    typeof aad.nonce !== "string" ||
+    !aad.nonce
+  ) {
+    throw new Error("E2EE response AAD mismatch");
+  }
+  if (Math.abs(Date.now() - aad.timestamp) > MAX_CLOCK_SKEW_MS) {
+    throw new Error("E2EE response timestamp expired");
+  }
+
+  cleanupResponseNonces();
+  const nonceKey = `${expected.sessionId}:${aad.nonce}`;
+  if (usedResponseNonces.has(nonceKey)) {
+    throw new Error("E2EE response replay detected");
+  }
+  usedResponseNonces.set(nonceKey, Date.now());
+}
+
+function cleanupResponseNonces() {
+  const cutoff = Date.now() - MAX_CLOCK_SKEW_MS;
+  usedResponseNonces.forEach((timestamp, nonce) => {
+    if (timestamp < cutoff) {
+      usedResponseNonces.delete(nonce);
+    }
+  });
+}
+
+function decodeBase64Url(value: string): Uint8Array {
+  const padding = value.length % 4 === 0
+    ? ""
+    : "=".repeat(4 - (value.length % 4));
+  const base64 = value.replace(/-/g, "+").replace(/_/g, "/") + padding;
+  return Uint8Array.from(atob(base64), (char) => char.charCodeAt(0));
 }

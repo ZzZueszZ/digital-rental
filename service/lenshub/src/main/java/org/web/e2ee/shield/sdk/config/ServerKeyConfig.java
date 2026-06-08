@@ -1,4 +1,4 @@
-package org.web.e2ee.config;
+package org.web.e2ee.shield.sdk.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

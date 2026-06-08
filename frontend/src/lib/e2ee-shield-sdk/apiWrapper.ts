@@ -1,8 +1,13 @@
-import type { InternalAxiosRequestConfig } from "axios";
+import type { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { AxiosHeaders } from "axios";
 import { baseAxios } from "./axios";
 import { b64u } from "./base64url";
-import { aesGcmDecrypt, aesGcmEncrypt, type Session } from "./crypto";
+import {
+  aesGcmEncrypt,
+  decryptE2eeResponse,
+  type EncryptedEnvelope,
+  type Session,
+} from "./crypto";
 import { shouldEncryptRequest } from "./e2eeRoutePolicy";
 import { getSession } from "./keyManager";
 
@@ -27,6 +32,7 @@ secureApi.interceptors.request.use(async (config) => {
     path,
     timestamp: Date.now(),
     nonce: b64u.enc(nonce),
+    direction: "request",
   };
 
   const { iv, ct, tag, aadBytes } = await aesGcmEncrypt(
@@ -51,19 +57,42 @@ secureApi.interceptors.request.use(async (config) => {
   return config;
 });
 
-secureApi.interceptors.response.use(async (response) => {
-  if (!isEncryptedEnvelope(response.data)) return response;
+secureApi.interceptors.response.use(
+  async (response) => {
+    if (!isEncryptedEnvelope(response.data)) return response;
 
-  const session = (response.config as E2eeRequestConfig)._e2eeSession ?? await getSession();
-  response.data = await aesGcmDecrypt(
-    session.key,
-    b64u.dec(response.data.iv),
-    b64u.dec(response.data.cipherText),
-    b64u.dec(response.data.tag),
-    b64u.dec(response.data.aad),
-  );
-  return response;
-});
+    const session = (response.config as E2eeRequestConfig)._e2eeSession ?? await getSession();
+    response.data = await decryptE2eeResponse(
+      session.key,
+      response.data,
+      {
+        sessionId: session.sessionId,
+        method: (response.config.method || "GET").toUpperCase(),
+        path: resolveRequestPath(response.config),
+      },
+    );
+    return response;
+  },
+  async (error: AxiosError) => {
+    if (!error.config || !error.response || !isEncryptedEnvelope(error.response.data)) {
+      return Promise.reject(error);
+    }
+
+    const session = (error.config as E2eeRequestConfig)._e2eeSession;
+    if (!session) return Promise.reject(error);
+
+    error.response.data = await decryptE2eeResponse(
+      session.key,
+      error.response.data,
+      {
+        sessionId: session.sessionId,
+        method: (error.config.method || "GET").toUpperCase(),
+        path: resolveRequestPath(error.config),
+      },
+    );
+    return Promise.reject(error);
+  },
+);
 
 const shouldApplyE2ee = (config: InternalAxiosRequestConfig) => {
   if (!isE2eeEnabled || typeof window === "undefined") return false;
@@ -79,10 +108,11 @@ const resolveRequestPath = (config: InternalAxiosRequestConfig) => {
 
 const isEncryptedEnvelope = (
   value: unknown,
-): value is { aad: string; iv: string; cipherText: string; tag: string } => {
+): value is EncryptedEnvelope => {
   if (!isE2eeEnabled || !value || typeof value !== "object") return false;
   const candidate = value as Record<string, unknown>;
   return (
+    typeof candidate.sessionId === "string" &&
     typeof candidate.aad === "string" &&
     typeof candidate.iv === "string" &&
     typeof candidate.cipherText === "string" &&

@@ -1,11 +1,11 @@
-package org.web.e2ee.config;
+package org.web.e2ee.shield.sdk.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.web.e2ee.filter.E2eeShieldFilter;
+import org.web.e2ee.shield.sdk.filter.E2eeShieldFilter;
 
 @Configuration
 @ConditionalOnProperty(name = "app.e2ee.enabled", havingValue = "true")
@@ -18,6 +18,7 @@ public class E2eeShieldConfig {
         bean.addUrlPatterns(
                 "/auth/*",
                 "/ekyc/*",
+                "/admin/ekyc/*",
                 "/profile",
                 "/addresses",
                 "/addresses/*",

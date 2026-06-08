@@ -1,4 +1,4 @@
-package org.web.e2ee.filter;
+package org.web.e2ee.shield.sdk.filter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,14 +9,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
-import org.web.e2ee.dto.EncryptedPayload;
-import org.web.e2ee.dto.EncryptedResult;
-import org.web.e2ee.policy.E2eeRoutePolicy;
-import org.web.e2ee.security.SessionKeyStore;
-import org.web.e2ee.util.CryptoUtil;
+import org.web.e2ee.shield.sdk.dto.EncryptedPayload;
+import org.web.e2ee.shield.sdk.dto.EncryptedResult;
+import org.web.e2ee.shield.sdk.policy.E2eeRoutePolicy;
+import org.web.e2ee.shield.sdk.security.SessionKeyStore;
+import org.web.e2ee.shield.sdk.util.CryptoUtil;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
@@ -26,6 +27,7 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
 
     private static final Duration MAX_CLOCK_SKEW = Duration.ofMinutes(2);
     private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {};
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private final ObjectMapper objectMapper;
 
@@ -67,7 +69,7 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
 
         try {
             byte[] aad = b64uDecode(encryptedPayload.getAad());
-            validateAad(request, encryptedPayload.getSessionId(), aad);
+            String nonce = validateAad(request, encryptedPayload.getSessionId(), aad);
 
             byte[] plainBytes = CryptoUtil.decrypt(
                     sessionKey,
@@ -76,6 +78,9 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
                     b64uDecode(encryptedPayload.getCipherText()),
                     b64uDecode(encryptedPayload.getTag())
             );
+            if (!SessionKeyStore.markNonce(encryptedPayload.getSessionId(), nonce)) {
+                throw new SecurityException("e2ee_replay_detected");
+            }
 
             DecryptedRequestWrapper decryptedRequest = new DecryptedRequestWrapper(request, plainBytes);
             ContentCachingResponseWrapper cachingResponse = new ContentCachingResponseWrapper(response);
@@ -92,10 +97,12 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
                     "method", request.getMethod(),
                     "path", request.getRequestURI(),
                     "timestamp", Instant.now().toEpochMilli(),
+                    "nonce", randomNonce(),
                     "direction", "response"
             ));
             CryptoUtil.AesSeal seal = CryptoUtil.encrypt(sessionKey, responseAad, responseBody);
             EncryptedResult encryptedResult = new EncryptedResult(
+                    encryptedPayload.getSessionId(),
                     b64uEncode(responseAad),
                     b64uEncode(seal.iv),
                     b64uEncode(seal.ct),
@@ -104,7 +111,9 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
 
             response.setStatus(cachingResponse.getStatus());
             response.setContentType("application/json;charset=UTF-8");
-            objectMapper.writeValue(response.getOutputStream(), encryptedResult);
+            byte[] encryptedBody = objectMapper.writeValueAsBytes(encryptedResult);
+            response.setContentLength(encryptedBody.length);
+            response.getOutputStream().write(encryptedBody);
         } catch (SecurityException exception) {
             writeError(response, HttpServletResponse.SC_BAD_REQUEST, exception.getMessage());
         } catch (Exception exception) {
@@ -122,12 +131,13 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
         }
     }
 
-    private void validateAad(HttpServletRequest request, String sessionId, byte[] aadBytes) throws IOException {
+    private String validateAad(HttpServletRequest request, String sessionId, byte[] aadBytes) throws IOException {
         Map<String, Object> aad = objectMapper.readValue(aadBytes, MAP_TYPE);
         String aadSessionId = asString(aad.get("sessionId"));
         String aadMethod = asString(aad.get("method"));
         String aadPath = asString(aad.get("path"));
         String nonce = asString(aad.get("nonce"));
+        String direction = asString(aad.get("direction"));
         long timestamp = asLong(aad.get("timestamp"));
 
         if (!sessionId.equals(aadSessionId)) {
@@ -139,14 +149,18 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
         if (!request.getRequestURI().equals(aadPath)) {
             throw new SecurityException("e2ee_path_mismatch");
         }
+        if (!"request".equals(direction)) {
+            throw new SecurityException("e2ee_direction_mismatch");
+        }
+        if (b64uDecode(nonce).length != 16) {
+            throw new SecurityException("invalid_e2ee_nonce");
+        }
 
         long age = Math.abs(Instant.now().toEpochMilli() - timestamp);
         if (age > MAX_CLOCK_SKEW.toMillis()) {
             throw new SecurityException("e2ee_timestamp_expired");
         }
-        if (!SessionKeyStore.markNonce(sessionId, nonce)) {
-            throw new SecurityException("e2ee_replay_detected");
-        }
+        return nonce;
     }
 
     private void writeError(HttpServletResponse response, int status, String error) throws IOException {
@@ -175,6 +189,12 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
 
     private static String b64uEncode(byte[] data) {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(data);
+    }
+
+    private static String randomNonce() {
+        byte[] nonce = new byte[16];
+        SECURE_RANDOM.nextBytes(nonce);
+        return b64uEncode(nonce);
     }
 
     private static byte[] b64uDecode(String value) {

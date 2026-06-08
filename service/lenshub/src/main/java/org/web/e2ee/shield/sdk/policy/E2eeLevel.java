@@ -1,4 +1,4 @@
-package org.web.e2ee.policy;
+package org.web.e2ee.shield.sdk.policy;
 
 public enum E2eeLevel {
     PUBLIC,

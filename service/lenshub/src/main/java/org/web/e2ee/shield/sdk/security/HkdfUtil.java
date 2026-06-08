@@ -1,4 +1,4 @@
-package org.web.e2ee.security;
+package org.web.e2ee.shield.sdk.security;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;

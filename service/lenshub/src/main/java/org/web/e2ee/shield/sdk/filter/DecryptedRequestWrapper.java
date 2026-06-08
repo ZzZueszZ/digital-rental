@@ -1,4 +1,4 @@
-package org.web.e2ee.filter;
+package org.web.e2ee.shield.sdk.filter;
 
 import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;

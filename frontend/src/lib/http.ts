@@ -1,9 +1,14 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 
 import { b64u } from "@/lib/e2ee-shield-sdk/base64url";
-import { aesGcmDecrypt, aesGcmEncrypt, type Session } from "@/lib/e2ee-shield-sdk/crypto";
+import {
+  aesGcmEncrypt,
+  decryptE2eeResponse,
+  type EncryptedEnvelope,
+  type Session,
+} from "@/lib/e2ee-shield-sdk/crypto";
 import { shouldEncryptRequest } from "@/lib/e2ee-shield-sdk/e2eeRoutePolicy";
-import { getSession } from "@/lib/e2ee-shield-sdk/keyManager";
+import { clearSession, getSession } from "@/lib/e2ee-shield-sdk/keyManager";
 import {
   removeRefreshTokenCookie,
   persistRefreshTokenCookie,
@@ -26,6 +31,9 @@ const isE2eeEnabled = process.env.NEXT_PUBLIC_E2EE_ENABLED === "true";
 
 type E2eeRequestConfig = InternalAxiosRequestConfig & {
   _e2eeSession?: Session;
+  _e2eeOriginalData?: unknown;
+  _e2eeHasOriginal?: boolean;
+  _e2eeRetry?: boolean;
 };
 
 // Separate axios instance for refresh – avoids interceptor loops
@@ -94,6 +102,12 @@ http.interceptors.request.use(
     }
 
     if (shouldApplyE2ee(config)) {
+      const e2eeConfig = config as E2eeRequestConfig;
+      if (!e2eeConfig._e2eeHasOriginal) {
+        e2eeConfig._e2eeOriginalData = config.data;
+        e2eeConfig._e2eeHasOriginal = true;
+      }
+
       const session = await getSession();
       const method = (config.method || "GET").toUpperCase();
       const path = resolveRequestPath(config);
@@ -104,6 +118,7 @@ http.interceptors.request.use(
         path,
         timestamp: Date.now(),
         nonce: b64u.enc(nonce),
+        direction: "request",
       };
       const { iv, ct, tag, aadBytes } = await aesGcmEncrypt(
         session.key,
@@ -111,7 +126,7 @@ http.interceptors.request.use(
         aad,
       );
 
-      (config as E2eeRequestConfig)._e2eeSession = session;
+      e2eeConfig._e2eeSession = session;
       config.data = {
         sessionId: session.sessionId,
         aad: b64u.enc(aadBytes),
@@ -137,12 +152,14 @@ http.interceptors.response.use(
   async (response) => {
     if (isEncryptedEnvelope(response.data)) {
       const session = (response.config as E2eeRequestConfig)._e2eeSession ?? await getSession();
-      response.data = await aesGcmDecrypt(
+      response.data = await decryptE2eeResponse(
         session.key,
-        b64u.dec(response.data.iv),
-        b64u.dec(response.data.cipherText),
-        b64u.dec(response.data.tag),
-        b64u.dec(response.data.aad),
+        response.data,
+        {
+          sessionId: session.sessionId,
+          method: (response.config.method || "GET").toUpperCase(),
+          path: resolveRequestPath(response.config),
+        },
       );
     }
     useLoadingStore.getState().stopLoading();
@@ -151,14 +168,42 @@ http.interceptors.response.use(
   async (error: AxiosError) => {
     useLoadingStore.getState().stopLoading();
 
+    const originalRequest = error.config as E2eeRequestConfig & {
+      _retry?: boolean;
+    };
+
+    if (error.response && isEncryptedEnvelope(error.response.data)) {
+      const session = originalRequest?._e2eeSession;
+      if (!session || !originalRequest) {
+        return Promise.reject(error);
+      }
+      error.response.data = await decryptE2eeResponse(
+        session.key,
+        error.response.data,
+        {
+          sessionId: session.sessionId,
+          method: (originalRequest.method || "GET").toUpperCase(),
+          path: resolveRequestPath(originalRequest),
+        },
+      );
+    }
+
+    if (
+      error.response?.status === 401 &&
+      isExpiredE2eeSessionError(error.response.data) &&
+      originalRequest &&
+      !originalRequest._e2eeRetry
+    ) {
+      originalRequest._e2eeRetry = true;
+      clearSession();
+      restoreOriginalE2eeData(originalRequest);
+      return http(originalRequest);
+    }
+
     // If logging out, ignore 401s to prevent refresh attempts
     if (isLoggingOut) {
       return Promise.reject(error);
     }
-
-    const originalRequest = error.config as InternalAxiosRequestConfig & {
-      _retry?: boolean;
-    };
 
     if (error.response?.status === 401 && !originalRequest?._retry) {
       originalRequest._retry = true;
@@ -169,6 +214,7 @@ http.interceptors.response.use(
           pendingQueue.push((token) => {
             if (token) {
               originalRequest.headers.set("Authorization", `Bearer ${token}`);
+              restoreOriginalE2eeData(originalRequest);
               resolve(http(originalRequest));
             } else {
               reject(error);
@@ -182,6 +228,7 @@ http.interceptors.response.use(
 
       if (newToken) {
         originalRequest.headers.set("Authorization", `Bearer ${newToken}`);
+        restoreOriginalE2eeData(originalRequest);
         return http(originalRequest);
       }
 
@@ -208,13 +255,25 @@ const resolveRequestPath = (config: InternalAxiosRequestConfig) => {
 
 const isEncryptedEnvelope = (
   value: unknown,
-): value is { aad: string; iv: string; cipherText: string; tag: string } => {
+): value is EncryptedEnvelope => {
   if (!isE2eeEnabled || !value || typeof value !== "object") return false;
   const candidate = value as Record<string, unknown>;
   return (
+    typeof candidate.sessionId === "string" &&
     typeof candidate.aad === "string" &&
     typeof candidate.iv === "string" &&
     typeof candidate.cipherText === "string" &&
     typeof candidate.tag === "string"
   );
+};
+
+const restoreOriginalE2eeData = (config: E2eeRequestConfig) => {
+  if (config._e2eeHasOriginal) {
+    config.data = config._e2eeOriginalData;
+  }
+};
+
+const isExpiredE2eeSessionError = (value: unknown) => {
+  if (!value || typeof value !== "object") return false;
+  return (value as Record<string, unknown>).error === "invalid_or_expired_e2ee_session";
 };

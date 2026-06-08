@@ -175,13 +175,13 @@ export default function CategoriesAdminPage() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-6">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
+                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center ">
                     <Layers
                       className="w-4.5 h-4.5 text-white"
                       strokeWidth={2}
                     />
                   </div>
-                  <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
+                  <h2 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
                     {viewMode === "ACTIVE"
                       ? "Quản lý danh mục"
                       : "Danh mục lưu trữ"}
@@ -233,7 +233,7 @@ export default function CategoriesAdminPage() {
                   setSelectedCategory(null);
                   setIsDialogOpen(true);
                 }}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95"
+                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2  whitespace-nowrap active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 Thêm danh mục

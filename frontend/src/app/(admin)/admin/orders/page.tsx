@@ -112,13 +112,13 @@ export default function OrdersAdminPage() {
           <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
+                <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center ">
                   <ShoppingBag
                     className="w-4.5 h-4.5 text-white"
                     strokeWidth={2}
                   />
                 </div>
-                 <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
+                 <h2 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
                   Quản lý đơn hàng
                 </h2>
               </div>
@@ -141,7 +141,7 @@ export default function OrdersAdminPage() {
 
               <Button
                 variant="outline"
-                className="h-10 px-4 rounded-xl border-zinc-100 bg-zinc-50/50 text-[14px] font-bold text-zinc-600 gap-2"
+                className="h-10 px-4 rounded-xl border-zinc-100 bg-zinc-50/50 text-[14px] font-semibold text-zinc-600 gap-2"
               >
                 <Filter className="w-4 h-4" />
                 Bộ lọc
@@ -157,19 +157,19 @@ export default function OrdersAdminPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                  <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                  <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
                     Đơn hàng
                   </th>
-                  <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                  <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
                     Khách hàng
                   </th>
-                  <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                  <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
                     Tổng thanh toán
                   </th>
-                  <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                  <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
                     Trạng thái
                   </th>
-                  <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400 text-right">
+                  <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400 text-right">
                     Thao tác
                   </th>
                 </tr>

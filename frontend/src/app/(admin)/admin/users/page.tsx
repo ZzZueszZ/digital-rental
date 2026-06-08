@@ -268,10 +268,10 @@ export default function UsersAdminPage() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-6">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
+                  <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center ">
                     <Users className="w-4.5 h-4.5 text-white" strokeWidth={2} />
                   </div>
-                  <h2 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight">
+                  <h2 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
                     {viewMode === "ACTIVE" ? "Quản lý thành viên" : "Thùng rác"}
                   </h2>
                 </div>
@@ -315,7 +315,7 @@ export default function UsersAdminPage() {
               </div>
               <Button
                 onClick={() => setCreateDialogOpen(true)}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95"
+                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2  whitespace-nowrap active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 Thêm thành viên
@@ -326,7 +326,7 @@ export default function UsersAdminPage() {
 
         {/* ── BULK ACTION TOOLBAR ─────────────────────────────────── */}
         {someSelected && (
-          <div className="px-6 py-3 bg-zinc-950 flex items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-200 shadow-lg shadow-zinc-200">
+          <div className="px-6 py-3 bg-zinc-950 flex items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-200 ">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSelectedIds(new Set())}
@@ -334,7 +334,7 @@ export default function UsersAdminPage() {
               >
                 <CheckSquare className="w-4 h-4" />
               </button>
-              <span className="text-xs font-bold text-white">
+              <span className="text-xs font-semibold text-white">
                 Đã chọn{" "}
                 <span className="text-zinc-400">{selectedIds.size}</span> tài
                 khoản
@@ -357,7 +357,7 @@ export default function UsersAdminPage() {
                       `Đã vô hiệu hóa ${selectedIds.size} tài khoản`,
                     )
                   }
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold transition-colors"
                 >
                   <Trash2Icon className="w-3.5 h-3.5" /> Vô hiệu hóa (
                   {selectedIds.size})
@@ -378,7 +378,7 @@ export default function UsersAdminPage() {
                       `Đã khôi phục ${selectedIds.size} tài khoản`,
                     )
                   }
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors"
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Khôi phục (
                   {selectedIds.size})
@@ -386,7 +386,7 @@ export default function UsersAdminPage() {
               )}
               <button
                 onClick={() => setSelectedIds(new Set())}
-                className="px-3 py-1.5 rounded-xl text-zinc-400 hover:text-white text-xs font-bold transition-colors"
+                className="px-3 py-1.5 rounded-xl text-zinc-400 hover:text-white text-xs font-semibold transition-colors"
               >
                 Bỏ chọn
               </button>
@@ -414,7 +414,7 @@ export default function UsersAdminPage() {
               <div className="w-16 h-16 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
                 <Aperture className="w-7 h-7 text-zinc-300" />
               </div>
-              <p className="text-sm font-bold text-zinc-400">
+              <p className="text-sm font-semibold text-zinc-400">
                 Không tìm thấy thành viên
               </p>
               <p className="text-xs text-zinc-300">
@@ -453,7 +453,7 @@ export default function UsersAdminPage() {
                     )}
                   </button>
                   <div className="w-10 h-10 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
-                    <span className="font-bold text-sm text-zinc-700">
+                    <span className="font-semibold text-sm text-zinc-700">
                       {u.email.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -531,7 +531,7 @@ export default function UsersAdminPage() {
                     <span
                       key={role}
                       className={cn(
-                        "inline-block text-xs font-bold px-2 py-0.5 rounded-xl border",
+                        "inline-block text-xs font-semibold px-2 py-0.5 rounded-xl border",
                         role === "SUPER_ADMIN" || role === "ADMIN"
                           ? "bg-red-50 text-red-700 border-red-200"
                           : "bg-zinc-50 text-zinc-600 border-zinc-200",
@@ -616,7 +616,7 @@ export default function UsersAdminPage() {
                       <div className="w-16 h-16 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
                         <Aperture className="w-7 h-7 text-zinc-300" />
                       </div>
-                      <p className="text-sm font-bold text-zinc-400">
+                      <p className="text-sm font-semibold text-zinc-400">
                         Không tìm thấy thành viên
                       </p>
                       <p className="text-xs text-zinc-300">
@@ -660,7 +660,7 @@ export default function UsersAdminPage() {
                     <td className="px-6 py-3">
                       <div className="flex items-center gap-3.5">
                         <div className="w-9 h-9 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
-                          <span className="font-bold text-sm text-zinc-700">
+                          <span className="font-semibold text-sm text-zinc-700">
                             {u.email.charAt(0).toUpperCase()}
                           </span>
                         </div>
@@ -694,7 +694,7 @@ export default function UsersAdminPage() {
                             <span
                               key={role}
                               className={cn(
-                                "inline-block text-xs font-bold px-2 py-0.5 rounded-xl border",
+                                "inline-block text-xs font-semibold px-2 py-0.5 rounded-xl border",
                                 isSpecial
                                   ? "bg-red-50 text-red-700 border-red-200"
                                   : "bg-zinc-50 text-zinc-600 border-zinc-200",

@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { AlertTriangle, ArrowRight, PackageOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface LowStockProduct {
   productId: number;
@@ -26,65 +25,65 @@ export function LowStockCard({ products }: LowStockCardProps) {
   };
 
   return (
-    <div className="admin-card flex flex-col h-full !p-0 border-red-100 shadow-red-50/50 rounded-xl">
-      <div className="p-4 border-b border-red-50 flex items-center justify-between bg-red-50/10">
+    <div className="admin-card flex h-full flex-col !p-0">
+      <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-4">
         <div className="flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-red-500" />
-          <span className="text-[15px] font-semibold text-zinc-900 tracking-tight">
+          <AlertTriangle className="h-4 w-4 text-red-500" />
+          <span className="text-[15px] font-semibold tracking-tight text-zinc-900">
             Cảnh báo kho
           </span>
         </div>
-        <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+        <span className="rounded-full bg-red-50 px-2.5 py-1 text-[12px] font-medium text-red-600">
+          {products.length} mục
+        </span>
       </div>
 
-      <div className="p-2 overflow-y-auto">
+      <div className="flex-1 p-2">
         <div className="space-y-1">
           {products.length === 0 ? (
-            <div className="py-12 text-center text-xs text-zinc-400 italic">
+            <div className="py-12 text-center text-sm font-medium text-zinc-400">
               Kho hàng ổn định
             </div>
           ) : (
-            products.map((p) => (
+            products.map((product) => (
               <div
-                key={p.productId}
-                className="flex items-center justify-between group p-2 rounded-xl transition-all border border-transparent hover:border-red-100 hover:bg-red-50/30"
+                key={product.productId}
+                className="group flex items-center justify-between rounded-xl border border-transparent p-2 transition-all hover:border-red-100 hover:bg-red-50/30"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl border border-zinc-100 overflow-hidden relative flex-shrink-0 bg-white">
-                    {p.imageUrl ? (
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-white">
+                    {product.imageUrl ? (
                       <Image
-                        src={getImageUrl(p.imageUrl)}
-                        alt={p.productName}
+                        src={getImageUrl(product.imageUrl)}
+                        alt={product.productName}
                         fill
                         className="object-contain p-1"
                         unoptimized
                       />
                     ) : (
-                      <div className="w-full h-full bg-zinc-50 flex items-center justify-center">
-                        <PackageOpen className="w-4 h-4 text-zinc-300" />
+                      <div className="flex h-full w-full items-center justify-center bg-zinc-50">
+                        <PackageOpen className="h-4 w-4 text-zinc-300" />
                       </div>
                     )}
                   </div>
-                  <div className="min-w-0 flex flex-col">
-                    <p className="text-[13px] font-bold text-zinc-950 truncate leading-tight mb-0.5">
-                      {p.productName}
+                  <div className="min-w-0">
+                    <p className="truncate text-[13px] font-semibold leading-tight text-zinc-950">
+                      {product.productName}
                     </p>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-black text-red-600 bg-red-50 px-1.5 py-0.5 rounded-xl uppercase">
-                        Kho: {p.stock}
-                      </span>
-                    </div>
+                    <span className="mt-1 inline-flex rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-medium text-red-600">
+                      Kho: {product.stock}
+                    </span>
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-zinc-200 group-hover:text-red-500 transition-colors" />
+                <ArrowRight className="h-4 w-4 text-zinc-300 transition-colors group-hover:text-red-500" />
               </div>
             ))
           )}
         </div>
       </div>
 
-      <div className="p-3 border-t border-zinc-50">
-        <Button className="rounded-xl w-full h-10 bg-zinc-950 text-white hover:bg-white hover:text-zinc-950 border border-transparent hover:border-zinc-200 rounded-xl font-bold text-[14px] tracking-tight transition-all shadow-dash-sm active:scale-95">
+      <div className="border-t border-zinc-100 p-3">
+        <Button className="h-9 w-full rounded-xl bg-zinc-950 text-[13px] font-medium text-white hover:bg-red-600">
           Kiểm kê ngay
         </Button>
       </div>

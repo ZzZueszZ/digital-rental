@@ -159,7 +159,7 @@ export function SupportTicketList({
                           <User className="w-4.5 h-4.5 text-zinc-400 group-hover:text-red-600" />
                         </div>
                         <div className="flex flex-col min-w-0">
-                          <span className="text-[14px] font-bold text-zinc-950 tracking-tight group-hover:text-red-600 transition-colors truncate">
+                          <span className="text-[14px] font-semibold text-zinc-950 tracking-tight group-hover:text-red-600 transition-colors truncate">
                             {ticket.name}
                           </span>
                           <span className="text-[12px] text-zinc-400 font-medium truncate italic">
@@ -172,7 +172,7 @@ export function SupportTicketList({
                       <div className="flex items-center gap-2">
                         <Badge
                           variant="outline"
-                          className="rounded-xl border-zinc-200 font-bold text-[11px] px-2.5 py-1 text-zinc-600 bg-white shadow-sm ring-1 ring-zinc-950/[0.02]"
+                          className="rounded-xl border-zinc-200 font-semibold text-[11px] px-2.5 py-1 text-zinc-600 bg-white shadow-sm ring-1 ring-zinc-950/[0.02]"
                         >
                           {SUBJECT_LABELS[ticket.subject]}
                         </Badge>
@@ -181,7 +181,7 @@ export function SupportTicketList({
                     <td className="px-6 py-4 text-center">
                       <div
                         className={cn(
-                          "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold border-0 ring-1",
+                          "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-semibold border-0 ring-1",
                           statusCfg.color,
                         )}
                       >
@@ -195,7 +195,7 @@ export function SupportTicketList({
                           <Calendar className="w-3.5 h-3.5 text-zinc-400" />
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-[13px] font-bold text-zinc-900 leading-none mb-1">
+                          <span className="text-[13px] font-semibold text-zinc-900 leading-none mb-1">
                             {format(new Date(ticket.createdAt), "dd/MM/yyyy", {
                               locale: vi,
                             })}
@@ -221,7 +221,7 @@ export function SupportTicketList({
                           className="w-56 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white z-[100]"
                         >
                           <DropdownMenuGroup>
-                            <DropdownMenuLabel className="text-[10px] font-bold text-zinc-500 px-3 py-1.5">
+                            <DropdownMenuLabel className="text-[10px] font-semibold text-zinc-500 px-3 py-1.5">
                               Quản lý hỗ trợ
                             </DropdownMenuLabel>
 

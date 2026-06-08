@@ -382,7 +382,7 @@ export default function ProductDetailPage({
                 {!isDeleted ? "Hoạt động" : "Đã xóa"}
               </Badge>
             </div>
-            <h1 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight truncate">
+            <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight truncate">
               {product.name}
             </h1>
           </div>
@@ -837,7 +837,7 @@ export default function ProductDetailPage({
               variant="ghost"
               onClick={() => selectedDevice && handleConfirmDeleteDevice(selectedDevice.id)}
               disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
-              className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl font-bold h-10 px-4 transition-all"
+              className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl font-semibold h-10 px-4 transition-all"
             >
               <Trash2 className="w-4 h-4 mr-1.5" />
               Xóa thiết bị
@@ -848,7 +848,7 @@ export default function ProductDetailPage({
                 variant="outline"
                 onClick={() => setSelectedDevice(null)}
                 disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
-                className="rounded-xl font-bold border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-100 h-10 px-4 transition-all"
+                className="rounded-xl font-semibold border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-100 h-10 px-4 transition-all"
               >
                 Hủy
               </Button>

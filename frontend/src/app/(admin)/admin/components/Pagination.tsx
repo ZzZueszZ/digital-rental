@@ -49,10 +49,10 @@ export function Pagination({
     <div className="px-5 py-4 bg-zinc-50/50 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-4">
       <p className="text-xs font-semibold text-zinc-500">
         Hiển thị{" "}
-        <span className="text-zinc-950 font-bold">
+        <span className="text-zinc-950 font-semibold">
           {startIndex}-{endIndex}
         </span>{" "}
-        / <span className="text-zinc-950 font-bold">{totalElements}</span> mục
+        / <span className="text-zinc-950 font-semibold">{totalElements}</span> mục
       </p>
 
       {totalPages > 1 && (
@@ -72,7 +72,7 @@ export function Pagination({
               p === "..." ? (
                 <span
                   key={`dots-${i}`}
-                  className="w-8 text-center text-zinc-400 font-bold text-xs"
+                  className="w-8 text-center text-zinc-400 font-semibold text-xs"
                 >
                   ...
                 </span>
@@ -81,7 +81,7 @@ export function Pagination({
                   key={p}
                   onClick={() => onPageChange(p)}
                   className={cn(
-                    "w-8 h-8 rounded-xl text-xs font-bold transition-all active:scale-95",
+                    "w-8 h-8 rounded-xl text-xs font-semibold transition-all active:scale-95",
                     page === p
                       ? "bg-zinc-950 text-white shadow-md shadow-zinc-200"
                       : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950",

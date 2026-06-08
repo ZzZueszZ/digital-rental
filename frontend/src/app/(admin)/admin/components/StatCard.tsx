@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StatCardProps {
@@ -19,55 +19,45 @@ export function StatCard({
   accent,
 }: StatCardProps) {
   const isPositive = trend >= 0;
-  return (
-    <div className="admin-card group relative overflow-hidden flex flex-col justify-between">
-      {/* Subtle accent highlight on top */}
-      <div
-        className={cn(
-          "absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300",
-          accent,
-        )}
-      />
 
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <div
-            className={cn(
-              "w-8 h-8 rounded-xl flex items-center justify-center transition-all bg-zinc-50 border border-zinc-100 group-hover:bg-zinc-950 group-hover:text-white group-hover:border-zinc-950",
-              accent.replace("bg-", "text-"),
-            )}
-          >
-            <Icon className="w-4 h-4" />
-          </div>
-          <p className="text-[13px] font-medium text-zinc-500 tracking-tight">
-            {title}
+  return (
+    <div className="admin-card group relative flex min-h-[132px] flex-col justify-between overflow-hidden">
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-2">
+          <p className="text-[13px] font-medium text-zinc-500">{title}</p>
+          <p className="text-[24px] font-semibold leading-none tracking-tight text-zinc-950">
+            {value}
           </p>
         </div>
-
-        <p className="text-[24px] font-bold tracking-tight text-zinc-950 mb-2 leading-none">
-          {value}
-        </p>
+        <div
+          className={cn(
+            "flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-700",
+            accent.replace("bg-", "text-"),
+          )}
+        >
+          <Icon className="h-4 w-4" />
+        </div>
       </div>
 
-      <div className="flex items-center gap-2 pt-1">
+      <div className="flex items-center gap-2 pt-4">
         <span
           className={cn(
-            "flex items-center gap-0.5 text-[12px] font-semibold px-2 py-0.5 rounded-xl",
+            "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-medium",
             isPositive
-              ? "bg-emerald-50 text-emerald-600"
-              : "bg-red-50 text-red-600",
+              ? "bg-emerald-50 text-emerald-700"
+              : "bg-red-50 text-red-700",
           )}
         >
           {isPositive ? (
-            <TrendingUp className="w-3.5 h-3.5" />
+            <TrendingUp className="h-3.5 w-3.5" />
           ) : (
-            <TrendingDown className="w-3.5 h-3.5" />
+            <TrendingDown className="h-3.5 w-3.5" />
           )}
           {isPositive ? "+" : ""}
           {trend}%
         </span>
-        <span className="text-[12px] text-zinc-400 font-medium tracking-tight">
-          Tháng này
+        <span className="text-[12px] font-medium text-zinc-400">
+          tháng này
         </span>
       </div>
     </div>

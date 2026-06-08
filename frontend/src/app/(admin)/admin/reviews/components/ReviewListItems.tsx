@@ -88,7 +88,7 @@ export function ReviewTableRow({
           </span>
           {review.images && review.images.length > 0 && (
             <div className="flex items-center gap-1 mt-2">
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tight bg-zinc-50 px-1.5 py-0.5 rounded-xl border border-zinc-100">
+              <span className="text-[10px] font-semibold text-zinc-400  tracking-tight bg-zinc-50 px-1.5 py-0.5 rounded-xl border border-zinc-100">
                 +{review.images.length} ảnh
               </span>
             </div>
@@ -98,7 +98,7 @@ export function ReviewTableRow({
       <td className="px-6 py-4 text-center">
         <div className="flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-xl border border-zinc-100 bg-zinc-50/50 w-fit mx-auto">
           <Clock className="w-3.5 h-3.5 text-zinc-400" />
-          <span className="text-[11px] font-bold text-zinc-600">
+          <span className="text-[11px] font-semibold text-zinc-600">
             {new Date(review.createdAt).toLocaleDateString("vi-VN")}
           </span>
         </div>
@@ -107,7 +107,7 @@ export function ReviewTableRow({
         <div className="flex flex-col items-center gap-1.5">
           <div
             className={cn(
-              "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold w-fit",
+              "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold w-fit",
               review.hidden
                 ? "bg-zinc-100 text-zinc-500 border border-zinc-200"
                 : "bg-emerald-50 text-emerald-600 border border-emerald-100",
@@ -124,7 +124,7 @@ export function ReviewTableRow({
             )}
           </div>
           {review.reporterCount > 0 && (
-            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-100 text-[10px] font-bold w-fit animate-pulse">
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-100 text-[10px] font-semibold w-fit animate-pulse">
               <Flag className="w-2.5 h-2.5" /> {review.reporterCount} Báo cáo
             </div>
           )}
@@ -137,10 +137,10 @@ export function ReviewTableRow({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-52 p-1.5 rounded-xl shadow-xl border-zinc-100 bg-white animate-in zoom-in-95 duration-200"
+            className="w-52 p-1.5 rounded-xl shadow-none border-zinc-100 bg-white animate-in zoom-in-95 duration-200"
           >
             <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-[10px] font-bold text-zinc-500 px-2 py-1.5">
+              <DropdownMenuLabel className="text-[10px] font-semibold text-zinc-500 px-2 py-1.5">
                 Quản lý đánh giá
               </DropdownMenuLabel>
               <DropdownMenuItem
@@ -205,7 +205,7 @@ export function ReviewMobileCard({
             )}
           </div>
           <div>
-            <h4 className="font-black text-zinc-950">{review.userName}</h4>
+            <h4 className="font-semibold text-zinc-950">{review.userName}</h4>
             <div className="flex items-center gap-1 mt-0.5">
               {[...Array(5)].map((_, i) => (
                 <Star
@@ -223,7 +223,7 @@ export function ReviewMobileCard({
         </div>
         <div
           className={cn(
-            "px-2.5 py-1 rounded-xl border text-[10px] font-bold",
+            "px-2.5 py-1 rounded-xl border text-[10px] font-semibold",
             review.hidden
               ? "bg-zinc-50 text-zinc-400 border-zinc-100"
               : "bg-emerald-50 text-emerald-600 border-emerald-100",
@@ -242,7 +242,7 @@ export function ReviewMobileCard({
       <div className="flex items-center justify-between pt-2">
         <div className="flex items-center gap-2">
           <Clock className="w-3.5 h-3.5 text-zinc-400" />
-          <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest">
+          <span className="text-[11px] font-semibold text-zinc-400  tracking-tight">
             {new Date(review.createdAt).toLocaleDateString("vi-VN")}
           </span>
         </div>

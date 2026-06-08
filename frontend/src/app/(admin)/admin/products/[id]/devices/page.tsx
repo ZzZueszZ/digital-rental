@@ -247,7 +247,7 @@ export default function DevicesPage({
                 Kho thuê: {devices.length} thiết bị
               </span>
             </div>
-            <h1 className="text-2xl font-bold text-zinc-950 tracking-tight leading-tight truncate max-w-lg">
+            <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight truncate max-w-lg">
               {product?.name || "Đang tải sản phẩm..."}
             </h1>
           </div>
@@ -256,7 +256,7 @@ export default function DevicesPage({
         <div className="flex items-center gap-3 w-full sm:w-auto shrink-0">
           <Button
             onClick={() => setIsCreateOpen(true)}
-            className="flex-1 sm:flex-none h-11 rounded-xl bg-zinc-950 hover:bg-zinc-900 text-white font-semibold px-6 transition-all duration-200 gap-2 shadow-lg shadow-zinc-200 active:scale-95 whitespace-nowrap"
+            className="flex-1 sm:flex-none h-11 rounded-xl bg-zinc-950 hover:bg-zinc-900 text-white font-semibold px-6 transition-all duration-200 gap-2  active:scale-95 whitespace-nowrap"
           >
             <Plus className="w-4 h-4" />
             Thêm thiết bị
@@ -277,7 +277,7 @@ export default function DevicesPage({
               key={s}
               onClick={() => setFilterStatus(isSelected ? "ALL" : s)}
               className={cn(
-                "flex flex-col items-center gap-2.5 p-4 rounded-xl border bg-white text-center transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md active:scale-95 group",
+                "flex flex-col items-center gap-2.5 p-4 rounded-xl border bg-white text-center transition-all duration-300  hover:shadow-md active:scale-95 group",
                 isSelected
                   ? "border-amber-300 ring-2 ring-amber-200/50 shadow-md"
                   : "border-zinc-100 shadow-sm",
@@ -294,10 +294,10 @@ export default function DevicesPage({
                 <Icon className="w-5 h-5" />
               </div>
               <div className="space-y-0.5">
-                <p className="text-2xl font-bold text-zinc-950 leading-none">
+                <p className="text-2xl font-semibold text-zinc-950 leading-none">
                   {count}
                 </p>
-                <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+                <p className="text-xs font-semibold text-zinc-400 tracking-tight">
                   {cfg.label}
                 </p>
               </div>
@@ -343,7 +343,7 @@ export default function DevicesPage({
                 <PackageSearch className="w-8 h-8 text-zinc-300" />
               </div>
               <div className="text-center max-w-sm">
-                <p className="text-sm font-bold text-zinc-900">
+                <p className="text-sm font-semibold text-zinc-900">
                   {devices.length === 0 ? "Chưa có thiết bị nào" : "Không tìm thấy kết quả"}
                 </p>
                 <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed">
@@ -357,10 +357,10 @@ export default function DevicesPage({
             <div>
               {/* Table Header */}
               <div className="grid grid-cols-[1.5fr_2fr_140px_100px] gap-4 px-6 py-4 border-b border-zinc-100 bg-zinc-50/50">
-                <span className="text-xs font-bold text-zinc-400 tracking-wider uppercase">Số Serial</span>
-                <span className="text-xs font-bold text-zinc-400 tracking-wider uppercase">Mô tả tình trạng</span>
-                <span className="text-xs font-bold text-zinc-400 tracking-wider uppercase">Trạng thái</span>
-                <span className="text-xs font-bold text-zinc-400 tracking-wider uppercase text-right">Thao tác</span>
+                <span className="text-xs font-semibold text-zinc-400 tracking-wider ">Số Serial</span>
+                <span className="text-xs font-semibold text-zinc-400 tracking-wider ">Mô tả tình trạng</span>
+                <span className="text-xs font-semibold text-zinc-400 tracking-wider ">Trạng thái</span>
+                <span className="text-xs font-semibold text-zinc-400 tracking-wider  text-right">Thao tác</span>
               </div>
 
               {/* Table Body */}
@@ -377,7 +377,7 @@ export default function DevicesPage({
                         <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
                           <Cpu className="w-4 h-4 text-amber-600" />
                         </div>
-                        <span className="text-sm font-bold text-zinc-900 truncate">
+                        <span className="text-sm font-semibold text-zinc-900 truncate">
                           {d.serialNumber}
                         </span>
                       </div>
@@ -395,7 +395,7 @@ export default function DevicesPage({
                             setNewStatus(d.status);
                           }}
                           className={cn(
-                            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold transition-all duration-200 hover:opacity-85 hover:shadow-sm active:scale-95 w-fit shrink-0",
+                            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-semibold transition-all duration-200 hover:opacity-85 hover:shadow-sm active:scale-95 w-fit shrink-0",
                             cfg.bg,
                             cfg.text,
                             cfg.border,
@@ -458,7 +458,7 @@ export default function DevicesPage({
       >
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-zinc-700">
+            <label className="text-xs font-semibold text-zinc-700">
               Số Serial <span className="text-red-500">*</span>
             </label>
             <Input
@@ -473,7 +473,7 @@ export default function DevicesPage({
           </div>
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-zinc-700">Mô tả tình trạng</label>
+              <label className="text-xs font-semibold text-zinc-700">Mô tả tình trạng</label>
               <span className="text-[11px] text-zinc-400 font-semibold">Tùy chọn</span>
             </div>
             <Textarea
@@ -502,7 +502,7 @@ export default function DevicesPage({
       >
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-zinc-700">
+            <label className="text-xs font-semibold text-zinc-700">
               Số Serial <span className="text-red-500">*</span>
             </label>
             <Input
@@ -515,7 +515,7 @@ export default function DevicesPage({
           </div>
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-zinc-700">Mô tả tình trạng</label>
+              <label className="text-xs font-semibold text-zinc-700">Mô tả tình trạng</label>
               <span className="text-[11px] text-zinc-400 font-semibold">Tùy chọn</span>
             </div>
             <Textarea

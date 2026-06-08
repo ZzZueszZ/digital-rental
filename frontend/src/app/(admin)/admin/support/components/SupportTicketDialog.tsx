@@ -69,7 +69,7 @@ export default function SupportTicketDialog({
       open={isOpen}
       onOpenChange={onOpenChange}
       icon={MessageSquare}
-      iconClassName="bg-red-600 text-white shadow-lg shadow-red-100"
+      iconClassName="bg-red-600 text-white "
       title={`Chi tiết yêu cầu #${ticketId}`}
       description={
         ticket
@@ -86,7 +86,7 @@ export default function SupportTicketDialog({
       {isLoading ? (
         <div className="py-20 flex flex-col items-center justify-center gap-4">
           <Loader2 className="w-10 h-10 text-red-600" />
-          <p className="text-sm font-bold text-zinc-400 italic">
+          <p className="text-sm font-semibold text-zinc-400 italic">
             Đang truy xuất dữ liệu yêu cầu...
           </p>
         </div>
@@ -97,18 +97,18 @@ export default function SupportTicketDialog({
             <div className="flex items-center gap-2">
               <Badge
                 variant="outline"
-                className="rounded-xl bg-zinc-50 border-zinc-200 font-bold text-xs px-2.5 py-1 text-zinc-600"
+                className="rounded-xl bg-zinc-50 border-zinc-200 font-semibold text-xs px-2.5 py-1 text-zinc-600"
               >
                 {ticket.subject}
               </Badge>
               <div className="w-1 h-1 rounded-full bg-zinc-300" />
-              <span className="text-xs font-bold text-zinc-400">
+              <span className="text-xs font-semibold text-zinc-400">
                 Mã số: {ticketId}
               </span>
             </div>
             <Badge
               className={cn(
-                "rounded-full font-bold text-xs px-3 py-1",
+                "rounded-full font-semibold text-xs px-3 py-1",
                 ticket.status === "PENDING"
                   ? "bg-amber-100 text-amber-700 hover:bg-amber-100"
                   : ticket.status === "IN_PROGRESS"
@@ -143,11 +143,11 @@ export default function SupportTicketDialog({
                   <div className="w-6 h-6 rounded-xl bg-white shadow-dash-card flex items-center justify-center">
                     <item.icon className="w-3 h-3 text-zinc-400" />
                   </div>
-                  <span className="text-xs font-bold text-zinc-400">
+                  <span className="text-xs font-semibold text-zinc-400">
                     {item.label}
                   </span>
                 </div>
-                <p className="text-[14px] font-bold text-zinc-900 truncate">
+                <p className="text-[14px] font-semibold text-zinc-900 truncate">
                   {item.value}
                 </p>
               </div>
@@ -158,7 +158,7 @@ export default function SupportTicketDialog({
           <div className="space-y-3">
             <div className="flex items-center gap-2 ml-1">
               <div className="w-1.5 h-6 bg-red-600 rounded-full" />
-              <h3 className="text-sm font-bold text-zinc-900">
+              <h3 className="text-sm font-semibold text-zinc-900">
                 Nội dung yêu cầu
               </h3>
             </div>
@@ -174,7 +174,7 @@ export default function SupportTicketDialog({
             <div className="space-y-3 pt-4 border-t border-zinc-100 animate-in fade-in slide-in-from-top-4 duration-500">
               <div className="flex items-center gap-2 ml-1">
                 <div className="w-1.5 h-6 bg-emerald-600 rounded-full" />
-                <h3 className="text-sm font-bold text-zinc-900">
+                <h3 className="text-sm font-semibold text-zinc-900">
                   Phản hồi của hệ thống
                 </h3>
               </div>
@@ -182,16 +182,16 @@ export default function SupportTicketDialog({
                 <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity duration-700 pointer-events-none">
                   <ShieldCheck className="w-32 h-32 text-emerald-600 rotate-12" />
                 </div>
-                <p className="text-[15px] font-bold text-emerald-950 leading-relaxed whitespace-pre-wrap relative z-10">
+                <p className="text-[15px] font-semibold text-emerald-950 leading-relaxed whitespace-pre-wrap relative z-10">
                   {ticket.replyMessage}
                 </p>
                 <div className="mt-5 flex items-center gap-3 pt-5 border-t border-emerald-200/30 relative z-10">
                   <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
                     <History className="w-3.5 h-3.5 text-emerald-600" />
                   </div>
-                  <span className="text-[11px] font-bold text-emerald-600/80">
+                  <span className="text-[11px] font-semibold text-emerald-600/80">
                     Phản hồi bởi{" "}
-                    <span className="text-emerald-700 font-bold">
+                    <span className="text-emerald-700 font-semibold">
                       {ticket.processedByName || "Hệ thống"}
                     </span>{" "}
                     vào{" "}
@@ -212,10 +212,10 @@ export default function SupportTicketDialog({
                 <StickyNote className="w-5 h-5 text-amber-500" />
               </div>
               <div className="flex-1">
-                <p className="text-xs font-bold text-amber-600 mb-1.5">
+                <p className="text-xs font-semibold text-amber-600 mb-1.5">
                   Ghi chú nội bộ
                 </p>
-                <p className="text-[13px] font-bold text-amber-900/80 italic leading-snug">
+                <p className="text-[13px] font-semibold text-amber-900/80 italic leading-snug">
                   {ticket.internalNote}
                 </p>
               </div>
@@ -227,10 +227,10 @@ export default function SupportTicketDialog({
             <div className="space-y-6 pt-4 border-t border-zinc-100">
               <div className="space-y-3">
                 <div className="flex items-center justify-between ml-1">
-                  <label className="text-xs font-bold text-zinc-400">
+                  <label className="text-xs font-semibold text-zinc-400">
                     Nội dung phản hồi khách hàng
                   </label>
-                  <span className="text-[10px] font-bold text-zinc-300 italic">
+                  <span className="text-[10px] font-semibold text-zinc-300 italic">
                     * Nội dung này sẽ được gửi qua email
                   </span>
                 </div>
@@ -242,7 +242,7 @@ export default function SupportTicketDialog({
                 />
               </div>
               <div className="space-y-3">
-                <label className="text-xs font-bold text-zinc-400 ml-1">
+                <label className="text-xs font-semibold text-zinc-400 ml-1">
                   Ghi chú nội bộ (không gửi khách)
                 </label>
                 <Input
@@ -261,7 +261,7 @@ export default function SupportTicketDialog({
               <button
                 type="button"
                 onClick={() => onOpenChange(false)}
-                className="h-11 px-8 rounded-xl border border-zinc-200 bg-white text-zinc-400 font-bold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all duration-200"
+                className="h-11 px-8 rounded-xl border border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-all duration-200"
               >
                 Đóng chi tiết
               </button>

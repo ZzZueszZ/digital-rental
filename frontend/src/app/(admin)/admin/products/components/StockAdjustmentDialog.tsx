@@ -81,7 +81,7 @@ export function StockAdjustmentDialog({
           {/* Header of the card */}
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h4 className="text-sm font-bold text-emerald-950">kho bán</h4>
+              <h4 className="text-sm font-semibold text-emerald-950">kho bán</h4>
               <p className="text-xs font-medium text-emerald-700/70">
                 Nhập số lượng cần cộng thêm hoặc trừ bớt.
               </p>
@@ -98,7 +98,7 @@ export function StockAdjustmentDialog({
               onClick={() => setAction("IMPORT")}
               disabled={isPending}
               className={cn(
-                "h-9 rounded-xl text-xs font-bold transition-all duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
+                "h-9 rounded-xl text-xs font-semibold transition-all duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
                 action === "IMPORT"
                   ? "bg-emerald-600 text-white shadow-sm"
                   : "text-zinc-500 hover:bg-emerald-50 hover:text-emerald-700",
@@ -111,7 +111,7 @@ export function StockAdjustmentDialog({
               onClick={() => setAction("EXPORT")}
               disabled={isPending}
               className={cn(
-                "h-9 rounded-xl text-xs font-bold transition-all duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
+                "h-9 rounded-xl text-xs font-semibold transition-all duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60",
                 action === "EXPORT"
                   ? "bg-red-600 text-white shadow-sm"
                   : "text-zinc-500 hover:bg-red-50 hover:text-red-600",
@@ -123,7 +123,7 @@ export function StockAdjustmentDialog({
 
           {/* Quantity Input */}
           <label className="space-y-1 block">
-            <span className="text-xs font-bold text-zinc-700">
+            <span className="text-xs font-semibold text-zinc-700">
               số lượng {action === "IMPORT" ? "nhập thêm" : "trừ bớt"}
             </span>
             <input
@@ -139,7 +139,7 @@ export function StockAdjustmentDialog({
 
           {/* Reason Input */}
           <label className="space-y-1 block">
-            <span className="text-xs font-bold text-zinc-700">lý do chỉnh kho bán</span>
+            <span className="text-xs font-semibold text-zinc-700">lý do chỉnh kho bán</span>
             <input
               type="text"
               value={reason}
@@ -155,7 +155,7 @@ export function StockAdjustmentDialog({
             type="submit"
             disabled={isPending}
             className={cn(
-              "w-full h-10 rounded-xl text-white text-sm font-bold shadow-md transition-all duration-200 ease-in-out active:scale-[0.98]",
+              "w-full h-10 rounded-xl text-white text-sm font-semibold shadow-md transition-all duration-200 ease-in-out active:scale-[0.98]",
               action === "IMPORT"
                 ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-100"
                 : "bg-red-600 hover:bg-red-700 shadow-red-100",

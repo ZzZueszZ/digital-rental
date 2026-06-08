@@ -88,6 +88,7 @@ export function ProductDialog({
   // Reset form state when dialog closes
   useEffect(() => {
     if (!open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData(
         product
           ? {
@@ -244,7 +245,7 @@ export function ProductDialog({
       open={open}
       onOpenChange={onOpenChange}
       icon={Package}
-      iconClassName="bg-red-600 text-white shadow-lg shadow-red-100"
+      iconClassName="bg-red-600 text-white "
       title={isUpdate ? "Cập nhật thông tin" : "Thêm sản phẩm mới"}
       description={
         isUpdate
@@ -283,7 +284,7 @@ export function ProductDialog({
                   unoptimized
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
-                  <span className="text-white text-xs font-bold flex items-center gap-2">
+                  <span className="text-white text-xs font-semibold flex items-center gap-2">
                     <Upload className="w-4 h-4" /> Đổi ảnh
                   </span>
                 </div>
@@ -422,11 +423,11 @@ export function ProductDialog({
                     }
                     placeholder="Giá / Ngày"
                     className={cn(
-                      "h-10 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-bold text-sm pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] focus:ring-4 focus:ring-red-600/5",
+                      "h-10 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] focus:ring-4 focus:ring-red-600/5",
                       errors.rentPricePerDay && "border-red-400",
                     )}
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-zinc-400">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-zinc-400">
                     ₫
                   </span>
                 </div>
@@ -464,11 +465,11 @@ export function ProductDialog({
                     }
                     placeholder="Giá bán đứt"
                     className={cn(
-                      "h-10 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-bold text-sm pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] focus:ring-4 focus:ring-red-600/5",
+                      "h-10 rounded-xl bg-zinc-50/50 border border-black/5 focus:bg-white focus:border-red-600/30 font-semibold text-sm pr-8 disabled:bg-zinc-50/30 disabled:text-zinc-300 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] focus:ring-4 focus:ring-red-600/5",
                       errors.salePrice && "border-red-400",
                     )}
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-zinc-400">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-zinc-400">
                     ₫
                   </span>
                 </div>

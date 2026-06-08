@@ -45,12 +45,12 @@ export function OrderTableRow({
     >
       <td className="px-6 py-4">
         <div className="flex flex-col">
-          <span className="text-sm font-black text-zinc-950 group-hover:text-red-600 transition-colors">
+          <span className="text-sm font-semibold text-zinc-950 group-hover:text-red-600 transition-colors">
             #{order.code}
           </span>
           <div className="flex items-center gap-1.5 mt-1">
             <Clock className="w-3 h-3 text-zinc-400" />
-            <span className="text-[11px] font-bold text-zinc-400">
+            <span className="text-[11px] font-semibold text-zinc-400">
               {new Date(order.createdAt).toLocaleDateString("vi-VN")}
             </span>
           </div>
@@ -58,7 +58,7 @@ export function OrderTableRow({
       </td>
       <td className="px-6 py-4">
         <div className="flex flex-col">
-          <span className="text-sm font-bold text-zinc-900 truncate max-w-[180px]">
+          <span className="text-sm font-semibold text-zinc-900 truncate max-w-[180px]">
             {order.shippingName}
           </span>
           <span className="text-[11px] font-medium text-zinc-400 truncate max-w-[180px]">
@@ -68,12 +68,12 @@ export function OrderTableRow({
       </td>
       <td className="px-6 py-4">
         <div className="flex flex-col">
-          <span className="text-sm font-black text-zinc-950">
+          <span className="text-sm font-semibold text-zinc-950">
             {formatVND(order.totalPrice)}
           </span>
           <span
             className={cn(
-              "text-[10px] font-bold mt-1",
+              "text-[10px] font-semibold mt-1",
               order.paymentStatus === PaymentStatus.SUCCESS
                 ? "text-emerald-600"
                 : "text-red-500",
@@ -88,7 +88,7 @@ export function OrderTableRow({
       <td className="px-6 py-4">
         <div
           className={cn(
-            "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl border text-[11px] font-bold",
+            "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl border text-[11px] font-semibold",
             getStatusStyles(order.status),
           )}
         >
@@ -102,10 +102,10 @@ export function OrderTableRow({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-56 p-1.5 rounded-xl shadow-xl border-zinc-100 bg-white animate-in zoom-in-95 duration-200"
+            className="w-56 p-1.5 rounded-xl shadow-none border-zinc-100 bg-white animate-in zoom-in-95 duration-200"
           >
             <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-[10px] font-bold text-zinc-400 px-2 py-1.5 tracking-widest">
+              <DropdownMenuLabel className="text-[10px] font-semibold text-zinc-400 px-2 py-1.5 tracking-tight">
                 Thao tác đơn hàng
               </DropdownMenuLabel>
               <DropdownMenuItem
@@ -120,7 +120,7 @@ export function OrderTableRow({
             <DropdownMenuSeparator className="my-1 bg-zinc-50" />
 
             <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-[10px] font-bold text-zinc-400 px-2 py-1.5 uppercase tracking-widest">
+              <DropdownMenuLabel className="text-[10px] font-semibold text-zinc-400 px-2 py-1.5  tracking-tight">
                 Cập nhật trạng thái
               </DropdownMenuLabel>
 
@@ -129,7 +129,7 @@ export function OrderTableRow({
                   key={status}
                   onClick={() => onUpdateStatus(order.id, status)}
                   className={cn(
-                    "flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm font-bold transition-colors cursor-pointer",
+                    "flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm font-semibold transition-colors cursor-pointer",
                     status === OrderStatus.CANCELED
                       ? "text-red-600 hover:bg-red-50"
                       : "text-zinc-600 hover:text-emerald-600 hover:bg-emerald-50",
@@ -156,16 +156,16 @@ export function OrderMobileCard({
     <div className="admin-card p-4 space-y-4">
       <div className="flex justify-between items-start">
         <div className="flex flex-col">
-          <span className="text-sm font-black text-zinc-950">
+          <span className="text-sm font-semibold text-zinc-950">
             #{order.code}
           </span>
-          <span className="text-[11px] font-bold text-zinc-400">
+          <span className="text-[11px] font-semibold text-zinc-400">
             {new Date(order.createdAt).toLocaleDateString("vi-VN")}
           </span>
         </div>
         <div
           className={cn(
-            "px-2.5 py-1 rounded-xl border text-[11px] font-bold",
+            "px-2.5 py-1 rounded-xl border text-[11px] font-semibold",
             getStatusStyles(order.status),
           )}
         >
@@ -174,15 +174,15 @@ export function OrderMobileCard({
       </div>
 
       <div className="py-3 border-y border-zinc-50 space-y-2">
-        <div className="flex items-center gap-2 text-xs font-bold text-zinc-900">
+        <div className="flex items-center gap-2 text-xs font-semibold text-zinc-900">
           <Mail className="w-3.5 h-3.5 text-zinc-400" />
           <span className="truncate">{order.userEmail}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+          <span className="text-[11px] font-semibold text-zinc-400 tracking-tight">
             Tổng tiền:
           </span>
-          <span className="text-sm font-black text-red-600">
+          <span className="text-sm font-semibold text-red-600">
             {formatVND(order.totalPrice)}
           </span>
         </div>
@@ -192,7 +192,7 @@ export function OrderMobileCard({
         <Button
           variant="outline"
           onClick={() => onView(order.id)}
-          className="flex-1 h-9 rounded-xl border-zinc-100 text-xs font-bold hover:bg-zinc-50"
+          className="flex-1 h-9 rounded-xl border-zinc-100 text-xs font-semibold hover:bg-zinc-50"
         >
           Chi tiết
         </Button>
@@ -200,20 +200,20 @@ export function OrderMobileCard({
           <DropdownMenuTrigger
             className={cn(
               buttonVariants({ variant: "default" }),
-              "flex-1 h-9 rounded-xl bg-red-600 hover:bg-red-700 text-xs font-bold cursor-pointer outline-none text-white border-none",
+              "flex-1 h-9 rounded-xl bg-red-600 hover:bg-red-700 text-xs font-semibold cursor-pointer outline-none text-white border-none",
             )}
           >
             Trạng thái
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-56 p-1.5 rounded-xl shadow-xl bg-white"
+            className="w-56 p-1.5 rounded-xl shadow-none bg-white"
           >
             {getNextStatuses(order.status).map((status) => (
               <DropdownMenuItem
                 key={status}
                 onClick={() => onUpdateStatus(order.id, status)}
-                className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm font-bold"
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm font-semibold"
               >
                 {getStatusIcon(status)}
                 {getStatusLabel(status)}

@@ -42,7 +42,7 @@ export default function SettingsAdminPage() {
             <CardHeader className="px-5 py-4 border-b border-zinc-50">
               <div className="flex items-center gap-3">
                 <Globe className="w-4 h-4 text-red-600" />
-                <CardTitle className="text-lg font-bold">
+                <CardTitle className="text-lg font-semibold">
                   Thông tin chung
                 </CardTitle>
               </div>
@@ -88,7 +88,7 @@ export default function SettingsAdminPage() {
                   <RefreshCw className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="font-bold text-zinc-900">Chế độ bảo trì</p>
+                  <p className="font-semibold text-zinc-900">Chế độ bảo trì</p>
                   <p className="text-xs text-zinc-500 font-medium">
                     Tạm đóng cửa hàng để nâng cấp hệ thống.
                   </p>
@@ -105,7 +105,7 @@ export default function SettingsAdminPage() {
             <CardHeader className="px-5 py-4 border-b border-zinc-50">
               <div className="flex items-center gap-3">
                 <Shield className="w-4 h-4 text-green-600" />
-                <CardTitle className="text-lg font-bold">Bảo mật</CardTitle>
+                <CardTitle className="text-lg font-semibold">Bảo mật</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="p-5 space-y-5">
@@ -142,12 +142,12 @@ export default function SettingsAdminPage() {
           </Card>
 
           {/* System Info */}
-          <Card className="rounded-xl border-zinc-950 bg-zinc-950 shadow-xl overflow-hidden text-white">
+          <Card className="rounded-xl border-zinc-950 bg-zinc-950 shadow-none overflow-hidden text-white">
             <CardContent className="p-6 flex flex-col items-center text-center">
               <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center mb-5 border border-white/10">
                 <Database className="w-7 h-7 text-red-600" />
               </div>
-              <h4 className="text-lg font-bold mb-1.5">Trạng thái Database</h4>
+              <h4 className="text-lg font-semibold mb-1.5">Trạng thái Database</h4>
               <p className="text-zinc-500 text-xs font-medium mb-6">
                 Mọi thứ đang vận hành ổn định trên Cloud Engine.
               </p>

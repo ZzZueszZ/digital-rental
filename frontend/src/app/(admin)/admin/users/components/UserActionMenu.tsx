@@ -65,7 +65,7 @@ export function UserActionMenu({
           className="w-52 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
         >
           <DropdownMenuGroup>
-            <DropdownMenuLabel className="text-[10px] font-bold text-zinc-400 px-2 py-1.5 tracking-widest">
+            <DropdownMenuLabel className="text-[10px] font-semibold text-zinc-400 px-2 py-1.5 tracking-tight">
               Tác vụ quản trị
             </DropdownMenuLabel>
 

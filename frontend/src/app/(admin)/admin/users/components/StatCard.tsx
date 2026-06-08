@@ -42,7 +42,7 @@ export function StatCard({
       />
 
       <div className="flex items-start justify-between mb-4">
-        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-zinc-400">
+        <p className="text-[10px] font-semibold  tracking-[0.18em] text-zinc-400">
           {title}
         </p>
         <div
@@ -55,14 +55,14 @@ export function StatCard({
         </div>
       </div>
 
-      <p className="text-3xl font-black tracking-tight text-zinc-950 mb-2">
+      <p className="text-3xl font-semibold tracking-tight text-zinc-950 mb-2">
         {value}
       </p>
 
       <div className="flex items-center gap-1.5">
         <span
           className={cn(
-            "flex items-center gap-0.5 text-[10px] font-black px-1.5 py-0.5 rounded-xl",
+            "flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-xl",
             isPositive
               ? "bg-emerald-50 text-emerald-600"
               : "bg-red-50 text-red-600",

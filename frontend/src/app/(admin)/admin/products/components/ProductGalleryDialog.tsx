@@ -133,7 +133,7 @@ export function ProductGalleryDialog({
       <div className="space-y-8">
         {/* Current Gallery */}
         <div className="space-y-4">
-          <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Ảnh hiện tại ({product.gallery?.length || 0})</h3>
+          <h3 className="text-[10px] font-semibold  tracking-tight text-zinc-400">Ảnh hiện tại ({product.gallery?.length || 0})</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {product.gallery?.map((img) => (
               <div key={img.id} className={cn(
@@ -158,7 +158,7 @@ export function ProductGalleryDialog({
                     : "bg-black/40 opacity-0 group-hover:opacity-100"
                 )}>
                   {markedForDeletionIds.has(img.id) && (
-                    <span className="text-[10px] font-black text-white uppercase tracking-widest drop-shadow-md">
+                    <span className="text-[10px] font-semibold text-white  tracking-tight drop-shadow-md">
                       Sẽ bị xóa
                     </span>
                   )}
@@ -166,7 +166,7 @@ export function ProductGalleryDialog({
                     size="icon"
                     variant={markedForDeletionIds.has(img.id) ? "secondary" : "destructive"}
                     className={cn(
-                      "rounded-full h-10 w-10 shadow-xl transition-all active:scale-90",
+                      "rounded-full h-10 w-10 shadow-none transition-all active:scale-90",
                       markedForDeletionIds.has(img.id) ? "bg-white text-red-600 hover:bg-zinc-100 scale-110" : "hover:scale-110"
                     )}
                     onClick={() => toggleMarkForDeletion(img.id)}
@@ -185,7 +185,7 @@ export function ProductGalleryDialog({
             {(!product.gallery || product.gallery.length === 0) && (
               <div className="col-span-full py-12 flex flex-col items-center justify-center bg-zinc-50 rounded-xl border-2 border-dashed border-zinc-200">
                 <ImageIcon className="w-10 h-10 text-zinc-300 mb-3" />
-                <p className="text-xs font-bold text-zinc-400">Chưa có ảnh trong bộ sưu tập</p>
+                <p className="text-xs font-semibold text-zinc-400">Chưa có ảnh trong bộ sưu tập</p>
               </div>
             )}
           </div>
@@ -193,7 +193,7 @@ export function ProductGalleryDialog({
 
         {/* Upload New Section */}
         <div className="space-y-4 pt-6 border-t border-zinc-100">
-          <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Tải lên ảnh mới</h3>
+          <h3 className="text-[10px] font-semibold  tracking-tight text-zinc-400">Tải lên ảnh mới</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {previews.map((preview, idx) => (
               <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border-2 border-red-100 shadow-sm">
@@ -216,7 +216,7 @@ export function ProductGalleryDialog({
               <div className="w-10 h-10 rounded-full bg-zinc-100 group-hover:bg-red-100 flex items-center justify-center transition-colors">
                 <Plus className="w-5 h-5 text-zinc-400 group-hover:text-red-600" />
               </div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-red-600">Thêm ảnh</span>
+              <span className="text-[10px] font-semibold  tracking-tight text-zinc-400 group-hover:text-red-600">Thêm ảnh</span>
             </button>
           </div>
           

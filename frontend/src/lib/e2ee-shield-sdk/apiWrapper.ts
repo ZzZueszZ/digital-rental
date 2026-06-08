@@ -102,8 +102,19 @@ const shouldApplyE2ee = (config: InternalAxiosRequestConfig) => {
 };
 
 const resolveRequestPath = (config: InternalAxiosRequestConfig) => {
-  const url = new URL(config.url || "/", config.baseURL || "http://localhost:8080/api");
-  return url.pathname;
+  const requestUrl = config.url || "/";
+  if (/^https?:\/\//i.test(requestUrl)) {
+    return new URL(requestUrl).pathname;
+  }
+
+  const baseUrl = new URL(
+    config.baseURL || "http://localhost:8080/api",
+  );
+  const normalizedBase = baseUrl.pathname.endsWith("/")
+    ? baseUrl.pathname
+    : `${baseUrl.pathname}/`;
+  return new URL(requestUrl.replace(/^\/+/, ""), `${baseUrl.origin}${normalizedBase}`)
+    .pathname;
 };
 
 const isEncryptedEnvelope = (

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "verify:e2ee": "node scripts/verify-e2ee-handshake.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",

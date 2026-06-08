@@ -18,7 +18,9 @@ public class RentalOrderResponse {
     private Long id;
     private String code;
     private Long userId;
+    private String userFullName;
     private String userEmail;
+    private String userPhone;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private RentalOrderStatus status;

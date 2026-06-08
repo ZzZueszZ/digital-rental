@@ -776,11 +776,18 @@ public class RentalServiceImpl implements RentalService {
     // Hand-written DTO Converters
     private RentalOrderResponse mapToResponse(RentalOrder order) {
         if (order == null) return null;
+        String userFullName = order.getUser() != null
+                ? userProfileRepository.findById(order.getUser().getId())
+                    .map(UserProfile::getFullName)
+                    .orElse(null)
+                : null;
         return RentalOrderResponse.builder()
                 .id(order.getId())
                 .code(order.getCode())
                 .userId(order.getUser() != null ? order.getUser().getId() : null)
+                .userFullName(userFullName)
                 .userEmail(order.getUser() != null ? order.getUser().getEmail() : null)
+                .userPhone(order.getUser() != null ? order.getUser().getPhone() : null)
                 .startDate(order.getStartDate())
                 .endDate(order.getEndDate())
                 .status(order.getStatus())

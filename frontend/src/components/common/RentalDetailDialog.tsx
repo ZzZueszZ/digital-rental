@@ -105,6 +105,71 @@ export function RentalDetailDialog({
     const terms = rental.contract.termsAndConditions || "";
     const signature = rental.contract.contractHash || "";
     const signedAtStr = rental.contract.signedAt ? formatDate(rental.contract.signedAt) : "";
+    const formatContractDate = (date: string) =>
+      new Date(date).toLocaleDateString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    const renterName =
+      rental.userFullName ||
+      signature ||
+      rental.shippingName ||
+      rental.userEmail;
+    const rentalDays = Math.max(
+      1,
+      Math.ceil(
+        (new Date(rental.endDate).getTime() -
+          new Date(rental.startDate).getTime()) /
+          (1000 * 60 * 60 * 24),
+      ),
+    );
+    const productGroups = rental.items.reduce<
+      Record<
+        number,
+        {
+          name: string;
+          quantity: number;
+          pricePerDay: number;
+          serialNumbers: string[];
+        }
+      >
+    >((groups, item) => {
+      const current = groups[item.productId] || {
+        name: item.productName,
+        quantity: 0,
+        pricePerDay: item.pricePerDay,
+        serialNumbers: [],
+      };
+      current.quantity += 1;
+      if (item.deviceSerialNumber) {
+        current.serialNumbers.push(item.deviceSerialNumber);
+      }
+      groups[item.productId] = current;
+      return groups;
+    }, {});
+    const productRows = Object.values(productGroups)
+      .map(
+        (item, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td class="text-left">
+              <strong>${item.name}</strong>
+              ${
+                item.serialNumbers.length > 0
+                  ? `<div class="sub-text">Serial: ${item.serialNumbers.join(", ")}</div>`
+                  : ""
+              }
+            </td>
+            <td>${item.quantity}</td>
+            <td class="text-right">${formatVND(item.pricePerDay)}</td>
+            <td class="text-right">${formatVND(
+              item.pricePerDay * item.quantity * rentalDays,
+            )}</td>
+          </tr>
+        `,
+      )
+      .join("");
 
     printWindow.document.write(`
       <html>
@@ -137,8 +202,61 @@ export function RentalDetailDialog({
             }
             .content-box {
               white-space: pre-wrap;
-              margin-bottom: 40px;
               text-align: justify;
+            }
+            .section-title {
+              margin: 22px 0 8px;
+              font-weight: bold;
+              text-transform: uppercase;
+            }
+            .info-table,
+            .product-table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            .info-table td {
+              padding: 4px 8px 4px 0;
+              vertical-align: top;
+            }
+            .info-label {
+              width: 22%;
+              font-weight: bold;
+            }
+            .product-table th,
+            .product-table td {
+              border: 1px solid #000;
+              padding: 7px;
+              text-align: center;
+            }
+            .product-table th {
+              background: #f3f4f6;
+            }
+            .text-left {
+              text-align: left !important;
+            }
+            .text-right {
+              text-align: right !important;
+            }
+            .sub-text {
+              margin-top: 2px;
+              color: #555;
+              font-size: 11px;
+            }
+            .summary-box {
+              margin-top: 10px;
+              margin-left: auto;
+              width: 48%;
+            }
+            .summary-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 3px 0;
+            }
+            .summary-total {
+              margin-top: 5px;
+              padding-top: 6px;
+              border-top: 1px solid #000;
+              font-weight: bold;
             }
             .signatures-container {
               margin-top: 50px;
@@ -193,6 +311,83 @@ export function RentalDetailDialog({
           <div class="header-title">HỢP ĐỒNG THUÊ THIẾT BỊ ĐIỆN TỬ</div>
           <div class="contract-info">Số: ${rental.contract.contractNumber}</div>
 
+          <div class="section-title">I. Thông tin các bên</div>
+          <table class="info-table">
+            <tr>
+              <td class="info-label">Bên cho thuê:</td>
+              <td><strong>Digital Rental</strong></td>
+            </tr>
+            <tr>
+              <td class="info-label">Đại diện:</td>
+              <td>${rental.contract.lessorSignature || "Cửa hàng Digital Rental"}</td>
+            </tr>
+            <tr>
+              <td class="info-label">Bên thuê:</td>
+              <td><strong>${renterName}</strong></td>
+            </tr>
+            <tr>
+              <td class="info-label">Email:</td>
+              <td>${rental.userEmail || "Chưa cập nhật"}</td>
+            </tr>
+            <tr>
+              <td class="info-label">Số điện thoại:</td>
+              <td>${rental.userPhone || rental.shippingPhone || "Chưa cập nhật"}</td>
+            </tr>
+            <tr>
+              <td class="info-label">Địa điểm nhận:</td>
+              <td>${rental.shippingAddress || "Nhận tại cửa hàng Digital Rental"}</td>
+            </tr>
+          </table>
+
+          <div class="section-title">II. Thông tin thuê thiết bị</div>
+          <table class="info-table">
+            <tr>
+              <td class="info-label">Mã đơn thuê:</td>
+              <td>#${rental.code}</td>
+            </tr>
+            <tr>
+              <td class="info-label">Thời hạn thuê:</td>
+              <td>${formatContractDate(rental.startDate)} đến ${formatContractDate(rental.endDate)} (${rentalDays} ngày)</td>
+            </tr>
+            <tr>
+              <td class="info-label">Hình thức thanh toán:</td>
+              <td>${rental.paymentMethod === "ONLINE" ? "VNPay Online" : rental.paymentMethod}</td>
+            </tr>
+          </table>
+
+          <div class="section-title">III. Danh sách thiết bị thuê</div>
+          <table class="product-table">
+            <thead>
+              <tr>
+                <th style="width: 7%">STT</th>
+                <th>Thiết bị</th>
+                <th style="width: 10%">SL</th>
+                <th style="width: 20%">Đơn giá/ngày</th>
+                <th style="width: 20%">Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody>${productRows}</tbody>
+          </table>
+          <div class="summary-box">
+            <div class="summary-row">
+              <span>Phí thuê:</span>
+              <strong>${formatVND(rental.rentalFee)}</strong>
+            </div>
+            <div class="summary-row">
+              <span>Tiền cọc dự kiến:</span>
+              <strong>${formatVND(
+                rental.finalDepositAmount ??
+                  rental.estimatedDepositAmount ??
+                  0,
+              )}</strong>
+            </div>
+            <div class="summary-row summary-total">
+              <span>Tổng phí thuê:</span>
+              <span>${formatVND(rental.rentalFee + rental.additionalFee)}</span>
+            </div>
+          </div>
+
+          <div class="section-title">IV. Điều khoản hợp đồng</div>
           <div class="content-box">
             ${terms}
           </div>
@@ -211,7 +406,7 @@ export function RentalDetailDialog({
               ${(rental.contract.isLocked || rental.contract.locked) ? `
                 <div class="signature-box">
                   ĐÃ KÝ ĐIỆN TỬ<br>
-                  Khách hàng: ${signature}<br>
+                  Khách hàng: ${renterName}<br>
                   Thời gian: ${signedAtStr}
                 </div>
               ` : `

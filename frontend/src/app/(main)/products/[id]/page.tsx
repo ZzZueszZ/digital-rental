@@ -88,6 +88,11 @@ interface Product {
 
 type Review = ReviewResponse;
 
+const formatRentalDate = (date: string) => {
+  const [year, month, day] = date.split("-");
+  return year && month && day ? `${day}/${month}/${year}` : date;
+};
+
 interface MetaData {
   averageRating: number;
   totalReviews: number;
@@ -124,6 +129,7 @@ export default function ProductDetailPage() {
   const paymentMethod = "ONLINE" as const;
   const [isSubmittingRental, setIsSubmittingRental] = useState(false);
   const [showKycDialog, setShowKycDialog] = useState(false);
+  const [showRentalConfirmDialog, setShowRentalConfirmDialog] = useState(false);
 
   const { accessToken } = useAuthStore();
   const { data: profileRes } = useMyProfile();
@@ -170,7 +176,7 @@ export default function ProductDetailPage() {
     }
   }, [checkAvailability, rentalStartDate, rentalEndDate]);
 
-  const handleRentalSubmit = async () => {
+  const handleRentalConfirmRequest = () => {
     if (!accessToken) {
       toast.error("Vui lòng đăng nhập để thuê thiết bị");
       router.push("/auth/login");
@@ -192,8 +198,13 @@ export default function ProductDetailPage() {
       return;
     }
 
+    setShowRentalConfirmDialog(true);
+  };
+
+  const handleRentalSubmit = async () => {
     try {
       setIsSubmittingRental(true);
+      setShowRentalConfirmDialog(false);
 
       // Check KYC status
       const kyc = await identityService.getKycStatus();
@@ -773,7 +784,7 @@ export default function ProductDetailPage() {
 
                       {/* Booking/Checkout Action Button */}
                       <Button
-                        onClick={handleRentalSubmit}
+                        onClick={handleRentalConfirmRequest}
                         disabled={
                           isSubmittingRental ||
                           (rentalStartDate !== "" &&
@@ -1018,6 +1029,66 @@ export default function ProductDetailPage() {
           description="Hành động này không thể hoàn tác. Đánh giá của bạn sẽ bị gỡ bỏ hoàn toàn."
           variant="danger"
           isLoading={deleteMutation.isPending}
+        />
+
+        <ConfirmDialog
+          open={showRentalConfirmDialog}
+          onOpenChange={(open) => {
+            if (!isSubmittingRental) setShowRentalConfirmDialog(open);
+          }}
+          onConfirm={handleRentalSubmit}
+          title="Xác nhận đặt lịch thuê"
+          description={
+            <span className="block space-y-3">
+              <span className="block">
+                Vui lòng kiểm tra lại thông tin trước khi gửi yêu cầu thuê.
+              </span>
+              <span className="block rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-zinc-600">
+                <span className="flex justify-between gap-4 py-1">
+                  <span>Thiết bị</span>
+                  <span className="text-right font-medium text-zinc-900">
+                    {product.name}
+                  </span>
+                </span>
+                <span className="flex justify-between gap-4 py-1">
+                  <span>Ngày thuê</span>
+                  <span className="font-medium text-zinc-900">
+                    {formatRentalDate(rentalStartDate)} -{" "}
+                    {formatRentalDate(rentalEndDate)}
+                  </span>
+                </span>
+                <span className="flex justify-between gap-4 py-1">
+                  <span>Thời gian</span>
+                  <span className="font-medium text-zinc-900">
+                    {days} ngày
+                  </span>
+                </span>
+                <span className="flex justify-between gap-4 py-1">
+                  <span>Khung giờ nhận</span>
+                  <span className="font-medium text-zinc-900">
+                    {pickupTimeSlot}
+                  </span>
+                </span>
+                <span className="mt-2 flex justify-between gap-4 border-t border-zinc-200 pt-3">
+                  <span>Phí thuê tạm tính</span>
+                  <span className="font-semibold text-zinc-950">
+                    {formatVND(product.rentPricePerDay * days * quantity)}
+                  </span>
+                </span>
+                <span className="flex justify-between gap-4 py-1">
+                  <span>Tiền cọc dự kiến</span>
+                  <span className="font-medium text-amber-700">
+                    {formatVND(product.salePrice * 0.2 * quantity)}
+                  </span>
+                </span>
+              </span>
+            </span>
+          }
+          confirmText="Xác nhận đặt thuê"
+          cancelText="Hủy"
+          isLoading={isSubmittingRental}
+          variant="info"
+          layout="stacked"
         />
 
         {/* KYC Alert Dialog */}

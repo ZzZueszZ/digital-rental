@@ -22,6 +22,7 @@ export interface ConfirmDialogProps {
   onConfirm: () => void | Promise<void>;
   isLoading?: boolean;
   variant?: "danger" | "warning" | "info";
+  layout?: "inline" | "stacked";
 }
 
 export function ConfirmDialog({
@@ -34,6 +35,7 @@ export function ConfirmDialog({
   onConfirm,
   isLoading = false,
   variant = "danger",
+  layout = "inline",
 }: ConfirmDialogProps) {
   const handleConfirm = async () => {
     await onConfirm();
@@ -69,19 +71,35 @@ export function ConfirmDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent showCloseButton={false} className="sm:max-w-md !p-0 !gap-0 overflow-hidden border border-zinc-100 shadow-dash-overlay rounded-xl bg-white">
         <div className="p-6">
-          <DialogHeader className="flex flex-col sm:flex-row sm:items-start gap-4 space-y-0 text-left">
-            <div className={cn("w-12 h-12 rounded-full flex items-center justify-center shrink-0 self-start shadow-sm border border-zinc-100", getIconBg())}>
-              {getIcon()}
-            </div>
-            <div className="space-y-1.5 pt-0.5">
-              <DialogTitle className="text-lg font-semibold tracking-tight text-zinc-950">
-                {title}
-              </DialogTitle>
-              <DialogDescription className="text-sm font-medium text-zinc-500 leading-relaxed">
+          {layout === "stacked" ? (
+            <DialogHeader className="space-y-4 text-left">
+              <div className="flex items-center gap-3">
+                <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-100", getIconBg())}>
+                  {getIcon()}
+                </div>
+                <DialogTitle className="text-lg font-semibold tracking-tight text-zinc-950">
+                  {title}
+                </DialogTitle>
+              </div>
+              <DialogDescription className="space-y-4 text-sm font-normal leading-relaxed text-zinc-500">
                 {description}
               </DialogDescription>
-            </div>
-          </DialogHeader>
+            </DialogHeader>
+          ) : (
+            <DialogHeader className="flex flex-col sm:flex-row sm:items-start gap-4 space-y-0 text-left">
+              <div className={cn("w-12 h-12 rounded-full flex items-center justify-center shrink-0 self-start shadow-sm border border-zinc-100", getIconBg())}>
+                {getIcon()}
+              </div>
+              <div className="space-y-1.5 pt-0.5">
+                <DialogTitle className="text-lg font-semibold tracking-tight text-zinc-950">
+                  {title}
+                </DialogTitle>
+                <DialogDescription className="text-sm font-medium text-zinc-500 leading-relaxed">
+                  {description}
+                </DialogDescription>
+              </div>
+            </DialogHeader>
+          )}
         </div>
         <DialogFooter className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex flex-row justify-end gap-3 m-0 rounded-b-xl">
           <DialogClose 

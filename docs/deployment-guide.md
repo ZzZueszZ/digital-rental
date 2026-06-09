@@ -1,7 +1,7 @@
 # Deployment Guide
 
 ## Documentation Maintenance
-**Last Updated:** 2026-06-08  
+**Last Updated:** 2026-06-09  
 **Document Version:** 1.0  
 **Maintained By:** Development Team
 
@@ -46,8 +46,8 @@ Required/important environment variables:
 | `APP_SCHEDULER_VOUCHER_EXPIRING_*` | Voucher expiry scheduler settings. |
 | `APP_INVENTORY_LOW_STOCK_THRESHOLD` | Low-stock alert threshold. |
 | `APP_E2EE_ENABLED` | Enables the E2EE Shield handshake and protected route filter. Must match the frontend flag. |
-| `SERVER_IDENTITY_PRIV_B64` | Base64-encoded PKCS#8 EC P-256 private identity key. Store only in a secret manager. |
-| `SERVER_IDENTITY_PUB_B64` | Base64-encoded X.509 EC P-256 public identity key. |
+| `SERVER_IDENTITY_PRIV_B64` | PKCS#8 EC P-256 private identity key. Accepted formats: raw PEM, base64-encoded PEM, or base64-encoded DER. Store only in a secret manager. |
+| `SERVER_IDENTITY_PUB_B64` | X.509 EC P-256 public identity key. Accepted formats: raw PEM, base64-encoded PEM, or base64-encoded DER. |
 
 Current Redis host and port are hardcoded to `localhost:6379` in `application.yml`; make these configurable before production deployment.
 

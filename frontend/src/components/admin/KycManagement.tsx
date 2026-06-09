@@ -509,7 +509,7 @@ export default function KycManagement() {
                       Risk score:
                     </span>
                     <span className="font-bold text-zinc-800">
-                      {formatPercent(selectedSession.riskScore)}
+                      {formatRiskScore(selectedSession.riskScore)}
                     </span>
                   </div>
                   <div className="text-xs">
@@ -525,7 +525,7 @@ export default function KycManagement() {
                       Liveness score:
                     </span>
                     <span className="font-bold text-red-600">
-                      {formatPercent(selectedSession.livenessScore)}
+                      {formatRatioPercent(selectedSession.livenessScore)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
@@ -748,9 +748,14 @@ function getImageUrl(url: string | null | undefined) {
   return `${baseUrl}${cleanUrl}`;
 }
 
-function formatPercent(value: number | null | undefined) {
+function formatRatioPercent(value: number | null | undefined) {
   if (value === null || value === undefined) return "---";
   return `${(value * 100).toFixed(0)}%`;
+}
+
+function formatRiskScore(value: number | null | undefined) {
+  if (value === null || value === undefined) return "---";
+  return `${value.toFixed(0)}%`;
 }
 
 function RiskBadge({
@@ -773,7 +778,7 @@ function RiskBadge({
 
   return (
     <Badge variant="outline" className={cn("font-bold", meta.className)}>
-      {meta.label} {formatPercent(session.riskScore)}
+      {meta.label} {formatRiskScore(session.riskScore)}
     </Badge>
   );
 }

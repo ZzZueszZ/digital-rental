@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -26,11 +27,8 @@ public class ServerKeyConfig {
     @Bean
     public KeyPair serverIdentityKeyPair() throws Exception {
         try {
-            String privPem = new String(Base64.getDecoder().decode(privPemB64));
-            String pubPem = new String(Base64.getDecoder().decode(pubPemB64));
-
-            byte[] privBytes = extractKey(privPem, "PRIVATE KEY");
-            byte[] pubBytes = extractKey(pubPem, "PUBLIC KEY");
+            byte[] privBytes = decodeKeyMaterial(privPemB64, "PRIVATE KEY");
+            byte[] pubBytes = decodeKeyMaterial(pubPemB64, "PUBLIC KEY");
 
             KeyFactory keyFactory = KeyFactory.getInstance("EC");
             PrivateKey privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(privBytes));
@@ -41,8 +39,31 @@ public class ServerKeyConfig {
         }
     }
 
+    private byte[] decodeKeyMaterial(String value, String type) {
+        String normalized = normalizeKeyValue(value);
+        if (isPem(normalized, type)) {
+            return extractKey(normalized, type);
+        }
+
+        byte[] decoded = Base64.getDecoder().decode(normalized.replaceAll("\\s", ""));
+        String decodedText = new String(decoded, StandardCharsets.UTF_8);
+        if (isPem(decodedText, type)) {
+            return extractKey(decodedText, type);
+        }
+
+        return decoded;
+    }
+
+    private String normalizeKeyValue(String value) {
+        return value == null ? "" : value.replace("\\n", "\n").trim();
+    }
+
+    private boolean isPem(String value, String type) {
+        return value.contains("-----BEGIN " + type + "-----");
+    }
+
     private byte[] extractKey(String pem, String type) {
-        String cleaned = pem
+        String cleaned = normalizeKeyValue(pem)
                 .replace("-----BEGIN " + type + "-----", "")
                 .replace("-----END " + type + "-----", "")
                 .replaceAll("\\s", "");

@@ -17,5 +17,6 @@ public class SubmitKycRequest {
     @NotBlank(message = "Selfie image URL is required")
     private String selfieImageUrl;
 
+    @NotBlank(message = "Liveness video URL is required")
     private String livenessVideoUrl;
 }

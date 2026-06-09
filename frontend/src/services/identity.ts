@@ -40,7 +40,7 @@ export interface SubmitKycRequest {
   frontImageUrl: string;
   backImageUrl: string;
   selfieImageUrl: string;
-  livenessVideoUrl?: string;
+  livenessVideoUrl: string;
 }
 
 export interface OcrPreviewRequest {

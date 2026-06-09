@@ -28,9 +28,7 @@ public class KycVerificationProcessor {
         saveArtifact(session, VerificationArtifactType.CCCD_FRONT, request.getFrontImageUrl());
         saveArtifact(session, VerificationArtifactType.CCCD_BACK, request.getBackImageUrl());
         saveArtifact(session, VerificationArtifactType.SELFIE_IMAGE, request.getSelfieImageUrl());
-        if (!isBlank(request.getLivenessVideoUrl())) {
-            saveArtifact(session, VerificationArtifactType.SELFIE_VIDEO, request.getLivenessVideoUrl());
-        }
+        saveArtifact(session, VerificationArtifactType.SELFIE_VIDEO, request.getLivenessVideoUrl());
 
         KycProvider provider = providerRegistry.activeProvider();
         log.info("KYC provider selected: userId={}, sessionId={}, provider={}",
@@ -38,7 +36,7 @@ public class KycVerificationProcessor {
         VerificationResult preview = verificationResultRepository.findByVerificationSessionId(session.getId()).orElse(null);
         KycOcrResult extracted;
         KycFaceMatchResult face;
-        KycLivenessResult liveness = null;
+        KycLivenessResult liveness;
         String providerName;
         if (hasOcrPreview(preview)) {
             providerName = preview.getOcrProvider() != null ? preview.getOcrProvider() : provider.name();
@@ -54,9 +52,7 @@ public class KycVerificationProcessor {
             log.debug("KYC provider verification completed: userId={}, sessionId={}, provider={}",
                     user.getId(), session.getId(), providerName);
         }
-        if (!isBlank(request.getLivenessVideoUrl())) {
-            liveness = provider.verifyLiveness(request.getLivenessVideoUrl(), request.getFrontImageUrl());
-        }
+        liveness = provider.verifyLiveness(request.getLivenessVideoUrl(), request.getFrontImageUrl());
         KycRiskAssessmentResult risk = riskScoringService.assess(user, extracted, face, liveness);
         log.info("KYC risk assessed: userId={}, sessionId={}, riskLevel={}, riskScore={}, reason={}",
                 user.getId(), session.getId(), risk.getRiskLevel(), risk.getRiskScore(), risk.getReason());
@@ -186,7 +182,4 @@ public class KycVerificationProcessor {
         return raw == null ? "{}" : raw;
     }
 
-    private boolean isBlank(String value) {
-        return value == null || value.isBlank();
-    }
 }

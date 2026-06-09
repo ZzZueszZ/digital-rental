@@ -118,7 +118,7 @@ Key patterns:
 
 - VNPay: `/payments/vnpay/create` and `/payments/vnpay/return`.
 - Rental VNPay: `/payments/vnpay/rental-fee/create` and `/payments/vnpay/rental-fee/return`.
-- eKYC: `/ekyc/ocr-preview`, `/ekyc/upload-liveness-video`, and `/ekyc/submit` support CCCD OCR preview, selfie facematch, and optional liveness video validation through the configured KYC provider.
+- eKYC: `/ekyc/ocr-preview`, `/ekyc/upload-liveness-video`, and `/ekyc/submit` support CCCD OCR preview, selfie facematch, and mandatory liveness video validation through the configured KYC provider.
 - Mail: activation and password reset flows use SMTP configuration.
 - Redis: token blacklist/cache support.
 - OpenAPI: Swagger UI and API docs paths are public.
@@ -132,7 +132,7 @@ Key patterns:
 - `FPT_KYC_FACEMATCH_URL`
 - `FPT_KYC_LIVENESS_URL`
 
-OCR preview is persisted in existing verification result data. Final submit reuses OCR preview, runs facematch, optionally runs liveness when `livenessVideoUrl` is present, then keeps manual review as final authority.
+OCR preview is persisted in existing verification result data. Final submit reuses OCR preview, runs facematch, requires `livenessVideoUrl`, runs liveness validation, then keeps manual review as final authority.
 
 ## Architecture Risks
 

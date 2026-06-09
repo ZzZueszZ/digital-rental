@@ -16,7 +16,11 @@ import {
   RefreshCw,
   Upload,
   Video,
-  Square,
+  CheckCircle2,
+  Circle,
+  ArrowLeft,
+  ArrowRight,
+  ScanFace,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -33,6 +37,31 @@ function base64ToFile(base64String: string, filename: string): File {
   }
   return new File([u8arr], filename, { type: mime });
 }
+
+const LIVENESS_PROMPTS = [
+  {
+    title: "Nhìn thẳng vào khung hình.",
+    helper: "Đặt khuôn mặt trong vòng tròn, mắt nhìn vào camera.",
+    icon: ScanFace,
+  },
+  {
+    title: "Quay mặt sang trái.",
+    helper: "Xoay đầu nhẹ sang trái, không đưa điện thoại theo mặt.",
+    icon: ArrowLeft,
+  },
+  {
+    title: "Quay mặt sang phải.",
+    helper: "Xoay đầu nhẹ sang phải, giữ khuôn mặt vẫn trong khung.",
+    icon: ArrowRight,
+  },
+  {
+    title: "Nhìn thẳng lại và giữ yên.",
+    helper: "Quay về giữa, giữ yên để hệ thống lấy khung hình rõ nhất.",
+    icon: CheckCircle2,
+  },
+] as const;
+
+const MIN_LIVENESS_STEP_MS = 1200;
 
 export default function EkycPage() {
   const { refetch: refetchProfile } = useMyProfile();
@@ -52,12 +81,19 @@ export default function EkycPage() {
   const streamRef = useRef<MediaStream | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<Blob[]>([]);
+  const livenessShouldUploadRef = useRef(false);
 
   // Upload image URLs
   const [frontImage, setFrontImage] = useState<string | null>(null);
   const [backImage, setBackImage] = useState<string | null>(null);
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [livenessVideo, setLivenessVideo] = useState<string | null>(null);
+  const [livenessStepIndex, setLivenessStepIndex] = useState(0);
+  const [completedLivenessSteps, setCompletedLivenessSteps] = useState<boolean[]>(
+    () => LIVENESS_PROMPTS.map(() => false)
+  );
+  const [livenessStepStartedAt, setLivenessStepStartedAt] = useState<number | null>(null);
+  const [livenessElapsedMs, setLivenessElapsedMs] = useState(0);
   const [ocrPreview, setOcrPreview] = useState<KycOcrPreviewResponse | null>(null);
   const [previewingOcr, setPreviewingOcr] = useState(false);
 
@@ -79,6 +115,14 @@ export default function EkycPage() {
       stopCamera();
     };
   }, []);
+
+  useEffect(() => {
+    if (!recordingLiveness || !livenessStepStartedAt) return;
+    const timer = window.setInterval(() => {
+      setLivenessElapsedMs(Date.now() - livenessStepStartedAt);
+    }, 150);
+    return () => window.clearInterval(timer);
+  }, [recordingLiveness, livenessStepStartedAt]);
 
   const startCamera = async (target: "front" | "back" | "selfie" | "liveness") => {
     try {
@@ -104,6 +148,7 @@ export default function EkycPage() {
 
   const stopCamera = () => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      livenessShouldUploadRef.current = false;
       mediaRecorderRef.current.stop();
     }
     setRecordingLiveness(false);
@@ -189,6 +234,10 @@ export default function EkycPage() {
       setBackImage(null);
       setSelfieImage(null);
       setLivenessVideo(null);
+      setLivenessStepIndex(0);
+      setCompletedLivenessSteps(LIVENESS_PROMPTS.map(() => false));
+      setLivenessStepStartedAt(null);
+      setLivenessElapsedMs(0);
       setOcrPreview(null);
     } catch {
       toast.error("Không thể khởi tạo phiên xác thực");
@@ -207,7 +256,7 @@ export default function EkycPage() {
 
   const runOcrPreview = async () => {
     if (!frontImage || !backImage) {
-      toast.error("Please upload both CCCD images before OCR preview");
+      toast.error("Vui lòng tải lên đủ hai mặt CCCD trước khi trích xuất OCR");
       return null;
     }
     try {
@@ -218,13 +267,13 @@ export default function EkycPage() {
       });
       setOcrPreview(preview);
       if (preview.warnings?.length) {
-        toast.warning("OCR preview has warnings. Please review before continuing.");
+        toast.warning("Thông tin OCR cần kiểm tra lại trước khi tiếp tục.");
       } else {
-        toast.success("OCR preview ready");
+        toast.success("Đã trích xuất thông tin CCCD");
       }
       return preview;
     } catch (error) {
-      toast.error("OCR preview failed. Please retry or retake CCCD images.");
+      toast.error("Trích xuất OCR thất bại. Vui lòng chụp lại CCCD rõ hơn.");
       console.error(error);
       return null;
     } finally {
@@ -234,6 +283,12 @@ export default function EkycPage() {
 
   const startLivenessRecording = () => {
     if (!streamRef.current) return;
+    setLivenessVideo(null);
+    setLivenessStepIndex(0);
+    setCompletedLivenessSteps(LIVENESS_PROMPTS.map(() => false));
+    setLivenessElapsedMs(0);
+    setLivenessStepStartedAt(Date.now());
+    livenessShouldUploadRef.current = false;
     recordedChunksRef.current = [];
     const mimeType = MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : "";
     const recorder = new MediaRecorder(streamRef.current, mimeType ? { mimeType } : undefined);
@@ -245,34 +300,83 @@ export default function EkycPage() {
     };
     recorder.onstop = async () => {
       const blob = new Blob(recordedChunksRef.current, { type: mimeType || "video/webm" });
+      if (!livenessShouldUploadRef.current || blob.size === 0) {
+        setUploadingImage(false);
+        setRecordingLiveness(false);
+        setLivenessStepStartedAt(null);
+        setLivenessElapsedMs(0);
+        livenessShouldUploadRef.current = false;
+        return;
+      }
       const file = new File([blob], "liveness.webm", { type: mimeType || "video/webm" });
       try {
         setUploadingImage(true);
         const uploadedUrl = await identityService.uploadLivenessVideo(file);
         setLivenessVideo(uploadedUrl);
-        toast.success("Liveness video uploaded");
+        toast.success("Video xác thực khuôn mặt đã sẵn sàng");
       } catch (error) {
-        toast.error("Liveness video upload failed. Please record again.");
+        toast.error("Tải video xác thực thất bại. Vui lòng quay lại.");
         console.error(error);
       } finally {
         setUploadingImage(false);
         setRecordingLiveness(false);
+        setLivenessStepStartedAt(null);
+        setLivenessElapsedMs(0);
+        livenessShouldUploadRef.current = false;
         stopCamera();
       }
     };
-    recorder.start();
+    recorder.start(250);
     setRecordingLiveness(true);
-    setTimeout(() => {
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
-        mediaRecorderRef.current.stop();
-      }
-    }, 6000);
   };
 
   const stopLivenessRecording = () => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+      livenessShouldUploadRef.current = true;
       mediaRecorderRef.current.stop();
     }
+  };
+
+  const cancelLivenessRecording = () => {
+    livenessShouldUploadRef.current = false;
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+      mediaRecorderRef.current.stop();
+    }
+    setRecordingLiveness(false);
+    setLivenessStepIndex(0);
+    setCompletedLivenessSteps(LIVENESS_PROMPTS.map(() => false));
+    setLivenessStepStartedAt(null);
+    setLivenessElapsedMs(0);
+    stopCamera();
+  };
+
+  const validateCurrentLivenessStep = () => {
+    const video = videoRef.current;
+    const elapsed = livenessStepStartedAt ? Date.now() - livenessStepStartedAt : 0;
+    if (!recordingLiveness || !video || video.videoWidth === 0 || video.videoHeight === 0) {
+      toast.error("Camera chưa sẵn sàng. Vui lòng giữ khuôn mặt trong khung hình.");
+      return;
+    }
+    if (elapsed < MIN_LIVENESS_STEP_MS) {
+      toast.error("Giữ tư thế thêm một chút để video rõ hơn.");
+      return;
+    }
+
+    const nextCompleted = completedLivenessSteps.map((done, index) =>
+      index === livenessStepIndex ? true : done
+    );
+    setCompletedLivenessSteps(nextCompleted);
+
+    const isLastStep = livenessStepIndex === LIVENESS_PROMPTS.length - 1;
+    if (isLastStep) {
+      toast.success("Đã đủ góc mặt. Đang tải video xác thực...");
+      stopLivenessRecording();
+      return;
+    }
+
+    setLivenessStepIndex((current) => current + 1);
+    setLivenessStepStartedAt(Date.now());
+    setLivenessElapsedMs(0);
   };
 
   const handleStep3Submit = async () => {
@@ -297,7 +401,7 @@ export default function EkycPage() {
 
   const handleStep5Submit = () => {
     if (!livenessVideo) {
-      toast.error("Please record liveness video");
+      toast.error("Vui lòng quay video xác thực khuôn mặt");
       return;
     }
     setStep(5);
@@ -310,11 +414,15 @@ export default function EkycPage() {
         const preview = await runOcrPreview();
         if (!preview) return;
       }
+      if (!livenessVideo) {
+        toast.error("Vui lòng quay video xác thực khuôn mặt trước khi gửi hồ sơ");
+        return;
+      }
       const data = await identityService.submitKyc({
         frontImageUrl: frontImage || "",
         backImageUrl: backImage || "",
         selfieImageUrl: selfieImage || "",
-        livenessVideoUrl: livenessVideo || undefined,
+        livenessVideoUrl: livenessVideo,
       });
 
       if (data.status === "REJECTED") {
@@ -990,7 +1098,7 @@ export default function EkycPage() {
               disabled={!selfieImage || uploadingImage}
               className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 disabled:opacity-50"
             >
-              Tiep tuc: Liveness video
+              Tiếp tục: Video khuôn mặt
             </Button>
           </div>
         </div>
@@ -1000,35 +1108,106 @@ export default function EkycPage() {
       {step === 4 && (
         <div className="space-y-8 animate-in fade-in duration-300">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-950">Buoc 4: Record liveness video</h3>
+            <h3 className="text-lg font-semibold text-zinc-950">Bước 4: Quay video xác thực khuôn mặt</h3>
             <p className="text-sm text-zinc-500 font-medium mt-1">
-              Record a short 5-6 second face video. Keep one face in frame, good light, no mask or sunglasses.
+              Làm theo từng hướng dẫn để video có đủ góc mặt. Giữ ánh sáng tốt, không đeo kính râm hoặc khẩu trang.
             </p>
           </div>
 
           {isCameraOpen && activeCameraFor === "liveness" ? (
-            <div className="max-w-md mx-auto flex flex-col items-center gap-6 bg-zinc-50/50 p-6 rounded-2xl border border-zinc-200/60 shadow-sm">
-              <div className="relative aspect-square w-full rounded-2xl border border-zinc-200/80 overflow-hidden bg-zinc-100 flex items-center justify-center shadow-inner">
-                <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
-                <div className="absolute inset-8 border-4 border-dashed border-red-600/10 rounded-full pointer-events-none flex items-center justify-center">
-                  <span className="text-xs text-zinc-700 bg-white/80 border border-zinc-200/50 px-5 py-2 rounded-full font-semibold whitespace-nowrap">
-                    Keep face centered
-                  </span>
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+              <div className="flex flex-col items-center gap-5 bg-zinc-50/50 p-4 sm:p-6 rounded-2xl border border-zinc-200/60 shadow-sm">
+                <div className="relative aspect-square w-full max-w-md rounded-2xl border border-zinc-200/80 overflow-hidden bg-zinc-100 flex items-center justify-center shadow-inner">
+                  <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+                  <div className="absolute inset-8 border-4 border-dashed border-red-600/20 rounded-full pointer-events-none flex items-center justify-center">
+                    <span className="text-xs text-zinc-700 bg-white/90 border border-zinc-200/70 px-4 py-2 rounded-full font-semibold whitespace-nowrap shadow-sm">
+                      Giữ khuôn mặt trong vòng tròn
+                    </span>
+                  </div>
+                  {recordingLiveness && (
+                    <div className="absolute left-4 top-4 rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold text-white shadow-lg">
+                      Đang ghi
+                    </div>
+                  )}
                 </div>
-              </div>
-              <div className="flex gap-3">
+
+                <div className="w-full max-w-md rounded-2xl border border-red-100 bg-white p-4 shadow-sm">
+                  {(() => {
+                    const currentPrompt = LIVENESS_PROMPTS[livenessStepIndex];
+                    const CurrentIcon = currentPrompt.icon;
+                    const progress = Math.min(100, Math.round((livenessElapsedMs / MIN_LIVENESS_STEP_MS) * 100));
+                    return (
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-3">
+                          <div className="h-11 w-11 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+                            <CurrentIcon className="h-5 w-5" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-bold text-zinc-950">{currentPrompt.title}</p>
+                            <p className="text-xs font-medium text-zinc-500 leading-relaxed mt-1">{currentPrompt.helper}</p>
+                          </div>
+                        </div>
+                        <div className="h-2 rounded-full bg-zinc-100 overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-red-600 transition-all duration-150"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                        <p className="text-[11px] font-semibold text-zinc-400">
+                          Bước {livenessStepIndex + 1}/{LIVENESS_PROMPTS.length} - Giữ tư thế đến khi thanh tiến trình đầy.
+                        </p>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-3">
                 {recordingLiveness ? (
-                  <Button onClick={stopLivenessRecording} className="h-10 px-5 rounded-xl bg-red-600 text-white font-semibold text-[14px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95">
-                    <Square className="w-4 h-4 mr-2" /> Stop
+                  <Button onClick={validateCurrentLivenessStep} className="h-10 px-5 rounded-xl bg-red-600 text-white font-semibold text-[14px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95">
+                    <CheckCircle2 className="w-4 h-4 mr-2" /> Xác nhận góc này
                   </Button>
                 ) : (
                   <Button onClick={startLivenessRecording} className="h-10 px-5 rounded-xl bg-red-600 text-white font-semibold text-[14px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95">
-                    <Video className="w-4 h-4 mr-2" /> Record 6s
+                    <Video className="w-4 h-4 mr-2" /> Bắt đầu ghi
                   </Button>
                 )}
-                <Button onClick={stopCamera} variant="outline" className="h-10 px-5 rounded-xl border border-zinc-200 text-zinc-700 bg-white font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95">
-                  Close Camera
+                <Button onClick={cancelLivenessRecording} variant="outline" className="h-10 px-5 rounded-xl border border-zinc-200 text-zinc-700 bg-white font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95">
+                  Hủy quay
                 </Button>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm h-fit space-y-3">
+                <p className="text-xs font-bold uppercase tracking-wider text-zinc-400">Các góc cần hoàn tất</p>
+                {LIVENESS_PROMPTS.map((prompt, index) => {
+                  const PromptIcon = prompt.icon;
+                  const isDone = completedLivenessSteps[index];
+                  const isCurrent = index === livenessStepIndex && recordingLiveness;
+                  return (
+                    <div
+                      key={prompt.title}
+                      className={cn(
+                        "flex items-start gap-3 rounded-xl border p-3 transition-colors",
+                        isDone
+                          ? "border-emerald-100 bg-emerald-50"
+                          : isCurrent
+                            ? "border-red-100 bg-red-50"
+                            : "border-zinc-100 bg-zinc-50/60"
+                      )}
+                    >
+                      <div className={cn(
+                        "mt-0.5 h-8 w-8 rounded-xl flex items-center justify-center shrink-0",
+                        isDone ? "bg-emerald-600 text-white" : isCurrent ? "bg-red-600 text-white" : "bg-white text-zinc-400"
+                      )}>
+                        {isDone ? <CheckCircle2 className="h-4 w-4" /> : isCurrent ? <PromptIcon className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-zinc-900">{prompt.title}</p>
+                        <p className="text-xs font-medium text-zinc-500 mt-0.5">{isDone ? "Đã xác nhận" : isCurrent ? "Đang thực hiện" : "Chưa thực hiện"}</p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ) : (
@@ -1037,18 +1216,20 @@ export default function EkycPage() {
                 <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5 space-y-4 text-center">
                   <Video className="w-10 h-10 text-emerald-600 mx-auto" />
                   <div>
-                    <p className="text-sm font-bold text-zinc-900">Liveness video ready</p>
-                    <p className="text-xs font-medium text-zinc-500 mt-1">This video will be checked on final submit.</p>
+                    <p className="text-sm font-bold text-zinc-900">Video xác thực đã sẵn sàng</p>
+                    <p className="text-xs font-medium text-zinc-500 mt-1">Video này sẽ được kiểm tra khi gửi hồ sơ.</p>
                   </div>
                   <Button
                     variant="outline"
                     onClick={() => {
                       setLivenessVideo(null);
+                      setLivenessStepIndex(0);
+                      setCompletedLivenessSteps(LIVENESS_PROMPTS.map(() => false));
                       startCamera("liveness");
                     }}
                     className="h-10 px-5 rounded-xl border border-zinc-200 text-zinc-700 bg-white font-semibold text-[14px]"
                   >
-                    Record again
+                    Quay lại
                   </Button>
                 </div>
               ) : (
@@ -1056,19 +1237,19 @@ export default function EkycPage() {
                   {uploadingImage ? (
                     <div className="flex flex-col items-center gap-3">
                       <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
-                      <span className="text-xs font-bold text-zinc-400">Uploading liveness video...</span>
+                      <span className="text-xs font-bold text-zinc-400">Đang tải video xác thực...</span>
                     </div>
                   ) : (
                     <>
                       <Video className="w-14 h-14 text-zinc-300 mb-6" />
                       <span className="text-xs font-bold text-zinc-500 mb-6 max-w-xs leading-relaxed">
-                        Open camera and record a short live face video for anti-spoofing check.
+                        Mở camera và quay đủ 4 góc mặt theo hướng dẫn để tăng chất lượng kiểm tra chống giả mạo.
                       </span>
                       <Button
                         onClick={() => startCamera("liveness")}
                         className="h-10 px-5 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 transition-all active:scale-95"
                       >
-                        <Video className="w-4 h-4" /> Open Camera
+                        <Video className="w-4 h-4" /> Mở camera
                       </Button>
                     </>
                   )}
@@ -1083,14 +1264,14 @@ export default function EkycPage() {
               onClick={() => setStep(4)}
               className="h-10 px-5 rounded-xl border border-zinc-100 bg-white text-zinc-500 font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95 shadow-sm"
             >
-              Back to selfie
+              Quay lại selfie
             </Button>
             <Button
               onClick={handleStep5Submit}
               disabled={!livenessVideo || uploadingImage || recordingLiveness}
               className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] shadow-lg shadow-zinc-200 whitespace-nowrap active:scale-95 disabled:opacity-50"
             >
-              Tiep tuc: Kiem tra & Gui
+              Tiếp tục: Kiểm tra & Gửi
             </Button>
           </div>
         </div>
@@ -1177,7 +1358,7 @@ export default function EkycPage() {
                   <div className="rounded-xl border border-zinc-100 bg-zinc-50/70 p-3 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2 min-w-0">
                       <Video className="h-4 w-4 text-emerald-600 shrink-0" />
-                      <span className="text-xs font-bold text-zinc-700 truncate">Liveness video</span>
+                      <span className="text-xs font-bold text-zinc-700 truncate">Video xác thực khuôn mặt</span>
                     </div>
                     <span className={cn(
                       "text-[10px] font-bold uppercase rounded-lg px-2 py-1 border",
@@ -1185,7 +1366,7 @@ export default function EkycPage() {
                         ? "bg-emerald-50 text-emerald-700 border-emerald-100"
                         : "bg-red-50 text-red-700 border-red-100"
                     )}>
-                      {livenessVideo ? "Ready" : "Missing"}
+                      {livenessVideo ? "Đã có" : "Thiếu"}
                     </span>
                   </div>
                 </div>

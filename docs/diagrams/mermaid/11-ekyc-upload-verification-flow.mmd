@@ -6,7 +6,7 @@
 %% 4. OCR preview extracts identity data and shows warnings
 %% 5. Retake CCCD if data/image is wrong
 %% 6. Capture selfie
-%% 7. Record liveness video 5-6s
+%% 7. Record guided liveness video with face angles
 %% 8. Review all data and submit
 %% 9. Backend runs facematch, liveness, risk scoring
 %% 10. Admin manually approves or rejects
@@ -45,7 +45,7 @@ flowchart TD
   N -->|Co| O["User chup selfie"]
   O --> P["Backend upload selfie va tra imageUrl"]
 
-  P --> Q["User record liveness video 5-6s"]
+  P --> Q["User record guided liveness video: center, left, right, center"]
   Q --> R["Backend upload video va tra videoUrl"]
 
   R --> S["User review anh + thong tin OCR + video"]
@@ -55,7 +55,7 @@ flowchart TD
   U --> V["Backend luu artifacts: front, back, selfie, liveness video"]
   V --> W["Backend reuse OCR preview, khong goi lai OCR neu da co"]
   W --> X["Backend goi facematch selfie vs CCCD front"]
-  X --> Y["Backend goi liveness neu co videoUrl"]
+  X --> Y["Backend bat buoc goi liveness voi videoUrl"]
   Y --> Z["Risk scoring"]
 
   Z --> AA{"Risk level"}

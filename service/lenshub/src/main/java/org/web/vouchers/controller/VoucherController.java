@@ -44,9 +44,9 @@ public class VoucherController {
         return ResponseEntity.ok(ApiResponse.successfulResponse("Cập nhật mã giảm giá thành công!", data));
     }
 
-    // ADMIN: xóa mềm (INACTIVE)
+    // ADMIN + STAFF: xóa mềm (INACTIVE)
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('VOUCHER_WRITE')")
+    @PreAuthorize("hasAuthority('VOUCHER_STATUS_MANAGE')")
     public ResponseEntity<ApiResponse<Void>> deactivate(@PathVariable Long id) {
         voucherService.deactivate(id);
         return ResponseEntity.ok(ApiResponse.successfulResponse("Mã giảm giá đã được vô hiệu hóa thành công!"));

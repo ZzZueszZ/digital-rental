@@ -68,12 +68,9 @@ export const useCreateProduct = () => {
         }
       });
 
-      // Append specifications
+      // Append specifications as JSON string to avoid part overhead, using a unique name to bypass default binding
       if (request.specifications && request.specifications.length > 0) {
-        request.specifications.forEach((spec, index) => {
-          formData.append(`specifications[${index}].specKey`, spec.specKey);
-          formData.append(`specifications[${index}].specValue`, spec.specValue);
-        });
+        formData.append("specificationsData", JSON.stringify(request.specifications));
       }
 
       // Append image
@@ -81,9 +78,7 @@ export const useCreateProduct = () => {
         formData.append("image", image);
       }
 
-      const { data } = await http.post<IBackendRes<ProductResponse>>("/products", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const { data } = await http.post<IBackendRes<ProductResponse>>("/products", formData);
       return data;
     },
     onSuccess: () => {
@@ -109,10 +104,7 @@ export const useUpdateProductInfo = (id: number) => {
         }
       });
       if (request.specifications && request.specifications.length > 0) {
-        request.specifications.forEach((spec, index) => {
-          formData.append(`specifications[${index}].specKey`, spec.specKey);
-          formData.append(`specifications[${index}].specValue`, spec.specValue);
-        });
+        formData.append("specificationsData", JSON.stringify(request.specifications));
       }
       if (image) {
         formData.append("image", image);
@@ -120,8 +112,7 @@ export const useUpdateProductInfo = (id: number) => {
 
       const { data } = await http.put<IBackendRes<ProductResponse>>(
         `/products/${id}/info`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        formData
       );
       return data;
     },
@@ -144,8 +135,7 @@ export const useUpdateProductPrice = (id: number) => {
 
       const { data } = await http.put<IBackendRes<ProductResponse>>(
         `/products/${id}/price`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        formData
       );
       return data;
     },
@@ -206,11 +196,13 @@ export const useHardDeleteProduct = () => {
   });
 };
 
-export const usePriceHistory = (id: number) => {
+export const usePriceHistory = (id: number, page: number = 0, size: number = 10) => {
   return useQuery({
-    queryKey: PRODUCT_KEYS.priceHistory(id),
+    queryKey: [...PRODUCT_KEYS.priceHistory(id), { page, size }],
     queryFn: async () => {
-      const { data } = await http.get<IBackendRes<PriceHistoryResponse[]>>(`/products/${id}/price-history`);
+      const { data } = await http.get<IBackendRes<PriceHistoryResponse[]>>(`/products/${id}/price-history`, {
+        params: { page, size }
+      });
       return data;
     },
     enabled: !!id,
@@ -228,8 +220,7 @@ export const useAddGallery = (productId: number) => {
 
       const { data } = await http.post<IBackendRes<GalleryImageResponse[]>>(
         `/products/${productId}/gallery`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        formData
       );
       return data;
     },

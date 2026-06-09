@@ -179,7 +179,7 @@ export function RoleGuard({ children, allowedRoles }: { children: React.ReactNod
 
   if (!isAuthenticated || !hasPermission) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 p-8 bg-zinc-50/50 rounded-3xl border border-zinc-200 mt-10 mx-auto max-w-2xl text-center">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 p-8 bg-zinc-50/50 rounded-xl border border-zinc-200 mt-10 mx-auto max-w-2xl text-center">
         <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center">
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m10-7V7a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H10a2 2 0 00-2 2v4a2 2 0 002 2z" />

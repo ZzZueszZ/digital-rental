@@ -1,33 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Camera,
-  Search,
-  User,
-  ShoppingBag,
-  Menu,
-  X,
-  Zap,
-  Sparkles,
-  LogOut,
-  Settings,
-  LayoutDashboard,
   ChevronRight,
   Home,
-  Package,
   Info,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Package,
+  Search,
+  Settings,
+  ShoppingBag,
+  User,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuLink,
-} from "@/components/ui/navigation-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,19 +29,20 @@ import Routers from "@/constants/routers";
 import { useAuthSession } from "@/components/auth/Guards";
 import { Role } from "@/constants/enum/role";
 
+const navigationItems = [
+  { label: "Thiết bị", href: "/rentals", icon: Camera },
+  { label: "Sản phẩm mới", href: "/#product-section", icon: Package },
+  { label: "Về chúng tôi", href: "/about", icon: Info },
+];
+
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, isLoading, logout } = useAuthSession({
     redirectToLogin: false,
   });
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
@@ -59,11 +50,8 @@ export function Navbar() {
 
   const getDashboardLink = () => {
     if (!user?.roles) return null;
-    if (
-      user.roles.includes(Role.SUPER_ADMIN) ||
-      user.roles.includes(Role.ADMIN)
-    )
-      return Routers.ADMIN;
+    if (user.roles.includes(Role.SUPER_ADMIN)) return Routers.SUPER_ADMIN;
+    if (user.roles.includes(Role.ADMIN)) return Routers.ADMIN;
     if (user.roles.includes(Role.STAFF)) return Routers.STAFF;
     return null;
   };
@@ -77,474 +65,295 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-zinc-200 select-none">
-        <div className="container flex h-16 lg:h-20 items-center justify-between px-4 sm:px-6 md:px-12 max-w-[1600px] mx-auto">
-          {/* Logo */}
-          <div className="flex items-center gap-6 lg:gap-12">
-            <Link
-              href="/"
-              className="group flex items-center gap-2.5 transition-all"
-            >
-              <div className="w-9 h-9 lg:w-10 lg:h-10 bg-red-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-500">
-                <Camera className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
+      <nav className="fixed inset-x-0 top-0 z-50 w-full border-b border-zinc-200 bg-white/95 backdrop-blur-xl">
+        <div className="container mx-auto flex h-16 max-w-[1320px] items-center justify-between px-4 md:px-6 lg:px-8">
+          <div className="flex items-center gap-8">
+            <Link href="/" className="group flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-950 text-white transition-colors group-hover:bg-red-600">
+                <Camera className="h-4.5 w-4.5" />
               </div>
-              <div className="flex flex-col select-none">
-                <span className="text-lg lg:text-xl font-black tracking-tighter text-zinc-950 uppercase font-heading leading-none">
-                  Studio
-                </span>
-                <span className="text-lg lg:text-xl font-black tracking-tighter text-red-600 uppercase font-heading leading-none">
-                  Visuals
-                </span>
-              </div>
+              <span className="text-base font-semibold tracking-tight text-zinc-950">
+                Digital<span className="text-red-600">Rental</span>
+              </span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center">
-              <NavigationMenu>
-                <NavigationMenuList className="gap-1">
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger className="bg-transparent text-zinc-600 hover:text-zinc-900 font-bold text-sm uppercase tracking-widest transition-colors data-[state=open]:text-zinc-900 focus:bg-zinc-100 hover:bg-zinc-100 data-[state=open]:bg-zinc-100 data-popup-open:bg-zinc-100 data-open:bg-zinc-100">
-                      Thiết Bị
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="p-0 border-none bg-transparent shadow-none">
-                      <div className="p-6 w-[700px] bg-white border border-zinc-200 rounded-[2rem] shadow-2xl flex gap-6">
-                        <div className="flex-1 bg-zinc-50 p-6 rounded-2xl border border-zinc-200">
-                          <Zap className="w-8 h-8 text-red-600 mb-4" />
-                          <h4 className="text-xl font-bold text-zinc-900 uppercase font-heading mb-3">
-                            Kho Thiết Bị
-                          </h4>
-                          <p className="text-zinc-500 text-xs leading-relaxed mb-4 font-medium">
-                            Khám phá các dòng máy ảnh và ống kính chuyên nghiệp
-                            nhất hiện nay.
-                          </p>
-                          <Button
-                            variant="outline"
-                            className="rounded-full border-zinc-200 text-zinc-200 font-bold uppercase text-xs tracking-widest px-6 h-10 hover:bg-red-600 hover:text-white hover:border-transparent transition-all"
-                          >
-                            Xem Tất Cả
-                          </Button>
-                        </div>
-                        <div className="flex-1 grid grid-cols-1 gap-2">
-                          <Link
-                            href="/rentals"
-                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-100 transition-all"
-                          >
-                            <div>
-                              <p className="text-zinc-900 font-bold text-xs uppercase tracking-widest">
-                                Máy Ảnh
-                              </p>
-                              <p className="text-zinc-500 text-[9px] font-bold uppercase mt-0.5">
-                                Mirrorless & Cinema
-                              </p>
-                            </div>
-                            <Sparkles className="w-3 h-3 text-red-600 opacity-0 group-hover:opacity-100 transition-all" />
-                          </Link>
-                          <Link
-                            href="/rentals"
-                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-100 transition-all"
-                          >
-                            <div>
-                              <p className="text-zinc-900 font-bold text-xs uppercase tracking-widest">
-                                Ống Kính
-                              </p>
-                              <p className="text-zinc-500 text-[9px] font-bold uppercase mt-0.5">
-                                Prime & Zoom
-                              </p>
-                            </div>
-                            <Sparkles className="w-3 h-3 text-red-600 opacity-0 group-hover:opacity-100 transition-all" />
-                          </Link>
-                          <Link
-                            href="/rentals"
-                            className="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-100 transition-all"
-                          >
-                            <div>
-                              <p className="text-zinc-900 font-bold text-xs uppercase tracking-widest">
-                                Ánh Sáng
-                              </p>
-                              <p className="text-zinc-500 text-[9px] font-bold uppercase mt-0.5">
-                                Phòng Studio & Ngoại Cảnh
-                              </p>
-                            </div>
-                            <Sparkles className="w-3 h-3 text-red-600 opacity-0 group-hover:opacity-100 transition-all" />
-                          </Link>
-                        </div>
-                      </div>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                  <NavigationMenuItem>
-                    <NavigationMenuLink
-                      href="/inventory"
-                      className="inline-flex h-10 items-center justify-center rounded-full bg-transparent px-5 text-xs font-bold text-zinc-500 uppercase tracking-widest transition-all hover:text-zinc-900 hover:bg-zinc-100"
-                    >
-                      Sản Phẩm Mới
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                  <NavigationMenuItem>
-                    <NavigationMenuLink
-                      href="/about"
-                      className="inline-flex h-10 items-center justify-center rounded-full bg-transparent px-5 text-xs font-bold text-zinc-500 uppercase tracking-widest transition-all hover:text-zinc-900 hover:bg-zinc-100"
-                    >
-                      Về Chúng Tôi
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
+            <div className="hidden items-center gap-1 lg:flex">
+              {navigationItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="rounded-xl px-3.5 py-2 text-sm font-normal text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-zinc-950"
+                >
+                  {item.label}
+                </Link>
+              ))}
             </div>
           </div>
 
-          {/* Right Action Section */}
-          <div className="flex items-center gap-2 sm:gap-4">
-            {/* Desktop Search */}
-            <div className="hidden lg:flex items-center bg-zinc-100 border border-zinc-200 rounded-full px-5 h-10 gap-3">
-              <Search className="h-3.5 w-3.5 text-zinc-500" />
+          <div className="flex items-center gap-2">
+            <label className="hidden h-9 items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50 px-3 transition-colors focus-within:border-zinc-300 focus-within:bg-white lg:flex">
+              <Search className="h-3.5 w-3.5 text-zinc-400" />
               <input
-                placeholder="Tìm kiếm..."
-                className="bg-transparent border-none outline-none text-[10px] font-bold uppercase tracking-widest text-zinc-900 placeholder:text-zinc-500 w-36"
+                placeholder="Tìm thiết bị"
+                className="w-36 border-none bg-transparent text-xs font-normal text-zinc-900 outline-none placeholder:text-zinc-400 xl:w-44"
               />
-            </div>
+            </label>
 
-            {/* Mobile Search */}
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden w-9 h-9 rounded-xl hover:bg-zinc-100 transition-all"
+              className="h-9 w-9 rounded-xl text-zinc-500 hover:bg-zinc-100 lg:hidden"
+              aria-label="Tìm kiếm"
             >
-              <Search className="h-4 w-4 text-zinc-500" />
+              <Search className="h-4 w-4" />
             </Button>
 
-            {/* Auth: Desktop */}
-            <div className="hidden lg:flex items-center gap-1">
+            <Link
+              href="/profile?section=cart"
+              className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-950"
+              aria-label="Giỏ hàng"
+            >
+              <ShoppingBag className="h-4 w-4" />
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full border-2 border-white bg-red-600 px-0.5 text-[9px] font-medium text-white">
+                0
+              </span>
+            </Link>
+
+            <div className="hidden lg:block">
               {isLoading ? (
-                <div className="w-10 h-10 rounded-xl bg-zinc-100 animate-pulse" />
+                <div className="h-9 w-9 animate-pulse rounded-xl bg-zinc-100" />
               ) : isAuthenticated && user ? (
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="w-10 h-10 rounded-xl hover:bg-zinc-100 transition-all cursor-pointer flex items-center justify-center group">
-                    <User className="h-4 w-4 text-zinc-500 group-hover:text-zinc-900" />
+                  <DropdownMenuTrigger className="flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-500 outline-none transition-colors hover:bg-zinc-50 hover:text-zinc-950">
+                    <User className="h-4 w-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
-                    className="w-64 bg-white border border-zinc-200 rounded-2xl p-2 shadow-2xl"
+                    className="w-64 rounded-xl border border-zinc-200 bg-white p-2 shadow-lg"
                   >
-                    <div className="px-3 py-3 mb-1">
-                      <p className="text-sm font-bold text-zinc-900 truncate">
+                    <div className="px-2.5 py-2">
+                      <p className="truncate text-sm font-medium text-zinc-900">
                         {user.email}
                       </p>
-                      <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-1">
-                        {user.roles?.join(", ") || "Customer"}
+                      <p className="mt-1 text-xs font-normal text-zinc-400">
+                        {user.roles?.[0] || "Khách hàng"}
                       </p>
                     </div>
                     <DropdownMenuSeparator className="bg-zinc-100" />
 
                     {dashboardLink && (
-                      <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-zinc-50 focus:text-zinc-900">
+                      <DropdownMenuItem className="cursor-pointer rounded-lg">
                         <Link
                           href={dashboardLink}
-                          className="flex items-center gap-3 px-3 py-2.5 w-full group"
+                          className="flex w-full items-center gap-3"
                         >
-                          <LayoutDashboard className="w-4 h-4 text-red-600" />
-                          <span className="text-xs font-bold text-zinc-900 uppercase tracking-widest">
-                            Dashboard
-                          </span>
+                          <LayoutDashboard className="h-4 w-4" />
+                          Bảng điều khiển
                         </Link>
                       </DropdownMenuItem>
                     )}
-
-                    <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-zinc-50 focus:text-zinc-900">
+                    <DropdownMenuItem className="cursor-pointer rounded-lg">
                       <Link
                         href="/profile"
-                        className="flex items-center gap-3 px-3 py-2.5 w-full group"
+                        className="flex w-full items-center gap-3"
                       >
-                        <User className="w-4 h-4 text-zinc-500 group-hover:text-zinc-900 transition-colors" />
-                        <span className="text-xs font-bold text-zinc-900 uppercase tracking-widest">
-                          Tài Khoản
-                        </span>
+                        <User className="h-4 w-4" />
+                        Tài khoản
                       </Link>
                     </DropdownMenuItem>
-
-                    <DropdownMenuItem className="rounded-xl cursor-pointer focus:bg-zinc-50 focus:text-zinc-900">
+                    <DropdownMenuItem className="cursor-pointer rounded-lg">
                       <Link
                         href="/profile/settings"
-                        className="flex items-center gap-3 px-3 py-2.5 w-full group"
+                        className="flex w-full items-center gap-3"
                       >
-                        <Settings className="w-4 h-4 text-zinc-500 group-hover:text-zinc-900 transition-colors" />
-                        <span className="text-xs font-bold text-zinc-900 uppercase tracking-widest">
-                          Cài Đặt
-                        </span>
+                        <Settings className="h-4 w-4" />
+                        Cài đặt
                       </Link>
                     </DropdownMenuItem>
-
                     <DropdownMenuSeparator className="bg-zinc-100" />
-
                     <DropdownMenuItem
                       onClick={logout}
-                      className="rounded-xl cursor-pointer focus:bg-red-50 focus:text-red-500"
+                      className="cursor-pointer rounded-lg text-red-600 focus:bg-red-50 focus:text-red-700"
                     >
-                      <div className="flex items-center gap-3 px-3 py-2.5">
-                        <LogOut className="w-4 h-4 text-red-500" />
-                        <span className="text-xs font-bold text-red-500 uppercase tracking-widest">
-                          Đăng Xuất
-                        </span>
-                      </div>
+                      <LogOut className="h-4 w-4" />
+                      Đăng xuất
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
                 <Link href={Routers.LOGIN}>
-                  <Button className="h-10 rounded-full px-6 bg-zinc-900 border border-zinc-800 text-white hover:bg-black font-black uppercase text-[9px] tracking-widest transition-all">
-                    Đăng Nhập
+                  <Button className="h-9 rounded-xl bg-zinc-950 px-4 text-xs font-medium text-white shadow-none hover:bg-zinc-800">
+                    Đăng nhập
                   </Button>
                 </Link>
               )}
             </div>
 
-            {/* Mobile Auth */}
             <div className="lg:hidden">
-              {isLoading ? (
-                <div className="w-9 h-9 rounded-xl bg-zinc-100 animate-pulse" />
-              ) : isAuthenticated && user ? (
+              {!isLoading && isAuthenticated && user ? (
                 <Link
                   href="/profile"
-                  className="w-9 h-9 rounded-xl hover:bg-zinc-100 transition-all flex items-center justify-center group"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-200 text-zinc-500"
+                  aria-label="Tài khoản"
                 >
-                  <User className="h-4 w-4 text-zinc-500 group-hover:text-zinc-900" />
+                  <User className="h-4 w-4" />
                 </Link>
-              ) : (
+              ) : !isLoading ? (
                 <Link
                   href={Routers.LOGIN}
-                  className="h-8 px-3.5 rounded-full bg-zinc-900 border border-zinc-800 text-white hover:bg-black font-black uppercase text-[8px] tracking-widest transition-all flex items-center"
+                  className="flex h-9 items-center rounded-xl bg-zinc-950 px-3 text-xs font-medium text-white"
                 >
-                  Đăng Nhập
+                  Đăng nhập
                 </Link>
-              )}
+              ) : null}
             </div>
 
-            {/* Shopping Bag */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative w-9 h-9 lg:w-10 lg:h-10 rounded-xl hover:bg-zinc-100 transition-all group"
-            >
-              <ShoppingBag className="h-4 w-4 text-zinc-500 group-hover:text-zinc-900" />
-              <span className="absolute top-1 right-1 lg:top-1.5 lg:right-1.5 flex h-3.5 w-3.5 lg:h-4 lg:w-4 items-center justify-center rounded-full bg-red-600 text-[7px] lg:text-[8px] font-black text-white">
-                0
-              </span>
-            </Button>
-
-            {/* Desktop CTA */}
-            <Button className="hidden xl:flex ml-2 h-10 rounded-full px-6 bg-white text-zinc-950 border border-zinc-200 hover:border-red-600 hover:bg-red-600 hover:text-white font-black uppercase text-xs tracking-widest shadow-sm active:scale-95 transition-all">
-              Đặt Thuê Ngay
-            </Button>
-
-            {/* Mobile Hamburger */}
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center transition-all active:scale-95"
-              aria-label="Toggle menu"
+              onClick={() => setMobileMenuOpen((open) => !open)}
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-100 text-zinc-800 lg:hidden"
+              aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu"}
             >
               {mobileMenuOpen ? (
-                <X className="h-4 w-4 text-zinc-900" />
+                <X className="h-4 w-4" />
               ) : (
-                <Menu className="h-4 w-4 text-zinc-900" />
+                <Menu className="h-4 w-4" />
               )}
             </button>
           </div>
         </div>
       </nav>
+      <div className="h-16 shrink-0" aria-hidden="true" />
 
-      {/* ─── Mobile Menu Overlay ─── */}
       <div
-        className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
+        className={`fixed inset-0 z-40 bg-zinc-950/35 backdrop-blur-sm transition-opacity lg:hidden ${
           mobileMenuOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
         }`}
         onClick={() => setMobileMenuOpen(false)}
       />
 
-      {/* ─── Mobile Menu Slide Panel ─── */}
-      <div
-        className={`fixed top-0 right-0 z-50 h-full w-[85%] max-w-sm bg-white border-l border-zinc-200 shadow-2xl transition-transform duration-300 ease-out lg:hidden ${
+      <aside
+        className={`fixed right-0 top-0 z-50 h-full w-[86%] max-w-sm border-l border-zinc-200 bg-white transition-transform duration-300 lg:hidden ${
           mobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex flex-col h-full">
-          {/* Mobile Menu Header */}
-          <div className="flex items-center justify-between h-16 px-5 border-b border-zinc-200">
-            <span className="text-xs font-black text-zinc-500 uppercase tracking-[0.3em]">
-              Menu
-            </span>
+        <div className="flex h-full flex-col">
+          <div className="flex h-16 items-center justify-between border-b border-zinc-200 px-5">
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2.5"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-950 text-white">
+                <Camera className="h-4 w-4" />
+              </div>
+              <span className="text-sm font-semibold text-zinc-950">
+                Digital<span className="text-red-600">Rental</span>
+              </span>
+            </Link>
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center transition-all active:scale-95"
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-100"
+              aria-label="Đóng menu"
             >
-              <X className="h-4 w-4 text-zinc-900" />
+              <X className="h-4 w-4" />
             </button>
           </div>
 
-          {/* Mobile Menu User Section */}
           {!isLoading && isAuthenticated && user && (
-            <div className="px-5 py-5 border-b border-zinc-200">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-red-600 flex items-center justify-center shrink-0 shadow-lg">
-                  <span className="text-sm font-black text-white uppercase">
-                    {user.email?.charAt(0) || "U"}
-                  </span>
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-zinc-900 truncate">
-                    {user.email}
-                  </p>
-                  <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5">
-                    {user.roles?.join(", ") || "Customer"}
-                  </p>
-                </div>
-              </div>
+            <div className="border-b border-zinc-200 px-5 py-4">
+              <p className="truncate text-sm font-medium text-zinc-900">
+                {user.email}
+              </p>
+              <p className="mt-1 text-xs font-normal text-zinc-400">
+                {user.roles?.[0] || "Khách hàng"}
+              </p>
             </div>
           )}
 
-          {/* Mobile Menu Navigation */}
-          <div className="flex-1 overflow-y-auto py-4">
-            <div className="px-3 space-y-1">
-              <p className="px-3 py-2 text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em]">
-                Điều Hướng
-              </p>
-
+          <div className="flex-1 overflow-y-auto p-3">
+            <p className="px-3 pb-2 pt-1 text-xs font-normal text-zinc-400">
+              Điều hướng
+            </p>
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-normal text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950"
+            >
+              <Home className="h-4 w-4 text-zinc-400" />
+              Trang chủ
+              <ChevronRight className="ml-auto h-3.5 w-3.5 text-zinc-300" />
+            </Link>
+            {navigationItems.map((item) => (
               <Link
-                href="/"
+                key={item.href}
+                href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-all group"
+                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-normal text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950"
               >
-                <Home className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                <span className="text-xs font-bold uppercase tracking-widest">
-                  Trang Chủ
-                </span>
-                <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
+                <item.icon className="h-4 w-4 text-zinc-400" />
+                {item.label}
+                <ChevronRight className="ml-auto h-3.5 w-3.5 text-zinc-300" />
               </Link>
+            ))}
 
-              <Link
-                href="/rentals"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-all group"
-              >
-                <Camera className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                <span className="text-xs font-bold uppercase tracking-widest">
-                  Thiết Bị
-                </span>
-                <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
-              </Link>
-
-              <Link
-                href="/inventory"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-all group"
-              >
-                <Package className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                <span className="text-xs font-bold uppercase tracking-widest">
-                  Sản Phẩm Mới
-                </span>
-                <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
-              </Link>
-
-              <Link
-                href="/about"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-all group"
-              >
-                <Info className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                <span className="text-xs font-bold uppercase tracking-widest">
-                  Về Chúng Tôi
-                </span>
-                <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
-              </Link>
-            </div>
-
-            {/* Mobile Menu Account Section */}
             {!isLoading && isAuthenticated && user && (
-              <div className="px-3 mt-4 space-y-1">
-                <p className="px-3 py-2 text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em]">
-                  Tài Khoản
+              <div className="mt-4 border-t border-zinc-100 pt-4">
+                <p className="px-3 pb-2 text-xs font-normal text-zinc-400">
+                  Tài khoản
                 </p>
-
                 {dashboardLink && (
                   <Link
                     href={dashboardLink}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-all group"
+                    className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-normal text-zinc-600 hover:bg-zinc-50"
                   >
-                    <LayoutDashboard className="w-4 h-4 text-red-600" />
-                    <span className="text-xs font-bold uppercase tracking-widest">
-                      Dashboard
-                    </span>
-                    <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
+                    <LayoutDashboard className="h-4 w-4 text-zinc-400" />
+                    Bảng điều khiển
                   </Link>
                 )}
-
                 <Link
                   href="/profile"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-all group"
+                  className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-normal text-zinc-600 hover:bg-zinc-50"
                 >
-                  <User className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                  <span className="text-xs font-bold uppercase tracking-widest">
-                    Tài Khoản
-                  </span>
-                  <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
+                  <User className="h-4 w-4 text-zinc-400" />
+                  Tài khoản
                 </Link>
-
                 <Link
                   href="/profile/settings"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-3 py-3 rounded-xl text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-all group"
+                  className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-normal text-zinc-600 hover:bg-zinc-50"
                 >
-                  <Settings className="w-4 h-4 text-zinc-400 group-hover:text-red-600" />
-                  <span className="text-xs font-bold uppercase tracking-widest">
-                    Cài Đặt
-                  </span>
-                  <ChevronRight className="w-3 h-3 text-zinc-300 ml-auto group-hover:text-zinc-400" />
+                  <Settings className="h-4 w-4 text-zinc-400" />
+                  Cài đặt
                 </Link>
               </div>
             )}
           </div>
 
-          {/* Mobile Menu Footer */}
-          <div className="px-5 py-5 border-t border-zinc-200 space-y-3">
+          <div className="border-t border-zinc-200 p-5">
             {!isLoading && isAuthenticated && user ? (
-              <>
-                <Button
-                  className="w-full h-12 rounded-xl bg-zinc-900 text-white hover:bg-black font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-[0.98] transition-all"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Đặt Thuê Ngay
-                </Button>
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl border border-red-500/20 text-red-500 hover:bg-red-50 font-bold uppercase text-xs tracking-widest transition-all"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Đăng Xuất
-                </button>
-              </>
+              <button
+                onClick={handleLogout}
+                className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-red-100 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+              >
+                <LogOut className="h-4 w-4" />
+                Đăng xuất
+              </button>
             ) : (
-              <>
-                <Link
-                  href={Routers.LOGIN}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Button className="w-full h-12 rounded-xl bg-zinc-900 text-white hover:bg-black font-black uppercase text-xs tracking-widest shadow-lg active:scale-[0.98] transition-all">
-                    Đăng Nhập
-                  </Button>
-                </Link>
-                <Button
-                  className="w-full h-12 rounded-xl bg-red-600 text-white hover:bg-red-700 font-black uppercase text-xs tracking-widest shadow-lg active:scale-[0.98] transition-all mt-2"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Đặt Thuê Ngay
-                </Button>
-              </>
+              <Link
+                href={Routers.LOGIN}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex h-10 w-full items-center justify-center rounded-xl bg-zinc-950 text-sm font-medium text-white"
+              >
+                Đăng nhập
+              </Link>
             )}
           </div>
         </div>
-      </div>
+      </aside>
     </>
   );
 }

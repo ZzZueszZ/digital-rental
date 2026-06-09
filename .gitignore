@@ -1,4 +1,10 @@
 HELP.md
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+**/.env.*.local
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar

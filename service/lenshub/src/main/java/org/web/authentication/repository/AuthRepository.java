@@ -13,6 +13,6 @@ public interface AuthRepository extends JpaRepository<User, Long> {
 
     default Optional<User> findActiveByEmail(String email) {
         return findByEmail(email)
-                .filter(u -> u.getAccountStatus() != AccountStatus.DELETED);
+                .filter(u -> u.getAccountStatus() == AccountStatus.ACTIVE);
     }
 }

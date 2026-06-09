@@ -51,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
     private final VoucherService voucherService;
     private final AuditLogService auditLogService;
     private final ShippingAddressRepository shippingAddressRepository;
+    private final org.web.reviews.repository.ReviewRepository reviewRepository;
 
     @Override
     @Transactional
@@ -138,7 +139,7 @@ public class OrderServiceImpl implements OrderService {
                 .totalPrice(total)
                 .status(OrderStatus.PENDING)
                 .paymentMethod(request.getPaymentMethod())
-                .paymentStatus(PaymentStatus.UNPAID)
+                .paymentStatus(PaymentStatus.PENDING)
                 .shippingFee(shippingFee)
                 .discountAmount(discountAmount)
                 .shippingDiscount(BigDecimal.ZERO)
@@ -149,7 +150,7 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         if (order.getCode() == null) {
-            order.setCode("ORD-" + System.currentTimeMillis());
+            order.setCode("ORD-" + System.currentTimeMillis() + "-" + java.util.UUID.randomUUID().toString().substring(0, 6));
         }
 
         for (OrderItem oi : orderItems) {
@@ -271,7 +272,7 @@ public class OrderServiceImpl implements OrderService {
                 .totalPrice(total)
                 .status(OrderStatus.PENDING)
                 .paymentMethod(request.getPaymentMethod())
-                .paymentStatus(PaymentStatus.UNPAID)
+                .paymentStatus(PaymentStatus.PENDING)
                 .shippingFee(shippingFee)
                 .discountAmount(discountAmount)
                 .shippingDiscount(BigDecimal.ZERO)
@@ -282,7 +283,7 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         if (order.getCode() == null) {
-            order.setCode("ORD-" + System.currentTimeMillis());
+            order.setCode("ORD-" + System.currentTimeMillis() + "-" + java.util.UUID.randomUUID().toString().substring(0, 6));
         }
 
         for (OrderItem oi : orderItems) {
@@ -313,7 +314,9 @@ public class OrderServiceImpl implements OrderService {
         if (!order.getUser().getId().equals(userId)) {
             throw new ApplicationException(HttpStatus.FORBIDDEN, "Đơn hàng này không thuộc về bạn");
         }
-        return orderMapper.toOrderResponse(order);
+        OrderResponse res = orderMapper.toOrderResponse(order);
+        res.setIsReviewed(reviewRepository.existsByOrderId(orderId));
+        return res;
     }
 
     @Override
@@ -322,7 +325,11 @@ public class OrderServiceImpl implements OrderService {
         User user = getUser(userId);
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Order> orders = orderRepository.findMyOrders(user, status, paymentStatus, pageable);
-        return orders.map(orderMapper::toOrderResponse);
+        return orders.map(order -> {
+            OrderResponse res = orderMapper.toOrderResponse(order);
+            res.setIsReviewed(reviewRepository.existsByOrderId(order.getId()));
+            return res;
+        });
     }
 
     @Override
@@ -357,6 +364,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(OrderStatus.COMPLETED);
         order.setCompletedAt(LocalDateTime.now());
+        order.setPaymentStatus(org.web.common.enums.PaymentStatus.SUCCESS);
         
         order = orderRepository.save(order);
         auditLogService.logAction("ORDER", order.getId(), "CONFIRM_RECEIVED", "User confirmed receipt", null, null);
@@ -380,7 +388,8 @@ public class OrderServiceImpl implements OrderService {
         } else if (currentStatus == OrderStatus.SHIPPING) {
             validTransition = (newStatus == OrderStatus.DELIVERED);
         } else if (currentStatus == OrderStatus.DELIVERED) {
-            validTransition = (newStatus == OrderStatus.COMPLETED);
+            // Only CUSTOMERS can confirm completion via confirmReceived method
+            validTransition = false; 
         }
 
         if (!validTransition) {
@@ -396,6 +405,7 @@ public class OrderServiceImpl implements OrderService {
             order.setShippedAt(now);
         } else if (newStatus == OrderStatus.DELIVERED) {
             order.setDeliveredAt(now);
+            order.setPaymentStatus(org.web.common.enums.PaymentStatus.SUCCESS);
         } else if (newStatus == OrderStatus.CANCELED) {
             order.setCanceledAt(now);
             restoreStock(order);

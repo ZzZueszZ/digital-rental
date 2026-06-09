@@ -89,7 +89,7 @@ public class Order extends BaseAuditEntity {
     private List<OrderItem> items = new ArrayList<>();
 
     public void markPaidByVnPay(String transactionNo, String responseCode, BigDecimal amount, String rawPayload) {
-        this.paymentStatus = PaymentStatus.PAID;
+        this.paymentStatus = PaymentStatus.SUCCESS;
         this.paymentTransactionNo = transactionNo;
         this.paymentResponseCode = responseCode;
         this.paymentRawPayload = rawPayload;

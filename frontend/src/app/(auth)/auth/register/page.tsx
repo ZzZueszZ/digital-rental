@@ -1,41 +1,20 @@
 "use client";
 
 import { RegisterForm } from "@/components/auth/RegisterForm";
-import { RegisterHero } from "@/components/auth/AuthHero";
-import Link from "next/link";
 import Routers from "@/constants/routers";
-import { ChevronLeft, Share2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AuthPageShell } from "@/components/auth/AuthPageShell";
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen flex flex-col transition-colors duration-1000 bg-zinc-50">
-      {/* Top Navigation */}
-      <div className="p-6 flex justify-between items-center relative z-10">
-        <Link href={Routers.LOGIN}>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full h-12 w-12 border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-red-600 shadow-sm transition-colors"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-        </Link>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full h-12 w-12 text-zinc-900 hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
-        >
-          <Share2 className="h-6 w-6" />
-        </Button>
-      </div>
-
-      <main className="flex-1 flex items-center px-4 pb-12">
-        <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center">
-          <RegisterHero />
-          <RegisterForm />
-        </div>
-      </main>
-    </div>
+    <AuthPageShell
+      title="Tạo tài khoản mới."
+      description="Lưu thiết bị yêu thích, theo dõi đơn hàng và hoàn tất eKYC khi bạn cần thuê thiết bị."
+      imageSrc="/images/auth-register-hero.png"
+      imageAlt="Đăng ký tài khoản Digital Rental"
+      backHref={Routers.LOGIN}
+      backLabel="Quay lại đăng nhập"
+    >
+      <RegisterForm />
+    </AuthPageShell>
   );
 }

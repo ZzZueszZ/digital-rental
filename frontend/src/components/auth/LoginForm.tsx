@@ -74,7 +74,7 @@ export function LoginForm() {
       // Set state and sync with persistence
       await persistRefreshTokenCookie(payload.refreshToken);
       setAccessToken(payload.accessToken);
-      
+
       // Update query cache with fresh user data
       queryClient.setQueryData(AUTH_ME_QUERY_KEY, payload.user);
 
@@ -86,14 +86,17 @@ export function LoginForm() {
       }
 
       // Priority-based redirection based on roles
-      const userRoles = (payload.user.roles || []).map((r: string | { code: string }) => {
-        if (typeof r === 'string') return r.toUpperCase();
-        if (r && typeof r === 'object' && r.code) return r.code.toUpperCase();
-        return '';
-      });
-      
+      const userRoles = (payload.user.roles || []).map(
+        (r: string | { code: string }) => {
+          if (typeof r === "string") return r.toUpperCase();
+          if (r && typeof r === "object" && r.code) return r.code.toUpperCase();
+          return "";
+        },
+      );
+
       // Helper to check for a role with optional ROLE_ prefix
-      const hasRole = (role: Role) => userRoles.some(r => r === role || r === `ROLE_${role}`);
+      const hasRole = (role: Role) =>
+        userRoles.some((r) => r === role || r === `ROLE_${role}`);
 
       if (hasRole(Role.SUPER_ADMIN)) {
         window.location.href = Routers.SUPER_ADMIN;
@@ -130,25 +133,35 @@ export function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto lg:mx-0">
+    <div className="w-full">
+      <div className="mb-7">
+        <p className="mb-2 text-sm font-medium text-red-600">Đăng nhập</p>
+        <h2 className="text-3xl font-semibold tracking-tight text-zinc-950">
+          Tiếp tục với tài khoản của bạn
+        </h2>
+        <p className="mt-2 text-sm font-normal leading-6 text-zinc-500">
+          Nhập email và mật khẩu đã đăng ký.
+        </p>
+      </div>
+
       {/* Pending Activation Banner */}
       {pendingEmail && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+        <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
           <div className="flex items-start gap-3">
             <Mail className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-semibold text-amber-900">
+              <p className="text-sm font-medium text-amber-900">
                 Tài khoản chưa được kích hoạt
               </p>
               <p className="text-xs text-amber-700 mt-1">
                 Vui lòng kiểm tra email{" "}
-                <span className="font-bold">{pendingEmail}</span> để kích hoạt
+                <span className="font-medium">{pendingEmail}</span> để kích hoạt
                 tài khoản.
               </p>
               <button
                 onClick={handleResendActivation}
                 disabled={isResendingActivation}
-                className="mt-2 text-sm font-bold text-amber-800 hover:text-amber-900 underline underline-offset-4 transition-colors disabled:opacity-50"
+                className="mt-2 text-sm font-medium text-amber-800 underline underline-offset-4 transition-colors hover:text-amber-900 disabled:opacity-50"
               >
                 {isResendingActivation
                   ? "Đang gửi..."
@@ -159,35 +172,26 @@ export function LoginForm() {
         </div>
       )}
 
-      <div className="lg:hidden space-y-4 mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-zinc-900">
-          Chào Mừng Trở Lại
-        </h1>
-        <p className="text-[1.125rem] text-zinc-500 font-medium">
-          Đăng nhập vào tài khoản của bạn
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="space-y-3">
-          <label className="text-[1.125rem] font-medium text-zinc-900">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label className="mb-1.5 block text-xs font-normal text-zinc-600">
             Email
           </label>
           <Input
             placeholder="Nhập địa chỉ email của bạn"
             type="email"
             {...register("email")}
-            className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-red-600 focus-visible:border-red-600 caret-red-600 text-zinc-900 text-[1.125rem] px-5 shadow-sm placeholder:text-zinc-500 ${errors.email ? "border-red-500 ring-red-500" : ""}`}
+            className={`h-10 rounded-xl border-zinc-200 bg-white px-3 text-sm font-normal text-zinc-900 shadow-none placeholder:text-zinc-400 focus-visible:border-zinc-400 focus-visible:ring-0 ${errors.email ? "border-red-500" : ""}`}
           />
           {errors.email && (
-            <p className="text-sm text-error font-medium">
+            <p className="mt-1 text-xs font-normal text-red-600">
               {errors.email.message}
             </p>
           )}
         </div>
 
-        <div className="space-y-3">
-          <label className="text-[1.125rem] font-medium text-zinc-900">
+        <div>
+          <label className="mb-1.5 block text-xs font-normal text-zinc-600">
             Mật khẩu
           </label>
           <div className="relative">
@@ -195,22 +199,22 @@ export function LoginForm() {
               type={showPassword ? "text" : "password"}
               placeholder="Nhập mật khẩu của bạn"
               {...register("password")}
-              className={`h-14 bg-white border-zinc-200 rounded-[1.5rem] focus-visible:ring-1 focus-visible:ring-red-600 focus-visible:border-red-600 caret-red-600 text-zinc-900 text-[1.125rem] px-5 pr-12 shadow-sm placeholder:text-zinc-500 ${errors.password ? "border-red-500 ring-red-500" : ""}`}
+              className={`h-10 rounded-xl border-zinc-200 bg-white px-3 pr-10 text-sm font-normal text-zinc-900 shadow-none placeholder:text-zinc-400 focus-visible:border-zinc-400 focus-visible:ring-0 ${errors.password ? "border-red-500" : ""}`}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-900 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors hover:text-zinc-900"
             >
               {showPassword ? (
-                <EyeOff className="size-5" />
+                <EyeOff className="size-4" />
               ) : (
-                <Eye className="size-5" />
+                <Eye className="size-4" />
               )}
             </button>
           </div>
           {errors.password && (
-            <p className="text-sm text-error font-medium">
+            <p className="mt-1 text-xs font-normal text-red-600">
               {errors.password.message}
             </p>
           )}
@@ -219,58 +223,60 @@ export function LoginForm() {
         <div className="flex justify-end pt-1">
           <Link
             href={Routers.FORGOT_PASSWORD}
-            className="text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
+            className="text-xs font-normal text-zinc-500 transition-colors hover:text-red-600"
           >
             Quên mật khẩu?
           </Link>
         </div>
 
-        <Button
+        <button
           type="submit"
-          className="w-full h-14 text-lg font-bold bg-zinc-900 text-white rounded-full hover:bg-black shadow-md transition-all active:scale-98"
+          className="inline-flex h-10 w-full items-center justify-center rounded-xl bg-zinc-950 px-5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
-        </Button>
+          <span style={{ color: "#ffffff" }}>
+            {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
+          </span>
+        </button>
       </form>
 
       {/* Divider */}
-      <div className="relative mt-12 mb-8 text-center">
+      <div className="relative my-6 text-center">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-zinc-200"></div>
         </div>
-        <span className="relative px-4 text-sm font-medium text-zinc-500 bg-zinc-50 uppercase tracking-widest">
-          Hoặc
+        <span className="relative bg-white px-3 text-xs font-normal text-zinc-400">
+          Hoặc tiếp tục với
         </span>
       </div>
 
       {/* Social Login */}
-      <div className="space-y-4">
-        <Button
-          variant="outline"
-          className="w-full h-14 justify-center gap-3 rounded-full bg-white border border-zinc-200 text-zinc-900 font-bold hover:bg-zinc-50 hover:text-zinc-900 transition-all active:scale-98 shadow-sm"
-        >
+      <div className="grid grid-cols-2 gap-3">
+        <Button className="h-10 w-full justify-center gap-2 rounded-xl border border-zinc-200 bg-white text-xs font-medium text-zinc-800 shadow-none hover:bg-zinc-50">
           <Image
             src="https://www.svgrepo.com/show/475656/google-color.svg"
-            width={20}
-            height={20}
+            width={18}
+            height={18}
             alt="Google"
           />
-          Tiếp tục với Google
+          Google
         </Button>
-        <Button className="w-full h-14 justify-center gap-3 rounded-full bg-white border border-zinc-200 text-[#1877F2] font-bold hover:bg-zinc-50 hover:text-[#1877F2] transition-all active:scale-98 shadow-sm">
-          <svg className="w-5 h-5 fill-current text-[#1877F2]" viewBox="0 0 24 24">
+        <Button className="h-10 w-full justify-center gap-2 rounded-xl border border-zinc-200 bg-white text-xs font-medium text-zinc-800 shadow-none hover:bg-zinc-50">
+          <svg
+            className="w-5 h-5 fill-current text-[#1877F2]"
+            viewBox="0 0 24 24"
+          >
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
           </svg>
-          <span className="text-zinc-900">Tiếp tục với Facebook</span>
+          Facebook
         </Button>
       </div>
 
-      <p className="mt-10 text-center text-[1.125rem] text-zinc-500">
+      <p className="mt-6 text-center text-sm font-normal text-zinc-500">
         Chưa có tài khoản?{" "}
         <Link
           href={Routers.REGISTER}
-          className="text-red-600 underline decoration-2 underline-offset-4 hover:text-red-700 transition-all ml-1 font-bold"
+          className="ml-1 font-medium text-red-600 transition-colors hover:text-red-700"
         >
           Đăng ký ngay
         </Link>

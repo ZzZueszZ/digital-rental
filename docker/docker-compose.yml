@@ -13,5 +13,29 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  lenshub-postgres:
+    image: postgres:15-alpine
+    container_name: lenshub_postgres_dev
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "123123"
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  lenshub-redis:
+    image: redis:7-alpine
+    container_name: lenshub_redis_dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
 volumes:
   mysql_data:
+  postgres_data:
+  redis_data:

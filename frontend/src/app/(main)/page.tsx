@@ -1,242 +1,332 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import {
   ArrowRight,
+  Award,
+  Camera,
+  CheckCircle2,
   Clock,
+  Layers,
+  ShieldCheck,
+  Star,
+  Users,
+  Video,
   Zap,
-  ChevronRight,
-  ShieldAlert,
-  HardDrive,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ProductListSection } from "@/components/home/ProductListSection";
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.3,
-    },
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
   },
 };
 
-const itemVariants = {
-  hidden: { y: 30, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.8 } },
+const itemVariants: Variants = {
+  hidden: { y: 16, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
 };
 
+const stats = [
+  { label: "Thiết bị sẵn sàng", value: "2.500+", icon: Camera },
+  { label: "Dự án đã phục vụ", value: "18.000+", icon: Video },
+  { label: "Khách hàng tin dùng", value: "12.000+", icon: Users },
+  { label: "Đối tác thương hiệu", value: "45+", icon: Award },
+];
+
+const categories = [
+  {
+    title: "Máy quay cinema",
+    description: "RED, ARRI và Sony Venice cho các đoàn phim chuyên nghiệp.",
+    image:
+      "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    title: "Ống kính chuyên dụng",
+    description: "Prime, zoom và anamorphic cho nhiều phong cách hình ảnh.",
+    image:
+      "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    title: "Ánh sáng và phụ kiện",
+    description: "Hệ thống ánh sáng, grip và phụ kiện sẵn sàng cho set quay.",
+    image:
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1600&auto=format&fit=crop",
+  },
+];
+
+const steps = [
+  {
+    icon: Layers,
+    title: "Chọn thiết bị",
+    description: "Tìm sản phẩm phù hợp với nhu cầu mua hoặc lịch quay.",
+  },
+  {
+    icon: Clock,
+    title: "Chọn thời gian",
+    description: "Kiểm tra lịch trống và xác nhận thời gian nhận, trả máy.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Xác minh và thanh toán",
+    description: "Hoàn tất eKYC, tiền thuê và khoản cọc theo hướng dẫn.",
+  },
+  {
+    icon: Zap,
+    title: "Nhận thiết bị",
+    description: "Thiết bị được kiểm tra kỹ trước khi bàn giao tại cửa hàng.",
+  },
+];
+
+const commitments = [
+  "Kiểm định thiết bị trước mỗi lần bàn giao",
+  "Hỗ trợ kỹ thuật trong suốt thời gian sử dụng",
+  "Chính sách bảo hiểm và tiền cọc minh bạch",
+  "Danh mục thiết bị từ các thương hiệu uy tín",
+];
+
 export default function Home() {
+  const scrollToProducts = () => {
+    document
+      .getElementById("product-section")
+      ?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <div className="flex min-h-screen flex-col bg-white text-zinc-950 selection:bg-red-600/20 font-sans">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-white font-sans text-zinc-950 selection:bg-red-100">
       <Navbar />
 
       <main className="flex-1">
-        {/* Dynamic Studio Hero */}
-        <section className="relative h-[90svh] w-full flex items-center overflow-hidden border-b border-zinc-200">
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/modern_photography_hero.png"
-              alt="Professional Photography Gear"
-              fill
-              className="object-cover object-center opacity-70"
-              priority
-            />
-            {/* Cinematic Gradient */}
-            <div className="absolute inset-0 bg-linear-to-r from-zinc-50 via-zinc-50/70 to-transparent" />
-            <div className="absolute inset-0 bg-zinc-50/20" />
-          </div>
-
-          <div className="container relative z-10 mx-auto px-6 md:px-12 max-w-[1600px]">
+        <section className="border-b border-zinc-200 bg-zinc-50/70">
+          <div className="container mx-auto grid min-h-[680px] max-w-[1320px] items-center gap-10 px-4 py-14 md:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:py-20">
             <motion.div
               initial="hidden"
               animate="visible"
               variants={containerVariants}
-              className="max-w-4xl"
+              className="max-w-xl"
             >
-              {/* Removed badge to match minimalist layout of the reference image */}
+              <motion.div
+                variants={itemVariants}
+                className="mb-5 inline-flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-xs font-normal text-red-700"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-red-600" />
+                Thiết bị hình ảnh chuyên nghiệp
+              </motion.div>
 
               <motion.h1
                 variants={itemVariants}
-                className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold tracking-tight text-zinc-900 mb-6 leading-[1.1]"
+                className="mb-5 text-4xl font-semibold leading-[1.08] tracking-tight text-zinc-950 sm:text-5xl lg:text-6xl"
               >
-                Khởi tạo <br className="hidden md:block" />
-                <span className="text-red-600 italic pr-2">
-                  Tuyệt tác.
-                </span>
+                Thiết bị tốt cho
+                <span className="block text-red-600">những khung hình tốt.</span>
               </motion.h1>
 
               <motion.p
                 variants={itemVariants}
-                className="text-[1.125rem] md:text-xl text-zinc-500 mb-10 leading-relaxed max-w-xl font-medium"
+                className="mb-8 max-w-lg text-base font-normal leading-7 text-zinc-500 md:text-lg"
               >
-                Giải pháp thuê thiết bị nhiếp ảnh và cinema chuyên nghiệp hàng
-                đầu. Nâng tầm sáng tạo với hệ sinh thái trang thiết bị đỉnh cao.
+                Mua và thuê máy ảnh, ống kính, ánh sáng cùng phụ kiện chính
+                hãng. Quy trình rõ ràng, thiết bị được kiểm tra kỹ và hỗ trợ
+                xuyên suốt dự án.
               </motion.p>
 
               <motion.div
                 variants={itemVariants}
-                className="flex flex-col sm:flex-row gap-4 mt-2"
+                className="flex flex-col gap-3 sm:flex-row"
               >
-                <Button
-                  size="lg"
-                  className="rounded-full px-8 h-13 text-[0.8rem] font-bold tracking-[0.05em] bg-red-600 text-white hover:bg-red-700 shadow-[0_4px_20px_rgba(220,38,38,0.3)] transition-all active:scale-95"
+                <button
+                  type="button"
+                  onClick={scrollToProducts}
+                  className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-950 px-6 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
                 >
-                  KHÁM PHÁ THIẾT BỊ
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="rounded-full px-8 h-13 text-[0.8rem] font-bold tracking-[0.05em] border border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-50 transition-all active:scale-95"
+                  <span style={{ color: "#ffffff" }}>Xem thiết bị</span>
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    document
+                      .getElementById("rental-process")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50"
                 >
-                  BẮT ĐẦU THUÊ
-                </Button>
+                  <span style={{ color: "#27272a" }}>Xem quy trình thuê</span>
+                </button>
               </motion.div>
+
+              <motion.div
+                variants={itemVariants}
+                className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-normal text-zinc-500"
+              >
+                {["Thiết bị chính hãng", "Hỗ trợ kỹ thuật", "Thanh toán an toàn"].map(
+                  (item) => (
+                    <span key={item} className="flex items-center gap-1.5">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                      {item}
+                    </span>
+                  ),
+                )}
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.15 }}
+              className="relative"
+            >
+              <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-zinc-200 bg-white">
+                <Image
+                  src="/modern_photography_hero.png"
+                  alt="Thiết bị máy ảnh chuyên nghiệp"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-zinc-950/25 via-transparent to-transparent" />
+              </div>
+              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-xl border border-white/50 bg-white/90 p-4 backdrop-blur-md">
+                <div>
+                  <p className="text-sm font-medium text-zinc-900">
+                    Sẵn sàng cho dự án tiếp theo
+                  </p>
+                  <p className="mt-1 text-xs font-normal text-zinc-500">
+                    Kiểm tra lịch trống trực tiếp trên từng sản phẩm
+                  </p>
+                </div>
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 text-white">
+                  <Camera className="h-4 w-4" />
+                </div>
+              </div>
             </motion.div>
           </div>
         </section>
 
-        {/* Category Sector */}
-        <section className="min-h-svh flex items-center py-10 bg-zinc-50">
-          <div className="container mx-auto px-6 md:px-12 max-w-[1600px]">
-            <div className="flex flex-col lg:flex-row justify-between items-end gap-10 mb-12">
-              <div className="max-w-xl">
-                <h2 className="text-4xl md:text-[3.5rem] font-bold text-zinc-950 tracking-tight mb-4 leading-tight">
-                  <span className="text-red-600 italic pr-2">
-                    Hệ sinh thái.
-                  </span>
-                </h2>
-                <p className="text-zinc-500 text-base md:text-lg font-medium leading-relaxed max-w-lg mt-4">
-                  Lựa chọn từ các thương hiệu máy ảnh và ống kính hàng đầu thế
-                  giới để hoàn thiện bộ công cụ hình ảnh của bạn.
-                </p>
-              </div>
-              <Button
-                variant="link"
-                className="text-zinc-900 hover:text-red-600 font-bold tracking-widest text-xs transition-all uppercase"
+        <section className="border-b border-zinc-200 bg-white py-8">
+          <div className="container mx-auto grid max-w-[1320px] grid-cols-2 gap-3 px-4 md:px-6 lg:grid-cols-4 lg:px-8">
+            {stats.map((stat) => (
+              <div
+                key={stat.label}
+                className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4"
               >
-                KHÁM PHÁ THIẾT BỊ <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-50 text-red-600">
+                  <stat.icon className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-lg font-semibold tracking-tight text-zinc-950">
+                    {stat.value}
+                  </p>
+                  <p className="text-xs font-normal text-zinc-500">{stat.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="bg-zinc-50/70 py-16 md:py-20">
+          <div className="container mx-auto max-w-[1320px] px-4 md:px-6 lg:px-8">
+            <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <p className="mb-2 text-sm font-medium text-red-600">
+                  Danh mục nổi bật
+                </p>
+                <h2 className="text-3xl font-semibold tracking-tight text-zinc-950">
+                  Chọn đúng thiết bị cho dự án
+                </h2>
+              </div>
+              <p className="max-w-md text-sm font-normal leading-6 text-zinc-500">
+                Danh mục được sắp xếp theo nhu cầu tác nghiệp để bạn dễ so sánh
+                và lên bộ thiết bị phù hợp.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Ống Kính Suite",
-                  desc: "Prime & Zoom Professional",
-                  count: "450+",
-                  image:
-                    "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?q=80&w=2000&auto=format&fit=crop",
-                },
-                {
-                  title: "Thân Máy Cinema",
-                  desc: "Ultra High Bitrate Systems",
-                  count: "120+",
-                  image:
-                    "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=2000&auto=format&fit=crop",
-                },
-                {
-                  title: "Ánh Sáng Studio",
-                  desc: "Gaffer Grade Equipment",
-                  count: "80+",
-                  image:
-                    "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2000&auto=format&fit=crop",
-                },
-              ].map((cat) => (
-                <div key={cat.title} className="group cursor-pointer">
-                  <div className="relative h-[60svh] max-h-[500px] min-h-[350px] rounded-[2.5rem] overflow-hidden border border-zinc-200 bg-white shadow-xs transition-all duration-700 group-hover:border-red-600/30 group-hover:shadow-[0_20px_60px_rgba(220,38,38,0.1)]">
+            <div className="grid gap-4 md:grid-cols-3">
+              {categories.map((category, index) => (
+                <motion.article
+                  key={category.title}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.08 }}
+                  className="group overflow-hidden rounded-xl border border-zinc-200 bg-white"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden">
                     <Image
-                      src={cat.image}
-                      alt={cat.title}
+                      src={category.image}
+                      alt={category.title}
                       fill
-                      className="object-cover opacity-85 transition-all duration-1000 group-hover:scale-105 group-hover:opacity-100"
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-zinc-50/90 via-zinc-50/30 to-transparent flex flex-col justify-end p-12">
-                      <p className="text-red-600 text-xs font-bold tracking-widest uppercase mb-3">
-                        {cat.desc}
-                      </p>
-                      <h3 className="text-3xl font-bold text-zinc-950 tracking-tight mb-4">
-                        {cat.title}
-                      </h3>
-                      <div className="flex items-center gap-4">
-                        <span className="text-zinc-500 font-medium tracking-wide text-xs">
-                          {cat.count} Thiết bị sẵn sàng
-                        </span>
-                        <div className="flex-1 h-px bg-zinc-200" />
-                        <div className="w-10 h-10 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-600 group-hover:border-red-600 group-hover:bg-red-600 group-hover:text-white transition-all">
-                          <ArrowRight className="w-4 h-4" />
-                        </div>
-                      </div>
-                    </div>
                   </div>
-                </div>
+                  <div className="p-5">
+                    <h3 className="text-lg font-medium text-zinc-950">
+                      {category.title}
+                    </h3>
+                    <p className="mt-2 min-h-10 text-sm font-normal leading-5 text-zinc-500">
+                      {category.description}
+                    </p>
+                    <button
+                      onClick={scrollToProducts}
+                      className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-red-600 transition-colors hover:text-red-700"
+                    >
+                      Xem sản phẩm <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </motion.article>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Product List Sector */}
         <ProductListSection />
 
-        {/* Feature Sectors - Premium Redesign */}
-        <section className="py-32 bg-zinc-50 relative overflow-hidden">
-          {/* Subtle background glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-red-600 opacity-[0.02] blur-[120px] pointer-events-none rounded-full" />
-
-          <div className="container relative z-10 mx-auto px-6 md:px-12 max-w-[1600px]">
-            <div className="text-center mb-20">
-              <h2 className="text-3xl md:text-5xl font-bold text-zinc-950 tracking-tight mb-4">
-                Dịch vụ <span className="text-red-600 italic">Đỉnh cao.</span>
+        <section
+          id="rental-process"
+          className="border-y border-zinc-200 bg-zinc-50/70 py-16 md:py-20"
+        >
+          <div className="container mx-auto max-w-[1320px] px-4 md:px-6 lg:px-8">
+            <div className="mb-10 max-w-xl">
+              <p className="mb-2 text-sm font-medium text-red-600">
+                Quy trình thuê
+              </p>
+              <h2 className="text-3xl font-semibold tracking-tight text-zinc-950">
+                Bốn bước, thông tin rõ ràng
               </h2>
-              <p className="text-zinc-500 font-medium">
-                Bảo chứng cho chất lượng và độ tín nhiệm hàng đầu trong ngành
-                thuê mua thiết bị.
+              <p className="mt-3 text-sm font-normal leading-6 text-zinc-500">
+                Từ chọn máy đến nhận thiết bị, mọi chi phí và trạng thái đều
+                được hiển thị trong tài khoản của bạn.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                {
-                  icon: <ShieldAlert className="w-8 h-8" />,
-                  title: "Bảo hiểm Toàn diện",
-                  desc: "Chính sách bảo hiểm minh bạch, bảo vệ quyền lợi tối đa cho rủi ro hư hỏng thiết bị.",
-                },
-                {
-                  icon: <Clock className="w-8 h-8" />,
-                  title: "Giao nhận Tốc hành",
-                  desc: "Mạng lưới hậu cần chuyên nghiệp, đảm bảo giao thiết bị đúng nơi, đúng thời điểm.",
-                },
-                {
-                  icon: <HardDrive className="w-8 h-8" />,
-                  title: "Kiểm định Gắt gao",
-                  desc: "Mỗi thiết bị đều trải qua quy trình kiểm tra 12 bước trước khi bàn giao cho bạn.",
-                },
-                {
-                  icon: <Zap className="w-8 h-8" />,
-                  title: "Hỗ trợ 24/7",
-                  desc: "Đội ngũ kỹ thuật viên túc trực để giải quyết mọi vấn đề phát sinh tức thì.",
-                },
-              ].map((f, i) => (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {steps.map((step, index) => (
                 <div
-                  key={i}
-                  className="group relative p-8 rounded-[2.5rem] bg-white border border-zinc-200 hover:border-red-600/30 overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-2"
+                  key={step.title}
+                  className="rounded-xl border border-zinc-200 bg-white p-5"
                 >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-red-600 opacity-0 group-hover:opacity-[0.03] blur-[60px] transition-opacity duration-500" />
-
-                  <div className="w-16 h-16 bg-zinc-50 border border-zinc-100 rounded-2xl flex items-center justify-center text-red-600 mb-8 transition-all duration-500 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white shadow-xs group-hover:shadow-lg">
-                    {f.icon}
+                  <div className="mb-5 flex items-center justify-between">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-50 text-zinc-800">
+                      <step.icon className="h-5 w-5" />
+                    </div>
+                    <span className="text-xs font-normal text-zinc-400">
+                      Bước {index + 1}
+                    </span>
                   </div>
-
-                  <h4 className="text-xl font-bold text-zinc-900 mb-4">
-                    {f.title}
-                  </h4>
-                  <p className="text-zinc-500 text-sm leading-relaxed font-medium">
-                    {f.desc}
+                  <h3 className="text-base font-medium text-zinc-950">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 text-sm font-normal leading-6 text-zinc-500">
+                    {step.description}
                   </p>
                 </div>
               ))}
@@ -244,45 +334,123 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Closing CTA - Full Bleed Redesign */}
-        <section className="relative h-[70svh] min-h-[600px] w-full flex items-center overflow-hidden border-t border-zinc-200 bg-zinc-50">
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/images/studio_cta_bg.png"
-              alt="Professional Photography Studio Background"
-              fill
-              className="object-cover object-bottom-right opacity-70 mix-blend-multiply"
-              priority
-            />
-            {/* Gradient overlay to ensure text is readable on the left */}
-            <div className="absolute inset-0 bg-linear-to-r from-zinc-50 via-zinc-50/70 to-transparent" />
-            <div className="absolute inset-0 bg-zinc-50/10" />
-          </div>
-          
-          {/* Content Container (Left Aligned) */}
-          <div className="container relative z-10 mx-auto px-6 md:px-12 max-w-[1600px]">
-            <div className="max-w-2xl px-4 md:px-0">
-              {/* Badge */}
-              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-red-600 mb-6">
-                <span className="text-[11px] font-black text-white tracking-[0.08em] uppercase">
-                  Ưu Đãi Giới Hạn
-                </span>
-              </div>
-              
-              {/* Heading */}
-              <h2 className="text-4xl md:text-5xl lg:text-[4rem] font-black text-zinc-950 tracking-tight leading-[1.1] uppercase mb-6">
-                SẴN SÀNG KIẾN TẠO <br />KHUNG HÌNH XUẤT CHÚNG
-              </h2>
-              
-              {/* Subtitle */}
-              <p className="text-zinc-500 text-base md:text-[1.125rem] font-medium mb-10 leading-relaxed max-w-lg">
-                Tham gia cộng đồng chuyên nghiệp trong chuỗi trải nghiệm 3 ngày cùng mạng lưới thiết bị lớn nhất bắt đầu tại Digital Rental.
+        <section className="bg-white py-16 md:py-20">
+          <div className="container mx-auto grid max-w-[1320px] items-center gap-8 px-4 md:px-6 lg:grid-cols-2 lg:px-8">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-zinc-200">
+              <Image
+                src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1800&auto=format&fit=crop"
+                alt="Kỹ thuật viên chuẩn bị thiết bị"
+                fill
+                className="object-cover"
+              />
+            </div>
+
+            <div className="lg:pl-8">
+              <p className="mb-2 text-sm font-medium text-red-600">
+                Đồng hành cùng dự án
               </p>
-              
-              {/* Button */}
-              <Button className="rounded-full px-10 h-14 bg-zinc-900 text-white hover:bg-black text-sm font-bold tracking-[0.08em] uppercase shadow-lg transition-all active:scale-95 border-none">
-                BẮT ĐẦU NGAY
-              </Button>
+              <h2 className="text-3xl font-semibold leading-tight tracking-tight text-zinc-950">
+                Không chỉ giao máy, chúng tôi giúp bạn sẵn sàng tác nghiệp.
+              </h2>
+              <p className="mt-4 text-sm font-normal leading-6 text-zinc-500">
+                Mỗi thiết bị đều được kiểm tra trước khi bàn giao. Đội ngũ hỗ
+                trợ luôn sẵn sàng tư vấn cấu hình, vận hành và xử lý vấn đề
+                trong quá trình sử dụng.
+              </p>
+
+              <div className="mt-7 grid gap-3 sm:grid-cols-2">
+                {commitments.map((commitment) => (
+                  <div
+                    key={commitment}
+                    className="flex gap-2.5 rounded-xl bg-zinc-50 p-3.5"
+                  >
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                    <span className="text-sm font-normal leading-5 text-zinc-600">
+                      {commitment}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-zinc-50/70 py-16 md:py-20">
+          <div className="container mx-auto max-w-[1320px] px-4 md:px-6 lg:px-8">
+            <div className="grid items-center gap-8 rounded-xl border border-zinc-200 bg-white p-6 md:grid-cols-[1fr_auto] md:p-10">
+              <div className="max-w-2xl">
+                <div className="mb-4 flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Star
+                      key={index}
+                      className="h-4 w-4 fill-amber-400 text-amber-400"
+                    />
+                  ))}
+                </div>
+                <p className="text-xl font-medium leading-8 text-zinc-900 md:text-2xl">
+                  “Thiết bị được chuẩn bị kỹ, quy trình nhận máy nhanh và đội kỹ
+                  thuật hỗ trợ rất sát trong suốt buổi quay.”
+                </p>
+                <p className="mt-5 text-sm font-normal text-zinc-500">
+                  Trần Việt Anh, Đạo diễn hình ảnh tại V-Studio
+                </p>
+              </div>
+              <div className="relative h-24 w-24 overflow-hidden rounded-xl border border-zinc-200 md:h-32 md:w-32">
+                <Image
+                  src="https://i.pravatar.cc/300?u=4"
+                  alt="Trần Việt Anh"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-y border-zinc-200 bg-white py-12">
+          <div className="container mx-auto max-w-[1320px] px-4 text-center md:px-6 lg:px-8">
+            <p className="mb-7 text-xs font-normal text-zinc-500">
+              Thiết bị từ các thương hiệu được tin dùng
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 text-xl font-semibold tracking-tight text-zinc-400 md:gap-x-16">
+              {["Canon", "Sony", "Nikon", "RED", "ARRI", "Blackmagic"].map(
+                (brand) => (
+                  <span key={brand}>{brand}</span>
+                ),
+              )}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-zinc-50/70 py-16 md:py-20">
+          <div className="container mx-auto max-w-[1320px] px-4 md:px-6 lg:px-8">
+            <div className="relative overflow-hidden rounded-xl bg-zinc-950 p-7 text-white md:p-12">
+              <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-red-600/20 blur-3xl" />
+              <div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-center">
+                <div className="max-w-2xl">
+                  <p className="mb-3 text-sm font-normal text-zinc-400">
+                    Bắt đầu dự án mới
+                  </p>
+                  <h2
+                    className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl"
+                    style={{ color: "#ffffff" }}
+                  >
+                    Tìm bộ thiết bị phù hợp ngay hôm nay.
+                  </h2>
+                  <p className="mt-4 text-sm font-normal leading-6 text-zinc-400">
+                    Xem giá mua, giá thuê và lịch trống trực tiếp trên từng sản
+                    phẩm.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={scrollToProducts}
+                  className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-white px-6 text-sm font-medium text-zinc-950 transition-colors hover:bg-zinc-100"
+                >
+                  <span style={{ color: "#09090b" }}>Khám phá thiết bị</span>
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+              </div>
             </div>
           </div>
         </section>

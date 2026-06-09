@@ -41,5 +41,6 @@ public class OrderResponse {
     private LocalDateTime canceledAt;
     private LocalDateTime createdAt;
     
+    private Boolean isReviewed;
     private List<OrderItemResponse> items;
 }

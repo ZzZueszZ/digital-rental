@@ -12,5 +12,7 @@ public class AdjustStockRequest {
     @NotNull(message = "Quantity change cannot be null")
     private Integer quantityChange;
 
+    private String type; // "SALE" or "RENTAL"
+
     private String reason;
 }

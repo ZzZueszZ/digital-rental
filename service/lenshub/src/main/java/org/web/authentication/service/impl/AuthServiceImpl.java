@@ -64,14 +64,14 @@ public class AuthServiceImpl implements AuthService {
             throw new ApplicationException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
-        if (user.getAccountStatus() == AccountStatus.PENDING) {
-            throw new ApplicationException(HttpStatus.UNAUTHORIZED, "Please verify your email to activate account");
-        }
-        if (user.getAccountStatus() == AccountStatus.BANNED) {
-            throw new ApplicationException(HttpStatus.UNAUTHORIZED, "Account is banned");
-        }
-        if (user.getAccountStatus() != AccountStatus.ACTIVE) {
-            throw new ApplicationException(HttpStatus.UNAUTHORIZED, "Account is not active");
+        switch (user.getAccountStatus()) {
+            case ACTIVE -> {
+            }
+            case PENDING -> throw new ApplicationException(HttpStatus.UNAUTHORIZED, "Please verify your email to activate account");
+            case SUSPENDED -> throw new ApplicationException(HttpStatus.UNAUTHORIZED, "Account is temporarily suspended");
+            case BANNED -> throw new ApplicationException(HttpStatus.UNAUTHORIZED, "Account is permanently banned");
+            case DISABLED -> throw new ApplicationException(HttpStatus.UNAUTHORIZED, "Account is disabled");
+            case DELETED -> throw new ApplicationException(HttpStatus.UNAUTHORIZED, "Account has been deleted");
         }
 
         String accessToken = jwtUtil.generateToken(user);
@@ -103,6 +103,7 @@ public class AuthServiceImpl implements AuthService {
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .accountStatus(AccountStatus.PENDING)
                 .enabled(true)
+                .accountNonLocked(true)
                 .roles(new HashSet<>())
                 .build();
 

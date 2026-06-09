@@ -16,10 +16,38 @@ export function getValidRedirectUrl(searchParams: URLSearchParams) {
 }
 
 export function getImageUrl(url: string | null | undefined): string {
-  if (!url) return "";
-  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("blob:")) {
-    return url;
+  const rawUrl = url?.trim();
+  if (!rawUrl) return "";
+  if (
+    rawUrl.startsWith("http://") ||
+    rawUrl.startsWith("https://") ||
+    rawUrl.startsWith("blob:") ||
+    rawUrl.startsWith("data:")
+  ) {
+    return rawUrl;
   }
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:8080";
-  return `${baseUrl}${url}`;
+
+  const apiBaseUrl =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+  const origin = apiBaseUrl.replace(/\/api\/?$/, "").replace(/\/$/, "");
+  const path = rawUrl.startsWith("/") ? rawUrl : `/${rawUrl}`;
+
+  return `${origin}${path}`;
+}
+
+export function formatVND(amount: number): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(amount);
+}
+
+export function formatDate(date: string | Date): string {
+  return new Date(date).toLocaleString("vi-VN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
 }

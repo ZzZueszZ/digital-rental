@@ -11,7 +11,6 @@ import {
   Clock,
   CheckCircle2,
   Lock,
-  Unlock,
   Edit2,
   Save,
   Loader2,
@@ -36,6 +35,7 @@ import {
   TrustLevel,
   Role,
   UserResponse,
+  UserUpdateRequest,
 } from "@/types/user";
 
 const AVATAR_COLORS = [
@@ -71,6 +71,11 @@ const STATUS_CONFIG: Record<
     dot: "bg-red-500",
     badge: "bg-red-50 text-red-700 border border-red-200",
   },
+  BANNED: {
+    label: "Cấm vĩnh viễn",
+    dot: "bg-red-700",
+    badge: "bg-red-100 text-red-800 border border-red-300",
+  },
   DISABLED: {
     label: "Vô hiệu",
     dot: "bg-zinc-400",
@@ -102,7 +107,6 @@ export function UserForm({
     kycStatus: user.kycStatus,
     trustLevel: user.trustLevel,
     enabled: user.enabled,
-    accountNonLocked: user.accountNonLocked,
     roles: user.roles as string[],
   });
 
@@ -112,11 +116,54 @@ export function UserForm({
 
   const handleSubmit = async () => {
     try {
-      await updateUser({ id: userId, payload: formData });
+      const changedData: UserUpdateRequest = {};
+
+      if (formData.phone !== (user.phone || "")) {
+        changedData.phone = formData.phone;
+      }
+      if (formData.accountStatus !== user.accountStatus) {
+        changedData.accountStatus = formData.accountStatus;
+      }
+      if (formData.kycStatus !== user.kycStatus) {
+        changedData.kycStatus = formData.kycStatus;
+      }
+      if (formData.trustLevel !== user.trustLevel) {
+        changedData.trustLevel = formData.trustLevel;
+      }
+      if (formData.enabled !== user.enabled) {
+        changedData.enabled = formData.enabled;
+      }
+
+      const originalRoles = [...(user.roles || [])].sort();
+      const currentRoles = [...formData.roles].sort();
+      const rolesChanged =
+        originalRoles.length !== currentRoles.length ||
+        originalRoles.some((val, index) => val !== currentRoles[index]);
+      if (rolesChanged) {
+        changedData.roles = formData.roles;
+      }
+
+      if (Object.keys(changedData).length === 0) {
+        toast.success("Không có thay đổi nào được lưu");
+        router.push(`/admin/users/${userId}`);
+        return;
+      }
+
+      await updateUser({ id: userId, payload: changedData });
       toast.success("Cập nhật tài khoản thành công");
       router.push(`/admin/users/${userId}`);
     } catch (error) {
-      toast.error("Cập nhật thất bại, vui lòng thử lại");
+      const err = error as {
+        response?: { data?: { data?: string; message?: string } };
+        message?: string;
+      };
+      const serverErrorMsg =
+        err.response?.data?.data || err.response?.data?.message || err.message;
+      toast.error(
+        serverErrorMsg
+          ? `Cập nhật thất bại: ${serverErrorMsg}`
+          : "Cập nhật thất bại, vui lòng thử lại",
+      );
     }
   };
 
@@ -141,19 +188,21 @@ export function UserForm({
             onClick={() =>
               router.push(isEditing ? `/admin/users/${userId}` : "/admin/users")
             }
-            className="h-12 w-12 rounded-full bg-white border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-sm shrink-0"
+            className="h-10 w-10 rounded-xl bg-white border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-sm shrink-0"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4" />
           </Button>
-          <div className="space-y-1">
-            <h1 className="text-3xl font-black tracking-tight text-zinc-950">
+          <div className="space-y-0.5">
+            <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
               {isEditing ? "Chỉnh sửa hồ sơ" : "Hồ sơ người dùng"}
             </h1>
-            <p className="text-sm font-medium text-zinc-500">
+            <p className="text-[14px] font-medium text-zinc-500">
               {isEditing ? (
                 <>
                   Cập nhật thông tin cho tài khoản{" "}
-                  <span className="font-bold text-zinc-900">{user.email}</span>
+                  <span className="font-semibold text-zinc-900">
+                    {user.email}
+                  </span>
                 </>
               ) : (
                 `Chi tiết tài khoản và lịch sử hệ thống của ID #${user.id}`
@@ -169,14 +218,14 @@ export function UserForm({
                 variant="outline"
                 onClick={() => router.push(`/admin/users/${userId}`)}
                 disabled={isPending}
-                className="h-12 px-6 rounded-full font-bold transition-all text-zinc-900 bg-white border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950"
+                className="h-10 px-5 rounded-xl font-semibold text-[14px] transition-all text-zinc-900 bg-white border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-950 active:scale-95"
               >
                 Hủy
               </Button>
               <Button
                 onClick={handleSubmit}
                 disabled={isPending}
-                className="h-12 px-8 rounded-full bg-zinc-950 text-white font-bold hover:bg-zinc-800 transition-all shadow-md active:scale-95 flex items-center gap-2"
+                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2  whitespace-nowrap active:scale-95 border-none"
               >
                 {isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -189,7 +238,7 @@ export function UserForm({
           ) : (
             <Button
               onClick={() => router.push(`/admin/users/${userId}/edit`)}
-              className="h-12 px-6 rounded-full bg-zinc-950 text-white font-bold hover:bg-zinc-800 transition-all shadow-md active:scale-95 flex items-center gap-2"
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2  whitespace-nowrap active:scale-95 border-none"
             >
               <Edit2 className="w-4 h-4" />
               Chỉnh sửa
@@ -206,9 +255,13 @@ export function UserForm({
             user={user}
             isEditing={isEditing}
             phone={formData.phone}
-            onPhoneChange={(v) => setFormData((prev) => ({ ...prev, phone: v }))}
+            onPhoneChange={(v) =>
+              setFormData((prev) => ({ ...prev, phone: v }))
+            }
             roles={formData.roles}
-            onRolesChange={(roles) => setFormData((prev) => ({ ...prev, roles }))}
+            onRolesChange={(roles) =>
+              setFormData((prev) => ({ ...prev, roles }))
+            }
           />
         </div>
 
@@ -216,10 +269,10 @@ export function UserForm({
         <div className="md:col-span-2 space-y-6">
           <Card
             className={cn(
-              "rounded-2xl border bg-white shadow-sm overflow-hidden relative group transition-all duration-500",
+              "rounded-xl border bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] overflow-hidden relative group transition-all duration-500",
               isEditing
                 ? "border-zinc-300 ring-1 ring-zinc-100"
-                : "border-zinc-200 hover:shadow-2xl",
+                : "border-zinc-100 hover:shadow-2xl",
             )}
           >
             <div
@@ -231,7 +284,7 @@ export function UserForm({
               )}
             />
             <CardHeader className="px-6 pt-6 pb-4">
-              <CardTitle className="text-sm font-bold text-zinc-950 flex items-center gap-2">
+              <CardTitle className="text-[18px] font-semibold text-zinc-950 flex items-center gap-2 tracking-tight">
                 <ShieldCheck className="w-5 h-5 text-red-600" />
                 Trạng thái bảo mật
               </CardTitle>
@@ -247,7 +300,7 @@ export function UserForm({
                       : "bg-zinc-50/50 border-zinc-100",
                   )}
                 >
-                  <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-2">
+                  <p className="text-[12px] font-medium text-zinc-400 mb-2 ml-1">
                     Tình trạng tài khoản
                   </p>
                   {isEditing ? (
@@ -260,21 +313,52 @@ export function UserForm({
                         }))
                       }
                     >
-                      <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-sm font-bold text-zinc-900 focus:ring-1 focus:ring-red-600">
+                      <SelectTrigger className="w-full! !h-10 rounded-xl !border-black/5 !bg-white text-[14px] font-semibold text-zinc-900 focus:!border-red-600/30 transition-all duration-200 shadow-dash-card outline-none">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl border-zinc-200 p-1">
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={AccountStatus.ACTIVE}>Hoạt động</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={AccountStatus.PENDING}>Chờ duyệt</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={AccountStatus.SUSPENDED}>Đình chỉ</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={AccountStatus.DISABLED}>Vô hiệu</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={AccountStatus.DELETED}>Đã xóa</SelectItem>
+                      <SelectContent className="rounded-xl border-zinc-200 p-1 bg-white shadow-none">
+                        <SelectItem
+                          className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
+                          value={AccountStatus.ACTIVE}
+                        >
+                          Hoạt động
+                        </SelectItem>
+                        <SelectItem
+                          className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
+                          value={AccountStatus.PENDING}
+                        >
+                          Chờ duyệt
+                        </SelectItem>
+                        <SelectItem
+                          className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
+                          value={AccountStatus.SUSPENDED}
+                        >
+                          Đình chỉ
+                        </SelectItem>
+                        <SelectItem
+                          className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
+                          value={AccountStatus.BANNED}
+                        >
+                          Cấm vĩnh viễn
+                        </SelectItem>
+                        <SelectItem
+                          className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
+                          value={AccountStatus.DISABLED}
+                        >
+                          Vô hiệu
+                        </SelectItem>
+                        <SelectItem
+                          className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
+                          value={AccountStatus.DELETED}
+                        >
+                          Đã xóa
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   ) : (
                     <span
                       className={cn(
-                        "inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full",
+                        "inline-flex items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-xl",
                         statusConfig.badge,
                       )}
                     >
@@ -289,142 +373,61 @@ export function UserForm({
                   )}
                 </div>
 
-                {/* Lock Status */}
+                {/* Access Status */}
                 <div
                   className={cn(
                     "rounded-xl p-4 border flex flex-col justify-center",
-                    isEditing
-                      ? "bg-white border-zinc-200"
-                      : "bg-zinc-50/50 border-zinc-100",
+                    "bg-zinc-50/50 border-zinc-100",
                   )}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-1">
-                        Trạng thái khóa
-                      </p>
-                      {!isEditing &&
-                        (user.accountNonLocked ? (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            <Unlock className="w-3.5 h-3.5" />
-                            Không bị khóa
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">
-                            <Lock className="w-3.5 h-3.5" />
-                            Đang bị khóa
-                          </span>
-                        ))}
-                    </div>
-                    {isEditing && (
-                      <Switch
-                        checked={formData.accountNonLocked}
-                        onCheckedChange={(checked) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            accountNonLocked: checked,
-                          }))
-                        }
-                      />
-                    )}
-                  </div>
+                  <p className="text-[12px] font-medium text-zinc-400 mb-1.5 ml-1">
+                    Quyền đăng nhập
+                  </p>
+                  {user.accountStatus === AccountStatus.ACTIVE ? (
+                    <span className="inline-flex w-fit items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Được phép đăng nhập
+                    </span>
+                  ) : (
+                    <span className="inline-flex w-fit items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-xl bg-red-50 text-red-700 border border-red-200">
+                      <Lock className="w-3.5 h-3.5" />
+                      Không được đăng nhập
+                    </span>
+                  )}
                 </div>
 
                 {/* KYC Status */}
-                <div
-                  className={cn(
-                    "rounded-xl p-4 border",
-                    isEditing
-                      ? "bg-white border-zinc-200"
-                      : "bg-zinc-50/50 border-zinc-100",
-                  )}
-                >
-                  <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-2">
+                <div className="rounded-xl p-4 border bg-zinc-50/50 border-zinc-100">
+                  <p className="text-[12px] font-medium text-zinc-400 mb-2 ml-1">
                     Xác minh danh tính (KYC)
                   </p>
-                  {isEditing ? (
-                    <Select
-                      value={formData.kycStatus}
-                      onValueChange={(val) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          kycStatus: val as KycStatus,
-                        }))
-                      }
-                    >
-                      <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-sm font-bold text-zinc-900 focus:ring-1 focus:ring-red-600">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl border-zinc-200 p-1">
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={KycStatus.NOT_STARTED}>Chưa bắt đầu</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={KycStatus.PENDING}>Chờ duyệt</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={KycStatus.VERIFIED}>Đã xác minh</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={KycStatus.REJECTED}>Bị từ chối</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md border",
-                        user.kycStatus === KycStatus.VERIFIED
-                          ? "bg-emerald-50 border-emerald-200 text-emerald-700"
-                          : user.kycStatus === KycStatus.PENDING
-                            ? "bg-amber-50 border-amber-200 text-amber-700"
-                            : "bg-zinc-100 border-zinc-200 text-zinc-600",
-                      )}
-                    >
-                      {user.kycStatus === KycStatus.VERIFIED
-                        ? "Đã xác minh"
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-xl border",
+                      user.kycStatus === KycStatus.VERIFIED
+                        ? "bg-emerald-50 border-emerald-200 text-emerald-700"
                         : user.kycStatus === KycStatus.PENDING
-                          ? "Chờ duyệt"
+                          ? "bg-amber-50 border-amber-200 text-amber-700"
+                          : user.kycStatus === KycStatus.REJECTED
+                            ? "bg-red-50 border-red-200 text-red-700"
+                            : "bg-zinc-100 border-zinc-200 text-zinc-600",
+                    )}
+                  >
+                    {user.kycStatus === KycStatus.VERIFIED
+                      ? "Đã xác minh"
+                      : user.kycStatus === KycStatus.PENDING
+                        ? "Chờ duyệt"
+                        : user.kycStatus === KycStatus.REJECTED
+                          ? "Bị từ chối"
                           : "Chưa xác minh"}
-                    </span>
-                  )}
-                </div>
-
-                {/* Trust Level */}
-                <div
-                  className={cn(
-                    "rounded-xl p-4 border",
-                    isEditing
-                      ? "bg-white border-zinc-200"
-                      : "bg-zinc-50/50 border-zinc-100",
-                  )}
-                >
-                  <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-2">
-                    Cấp độ tin cậy
-                  </p>
-                  {isEditing ? (
-                    <Select
-                      value={formData.trustLevel}
-                      onValueChange={(val) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          trustLevel: val as TrustLevel,
-                        }))
-                      }
-                    >
-                      <SelectTrigger className="h-10 rounded-xl border-zinc-200 bg-zinc-50 text-sm font-bold text-zinc-900 focus:ring-1 focus:ring-red-600">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl border-zinc-200 p-1">
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={TrustLevel.BASIC}>BASIC</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={TrustLevel.VERIFIED}>VERIFIED</SelectItem>
-                        <SelectItem className="rounded-lg px-3 py-2 cursor-pointer" value={TrustLevel.ELITE}>ELITE</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <span className="inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-md bg-zinc-950 text-white tracking-widest uppercase">
-                      {user.trustLevel}
-                    </span>
-                  )}
+                  </span>
                 </div>
 
                 {/* Enabled Status (Only in Edit) */}
                 {isEditing && (
                   <div className="rounded-xl p-4 border bg-white border-zinc-200 sm:col-span-2 flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-bold text-zinc-900">
+                      <p className="text-sm font-semibold text-zinc-900">
                         Kích hoạt tài khoản
                       </p>
                       <p className="text-[11px] text-zinc-500 font-medium">
@@ -445,10 +448,10 @@ export function UserForm({
 
           <Card
             className={cn(
-              "rounded-2xl border bg-white shadow-sm overflow-hidden relative group transition-all duration-500",
+              "rounded-xl border bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] overflow-hidden relative group transition-all duration-500",
               isEditing
                 ? "opacity-50 pointer-events-none border-zinc-200"
-                : "border-zinc-200 hover:shadow-2xl",
+                : "border-zinc-100 hover:shadow-2xl",
             )}
           >
             <div
@@ -460,7 +463,7 @@ export function UserForm({
               )}
             />
             <CardHeader className="px-6 pt-6 pb-4">
-              <CardTitle className="text-sm font-bold text-zinc-950 flex items-center gap-2">
+              <CardTitle className="text-[18px] font-semibold text-zinc-950 flex items-center gap-2 tracking-tight">
                 <Clock className="w-5 h-5 text-zinc-400" />
                 Lịch sử hoạt động
               </CardTitle>
@@ -472,10 +475,10 @@ export function UserForm({
                     <UserIcon className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">
+                    <p className="text-[12px] font-medium text-zinc-400 mb-1.5 ml-1">
                       Ngày gia nhập
                     </p>
-                    <p className="text-sm font-black tracking-tight text-zinc-950 tabular-nums">
+                    <p className="text-[14px] font-semibold tracking-tight text-zinc-950 tabular-nums">
                       {new Date(user.createdAt).toLocaleString("vi-VN")}
                     </p>
                   </div>
@@ -486,10 +489,10 @@ export function UserForm({
                     <Calendar className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">
+                    <p className="text-[12px] font-medium text-zinc-400 mb-1.5 ml-1">
                       Cập nhật cuối
                     </p>
-                    <p className="text-sm font-black tracking-tight text-zinc-950 tabular-nums">
+                    <p className="text-[14px] font-semibold tracking-tight text-zinc-950 tabular-nums">
                       {new Date(user.updatedAt).toLocaleString("vi-VN")}
                     </p>
                   </div>

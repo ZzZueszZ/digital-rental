@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/**",
+                                "/shield/handshake",
                                 "/uploads/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
@@ -55,7 +56,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/products", "/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/categories", "/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/reviews/product/**").permitAll()
-                        .requestMatchers("/payments/vnpay/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/rentals/products/*/availability").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/payments/vnpay/return",
+                                "/payments/vnpay/ipn",
+                                "/payments/vnpay/rental-fee/ipn",
+                                "/payments/vnpay/rental-fee/return"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/support/tickets").permitAll()
 
                         .anyRequest().authenticated()

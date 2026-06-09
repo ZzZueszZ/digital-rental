@@ -31,12 +31,13 @@ export interface ProductResponse {
   description: string;
   rentPricePerDay: number;
   salePrice: number;
-  forRent: boolean;
-  forSale: boolean;
+  isForRent: boolean;
+  isForSale: boolean;
   mainImageUrl: string;
   brand: string;
   specifications: ProductSpecificationResponse[];
   quantity: number;
+  rentalQuantity: number;
   active: boolean;
   categoryId: number;
   categoryName: string;

@@ -17,6 +17,7 @@ public class InventoryAuditResponse {
     private String productName;
     private int oldStock;
     private int newStock;
+    private String stockType;
     private String reason;
     private String changedByEmail;
     private LocalDateTime changedAt;

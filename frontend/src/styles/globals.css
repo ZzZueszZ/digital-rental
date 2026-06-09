@@ -1,146 +1,379 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-heading: var(--font-be-vietnam);
-}
-@theme inline {
+  /* Fonts */
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-roboto-mono);
+
+  /* Colors mapped from standard CSS variables for Tailwind 4 */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-inter), sans-serif;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-  /* Design System Tokens */
-  --color-surface: var(--surface);
-  --color-surface-container-low: var(--surface-container-low);
-  --color-surface-container: var(--surface-container);
-  --color-surface-container-highest: var(--surface-container-highest);
-  --color-surface-bright: var(--surface-bright);
-  --color-on-surface-variant: var(--on-surface-variant);
-  --color-on-primary-container: var(--on-primary-container);
-  --color-primary-fixed: var(--primary-fixed);
-  --color-outline-variant: var(--outline-variant);
+  --radius-lg: 12px;
+  --radius-md: 12px;
+  --radius-sm: 12px;
+
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  /* Dashboard Radius & Shadow Tokens */
+  --spacing-dash-gap: 1.25rem; /* 20px */
+  --spacing-dash-card-p: 1rem; /* 16px */
+  --spacing-dash-card-p-lg: 1.25rem; /* 20px */
+  --radius-dash-sm: 12px;
+  --radius-dash-md: 12px;
+  --radius-dash-lg: 12px;
+  --shadow-dash-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-dash-md: 0 8px 20px rgba(15, 23, 42, 0.05);
+  --shadow-dash-lg: 0 16px 40px rgba(15, 23, 42, 0.08);
+  --shadow-dash-card: var(--shadow-dash-sm);
+  --shadow-dash-hover: var(--shadow-dash-md);
+  --shadow-dash-overlay: var(--shadow-dash-lg);
+
+  /* Sidebar/Navbar Dimensions */
+  --dash-sidebar-w: 240px;
+  --dash-navbar-h: 60px;
+  --dash-row-h: 48px;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #09090b;
-  --card: #ffffff;
-  --card-foreground: #09090b;
-  --popover: #ffffff;
-  --popover-foreground: #09090b;
-  --primary: #dc2626;
-  --primary-foreground: #ffffff;
-  --secondary: #f4f4f5;
-  --secondary-foreground: #09090b;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
-  --accent-foreground: #09090b;
-  --destructive: #dc2626;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: #dc2626;
-  --radius: 1rem;
-
-  /* Specific Theming vars */
-  --surface: #ffffff;
-  --surface-container-low: #f4f4f5;
-  --surface-container: #e4e4e7;
-  --surface-container-highest: #d4d4d8;
-  --surface-bright: #ffffff;
-  --on-surface-variant: #71717a;
-  --on-primary-container: #dc2626;
-  --primary-fixed: #fecaca;
-  --outline-variant: #e4e4e7;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.6 0.2 25);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
 }
 
 .dark {
-  --background: oklch(0.05 0 0);
-  --foreground: oklch(0.98 0 0);
-  --card: oklch(0.08 0 0);
-  --card-foreground: oklch(0.98 0 0);
-  --primary: oklch(1 0 0);
-  --primary-foreground: oklch(0.05 0 0);
-  --border: oklch(0.15 0 0);
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--border);
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-  html {
-    @apply font-sans;
+
+  /* Force white background for autofilled inputs */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    -webkit-text-fill-color: #09090b !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  /* Admin Checkbox Standardization */
+  input[type="checkbox"] {
+    @apply appearance-none w-4 h-4 rounded-xl border border-zinc-300 bg-white cursor-pointer transition-all relative shrink-0;
+  }
+
+  input[type="checkbox"]:checked {
+    @apply bg-red-600 border-red-600;
+  }
+
+  input[type="checkbox"]:checked::after {
+    content: "";
+    @apply absolute left-[50%] top-[45%] -translate-x-1/2 -translate-y-1/2 w-[8px] h-[8px] bg-white;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+
+  input[type="checkbox"]:focus-visible {
+    @apply ring-2 ring-red-600/20 ring-offset-2;
+  }
+
+  /* Typography Utilities for Special Cases */
+  .text-product-name {
+    @apply font-semibold tracking-tight text-zinc-950;
+    font-size: clamp(1.125rem, 2.5vw, 1.375rem); /* 18px - 22px */
+    line-height: 1.3;
+  }
+
+  .text-price-tag {
+    @apply font-bold tracking-tighter text-zinc-950;
+    font-size: clamp(1.25rem, 3vw, 1.5rem); /* 20px - 24px */
+    line-height: 1;
+  }
+
+  .nav-menu-item {
+    @apply font-medium text-[14px] sm:text-[15px] lg:text-[16px] tracking-tight;
+    line-height: 1.5;
+  }
+
+  .btn-text {
+    @apply font-semibold tracking-tight;
+    font-size: clamp(0.875rem, 1.5vw, 1rem); /* 14px - 16px */
+  }
+  h1 {
+    @apply font-bold text-zinc-950;
+    font-size: clamp(2.25rem, 5vw, 2.75rem); /* 36px - 44px */
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  h2 {
+    @apply font-semibold tracking-tight text-zinc-950;
+    font-size: clamp(1.75rem, 4vw, 2rem); /* 28px - 32px */
+    line-height: 1.25;
+  }
+
+  h3 {
+    @apply font-medium sm:font-semibold tracking-tight text-zinc-900;
+    font-size: clamp(1.375rem, 3vw, 1.5rem); /* 22px - 24px */
+    line-height: 1.3;
+  }
+
+  h4 {
+    @apply font-medium tracking-tight text-zinc-900;
+    font-size: clamp(1.125rem, 2vw, 1.25rem); /* 18px - 20px */
+    line-height: 1.3;
+  }
+
+  /* White Number Input Spin Buttons */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    filter: invert(1) brightness(100);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  input[type="number"]:hover::-webkit-inner-spin-button,
+  input[type="number"]:hover::-webkit-outer-spin-button {
+    opacity: 1;
   }
 }
 
-/* Global loading bar animation */
-@keyframes loading-bar {
-  0% {
-    width: 0%;
-    margin-left: 0%;
+@layer components {
+  /* =========================================
+     ADMIN DASHBOARD SYSTEM (Compact & Data-Focused)
+     ========================================= */
+
+  .admin-layout {
+    @apply min-h-screen bg-zinc-50/70;
   }
-  20% {
-    width: 30%;
-    margin-left: 5%;
+
+  .admin-sidebar {
+    width: var(--dash-sidebar-w);
+    @apply bg-white border-r border-zinc-200/80 h-screen sticky top-0 flex flex-col p-4;
+  }
+
+  .admin-sidebar-item {
+    @apply h-11 px-3.5 rounded-xl flex items-center gap-3 text-sm font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950 transition-all duration-200 ease-in-out cursor-pointer mb-1;
+  }
+
+  .admin-sidebar-item.active {
+    @apply bg-zinc-950 text-white;
+  }
+
+  .admin-navbar {
+    height: var(--dash-navbar-h);
+    @apply bg-white/90 backdrop-blur-xl border-b border-zinc-200/80 px-5 flex items-center justify-between sticky top-0 z-40;
+  }
+
+  .admin-content {
+    @apply p-4 sm:p-6 lg:p-8 flex-1 w-full max-w-[1440px] mx-auto;
+  }
+
+  .admin-card {
+    @apply bg-white border border-zinc-200/80 rounded-xl p-4 shadow-none transition-colors duration-200 ease-in-out;
+  }
+
+  .admin-card:hover {
+    @apply border-zinc-300 shadow-none;
+  }
+
+  .admin-card-header {
+    @apply flex items-center gap-2 mb-4;
+  }
+
+  .admin-card-title {
+    @apply text-xs font-medium tracking-tight text-zinc-500;
+  }
+
+  .admin-card-value {
+    @apply text-2xl lg:text-3xl font-semibold text-zinc-950 tracking-tight;
+  }
+
+  .admin-card-meta {
+    @apply text-[11px] font-medium text-zinc-500 mt-2 flex items-center gap-1.5;
+  }
+
+  /* Admin Tables */
+  .admin-table-container {
+    @apply bg-white border border-zinc-200/80 rounded-xl shadow-none overflow-hidden;
+  }
+
+  .admin-table-row {
+    @apply h-[var(--dash-row-h)] border-b border-zinc-100 last:border-0 hover:bg-zinc-50/70 transition-colors;
+  }
+
+  .admin-table-cell {
+    @apply px-4 py-2 text-sm text-zinc-600;
+  }
+
+  /* Admin Buttons */
+  .btn-admin-sm {
+    @apply px-3 py-1.5 text-xs font-medium rounded-xl transition-all duration-200 ease-in-out;
+  }
+  .btn-admin-md {
+    @apply px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 ease-in-out;
+  }
+
+  /* Admin Forms */
+  .admin-form-group {
+    @apply space-y-4;
+  }
+  .admin-input {
+    @apply h-10 px-3 rounded-xl border-zinc-200 text-sm focus-visible:ring-zinc-950/10;
+  }
+
+  /* =========================================
+     MARKETING / CLIENT SYSTEM
+     ========================================= */
+
+  .text-premium-product {
+    @apply font-semibold tracking-tight text-zinc-900;
+    font-size: clamp(1.125rem, 2.5vw, 1.375rem); /* 18px - 22px */
+    line-height: 1.4;
+  }
+
+  .text-premium-price {
+    @apply font-bold tracking-tighter text-zinc-950;
+    font-size: clamp(1.25rem, 3vw, 1.5rem); /* 20px - 24px */
+    line-height: 1;
+  }
+
+  .badge-discount {
+    @apply font-bold tracking-widest text-white bg-red-600 px-2 py-0.5 rounded-xl uppercase;
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem); /* 12px - 14px */
+  }
+
+  .btn-premium {
+    @apply font-semibold tracking-tight uppercase;
+    font-size: clamp(0.875rem, 1.5vw, 1rem); /* 14px - 16px */
+  }
+
+  .text-secondary {
+    @apply text-zinc-500 font-normal;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .text-small {
+    @apply text-zinc-400 font-normal;
+    font-size: 13px; /* 12-13px */
+    line-height: 1.4;
+  }
+
+  /* Clean "White" Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-200 rounded-full transition-colors;
+  }
+  *:hover::-webkit-scrollbar-thumb {
+    @apply bg-zinc-300;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-zinc-400;
+  }
+}
+
+/* Animations */
+@keyframes pulse-subtle {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
   50% {
-    width: 40%;
-    margin-left: 30%;
-  }
-  80% {
-    width: 25%;
-    margin-left: 65%;
-  }
-  100% {
-    width: 5%;
-    margin-left: 95%;
+    opacity: 0.8;
+    transform: scale(0.99);
   }
 }
 
-.animate-loading-bar {
-  animation: loading-bar 1.2s ease-in-out infinite;
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+@keyframes bounce-subtle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
 }

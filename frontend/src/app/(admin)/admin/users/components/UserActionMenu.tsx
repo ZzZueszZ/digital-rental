@@ -32,7 +32,7 @@ export interface UserActionCallbacks {
 interface UserActionMenuProps {
   userId: number;
   viewMode: "ACTIVE" | "DELETED";
-  accountNonLocked: boolean;
+  accountStatus: string;
   callbacks: UserActionCallbacks;
   /** Compact trigger style for desktop table */
   compact?: boolean;
@@ -41,7 +41,7 @@ interface UserActionMenuProps {
 export function UserActionMenu({
   userId,
   viewMode,
-  accountNonLocked,
+  accountStatus,
   callbacks,
   compact = false,
 }: UserActionMenuProps) {
@@ -53,8 +53,8 @@ export function UserActionMenu({
         <DropdownMenuTrigger
           className={
             compact
-              ? "inline-flex items-center justify-center h-8 w-8 rounded-lg p-0 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 transition-all duration-200 outline-none"
-              : "inline-flex items-center justify-center h-8 w-8 rounded-lg hover:bg-zinc-100 outline-none"
+              ? "inline-flex items-center justify-center h-8 w-8 rounded-xl p-0 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 transition-all duration-200 outline-none"
+              : "inline-flex items-center justify-center h-8 w-8 rounded-xl hover:bg-zinc-100 outline-none"
           }
         >
           <MoreHorizontal className="w-4 h-4 text-zinc-500" />
@@ -65,41 +65,42 @@ export function UserActionMenu({
           className="w-52 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
         >
           <DropdownMenuGroup>
-            <DropdownMenuLabel className="text-[9px] font-black uppercase text-zinc-400 px-3 py-1.5 tracking-widest">
+            <DropdownMenuLabel className="text-[10px] font-semibold text-zinc-400 px-2 py-1.5 tracking-tight">
               Tác vụ quản trị
             </DropdownMenuLabel>
 
             {viewMode === "ACTIVE" ? (
               <>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="cursor-pointer"
                   onClick={() => router.push(`/admin/users/${userId}`)}
                 >
                   <Eye className="w-3.5 h-3.5 text-zinc-400" /> Xem chi tiết
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="cursor-pointer"
                   onClick={() => router.push(`/admin/users/${userId}/edit`)}
                 >
                   <Edit2 className="w-3.5 h-3.5 text-zinc-400" /> Chỉnh sửa
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="cursor-pointer"
                   onClick={callbacks.onResetPassword}
                 >
-                  <RefreshCw className="w-3.5 h-3.5 text-zinc-400" /> Reset mật khẩu
+                  <RefreshCw className="w-3.5 h-3.5 text-zinc-400" /> Reset mật
+                  khẩu
                 </DropdownMenuItem>
-                {accountNonLocked ? (
+                {accountStatus !== "SUSPENDED" ? (
                   <DropdownMenuItem
-                    className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-amber-50 text-zinc-700"
+                    className="cursor-pointer"
                     onClick={callbacks.onLock}
                   >
-                    <Lock className="w-3.5 h-3.5 text-amber-500" /> Khóa tài khoản
+                    <Lock className="w-3.5 h-3.5 text-amber-500" /> Khóa tài
+                    khoản
                   </DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem
-                    className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-emerald-50 text-zinc-700"
+                    className="cursor-pointer"
                     onClick={callbacks.onUnlock}
                   >
                     <Unlock className="w-3.5 h-3.5 text-emerald-500" /> Mở khóa
@@ -107,7 +108,7 @@ export function UserActionMenu({
                 )}
                 <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-red-600 focus:bg-red-50"
+                  className="cursor-pointer"
                   onClick={callbacks.onDelete}
                 >
                   <Trash2 className="w-3.5 h-3.5" /> Vô hiệu hóa
@@ -116,14 +117,14 @@ export function UserActionMenu({
             ) : (
               <>
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer focus:bg-zinc-50 text-zinc-700"
+                  className="cursor-pointer"
                   onClick={() => router.push(`/admin/users/${userId}`)}
                 >
                   <Eye className="w-3.5 h-3.5 text-zinc-400" /> Xem chi tiết
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-1 bg-zinc-50" />
                 <DropdownMenuItem
-                  className="rounded-lg h-9 font-semibold text-xs gap-3 cursor-pointer text-emerald-700 focus:bg-emerald-50"
+                  className="cursor-pointer"
                   onClick={callbacks.onRestore}
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Khôi phục tài khoản

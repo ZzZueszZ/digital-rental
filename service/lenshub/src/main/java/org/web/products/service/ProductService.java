@@ -39,5 +39,5 @@ public interface ProductService {
     void deleteGalleryImage(Long productId, Long imageId);
 
     // Pricing
-    List<PriceHistoryResponse> getPriceHistory(Long productId);
+    Page<PriceHistoryResponse> getPriceHistory(Long productId, int page, int size);
 }

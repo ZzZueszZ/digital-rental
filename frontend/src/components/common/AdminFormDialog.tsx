@@ -8,33 +8,35 @@ import { ReactNode } from "react";
 interface AdminFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  icon: LucideIcon;
+  icon?: LucideIcon;
   iconClassName?: string;
   title: string;
   description?: string;
   children: ReactNode;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit?: (e: React.FormEvent) => void;
   isPending?: boolean;
   submitText?: string;
   submitIcon?: LucideIcon;
   cancelText?: string;
   maxWidth?: string;
+  hideFooter?: boolean;
 }
 
 export function AdminFormDialog({
   open,
   onOpenChange,
-  icon: Icon,
-  iconClassName = "bg-zinc-950 text-white", // Default to black for general things, can override with red-600
+  icon: Icon = X, // Fallback to X or similar
+  iconClassName = "bg-red-600 text-white", // Default to brand red
   title,
   description,
   children,
-  onSubmit,
+  onSubmit = () => {},
   isPending = false,
   submitText = "Lưu thay đổi",
   submitIcon: SubmitIcon,
   cancelText = "Hủy",
   maxWidth = "max-w-lg",
+  hideFooter = false,
 }: AdminFormDialogProps) {
   if (!open) return null;
 
@@ -48,26 +50,30 @@ export function AdminFormDialog({
 
       {/* Dialog */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-        <div 
+        <div
           className={cn(
-            "relative w-full bg-white rounded-2xl shadow-[0_32px_80px_rgba(0,0,0,0.15)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300",
-            maxWidth
+            "relative w-full bg-white rounded-xl shadow-dash-overlay overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 border border-zinc-100",
+            maxWidth,
           )}
         >
-
           {/* Header */}
           <div className="px-6 pt-7 pb-5 border-b border-zinc-100 bg-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={cn("w-10 h-10 rounded-full flex items-center justify-center shadow-sm shrink-0", iconClassName)}>
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm shrink-0",
+                    iconClassName,
+                  )}
+                >
                   <Icon className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-zinc-950 tracking-tight">
+                  <h2 className="text-xl font-bold text-zinc-950 tracking-tight">
                     {title}
                   </h2>
                   {description && (
-                    <p className="text-[11px] text-zinc-500 font-medium mt-0.5">
+                    <p className="text-xs text-zinc-500 font-medium mt-1">
                       {description}
                     </p>
                   )}
@@ -84,38 +90,43 @@ export function AdminFormDialog({
           </div>
 
           {/* Form */}
-          <form onSubmit={onSubmit} className="flex flex-col max-h-[calc(100vh-140px)]">
+          <form
+            onSubmit={onSubmit}
+            className="flex flex-col max-h-[calc(100vh-140px)]"
+          >
             <div className="px-6 py-5 space-y-4 overflow-y-auto custom-scrollbar">
               {children}
             </div>
 
             {/* Actions / Footer */}
-            <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-end gap-3 mt-auto">
-              <button
-                type="button"
-                onClick={() => onOpenChange(false)}
-                className="h-10 px-5 rounded-xl border border-zinc-200 bg-white text-zinc-600 font-bold text-sm hover:bg-zinc-50 hover:border-zinc-300 transition-colors"
-              >
-                {cancelText}
-              </button>
-              <Button
-                type="submit"
-                disabled={isPending}
-                className="h-10 px-6 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-bold text-sm transition-all duration-300"
-              >
-                {isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    Đang xử lý...
-                  </>
-                ) : (
-                  <>
-                    {SubmitIcon && <SubmitIcon className="w-4 h-4 mr-2" />}
-                    {submitText}
-                  </>
-                )}
-              </Button>
-            </div>
+            {!hideFooter && (
+              <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-end gap-3 mt-auto">
+                <button
+                  type="button"
+                  onClick={() => onOpenChange(false)}
+                  className="h-10 px-5 rounded-xl border border-zinc-200 bg-white text-zinc-400 font-semibold text-sm hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
+                >
+                  {cancelText}
+                </button>
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  className="h-10 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-all duration-300 shadow-md shadow-red-100"
+                >
+                  {isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2" />
+                      Đang xử lý...
+                    </>
+                  ) : (
+                    <>
+                      {SubmitIcon && <SubmitIcon className="w-4 h-4 mr-2" />}
+                      {submitText}
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
           </form>
         </div>
       </div>

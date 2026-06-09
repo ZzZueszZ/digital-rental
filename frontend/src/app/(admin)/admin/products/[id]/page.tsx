@@ -1,20 +1,23 @@
 "use client";
 
 import { use } from "react";
-import { 
-  ArrowLeft, 
-  Package, 
-  Calendar, 
-  Tag, 
-  Edit2, 
-  Trash2, 
+import {
+  ArrowLeft,
+  Package,
+  Tag,
+  Edit2,
+  Trash2,
   RotateCcw,
   CheckCircle2,
   XCircle,
   Truck,
   ShieldCheck,
   Zap,
-  Info
+  Info,
+  TrendingUp,
+  ChevronLeft,
+  ChevronRight,
+  Image as ImageIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -22,19 +25,66 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { useProduct, useDeleteProduct, useRestoreProduct } from "@/services/product";
 import { getImageUrl, cn } from "@/lib/utils";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { ProductDialog } from "../components/ProductDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  useUpdateProductInfo,
+  useProduct,
+  useDeleteProduct,
+  useRestoreProduct,
+  PRODUCT_KEYS,
+  usePriceHistory,
+  useUpdateProductPrice,
+} from "@/services/product";
+import { useAdjustStock, useInventoryLogs } from "@/services/inventory";
+import { useGetDevicesByProduct, useCreateDevice, useUpdateDevice, useUpdateDeviceStatus, useDeleteDevice, DeviceResponse, DeviceStatus } from "@/services/rental";
+import { useCategories } from "@/services/category";
+import {
+  ProductInfoUpdateRequest,
+  PriceHistoryResponse,
+} from "@/types/product";
+import { InventoryAuditResponse } from "@/types/inventory";
+import { useQueryClient } from "@tanstack/react-query";
+import { StockAdjustmentDialog } from "../components/StockAdjustmentDialog";
+import { ProductPriceDialog } from "../components/ProductPriceDialog";
+import { ProductGalleryDialog } from "../components/ProductGalleryDialog";
 
-export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { id } = use(params);
   const productId = parseInt(id);
 
   const { data: response, isLoading, error } = useProduct(productId);
   const product = response?.data;
+
+  const [priceHistoryPage, setPriceHistoryPage] = useState(0);
+  const [inventoryPage, setInventoryPage] = useState(0);
+  const PAGE_SIZE = 5;
+
+  const { data: historyRes } = usePriceHistory(
+    productId,
+    priceHistoryPage,
+    PAGE_SIZE,
+  );
+  const priceHistory = historyRes?.data || [];
+  const pricePagination = historyRes?.pagination;
+
+  const { data: inventoryRes } = useInventoryLogs(
+    productId,
+    inventoryPage,
+    PAGE_SIZE,
+  );
+  const inventoryLogs = inventoryRes?.data || [];
+  const inventoryPagination = inventoryRes?.pagination;
 
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [confirmConfig, setConfirmConfig] = useState<{
@@ -52,6 +102,38 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   const deleteMutation = useDeleteProduct();
   const restoreMutation = useRestoreProduct();
+  const updateInfoMutation = useUpdateProductInfo(productId);
+  const updatePriceMutation = useUpdateProductPrice(productId);
+  const { data: catRes } = useCategories({ activeOnly: true }, 0, 100);
+  const categories = useMemo(() => catRes?.data || [], [catRes]);
+
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isStockDialogOpen, setIsStockDialogOpen] = useState(false);
+  const [isPriceDialogOpen, setIsPriceDialogOpen] = useState(false);
+  const [isGalleryDialogOpen, setIsGalleryDialogOpen] = useState(false);
+  const [stockTab, setStockTab] = useState<"sale" | "rental" | null>(null);
+  const [saleStockInput, setSaleStockInput] = useState("");
+  const [rentalStockInput, setRentalStockInput] = useState("");
+  const [saleStockReason, setSaleStockReason] = useState("");
+  const [rentalStockReason, setRentalStockReason] = useState("");
+  const [saleStockAction, setSaleStockAction] = useState<"IMPORT" | "EXPORT">("IMPORT");
+  const [rentalStockAction, setRentalStockAction] = useState<"IMPORT" | "EXPORT">("IMPORT");
+  const adjustStockMutation = useAdjustStock(productId);
+  const { data: devicesRes } = useGetDevicesByProduct(productId);
+  const devices = devicesRes?.data || [];
+  const createDeviceMutation = useCreateDevice();
+  const updateDeviceMutation = useUpdateDevice(productId);
+  const updateDeviceStatusMutation = useUpdateDeviceStatus(productId);
+  const deleteDeviceMutation = useDeleteDevice(productId);
+  
+  const [showDeviceForm, setShowDeviceForm] = useState(false);
+  const [deviceSerial, setDeviceSerial] = useState("");
+  const [deviceCondition, setDeviceCondition] = useState("");
+
+  const [selectedDevice, setSelectedDevice] = useState<DeviceResponse | null>(null);
+  const [editDeviceSerial, setEditDeviceSerial] = useState("");
+  const [editDeviceCondition, setEditDeviceCondition] = useState("");
+  const [editDeviceStatus, setEditDeviceStatus] = useState<DeviceStatus>(DeviceStatus.AVAILABLE);
 
   const handleBack = () => router.push("/admin/products");
 
@@ -59,17 +141,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     setConfirmConfig({
       open: true,
       title: "Vô hiệu hóa sản phẩm?",
-      description: "Sản phẩm này sẽ bị ẩn khỏi cửa hàng nhưng không bị xóa vĩnh viễn.",
+      description:
+        "Sản phẩm này sẽ bị ẩn khỏi cửa hàng nhưng không bị xóa vĩnh viễn.",
       variant: "warning",
       onConfirm: async () => {
         try {
           await deleteMutation.mutateAsync(productId);
+          await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
           toast.success("Vô hiệu hóa thành công");
-          setConfirmConfig(prev => ({ ...prev, open: false }));
-        } catch (err) {
+          setConfirmConfig((prev) => ({ ...prev, open: false }));
+        } catch {
           toast.error("Không thể vô hiệu hóa sản phẩm");
         }
-      }
+      },
     });
   };
 
@@ -82,104 +166,298 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       onConfirm: async () => {
         try {
           await restoreMutation.mutateAsync(productId);
+          await queryClient.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
           toast.success("Khôi phục thành công");
-          setConfirmConfig(prev => ({ ...prev, open: false }));
-        } catch (err) {
+          setConfirmConfig((prev) => ({ ...prev, open: false }));
+        } catch {
           toast.error("Không thể khôi phục sản phẩm");
+        }
+      },
+    });
+  };
+
+  const handleUpdateInfo = async ({
+    request,
+    image,
+  }: {
+    request: ProductInfoUpdateRequest;
+    image: File | null;
+  }) => {
+    try {
+      await updateInfoMutation.mutateAsync({ request, image });
+      toast.success("Cập nhật thông tin thành công");
+      setIsEditDialogOpen(false);
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Lỗi khi cập nhật");
+    }
+  };
+
+  const handleAdjustSaleStock = async () => {
+    if (!product) return;
+    const quantity = Number(saleStockInput);
+
+    if (!Number.isInteger(quantity) || quantity <= 0) {
+      toast.error("Số lượng kho bán phải là số nguyên lớn hơn 0");
+      return;
+    }
+
+    if (saleStockAction === "EXPORT" && quantity > product.quantity) {
+      toast.error(`Số lượng xuất vượt quá kho bán hiện có (${product.quantity})`);
+      return;
+    }
+
+    try {
+      await adjustStockMutation.mutateAsync({
+        quantityChange: saleStockAction === "IMPORT" ? quantity : -quantity,
+        type: "SALE",
+        reason: saleStockReason.trim() || undefined,
+      });
+      toast.success(`${saleStockAction === "IMPORT" ? "Nhập" : "Xuất"} kho bán thành công`);
+      setSaleStockInput("");
+      setSaleStockReason("");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Không thể điều chỉnh kho bán");
+    }
+  };
+
+  
+  const handleCreateDevice = async () => {
+    if (!deviceSerial.trim()) {
+      toast.error("Vui lòng nhập Số Serial");
+      return;
+    }
+    try {
+      await createDeviceMutation.mutateAsync({
+        productId,
+        serialNumber: deviceSerial.trim(),
+        conditionDetails: deviceCondition.trim() || "Mới"
+      });
+      toast.success("Thêm thiết bị thành công");
+      setDeviceSerial("");
+      setDeviceCondition("");
+      setShowDeviceForm(false);
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Không thể thêm thiết bị");
+    }
+  };
+  
+  const handleSaveDeviceEdit = async () => {
+    if (!selectedDevice) return;
+    try {
+      await updateDeviceMutation.mutateAsync({
+        id: selectedDevice.id,
+        req: {
+          serialNumber: editDeviceSerial.trim(),
+          conditionDetails: editDeviceCondition.trim(),
+          status: editDeviceStatus
+        }
+      });
+      toast.success("Cập nhật thiết bị thành công");
+      setSelectedDevice(null);
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Lỗi khi cập nhật thiết bị");
+    }
+  };
+
+  const handleConfirmDeleteDevice = (deviceId: number) => {
+    setConfirmConfig({
+      open: true,
+      title: "Xóa thiết bị vật lý?",
+      description: "Hành động này sẽ xóa vĩnh viễn thiết bị vật lý khỏi hệ thống và giảm số lượng kho thuê tương ứng. Bạn có chắc chắn muốn tiếp tục?",
+      variant: "danger",
+      onConfirm: async () => {
+        try {
+          await deleteDeviceMutation.mutateAsync(deviceId);
+          toast.success("Xóa thiết bị thành công");
+          setSelectedDevice(null);
+          setConfirmConfig((prev) => ({ ...prev, open: false }));
+        } catch (error: unknown) {
+          const err = error as { response?: { data?: { message?: string } } };
+          toast.error(err.response?.data?.message || "Lỗi khi xóa thiết bị");
         }
       }
     });
   };
 
-  if (isLoading) return (
-    <div className="flex-1 flex flex-col items-center justify-center p-20 gap-4">
-      <div className="w-12 h-12 border-4 border-zinc-100 border-t-zinc-950 rounded-full animate-spin" />
-      <p className="text-xs font-black uppercase tracking-widest text-zinc-400">Đang tải dữ liệu...</p>
-    </div>
-  );
 
-  if (!product || error) return (
-    <div className="flex-1 flex flex-col items-center justify-center p-20 gap-6">
-      <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center">
-        <XCircle className="w-10 h-10 text-red-500" />
-      </div>
-      <div className="text-center">
-        <h2 className="text-2xl font-black text-zinc-950 tracking-tight">Không tìm thấy sản phẩm</h2>
-        <p className="text-sm font-medium text-zinc-500 mt-2">Sản phẩm này không tồn tại hoặc đã bị xóa vĩnh viễn.</p>
-      </div>
-      <Button onClick={handleBack} variant="outline" className="rounded-xl px-8 h-12 font-bold gap-2">
-        <ArrowLeft className="w-4 h-4" /> Quay lại danh sách
-      </Button>
-    </div>
-  );
+  const handleAdjustRentalStock = async () => {
+    if (!product) return;
+    const quantity = Number(rentalStockInput);
+    const currentRentalStock = product.rentalQuantity ?? 0;
 
-  const images = [product.mainImageUrl, ...(product.gallery?.map(g => g.url) || [])];
+    if (!Number.isInteger(quantity) || quantity <= 0) {
+      toast.error("Số lượng kho thuê phải là số nguyên lớn hơn 0");
+      return;
+    }
+
+    if (rentalStockAction === "EXPORT" && quantity > currentRentalStock) {
+      toast.error(`Số lượng xuất vượt quá kho thuê hiện có (${currentRentalStock})`);
+      return;
+    }
+
+    try {
+      await adjustStockMutation.mutateAsync({
+        quantityChange: rentalStockAction === "IMPORT" ? quantity : -quantity,
+        type: "RENTAL",
+        reason: rentalStockReason.trim() || undefined,
+      });
+      toast.success(`${rentalStockAction === "IMPORT" ? "Nhập" : "Xuất"} kho thuê thành công`);
+      setRentalStockInput("");
+      setRentalStockReason("");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Không thể điều chỉnh kho thuê");
+    }
+  };
+
+  if (isLoading)
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-20 gap-4">
+        <div className="w-12 h-12 border-4 border-zinc-100 border-t-zinc-950 rounded-full animate-spin" />
+        <p className="text-sm font-medium text-zinc-500">
+          Đang tải dữ liệu...
+        </p>
+      </div>
+    );
+
+  if (!product || error)
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-20 gap-6">
+        <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center">
+          <XCircle className="w-10 h-10 text-red-500" />
+        </div>
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-zinc-950 tracking-tight">
+            Không tìm thấy sản phẩm
+          </h2>
+          <p className="text-sm font-medium text-zinc-500 mt-2">
+            Sản phẩm này không tồn tại hoặc đã bị xóa vĩnh viễn.
+          </p>
+        </div>
+        <Button
+          onClick={handleBack}
+          variant="outline"
+          className="rounded-xl px-8 h-12 font-semibold gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" /> Quay lại danh sách
+        </Button>
+      </div>
+    );
+
+  const images = [
+    product.mainImageUrl,
+    ...(product.gallery?.map((g) => g.url) || []),
+  ];
   const currentImage = activeImage || product.mainImageUrl;
   const isDeleted = !!product.deletedAt;
 
   return (
-    <div className="flex-1 space-y-8 animate-in fade-in duration-700">
+    <div className="flex-1 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Top Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mb-8">
-        <div className="flex items-center gap-6">
-          <Button 
-            onClick={handleBack} 
-            variant="ghost" 
-            size="icon" 
-            className="h-12 w-12 rounded-full bg-white border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-sm shrink-0"
+      <div className="bg-white rounded-xl border border-zinc-100 shadow-sm p-5 sm:p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
+        <div className="flex items-center gap-4 min-w-0">
+          <Button
+            onClick={handleBack}
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 rounded-xl bg-white border border-zinc-200 text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950 transition-all shadow-sm shrink-0"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4" />
           </Button>
           <div>
-            <div className="flex items-center gap-3 mb-1">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded">ID: #{product.id}</span>
-              <Badge className={cn(
-                "rounded-full px-3 py-0.5 text-[10px] font-black uppercase tracking-widest border-0",
-                !isDeleted ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
-              )}>
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="text-xs font-medium text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-xl">
+                Mã sản phẩm #{product.id}
+              </span>
+              <Badge
+                className={cn(
+                  "rounded-xl px-3 py-1 text-xs font-semibold border-0 shadow-none inline-flex items-center gap-1.5",
+                  !isDeleted
+                    ? "bg-emerald-50 text-emerald-600"
+                    : "bg-red-50 text-red-600",
+                )}
+              >
+                <span className={cn("h-1.5 w-1.5 rounded-full", !isDeleted ? "bg-emerald-500" : "bg-red-500")} />
                 {!isDeleted ? "Hoạt động" : "Đã xóa"}
               </Badge>
             </div>
-            <h1 className="text-3xl font-black text-zinc-950 tracking-tighter leading-none">{product.name}</h1>
+            <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight truncate">
+              {product.name}
+            </h1>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
           {!isDeleted ? (
             <>
-              <Button className="flex-1 sm:flex-none h-12 rounded-2xl bg-white border border-zinc-200 hover:border-red-600 hover:bg-red-50 text-zinc-950 hover:text-red-600 font-bold px-8 transition-all gap-2 shadow-sm">
+              <Button
+                onClick={() => setIsGalleryDialogOpen(true)}
+                variant="outline"
+                className="w-full sm:w-auto h-11 rounded-xl border-zinc-200 bg-white text-zinc-800 hover:bg-red-50 hover:border-red-200 hover:text-red-600 font-semibold px-5 transition-colors gap-2"
+              >
+                <ImageIcon className="w-4 h-4" /> Thư viện ảnh
+              </Button>
+              <Button
+                onClick={() => setIsEditDialogOpen(true)}
+                className="w-full sm:w-auto h-11 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold px-6 transition-colors gap-2"
+              >
                 <Edit2 className="w-4 h-4" /> Chỉnh sửa
               </Button>
-              <Button onClick={handleDelete} variant="ghost" className="flex-1 sm:flex-none h-12 rounded-2xl bg-white border border-red-100 text-red-600 hover:bg-red-600 hover:text-white font-bold px-6 transition-all gap-2 shadow-sm">
+              <Button
+                onClick={handleDelete}
+                variant="ghost"
+                className="w-full sm:w-auto h-11 rounded-xl bg-white border border-red-100 text-red-600 hover:bg-red-600 hover:text-white font-semibold px-6 transition-colors gap-2"
+              >
                 <Trash2 className="w-4 h-4" /> Vô hiệu hóa
               </Button>
             </>
           ) : (
-            <Button onClick={handleRestore} variant="ghost" className="flex-1 sm:flex-none h-12 rounded-2xl bg-white border border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white font-bold px-8 transition-all gap-2 shadow-sm">
+            <Button
+              onClick={handleRestore}
+              variant="ghost"
+              className="w-full sm:w-auto h-11 rounded-xl bg-white border border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white font-semibold px-6 transition-colors gap-2"
+            >
               <RotateCcw className="w-4 h-4" /> Khôi phục
             </Button>
           )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
         {/* Left Column: Gallery & Visuals */}
         <div className="xl:col-span-7 space-y-6">
-          <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-zinc-50 border border-zinc-100 shadow-2xl group">
+          <div className="relative flex min-h-[520px] items-center justify-center overflow-hidden rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
             <Image
               src={getImageUrl(currentImage)}
               alt={product.name}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className="object-contain p-8"
               unoptimized
             />
             {/* Overlay Badges */}
             <div className="absolute top-6 left-6 flex flex-col gap-2">
-              <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-xl flex items-center gap-2">
+              <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-xl shadow-lg border border-black/5 flex items-center gap-2">
                 <Tag className="w-4 h-4 text-indigo-600" />
-                <span className="text-[11px] font-black uppercase text-zinc-900 tracking-widest">{product.brand}</span>
+                <span className="text-xs font-semibold text-zinc-900">
+                  {product.brand}
+                </span>
               </div>
             </div>
+            {!isDeleted && (
+              <Button
+                type="button"
+                onClick={() => setIsGalleryDialogOpen(true)}
+                variant="outline"
+                className="absolute right-4 top-4 h-10 rounded-xl border-zinc-200 bg-white/95 px-4 text-xs font-semibold text-zinc-800 shadow-sm backdrop-blur hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+              >
+                <ImageIcon className="mr-2 h-4 w-4" />
+                Thư viện ảnh
+              </Button>
+            )}
           </div>
 
           <div className="flex gap-4 overflow-x-auto p-2 scrollbar-hide">
@@ -188,17 +466,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 key={idx}
                 onClick={() => setActiveImage(img)}
                 className={cn(
-                  "relative w-24 h-24 rounded-2xl flex-shrink-0 transition-all duration-300 overflow-hidden",
-                  currentImage === img 
-                    ? "ring-2 ring-red-600 ring-offset-2 scale-105 shadow-md z-10" 
-                    : "opacity-50 grayscale hover:opacity-100 hover:grayscale-0"
+                  "relative w-24 h-24 rounded-xl flex-shrink-0 transition-all duration-200 overflow-hidden border border-zinc-100 bg-zinc-50",
+                  currentImage === img
+                    ? "ring-2 ring-red-600 ring-offset-2 shadow-sm z-10"
+                    : "opacity-70 hover:opacity-100",
                 )}
               >
                 <Image
                   src={getImageUrl(img)}
                   alt={`Gallery ${idx}`}
                   fill
-                  className="object-cover"
+                  className="object-contain p-2"
                   unoptimized
                 />
               </button>
@@ -206,114 +484,244 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
 
           {/* Description Card */}
-          <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm space-y-4">
+          <div className="bg-white p-5 sm:p-6 rounded-xl border border-zinc-100 shadow-sm group">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center border border-black/5 group-hover:bg-white transition-colors">
                 <Info className="w-5 h-5 text-zinc-400" />
               </div>
-              <h3 className="text-sm font-black uppercase tracking-widest text-zinc-400">Mô tả sản phẩm</h3>
+              <h3 className="text-base font-semibold text-zinc-950">
+                Mô tả sản phẩm
+              </h3>
             </div>
-            <p className="text-zinc-600 leading-relaxed font-medium">
-              {product.description || "Chưa có mô tả chi tiết cho sản phẩm này."}
+            <p className="mt-4 text-sm text-zinc-600 leading-6">
+              {product.description ||
+                "Chưa có mô tả chi tiết cho sản phẩm này."}
             </p>
           </div>
         </div>
 
         {/* Right Column: Key Info & Actions */}
-        <div className="xl:col-span-5 space-y-8">
+        <div className="xl:col-span-5 space-y-6">
           {/* Status & Inventory Card */}
-          <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-3xl bg-emerald-50/50 border border-emerald-100 flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
-                  <Package className="w-5 h-5 text-emerald-600" />
+          <div className="bg-white p-5 sm:p-6 rounded-xl border border-zinc-100 shadow-sm space-y-6">
+            <div className={cn(
+              "grid gap-4",
+              product.isForSale && product.isForRent ? "grid-cols-3" : "grid-cols-2"
+            )}>
+              {product.isForSale && (
+                <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-100 flex flex-col items-center text-center relative group/stock">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center mb-3 group-hover/stock:scale-110 transition-transform">
+                    <Package className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <span className="text-xs font-medium text-emerald-700/80 mb-1">
+                    Kho bán lẻ
+                  </span>
+                  <span className="text-2xl font-semibold text-emerald-950">
+                    {product.quantity}{" "}
+                    <span className="text-xs font-medium text-emerald-600/60">
+                      máy
+                    </span>
+                  </span>
+
+                  <button
+                    onClick={() => setIsStockDialogOpen(true)}
+                    className="mt-3 px-3 py-1.5 bg-white border border-emerald-200 rounded-xl text-xs font-medium text-emerald-700 hover:bg-emerald-600 hover:text-white transition-colors shadow-sm"
+                  >
+                    Điều chỉnh
+                  </button>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600/60 mb-1">Số lượng kho</span>
-                <span className="text-xl font-black text-emerald-950">{product.quantity} <span className="text-xs font-bold text-emerald-600/50">máy</span></span>
-              </div>
-              <div className="p-4 rounded-3xl bg-indigo-50/50 border border-indigo-100 flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
+              )}
+
+              {product.isForRent && (
+                <div className="p-4 rounded-xl bg-amber-50/50 border border-amber-100 flex flex-col items-center text-center relative group/rental-stock">
+                  <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mb-3 group-hover/rental-stock:scale-110 transition-transform">
+                    <Package className="w-5 h-5 text-amber-600" />
+                  </div>
+                  <span className="text-xs font-medium text-amber-700/80 mb-1">
+                    Kho cho thuê
+                  </span>
+                  <span className="text-2xl font-semibold text-zinc-950">
+                    {product.rentalQuantity ?? 0}{" "}
+                    <span className="text-xs font-medium text-amber-600/60">
+                      máy
+                    </span>
+                  </span>
+
+                  <button
+                    onClick={() => setIsStockDialogOpen(true)}
+                    className="mt-3 px-3 py-1.5 bg-white border border-amber-200 rounded-xl text-xs font-medium text-amber-700 hover:bg-amber-600 hover:text-white transition-colors shadow-sm"
+                  >
+                    Điều chỉnh
+                  </button>
+                </div>
+              )}
+
+              <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 flex flex-col items-center text-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center mb-3">
                   <CheckCircle2 className="w-5 h-5 text-indigo-600" />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600/60 mb-1">Trạng thái</span>
-                <span className="text-sm font-black text-indigo-950 uppercase tracking-tighter">Sẵn sàng thuê</span>
+                <span className="text-xs font-medium text-indigo-700/70 mb-1">
+                  Trạng thái
+                </span>
+                <span className="text-sm font-semibold text-indigo-950">
+                  {(!product.isForRent && product.isForSale) ? "Sẵn sàng bán" : "Sẵn sàng thuê"}
+                </span>
               </div>
             </div>
 
-            <div className="space-y-4 pt-4 border-t border-zinc-50">
-              <div className="flex items-center justify-between">
+            <div className="space-y-2 pt-2">
+              {/* Stock Action Buttons */}
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  type="button"
+                  onClick={() => setIsStockDialogOpen(true)}
+                  className="h-10 px-5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition-all duration-200 font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-100 active:scale-95"
+                >
+                  Kho bán
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => router.push(`/admin/products/${productId}/devices`)}
+                  className="h-10 px-5 rounded-xl bg-amber-500 text-white hover:bg-amber-600 transition-all duration-200 font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-amber-100 active:scale-95"
+                >
+                  Kho thuê (Serial)
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-4 pt-4 border-t border-black/5">
+              <div className="flex items-center justify-between group/price">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center group-hover/price:scale-110 transition-transform border border-amber-100">
                     <Truck className="w-5 h-5 text-amber-600" />
                   </div>
-                  <span className="text-xs font-black text-zinc-900 uppercase tracking-tight">Giá thuê mỗi ngày</span>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-zinc-900">
+                      Giá thuê mỗi ngày
+                    </span>
+                    <button
+                      onClick={() => setIsPriceDialogOpen(true)}
+                      className="text-xs font-medium text-amber-600 hover:underline text-left"
+                    >
+                      Điều chỉnh
+                    </button>
+                  </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-xl font-black text-zinc-950 leading-none mb-1">{product.rentPricePerDay?.toLocaleString('vi-VN')} ₫</p>
-                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">VND / Ngày</p>
+                  <p className="text-xl font-semibold text-zinc-950 leading-none mb-1">
+                    {product.rentPricePerDay?.toLocaleString("vi-VN")} ₫
+                  </p>
+                  <p className="text-xs font-medium text-zinc-400">
+                    VND / ngày
+                  </p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-zinc-50">
+              <div className="flex items-center justify-between pt-4 border-t border-black/5 group/price2">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover/price2:scale-110 transition-transform border border-blue-100">
                     <Zap className="w-5 h-5 text-blue-600" />
                   </div>
-                  <span className="text-xs font-black text-zinc-900 uppercase tracking-tight">Giá bán thanh lý</span>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-zinc-900">
+                      Giá bán thanh lý
+                    </span>
+                    <button
+                      onClick={() => setIsPriceDialogOpen(true)}
+                      className="text-xs font-medium text-blue-600 hover:underline text-left"
+                    >
+                      Điều chỉnh
+                    </button>
+                  </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-xl font-black text-zinc-950 leading-none mb-1">{product.salePrice?.toLocaleString('vi-VN')} ₫</p>
-                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Thanh toán 1 lần</p>
+                  <p className="text-xl font-semibold text-zinc-950 leading-none mb-1">
+                    {product.salePrice?.toLocaleString("vi-VN")} ₫
+                  </p>
+                  <p className="text-xs font-medium text-zinc-400">
+                    Thanh toán 1 lần
+                  </p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Specifications Table */}
-          <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm space-y-6">
+          <div className="bg-white p-5 sm:p-6 rounded-xl border border-zinc-100 shadow-sm space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-black/5 flex items-center justify-center">
                   <ShieldCheck className="w-5 h-5 text-red-600" />
                 </div>
-                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950">Thông số kỹ thuật</h3>
+                <h3 className="text-base font-semibold text-zinc-950">
+                  Thông số kỹ thuật
+                </h3>
               </div>
-              <Badge variant="outline" className="bg-red-50 border-red-100 text-red-600 font-bold text-[9px] uppercase tracking-widest">Pro Specs</Badge>
+              <Badge
+                variant="outline"
+                className="bg-red-50 border-red-100 text-red-600 font-semibold text-xs rounded-xl"
+              >
+                Chi tiết
+              </Badge>
             </div>
 
             <div className="space-y-4">
               {product.specifications?.map((spec, idx) => (
-                <div key={idx} className="flex items-center justify-between group">
-                  <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider group-hover:text-zinc-600 transition-colors">{spec.specKey}</span>
+                <div
+                  key={idx}
+                  className="flex items-center justify-between group"
+                >
+                  <span className="text-sm font-medium text-zinc-500 group-hover:text-zinc-700 transition-colors">
+                    {spec.specKey}
+                  </span>
                   <div className="flex-1 mx-4 border-b border-zinc-100 border-dashed" />
-                  <span className="text-xs font-black text-zinc-900">{spec.specValue}</span>
+                  <span className="text-sm font-semibold text-zinc-900">
+                    {spec.specValue}
+                  </span>
                 </div>
               ))}
-              {(!product.specifications || product.specifications.length === 0) && (
-                <p className="text-[11px] font-bold text-zinc-500 text-center py-4">Chưa có thông số kỹ thuật.</p>
+              {(!product.specifications ||
+                product.specifications.length === 0) && (
+                <p className="text-sm font-medium text-zinc-500 text-center py-4">
+                  Chưa có thông số kỹ thuật.
+                </p>
               )}
             </div>
           </div>
 
           {/* Timeline & Audit Card */}
-          <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm">
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-6">Lịch sử hệ thống</h3>
+          <div className="bg-white p-5 sm:p-6 rounded-xl border border-zinc-100 shadow-sm">
+            <h3 className="text-base font-semibold text-zinc-950 mb-6">
+              Lịch sử hệ thống
+            </h3>
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="mt-1 w-2 h-2 rounded-full bg-emerald-500 ring-4 ring-emerald-50" />
                 <div>
-                  <p className="text-[11px] font-black text-zinc-950 uppercase tracking-tight">Khởi tạo sản phẩm</p>
-                  <p className="text-[11px] font-medium text-zinc-400">
-                    {format(new Date(product.createdAt), "HH:mm, 'Ngày' dd 'tháng' MM, yyyy", { locale: vi })}
+                  <p className="text-sm font-semibold text-zinc-950">
+                    Khởi tạo sản phẩm
+                  </p>
+                  <p className="text-xs font-medium text-zinc-500 mt-1">
+                    {format(
+                      new Date(product.createdAt),
+                      "HH:mm, 'Ngày' dd 'tháng' MM, yyyy",
+                      { locale: vi },
+                    )}
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <div className="mt-1 w-2 h-2 rounded-full bg-indigo-500 ring-4 ring-indigo-50" />
                 <div>
-                  <p className="text-[11px] font-black text-zinc-950 uppercase tracking-tight">Cập nhật gần nhất</p>
-                  <p className="text-[11px] font-medium text-zinc-400">
-                    {format(new Date(product.updatedAt), "HH:mm, 'Ngày' dd 'tháng' MM, yyyy", { locale: vi })}
+                  <p className="text-sm font-semibold text-zinc-950">
+                    Cập nhật gần nhất
+                  </p>
+                  <p className="text-xs font-medium text-zinc-500 mt-1">
+                    {format(
+                      new Date(product.updatedAt),
+                      "HH:mm, 'Ngày' dd 'tháng' MM, yyyy",
+                      { locale: vi },
+                    )}
                   </p>
                 </div>
               </div>
@@ -324,13 +732,411 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
       <ConfirmDialog
         open={confirmConfig.open}
-        onOpenChange={(o) => setConfirmConfig(prev => ({ ...prev, open: o }))}
+        onOpenChange={(o) => setConfirmConfig((prev) => ({ ...prev, open: o }))}
         title={confirmConfig.title}
         description={confirmConfig.description}
         onConfirm={confirmConfig.onConfirm}
         variant={confirmConfig.variant}
         isLoading={deleteMutation.isPending || restoreMutation.isPending}
       />
+      <ProductDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        product={product || null}
+        categories={categories}
+        onSubmit={handleUpdateInfo}
+        isPending={updateInfoMutation.isPending}
+      />
+      <StockAdjustmentDialog
+        open={isStockDialogOpen}
+        onOpenChange={setIsStockDialogOpen}
+        product={product || null}
+      />
+      <ProductPriceDialog
+        open={isPriceDialogOpen}
+        onOpenChange={setIsPriceDialogOpen}
+        product={product || null}
+        onSubmit={async (data) => {
+          try {
+            await updatePriceMutation.mutateAsync(data);
+            toast.success("Cập nhật giá thành công");
+            setIsPriceDialogOpen(false);
+          } catch (error: unknown) {
+            const err = error as { response?: { data?: { message?: string } } };
+            toast.error(err.response?.data?.message || "Lỗi khi cập nhật giá");
+          }
+        }}
+        isPending={updatePriceMutation.isPending}
+      />
+      <ProductGalleryDialog
+        open={isGalleryDialogOpen}
+        onOpenChange={setIsGalleryDialogOpen}
+        product={product || null}
+      />
+
+      <Dialog open={!!selectedDevice} onOpenChange={(open) => !open && setSelectedDevice(null)}>
+        <DialogContent showCloseButton={false} className="sm:max-w-md !p-0 !gap-0 overflow-hidden border border-zinc-100 shadow-dash-overlay rounded-xl bg-white">
+          <div className="p-6">
+            <DialogHeader className="text-left space-y-1">
+              <DialogTitle className="text-lg font-semibold tracking-tight text-zinc-950">Chỉnh sửa thiết bị vật lý</DialogTitle>
+              <p className="text-xs font-medium text-zinc-500">Mã thiết bị: #{selectedDevice?.id}</p>
+            </DialogHeader>
+
+            <div className="mt-4 space-y-4">
+              <label className="space-y-1 block">
+                <span className="text-xs font-semibold text-zinc-700">Số Serial (Serial Number)</span>
+                <input
+                  type="text"
+                  value={editDeviceSerial}
+                  onChange={(e) => setEditDeviceSerial(e.target.value)}
+                  placeholder="Nhập serial..."
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                />
+              </label>
+
+              <label className="space-y-1 block">
+                <span className="text-xs font-semibold text-zinc-700">Tình trạng (Condition Details)</span>
+                <input
+                  type="text"
+                  value={editDeviceCondition}
+                  onChange={(e) => setEditDeviceCondition(e.target.value)}
+                  placeholder="Ví dụ: Mới 99%, có trầy nhẹ..."
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                />
+              </label>
+
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-zinc-700 block">Trạng thái hiện tại</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.values(DeviceStatus).map((status) => {
+                    const isSelected = editDeviceStatus === status;
+                    let label = "";
+                    let colorClasses = "";
+                    switch (status) {
+                      case DeviceStatus.AVAILABLE:
+                        label = "Sẵn sàng";
+                        colorClasses = isSelected ? "bg-emerald-500 text-white border-emerald-500" : "bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50/50";
+                        break;
+                      case DeviceStatus.RESERVED:
+                        label = "Đặt trước";
+                        colorClasses = isSelected ? "bg-amber-500 text-white border-amber-500" : "bg-white text-amber-700 border-amber-200 hover:bg-amber-50/50";
+                        break;
+                      case DeviceStatus.RENTED:
+                        label = "Đang cho thuê";
+                        colorClasses = isSelected ? "bg-blue-500 text-white border-blue-500" : "bg-white text-blue-700 border-blue-200 hover:bg-blue-50/50";
+                        break;
+                      case DeviceStatus.MAINTENANCE:
+                        label = "Bảo trì";
+                        colorClasses = isSelected ? "bg-zinc-600 text-white border-zinc-600" : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50/50";
+                        break;
+                      case DeviceStatus.DAMAGED:
+                        label = "Hỏng hóc";
+                        colorClasses = isSelected ? "bg-rose-500 text-white border-rose-500" : "bg-white text-rose-700 border-rose-200 hover:bg-rose-50/50";
+                        break;
+                      case DeviceStatus.LOST:
+                        label = "Bị mất";
+                        colorClasses = isSelected ? "bg-red-600 text-white border-red-600" : "bg-white text-red-700 border-red-200 hover:bg-red-50/50";
+                        break;
+                    }
+                    return (
+                      <button
+                        key={status}
+                        type="button"
+                        onClick={() => setEditDeviceStatus(status)}
+                        className={cn(
+                          "px-3 py-2 text-xs font-semibold rounded-xl border text-center transition-all duration-150 active:scale-[0.98]",
+                          colorClasses
+                        )}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-between gap-3 m-0 rounded-b-xl">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => selectedDevice && handleConfirmDeleteDevice(selectedDevice.id)}
+              disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
+              className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl font-semibold h-10 px-4 transition-all"
+            >
+              <Trash2 className="w-4 h-4 mr-1.5" />
+              Xóa thiết bị
+            </Button>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setSelectedDevice(null)}
+                disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
+                className="rounded-xl font-semibold border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-100 h-10 px-4 transition-all"
+              >
+                Hủy
+              </Button>
+              <Button
+                type="button"
+                onClick={handleSaveDeviceEdit}
+                disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
+                className="rounded-xl font-semibold h-10 px-5 shadow-sm text-white bg-red-600 hover:bg-red-700 shadow-md shadow-red-100 transition-all"
+              >
+                {updateDeviceMutation.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 mb-12">
+        {/* Price History Section */}
+        <div className="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-5 sm:px-6 py-5 border-b border-zinc-100 bg-white flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold text-zinc-950">
+                  Lịch sử thay đổi giá
+                </h3>
+                <p className="text-sm text-zinc-500 mt-0.5">
+                  Biến động giá trị
+                </p>
+              </div>
+            </div>
+            <Badge className="bg-zinc-950 text-white text-xs font-semibold px-3 py-1 rounded-xl">
+              {pricePagination?.totalElements || 0}
+            </Badge>
+          </div>
+
+          <div className="flex-1 overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-white">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-zinc-500 border-b border-zinc-50">
+                    Giá mới
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-zinc-500 border-b border-zinc-50">
+                    Biến động
+                  </th>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-zinc-500 border-b border-zinc-50">
+                    Thời gian
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-50">
+                {priceHistory.map((history: PriceHistoryResponse) => (
+                  <tr
+                    key={history.id}
+                    className="group hover:bg-zinc-50/50 transition-colors"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-zinc-950">
+                          {history.newPrice.toLocaleString()} đ
+                        </span>
+                        <span className="text-xs font-medium text-zinc-500">
+                          {history.priceType === "RENT"
+                            ? "Giá thuê"
+                            : "Giá bán"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      {history.changeType === "INCREASE" && (
+                        <span className="text-sm font-semibold text-red-600">
+                          +{history.percentChange.toFixed(1)}%
+                        </span>
+                      )}
+                      {history.changeType === "DECREASE" && (
+                        <span className="text-sm font-semibold text-emerald-600">
+                          -{history.percentChange.toFixed(1)}%
+                        </span>
+                      )}
+                      {history.changeType === "NONE" && (
+                        <span className="text-xs font-medium text-zinc-400">
+                          Khởi tạo
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <span className="text-xs font-medium text-zinc-500">
+                        {format(new Date(history.createdAt), "dd/MM/yy", {
+                          locale: vi,
+                        })}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                {priceHistory.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={3}
+                      className="px-6 py-10 text-center text-sm font-medium text-zinc-400"
+                    >
+                      Chưa có lịch sử giá
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination Controls */}
+          {pricePagination && pricePagination.totalPages > 1 && (
+            <div className="px-6 py-4 bg-zinc-50/50 border-t border-black/5 flex items-center justify-between">
+              <span className="text-xs font-medium text-zinc-500">
+                Trang {priceHistoryPage + 1} / {pricePagination.totalPages}
+              </span>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
+                  disabled={priceHistoryPage === 0}
+                  onClick={() => setPriceHistoryPage((p) => p - 1)}
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
+                  disabled={priceHistoryPage >= pricePagination.totalPages - 1}
+                  onClick={() => setPriceHistoryPage((p) => p + 1)}
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Inventory History Section */}
+        <div className="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-5 sm:px-6 py-5 border-b border-zinc-100 bg-white flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 flex items-center justify-center">
+                <Package className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold text-zinc-950">
+                  Lịch sử kho
+                </h3>
+                <p className="text-sm text-zinc-500 mt-0.5">
+                  Nhập xuất thiết bị
+                </p>
+              </div>
+            </div>
+            <Badge className="bg-emerald-600 text-white text-xs font-semibold px-3 py-1 rounded-xl">
+              {inventoryPagination?.totalElements || 0}
+            </Badge>
+          </div>
+
+          <div className="flex-1 overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-white">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-zinc-500 border-b border-zinc-50">
+                    Thay đổi
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-zinc-500 border-b border-zinc-50">
+                    Lý do
+                  </th>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-zinc-500 border-b border-zinc-50">
+                    Thời gian
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-50">
+                {inventoryLogs.map((log: InventoryAuditResponse) => {
+                  const diff = log.newStock - log.oldStock;
+                  return (
+                    <tr
+                      key={log.id}
+                      className="group hover:bg-zinc-50/50 transition-colors"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span
+                            className={cn(
+                              "text-sm font-semibold",
+                              diff > 0 ? "text-emerald-600" : "text-red-600",
+                            )}
+                          >
+                            {diff > 0 ? `+${diff}` : diff}
+                          </span>
+                          <span className="text-xs font-medium text-zinc-500">
+                            Tồn: {log.newStock}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p
+                          className="text-sm font-medium text-zinc-600 truncate max-w-[160px]"
+                          title={log.reason}
+                        >
+                          {log.reason || "Không có lý do"}
+                        </p>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <span className="text-xs font-medium text-zinc-500">
+                          {format(new Date(log.changedAt), "dd/MM/yy", {
+                            locale: vi,
+                          })}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+                {inventoryLogs.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={3}
+                      className="px-6 py-10 text-center text-sm font-medium text-zinc-400"
+                    >
+                      Chưa có lịch sử kho
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination Controls */}
+          {inventoryPagination && inventoryPagination.totalPages > 1 && (
+            <div className="px-6 py-4 bg-zinc-50/50 border-t border-black/5 flex items-center justify-between">
+              <span className="text-xs font-medium text-zinc-500">
+                Trang {inventoryPage + 1} / {inventoryPagination.totalPages}
+              </span>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
+                  disabled={inventoryPage === 0}
+                  onClick={() => setInventoryPage((p) => p - 1)}
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="rounded-xl hover:bg-zinc-950 hover:text-white border border-transparent hover:border-zinc-950 transition-all duration-200 disabled:opacity-20"
+                  disabled={inventoryPage >= inventoryPagination.totalPages - 1}
+                  onClick={() => setInventoryPage((p) => p + 1)}
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

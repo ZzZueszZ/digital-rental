@@ -59,6 +59,10 @@ public class Product extends BaseAuditEntity {
     @Builder.Default
     private int quantity = 0;
 
+    @Column(name = "rental_quantity", nullable = false)
+    @Builder.Default
+    private int rentalQuantity = 0;
+
     @Column(name = "rating_average", precision = 3, scale = 2)
     @Builder.Default
     private BigDecimal ratingAverage = BigDecimal.ZERO;

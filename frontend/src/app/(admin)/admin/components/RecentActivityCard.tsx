@@ -1,26 +1,35 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { 
-  History, 
-  User, 
-  Settings, 
-  Package, 
-  Trash2, 
-  RotateCcw, 
-  Lock, 
-  Unlock, 
-  Key, 
-  RefreshCw, 
+import {
+  ArrowLeftRight,
   ArrowRight,
-  LucideIcon 
+  CheckCircle2,
+  Coins,
+  CreditCard,
+  FileCheck,
+  FilePlus,
+  FileText,
+  History,
+  Key,
+  Lock,
+  LucideIcon,
+  Mail,
+  PackageCheck,
+  RefreshCw,
+  RotateCcw,
+  Settings,
+  Trash2,
+  Truck,
+  Unlock,
+  User,
+  XCircle,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { useAuditLogs } from "@/services/audit";
 import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
-import { vi } from "date-fns/locale";
 
 const ACTION_ICONS: Record<string, LucideIcon> = {
   CREATE_USER: User,
@@ -33,76 +42,122 @@ const ACTION_ICONS: Record<string, LucideIcon> = {
   UPDATE_PASSWORD: Key,
   DELETE_AVATAR: Trash2,
   UPLOAD_AVATAR: RefreshCw,
+  CREATE_ORDER: FilePlus,
+  SEND_OTP: Mail,
+  SIGN_CONTRACT: FileCheck,
+  PAY_DEPOSIT: CreditCard,
+  PREPARE_RENTAL: PackageCheck,
+  REJECT_RENTAL: XCircle,
+  CREATE_HANDOVER_REPORT: FileText,
+  COLLECT_DEPOSIT: Coins,
+  HANDOVER_DEVICES: Truck,
+  CREATE_RETURN_REPORT: ArrowLeftRight,
+  COMPLETE_RENTAL: CheckCircle2,
 };
 
 const ACTION_COLORS: Record<string, string> = {
-  CREATE_USER: "text-emerald-600 bg-emerald-50",
-  UPDATE_USER: "text-blue-600 bg-blue-50",
-  LOCK_USER: "text-amber-600 bg-amber-50",
-  UNLOCK_USER: "text-emerald-600 bg-emerald-50",
-  BATCH_SOFT_DELETE: "text-red-600 bg-red-50",
-  BATCH_RESTORE: "text-indigo-600 bg-indigo-50",
-  RESET_PASSWORD: "text-amber-600 bg-amber-50",
+  CREATE_USER: "text-emerald-700 bg-emerald-50",
+  UPDATE_USER: "text-blue-700 bg-blue-50",
+  LOCK_USER: "text-amber-700 bg-amber-50",
+  UNLOCK_USER: "text-emerald-700 bg-emerald-50",
+  BATCH_SOFT_DELETE: "text-red-700 bg-red-50",
+  BATCH_RESTORE: "text-indigo-700 bg-indigo-50",
+  RESET_PASSWORD: "text-amber-700 bg-amber-50",
+  CREATE_ORDER: "text-indigo-700 bg-indigo-50",
+  SEND_OTP: "text-amber-700 bg-amber-50",
+  SIGN_CONTRACT: "text-emerald-700 bg-emerald-50",
+  PAY_DEPOSIT: "text-blue-700 bg-blue-50",
+  PREPARE_RENTAL: "text-teal-700 bg-teal-50",
+  REJECT_RENTAL: "text-red-700 bg-red-50",
+  CREATE_HANDOVER_REPORT: "text-sky-700 bg-sky-50",
+  COLLECT_DEPOSIT: "text-orange-700 bg-orange-50",
+  HANDOVER_DEVICES: "text-emerald-700 bg-emerald-50",
+  CREATE_RETURN_REPORT: "text-purple-700 bg-purple-50",
+  COMPLETE_RENTAL: "text-emerald-700 bg-emerald-50",
 };
 
 export function RecentActivityCard() {
   const router = useRouter();
-  const { data, isLoading } = useAuditLogs(0, 5);
+  const { data, isLoading } = useAuditLogs(0, 8);
   const logs = data?.data || [];
 
   return (
-    <Card className="rounded-2xl border-zinc-200 overflow-hidden bg-white shadow-sm flex flex-col h-full">
-      <CardHeader className="px-5 sm:px-8 pt-6 sm:pt-8 flex flex-row items-center justify-between border-b border-zinc-50 shrink-0">
-        <div>
-          <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950">
+    <div className="admin-card flex h-full flex-col !p-0">
+      <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-4">
+        <div className="flex items-center gap-2">
+          <History className="h-4 w-4 text-zinc-500" />
+          <span className="text-[15px] font-semibold tracking-tight text-zinc-900">
             Hoạt động hệ thống
-          </CardTitle>
+          </span>
         </div>
-        <History className="w-6 h-6 text-zinc-200" />
-      </CardHeader>
-      <CardContent className="p-0 flex-1 overflow-hidden flex flex-col">
-        <div className="divide-y divide-zinc-50 overflow-y-auto flex-1">
+        <Button
+          onClick={() => router.push("/admin/audit-logs")}
+          variant="ghost"
+          size="sm"
+          className="h-8 gap-1 rounded-xl border border-transparent px-3 text-[13px] font-medium text-zinc-500 transition-colors hover:border-zinc-950 hover:bg-zinc-950 hover:text-white"
+        >
+          Tất cả <ArrowRight className="h-3.5 w-3.5" />
+        </Button>
+      </div>
+
+      <div className="custom-scrollbar flex-1 overflow-y-auto">
+        <div className="divide-y divide-zinc-100">
           {isLoading ? (
-            Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="p-4 sm:p-6 flex items-start gap-4 animate-pulse">
-                <div className="w-10 h-10 rounded-full bg-zinc-100 flex-shrink-0" />
+            Array.from({ length: 5 }).map((_, index) => (
+              <div
+                key={index}
+                className="flex animate-pulse items-start gap-3 p-3.5"
+              >
+                <div className="h-9 w-9 flex-shrink-0 rounded-xl bg-zinc-50" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-zinc-100 rounded w-1/3" />
-                  <div className="h-3 bg-zinc-100 rounded w-2/3" />
+                  <div className="h-3 w-1/3 rounded-xl bg-zinc-50" />
+                  <div className="h-2.5 w-2/3 rounded-xl bg-zinc-50" />
                 </div>
               </div>
             ))
           ) : logs.length === 0 ? (
-            <div className="p-10 text-center text-zinc-400 font-medium">
-              Chưa có hoạt động nào
+            <div className="py-16 text-center text-sm font-medium text-zinc-400">
+              Chưa có dữ liệu hoạt động
             </div>
           ) : (
             logs.map((log) => {
               const Icon = ACTION_ICONS[log.action] || History;
-              const colorClass = ACTION_COLORS[log.action] || "text-zinc-600 bg-zinc-50";
+              const colorClass =
+                ACTION_COLORS[log.action] || "text-zinc-500 bg-zinc-50";
 
               return (
-                <div key={log.id} className="p-4 sm:p-5 flex items-start gap-4 hover:bg-zinc-50/50 transition-colors group">
-                  <div className={cn("w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm", colorClass)}>
-                    <Icon className="w-5 h-5" />
+                <div
+                  key={log.id}
+                  className="group flex items-start gap-3 p-3.5 transition-colors hover:bg-zinc-50/70"
+                >
+                  <div
+                    className={cn(
+                      "flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl",
+                      colorClass,
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm font-bold text-zinc-900 truncate">
+                      <p className="truncate text-[13px] font-semibold text-zinc-900">
                         {log.actorEmail}
                       </p>
-                      <span className="text-[10px] font-medium text-zinc-400 whitespace-nowrap">
-                        {formatDistanceToNow(new Date(log.createdAt), { addSuffix: true, locale: vi })}
+                      <span className="whitespace-nowrap text-[11px] font-medium text-zinc-400">
+                        {formatDistanceToNow(new Date(log.createdAt), {
+                          addSuffix: true,
+                          locale: vi,
+                        })}
                       </span>
                     </div>
-                    <p className="text-xs text-zinc-600 mt-0.5 line-clamp-1">
+                    <p className="mt-0.5 line-clamp-1 text-[12px] font-medium leading-snug text-zinc-500">
                       {log.description}
                     </p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-500">
-                        {log.action}
+                    <div className="mt-2 flex items-center gap-1.5">
+                      <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-500">
+                        {log.action.split("_").pop()}
                       </span>
-                      <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-50 text-red-600">
+                      <span className="rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-medium text-red-600">
                         {log.targetType} #{log.targetId}
                       </span>
                     </div>
@@ -112,17 +167,7 @@ export function RecentActivityCard() {
             })
           )}
         </div>
-        
-        <div className="p-4 bg-zinc-50/50 border-t border-zinc-100 shrink-0">
-          <Button 
-            onClick={() => router.push("/admin/audit-logs")}
-            variant="ghost" 
-            className="w-full h-11 rounded-xl text-xs font-black uppercase tracking-widest text-zinc-500 hover:text-zinc-950 hover:bg-white border border-transparent hover:border-zinc-200 transition-all gap-2"
-          >
-            Xem tất cả nhật ký <ArrowRight className="w-3.5 h-3.5" />
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

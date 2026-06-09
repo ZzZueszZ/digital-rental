@@ -41,7 +41,7 @@ Module directories:
 | `carts` | Cart item management. |
 | `categories` | Category CRUD and restore flows. |
 | `dashboard` | Admin dashboard summaries. |
-| `identity` | KYC/eKYC sessions, artifacts, status, and admin review endpoints. |
+| `identity` | KYC/eKYC sessions, artifacts, required liveness video, status, and admin review endpoints. |
 | `inventory` | Stock adjustment and audit logs. |
 | `orders` | Checkout and order management. |
 | `payments` | VNPay and payment logs. |

@@ -1,0 +1,14 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+pydantic-settings==2.7.1
+pillow==11.1.0
+numpy==2.2.1
+opencv-python-headless==4.10.0.84
+--extra-index-url https://www.paddlepaddle.org.cn/packages/stable/cpu/
+paddlepaddle==3.2.0
+paddleocr==3.3.2
+# Optional production model dependencies. Install when the target CPU host can support them.
+# insightface
+# onnxruntime
+# mediapipe

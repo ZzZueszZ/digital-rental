@@ -10,6 +10,7 @@
 This is a multi-project repository:
 
 - `service/lenshub`: primary backend.
+- `service/ai-kyc-service`: self-hosted FastAPI KYC AI provider compatible with FPT OCR, facematch, and liveness endpoint contracts.
 - `frontend`: primary Next.js frontend.
 - `docker`, `deploy`, `migration`: local and deployment support.
 
@@ -113,6 +114,24 @@ Current repository infra files:
 - `migration/`: legacy migration assets. Current ownership unclear.
 
 No verified PostgreSQL Docker Compose file for the active backend was found.
+
+## AI KYC Service: `service/ai-kyc-service`
+
+`service/ai-kyc-service` is a Python FastAPI service for local/self-hosted eKYC provider execution. It exposes FPT-compatible endpoints so `service/lenshub` can keep using `FptKycProvider` by changing only:
+
+- `FPT_KYC_IDR_URL`
+- `FPT_KYC_FACEMATCH_URL`
+- `FPT_KYC_LIVENESS_URL`
+- `FPT_KYC_API_KEY`
+
+Implemented endpoints:
+
+- `POST /vision/idr/vnm/`: CCCD OCR contract.
+- `POST /dmp/checkface/v1`: two-image face match contract.
+- `POST /dmp/liveness/v3`: liveness video contract.
+- `GET /health`: service health check.
+
+The MVP is CPU-only, uses lazy optional imports for heavier model packages, and includes fallback logic plus API contract tests.
 
 ## Documentation Gaps
 

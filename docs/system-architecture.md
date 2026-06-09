@@ -17,6 +17,7 @@ flowchart LR
   API --> Redis["Redis"]
   API --> Mail["SMTP Mail"]
   API --> VNPay["VNPay"]
+  API --> AIKYC["service/ai-kyc-service: FastAPI KYC AI"]
 ```
 
 ## Backend Runtime
@@ -133,6 +134,14 @@ Key patterns:
 - `FPT_KYC_LIVENESS_URL`
 
 OCR preview is persisted in existing verification result data. Final submit reuses OCR preview, runs facematch, requires `livenessVideoUrl`, runs liveness validation, then keeps manual review as final authority.
+
+For self-hosted local AI execution, `service/ai-kyc-service` can replace FPT network calls while keeping the same Spring provider contract. Point the three FPT URL variables to the FastAPI service:
+
+- `FPT_KYC_IDR_URL=http://kyc-ai-service:8000/vision/idr/vnm/`
+- `FPT_KYC_FACEMATCH_URL=http://kyc-ai-service:8000/dmp/checkface/v1`
+- `FPT_KYC_LIVENESS_URL=http://kyc-ai-service:8000/dmp/liveness/v3`
+
+The service is CPU-only in MVP. OCR, facematch, and liveness model integrations are lazy/optional so deployment can start with the FPT-compatible facade and evolve with representative CCCD/selfie/liveness test data.
 
 ## Architecture Risks
 

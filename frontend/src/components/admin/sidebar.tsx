@@ -51,7 +51,7 @@ const sharedAdminNav: NavItem[] = [
     href: "/admin/ekyc",
     icon: ShieldAlert,
     label: "Duyệt eKYC",
-    roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
+    roles: [Role.ADMIN, Role.SUPER_ADMIN],
   },
   {
     href: "/admin/categories",
@@ -104,6 +104,7 @@ const sharedAdminNav: NavItem[] = [
 ];
 
 const staffNav: NavItem[] = sharedAdminNav
+  .filter((item) => item.href !== "/admin/ekyc")
   .map((item) => ({
     ...item,
     href: item.href.replace("/admin", "/staff"),

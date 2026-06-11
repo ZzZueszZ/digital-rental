@@ -70,6 +70,9 @@ public class RolePermissionSeeder implements CommandLineRunner {
         // Orders
         addPerm(admin, "ORDER_MANAGE");
 
+        // eKYC review
+        addPerm(admin, "EKYC_REVIEW");
+
         // Reviews
         addPerm(admin, "REVIEW_MANAGE");
 

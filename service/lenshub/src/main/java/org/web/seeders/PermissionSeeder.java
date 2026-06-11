@@ -72,6 +72,9 @@ public class PermissionSeeder implements CommandLineRunner {
         create("ORDER_WRITE", "Can checkout and create orders (Customer)");
         create("ORDER_MANAGE", "Can view all orders, logs and update status (Admin/Staff)");
 
+        // ================= EKYC =================
+        create("EKYC_REVIEW", "Can review, approve and reject eKYC applications (Admin only)");
+
         // ================= REVIEW =================
         create("REVIEW_MANAGE", "Can view all, hide/unhide and review reported comments (Admin/Staff)");
 

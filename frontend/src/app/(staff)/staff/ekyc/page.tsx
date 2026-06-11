@@ -1,5 +1,5 @@
-import KycManagement from "@/components/admin/KycManagement";
+import { redirect } from "next/navigation";
 
 export default function StaffKycPage() {
-  return <KycManagement />;
+  redirect("/staff");
 }

@@ -59,7 +59,7 @@ public class IdentityController {
     }
 
     @GetMapping("/admin/ekyc/pending")
-    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
+    @PreAuthorize("hasAuthority('EKYC_REVIEW')")
     public ResponseEntity<ApiResponse<List<KycSessionResponse>>> getPendingKycSessions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -69,7 +69,7 @@ public class IdentityController {
     }
 
     @PostMapping("/admin/ekyc/{sessionId}/resolve")
-    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
+    @PreAuthorize("hasAuthority('EKYC_REVIEW')")
     public ResponseEntity<ApiResponse<KycSessionResponse>> resolveKycSession(
             @PathVariable Long sessionId,
             @Valid @RequestBody ResolveKycRequest request

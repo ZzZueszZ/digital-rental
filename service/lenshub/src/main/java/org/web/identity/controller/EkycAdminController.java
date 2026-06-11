@@ -19,7 +19,7 @@ public class EkycAdminController {
     private final IdentityService identityService;
 
     @GetMapping("/pending")
-    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
+    @PreAuthorize("hasAuthority('EKYC_REVIEW')")
     public ResponseEntity<ApiResponse<List<KycSessionResponse>>> getPendingKyc(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -29,7 +29,7 @@ public class EkycAdminController {
     }
 
     @PutMapping("/{id}/approve")
-    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
+    @PreAuthorize("hasAuthority('EKYC_REVIEW')")
     public ResponseEntity<ApiResponse<KycSessionResponse>> approveKyc(
             @PathVariable("id") Long id,
             @RequestBody(required = false) ResolveKycRequest request
@@ -44,7 +44,7 @@ public class EkycAdminController {
     }
 
     @PutMapping("/{id}/reject")
-    @PreAuthorize("hasAuthority('ORDER_MANAGE')")
+    @PreAuthorize("hasAuthority('EKYC_REVIEW')")
     public ResponseEntity<ApiResponse<KycSessionResponse>> rejectKyc(
             @PathVariable("id") Long id,
             @RequestBody(required = false) ResolveKycRequest request

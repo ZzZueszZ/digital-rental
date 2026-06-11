@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, LogOut, Menu } from "lucide-react";
+import { ChevronDown, LogOut, Menu, Settings } from "lucide-react";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { RoleGuard, useAuthSession } from "@/components/auth/Guards";
 import { Role } from "@/constants/enum/role";
@@ -49,8 +50,6 @@ export default function AdminLayout({
       return { title: "Hỗ trợ", subtitle: "Yêu cầu khách hàng" };
     if (pathname.includes("/audit-logs"))
       return { title: "Nhật ký", subtitle: "Hoạt động hệ thống" };
-    if (pathname.includes("/settings"))
-      return { title: "Cài đặt", subtitle: "Thiết lập hệ thống" };
     return { title: "Digital Rental", subtitle: "Admin" };
   }, [pathname]);
 
@@ -143,6 +142,14 @@ export default function AdminLayout({
                         </div>
                       </div>
                       <div className="p-1">
+                        <Link
+                          href="/profile/settings"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium text-zinc-600 transition-all hover:bg-zinc-50 hover:text-zinc-950"
+                        >
+                          <Settings className="h-3.5 w-3.5" />
+                          Cài đặt tài khoản
+                        </Link>
                         <button
                           onClick={() => logout()}
                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium text-red-600 transition-all hover:bg-red-50"

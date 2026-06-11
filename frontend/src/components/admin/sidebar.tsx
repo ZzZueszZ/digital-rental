@@ -14,7 +14,6 @@ import {
   MessageCircle,
   MessageSquare,
   Package,
-  Settings,
   ShieldAlert,
   ShoppingCart,
   Users,
@@ -102,16 +101,9 @@ const sharedAdminNav: NavItem[] = [
     label: "Hỗ trợ",
     roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.STAFF],
   },
-  {
-    href: "/admin/settings",
-    icon: Settings,
-    label: "Cài đặt",
-    roles: [Role.ADMIN, Role.SUPER_ADMIN],
-  },
 ];
 
 const staffNav: NavItem[] = sharedAdminNav
-  .filter((item) => item.href !== "/admin/settings")
   .map((item) => ({
     ...item,
     href: item.href.replace("/admin", "/staff"),

@@ -46,8 +46,6 @@ export default function StaffLayout({
       return { title: "Hỗ trợ", subtitle: "Phản hồi khách hàng" };
     if (pathname.includes("/audit-logs"))
       return { title: "Nhật ký", subtitle: "Hoạt động hệ thống" };
-    if (pathname.includes("/settings"))
-      return { title: "Cài đặt", subtitle: "Thiết lập hệ thống" };
     return { title: "Digital Rental", subtitle: "Staff" };
   }, [pathname]);
 

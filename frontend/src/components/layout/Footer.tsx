@@ -2,11 +2,11 @@ import Link from "next/link";
 import {
   Camera,
   Facebook,
+  Github,
   Instagram,
   Mail,
   MapPin,
   Phone,
-  Youtube,
 } from "lucide-react";
 
 const footerGroups = [
@@ -111,13 +111,27 @@ export function Footer() {
 
           <div className="flex items-center gap-2">
             {[
-              { label: "Instagram", icon: Instagram },
-              { label: "Facebook", icon: Facebook },
-              { label: "Youtube", icon: Youtube },
-            ].map(({ label, icon: Icon }) => (
+              {
+                label: "Instagram",
+                icon: Instagram,
+                href: "https://www.instagram.com/ainga_76",
+              },
+              {
+                label: "Facebook",
+                icon: Facebook,
+                href: "https://www.facebook.com/truong.ai.nga.2025",
+              },
+              {
+                label: "GitHub",
+                icon: Github,
+                href: "https://github.com/AiNga04",
+              },
+            ].map(({ label, icon: Icon, href }) => (
               <Link
                 key={label}
-                href="#"
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={label}
                 className="flex h-8 w-8 items-center justify-center rounded-xl border border-zinc-200 text-zinc-400 transition-colors hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900"
               >

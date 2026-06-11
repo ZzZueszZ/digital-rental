@@ -13,17 +13,17 @@ const footerGroups = [
   {
     title: "Danh mục",
     links: [
-      { label: "Máy ảnh", href: "/rentals" },
-      { label: "Ống kính", href: "/rentals" },
-      { label: "Ánh sáng", href: "/rentals" },
-      { label: "Phụ kiện", href: "/#product-section" },
+      { label: "Máy ảnh", href: "/products?category=CAMERA" },
+      { label: "Ống kính", href: "/products?category=LENS" },
+      { label: "Ánh sáng", href: "/products?category=LIGHTING" },
+      { label: "Chân máy", href: "/products?category=TRIPOD" },
     ],
   },
   {
     title: "Dịch vụ",
     links: [
-      { label: "Thuê thiết bị", href: "/rentals" },
-      { label: "Mua thiết bị", href: "/#product-section" },
+      { label: "Thuê thiết bị", href: "/products?purpose=rent" },
+      { label: "Mua thiết bị", href: "/products?purpose=sale" },
       { label: "Hỗ trợ eKYC", href: "/profile/ekyc" },
       { label: "Dành cho doanh nghiệp", href: "/about" },
     ],
@@ -74,10 +74,15 @@ export function Footer() {
                 <Mail className="h-4 w-4 text-zinc-400" />
                 adminlenshub@gmail.com
               </a>
-              <p className="flex items-start gap-2.5">
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=S%E1%BB%91%201%2C%20V%C3%B5%20V%C4%83n%20Ng%C3%A2n%2C%20TP.%20Th%E1%BB%A7%20%C4%90%E1%BB%A9c"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2.5 transition-colors hover:text-zinc-900"
+              >
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
                 Số 1, Võ Văn Ngân, TP. Thủ Đức
-              </p>
+              </a>
             </div>
           </div>
 

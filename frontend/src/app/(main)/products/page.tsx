@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   ArrowRight,
   Camera,
@@ -45,6 +46,7 @@ type Product = {
 
 type Category = {
   id: number;
+  code: string;
   name: string;
   isActive: boolean;
 };
@@ -84,7 +86,8 @@ const sortLabels: Record<keyof typeof sortOptions, string> = {
   saleAsc: "Giá bán thấp nhất",
 };
 
-export default function ProductsPage() {
+function ProductsContent() {
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
@@ -95,6 +98,19 @@ export default function ProductsPage() {
   const [sort, setSort] = useState<keyof typeof sortOptions>("newest");
   const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    const purposeParam = searchParams.get("purpose");
+
+    setCategory(categoryParam || "all");
+    setPurpose(
+      purposeParam === "rent" || purposeParam === "sale"
+        ? purposeParam
+        : "all",
+    );
+    setPage(0);
+  }, [searchParams]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -159,7 +175,7 @@ export default function ProductsPage() {
   const categoryLabel =
     category === "all"
       ? "Tất cả danh mục"
-      : categories.find((item) => String(item.id) === category)?.name ??
+      : categories.find((item) => item.code === category)?.name ??
         "Danh mục";
 
   const changeFilter = (setter: (value: string) => void, value: string) => {
@@ -240,7 +256,7 @@ export default function ProductsPage() {
                   <SelectContent className="border border-zinc-200 bg-white p-1 text-zinc-900 shadow-xl">
                     <SelectItem value="all">Tất cả danh mục</SelectItem>
                     {categories.map((item) => (
-                      <SelectItem key={item.id} value={String(item.id)}>
+                      <SelectItem key={item.id} value={item.code}>
                         {item.name}
                       </SelectItem>
                     ))}
@@ -472,5 +488,31 @@ export default function ProductsPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white">
+          <Navbar />
+          <main className="container mx-auto max-w-[1320px] px-4 py-16 md:px-6 lg:px-8">
+            <div className="h-40 animate-pulse rounded-xl bg-zinc-100" />
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="h-[420px] animate-pulse rounded-xl bg-zinc-100"
+                />
+              ))}
+            </div>
+          </main>
+          <Footer />
+        </div>
+      }
+    >
+      <ProductsContent />
+    </Suspense>
   );
 }

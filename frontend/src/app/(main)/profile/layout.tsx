@@ -11,6 +11,7 @@ import {
   LogOut,
   MapPin,
   Menu,
+  Settings,
   ShieldCheck,
   ShoppingBag,
   ShoppingCart,
@@ -34,6 +35,7 @@ const navigationItems = [
   { label: "Sổ địa chỉ", href: "/profile/address", icon: MapPin },
   { label: "Đơn hàng", href: "/profile/orders", icon: ShoppingBag },
   { label: "Giỏ hàng", href: "/profile/cart", icon: ShoppingCart },
+  { label: "Cài đặt", href: "/profile/settings", icon: Settings },
 ];
 
 export default function ProfileLayout({
@@ -73,6 +75,11 @@ export default function ProfileLayout({
       return { title: "Đơn hàng", subtitle: "Theo dõi giao dịch mua và thuê" };
     if (pathname.includes("/profile/cart"))
       return { title: "Giỏ hàng", subtitle: "Sản phẩm đang chờ thanh toán" };
+    if (pathname.includes("/profile/settings"))
+      return {
+        title: "Cài đặt",
+        subtitle: "Bảo mật và thông tin đăng nhập",
+      };
     return { title: "Tài khoản", subtitle: "Quản lý thông tin cá nhân" };
   }, [isProfileRoot, pathname]);
 

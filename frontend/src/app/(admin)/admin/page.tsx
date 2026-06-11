@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { AlertTriangle, DollarSign, ShoppingCart, Users } from "lucide-react";
 import {
+  type RevenueMode,
   useDailyOrderStats,
   useLowStockStats,
   useOrderStats,
@@ -16,6 +18,7 @@ import { StatCard } from "./components/StatCard";
 import { TopProductsCard } from "./components/TopProductsCard";
 
 export default function AdminDashboardPage() {
+  const [revenueMode, setRevenueMode] = useState<RevenueMode>("total");
   const { data: revenueRes } = useRevenueStats();
   const { data: orderRes } = useOrderStats();
   const { data: userSummaryRes } = useUserSummaryStats();
@@ -29,6 +32,23 @@ export default function AdminDashboardPage() {
   const topProducts = topProductsRes?.data || [];
   const lowStock = lowStockRes?.data || [];
   const dailyOrders = dailyOrdersRes?.data || [];
+  const selectedRevenue = {
+    total: {
+      title: "Tổng doanh thu 30 ngày",
+      value: revenueData?.totalRevenue ?? 0,
+      trend: revenueData?.growthRate ?? 0,
+    },
+    purchase: {
+      title: "Doanh thu bán hàng",
+      value: revenueData?.purchaseRevenue ?? 0,
+      trend: revenueData?.purchaseGrowthRate ?? 0,
+    },
+    rental: {
+      title: "Doanh thu cho thuê",
+      value: revenueData?.rentalRevenue ?? 0,
+      trend: revenueData?.rentalGrowthRate ?? 0,
+    },
+  }[revenueMode];
 
   return (
     <div className="flex-1 space-y-5 lg:space-y-6">
@@ -48,7 +68,7 @@ export default function AdminDashboardPage() {
           </div>
           <div className="grid grid-cols-2 gap-3 text-sm sm:min-w-[320px]">
             <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3">
-              <p className="text-xs font-medium text-zinc-500">Đơn hàng</p>
+              <p className="text-xs font-medium text-zinc-500">Đơn mua</p>
               <p className="mt-1 text-lg font-semibold text-zinc-950">
                 {orderData?.totalOrders || 0}
               </p>
@@ -65,16 +85,12 @@ export default function AdminDashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Doanh thu 30 ngày"
-          value={
-            revenueData?.totalRevenue
-              ? new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(revenueData.totalRevenue)
-              : "0 ₫"
-          }
-          trend={revenueData?.growthRate ?? 0}
+          title={selectedRevenue.title}
+          value={new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(selectedRevenue.value)}
+          trend={selectedRevenue.trend}
           icon={DollarSign}
           accent="bg-red-600"
         />
@@ -86,7 +102,7 @@ export default function AdminDashboardPage() {
           accent="bg-zinc-950"
         />
         <StatCard
-          title="Tổng đơn hàng"
+          title="Tổng đơn mua"
           value={orderData?.totalOrders || 0}
           trend={-5}
           icon={ShoppingCart}
@@ -101,7 +117,12 @@ export default function AdminDashboardPage() {
         />
       </div>
 
-      <DashboardCharts revenueData={revenueData} dailyOrders={dailyOrders} />
+      <DashboardCharts
+        revenueData={revenueData}
+        dailyOrders={dailyOrders}
+        revenueMode={revenueMode}
+        onRevenueModeChange={setRevenueMode}
+      />
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         <LowStockCard products={lowStock} />

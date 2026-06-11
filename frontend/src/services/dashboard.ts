@@ -5,12 +5,19 @@ import type { IBackendRes } from '@/types/global';
 export interface RevenueStatResponse {
   date: string;
   revenue: number;
+  purchaseRevenue: number;
+  rentalRevenue: number;
 }
 export interface RevenueDashboardResponse {
   totalRevenue: number;
+  purchaseRevenue: number;
+  rentalRevenue: number;
   growthRate: number;
+  purchaseGrowthRate: number;
+  rentalGrowthRate: number;
   dailyStats: RevenueStatResponse[];
 }
+export type RevenueMode = 'total' | 'purchase' | 'rental';
 export interface OrderStatResponse {
   totalOrders: number;
   byStatus: Record<string, number>;

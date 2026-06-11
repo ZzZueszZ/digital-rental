@@ -274,6 +274,7 @@ public class RentalServiceImpl implements RentalService {
         }
 
         order.setPaymentStatus(PaymentStatus.SUCCESS);
+        order.setRentalFeePaidAt(LocalDateTime.now());
         order.setStatus(RentalOrderStatus.PAID_RENTAL_FEE);
 
         // Generate contract automatically

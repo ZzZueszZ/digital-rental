@@ -22,11 +22,14 @@ import { Button } from "@/components/ui/button";
 import {
   DailyOrderStatResponse,
   RevenueDashboardResponse,
+  RevenueMode,
 } from "@/services/dashboard";
 
 interface DashboardChartsProps {
   revenueData: RevenueDashboardResponse | undefined;
   dailyOrders: DailyOrderStatResponse[];
+  revenueMode: RevenueMode;
+  onRevenueModeChange: (mode: RevenueMode) => void;
 }
 
 const tooltipStyle = {
@@ -39,7 +42,41 @@ const tooltipStyle = {
 export function DashboardCharts({
   revenueData,
   dailyOrders,
+  revenueMode,
+  onRevenueModeChange,
 }: DashboardChartsProps) {
+  const revenueOptions: Array<{
+    mode: RevenueMode;
+    label: string;
+    value: number;
+  }> = [
+    {
+      mode: "total",
+      label: "Tổng",
+      value: revenueData?.totalRevenue ?? 0,
+    },
+    {
+      mode: "purchase",
+      label: "Bán hàng",
+      value: revenueData?.purchaseRevenue ?? 0,
+    },
+    {
+      mode: "rental",
+      label: "Cho thuê",
+      value: revenueData?.rentalRevenue ?? 0,
+    },
+  ];
+  const revenueDataKey = {
+    total: "revenue",
+    purchase: "purchaseRevenue",
+    rental: "rentalRevenue",
+  }[revenueMode];
+  const chartColor = {
+    total: "#ef4444",
+    purchase: "#18181b",
+    rental: "#059669",
+  }[revenueMode];
+
   return (
     <div className="grid grid-cols-1 gap-5 xl:grid-cols-7">
       <Card className="overflow-hidden rounded-xl border-zinc-200/80 bg-white shadow-none xl:col-span-4">
@@ -61,6 +98,28 @@ export function DashboardCharts({
               Xuất báo cáo
             </Button>
           </div>
+          <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            {revenueOptions.map((option) => {
+              const selected = revenueMode === option.mode;
+              return (
+                <button
+                  key={option.mode}
+                  type="button"
+                  onClick={() => onRevenueModeChange(option.mode)}
+                  className={`min-w-0 rounded-xl border px-3 py-2.5 text-left transition-colors ${
+                    selected
+                      ? "border-red-200 bg-red-50 text-red-700"
+                      : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50"
+                  }`}
+                >
+                  <span className="block text-xs font-medium">{option.label}</span>
+                  <span className="mt-1 block truncate text-sm font-semibold text-zinc-950">
+                    {new Intl.NumberFormat("vi-VN").format(option.value)} ₫
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </CardHeader>
         <CardContent className="p-4 sm:p-5">
           <div className="mt-2 h-[280px] w-full sm:h-[350px]">
@@ -71,8 +130,8 @@ export function DashboardCharts({
               >
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.16} />
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                    <stop offset="5%" stopColor={chartColor} stopOpacity={0.16} />
+                    <stop offset="95%" stopColor={chartColor} stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <XAxis
@@ -98,6 +157,10 @@ export function DashboardCharts({
                 />
                 <RechartsTooltip
                   contentStyle={tooltipStyle}
+                  formatter={(value) => [
+                    `${new Intl.NumberFormat("vi-VN").format(Number(value))} ₫`,
+                    "Doanh thu",
+                  ]}
                   itemStyle={{
                     color: "#18181b",
                     fontWeight: 600,
@@ -111,8 +174,8 @@ export function DashboardCharts({
                 />
                 <Area
                   type="monotone"
-                  dataKey="revenue"
-                  stroke="#ef4444"
+                  dataKey={revenueDataKey}
+                  stroke={chartColor}
                   strokeWidth={2.5}
                   fillOpacity={1}
                   fill="url(#colorRevenue)"

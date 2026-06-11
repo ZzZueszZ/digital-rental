@@ -72,6 +72,9 @@ public class RentalOrder extends BaseAuditEntity {
     @Column(name = "payment_status", nullable = false, length = 30)
     private PaymentStatus paymentStatus;
 
+    @Column(name = "rental_fee_paid_at")
+    private LocalDateTime rentalFeePaidAt;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "refund_status", length = 30)
     private PaymentStatus refundStatus;

@@ -14,4 +14,13 @@ import java.time.LocalDate;
 public class RevenueStatResponse {
     private LocalDate date;
     private BigDecimal revenue;
+    private BigDecimal purchaseRevenue;
+    private BigDecimal rentalRevenue;
+
+    public RevenueStatResponse(LocalDate date, BigDecimal revenue) {
+        this.date = date;
+        this.revenue = revenue;
+        this.purchaseRevenue = BigDecimal.ZERO;
+        this.rentalRevenue = BigDecimal.ZERO;
+    }
 }

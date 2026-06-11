@@ -2,12 +2,16 @@ package org.web.dashboard.service.impl;
 
 import org.web.common.enums.AccountStatus;
 import org.web.common.enums.OrderStatus;
+import org.web.common.enums.PaymentStatus;
+import org.web.common.enums.RentalPaymentType;
 import org.web.dashboard.dto.*;
 import org.web.dashboard.service.DashboardService;
 import org.web.orders.repository.OrderItemRepository;
 import org.web.orders.repository.OrderRepository;
 import org.web.products.model.Product;
 import org.web.products.repository.ProductRepository;
+import org.web.rentals.repository.RentalOrderRepository;
+import org.web.rentals.repository.RentalPaymentRepository;
 import org.web.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +23,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +37,8 @@ public class DashboardServiceImpl implements DashboardService {
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final RentalOrderRepository rentalOrderRepository;
+    private final RentalPaymentRepository rentalPaymentRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -41,36 +50,108 @@ public class DashboardServiceImpl implements DashboardService {
                 OrderStatus.COMPLETED
         );
         
-        List<RevenueStatResponse> stats = orderRepository.getRevenueStats(statuses, start, end);
-        
-        BigDecimal totalRevenue = stats.stream()
-                .map(RevenueStatResponse::getRevenue)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        List<RevenueStatResponse> purchaseStats = orderRepository.getRevenueStats(statuses, start, end);
+        List<RevenueStatResponse> rentalStats = getRentalRevenueStats(start, end);
+
+        BigDecimal purchaseRevenue = sumRevenue(purchaseStats);
+        BigDecimal rentalRevenue = sumRevenue(rentalStats);
+        BigDecimal totalRevenue = purchaseRevenue.add(rentalRevenue);
 
         // Growth Rate Calculation
         long daysDiff = java.time.temporal.ChronoUnit.DAYS.between(from, to) + 1;
         LocalDateTime prevStart = start.minusDays(daysDiff);
         LocalDateTime prevEnd = start.minusNanos(1);
 
-        List<RevenueStatResponse> prevStats = orderRepository.getRevenueStats(statuses, prevStart, prevEnd);
-        BigDecimal prevRevenue = prevStats.stream()
-                .map(RevenueStatResponse::getRevenue)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        Double growthRate = 0.0;
-        if (prevRevenue.compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal diff = totalRevenue.subtract(prevRevenue);
-            growthRate = diff.divide(prevRevenue, 4, java.math.RoundingMode.HALF_UP)
-                    .multiply(BigDecimal.valueOf(100)).doubleValue();
-        } else if (totalRevenue.compareTo(BigDecimal.ZERO) > 0) {
-            growthRate = 100.0;
-        }
+        BigDecimal previousPurchaseRevenue = sumRevenue(
+                orderRepository.getRevenueStats(statuses, prevStart, prevEnd)
+        );
+        BigDecimal previousRentalRevenue = sumRevenue(getRentalRevenueStats(prevStart, prevEnd));
+        BigDecimal previousTotalRevenue = previousPurchaseRevenue.add(previousRentalRevenue);
 
         return RevenueDashboardResponse.builder()
                 .totalRevenue(totalRevenue)
-                .growthRate(growthRate)
-                .dailyStats(stats)
+                .purchaseRevenue(purchaseRevenue)
+                .rentalRevenue(rentalRevenue)
+                .growthRate(calculateGrowthRate(totalRevenue, previousTotalRevenue))
+                .purchaseGrowthRate(calculateGrowthRate(purchaseRevenue, previousPurchaseRevenue))
+                .rentalGrowthRate(calculateGrowthRate(rentalRevenue, previousRentalRevenue))
+                .dailyStats(mergeRevenueStats(purchaseStats, rentalStats))
                 .build();
+    }
+
+    private List<RevenueStatResponse> getRentalRevenueStats(LocalDateTime start, LocalDateTime end) {
+        List<RevenueStatResponse> rentalFees = rentalOrderRepository.getRentalFeeRevenueStats(
+                PaymentStatus.SUCCESS,
+                start,
+                end
+        );
+        List<RevenueStatResponse> extraFees = rentalPaymentRepository.getRevenueStats(
+                PaymentStatus.SUCCESS,
+                List.of(RentalPaymentType.EXTRA_FEE_OFFLINE),
+                start,
+                end
+        );
+
+        Map<LocalDate, BigDecimal> revenueByDate = new TreeMap<>();
+        addRevenue(revenueByDate, rentalFees);
+        addRevenue(revenueByDate, extraFees);
+
+        return revenueByDate.entrySet().stream()
+                .map(entry -> new RevenueStatResponse(entry.getKey(), entry.getValue()))
+                .toList();
+    }
+
+    private List<RevenueStatResponse> mergeRevenueStats(
+            List<RevenueStatResponse> purchaseStats,
+            List<RevenueStatResponse> rentalStats
+    ) {
+        Map<LocalDate, RevenueStatResponse> merged = new TreeMap<>();
+
+        for (RevenueStatResponse stat : purchaseStats) {
+            merged.computeIfAbsent(stat.getDate(), this::emptyRevenueStat)
+                    .setPurchaseRevenue(stat.getRevenue());
+        }
+        for (RevenueStatResponse stat : rentalStats) {
+            merged.computeIfAbsent(stat.getDate(), this::emptyRevenueStat)
+                    .setRentalRevenue(stat.getRevenue());
+        }
+
+        List<RevenueStatResponse> result = new ArrayList<>(merged.values());
+        result.forEach(stat -> stat.setRevenue(
+                stat.getPurchaseRevenue().add(stat.getRentalRevenue())
+        ));
+        return result;
+    }
+
+    private RevenueStatResponse emptyRevenueStat(LocalDate date) {
+        return RevenueStatResponse.builder()
+                .date(date)
+                .revenue(BigDecimal.ZERO)
+                .purchaseRevenue(BigDecimal.ZERO)
+                .rentalRevenue(BigDecimal.ZERO)
+                .build();
+    }
+
+    private void addRevenue(Map<LocalDate, BigDecimal> target, List<RevenueStatResponse> stats) {
+        for (RevenueStatResponse stat : stats) {
+            target.merge(stat.getDate(), stat.getRevenue(), BigDecimal::add);
+        }
+    }
+
+    private BigDecimal sumRevenue(List<RevenueStatResponse> stats) {
+        return stats.stream()
+                .map(RevenueStatResponse::getRevenue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private Double calculateGrowthRate(BigDecimal currentRevenue, BigDecimal previousRevenue) {
+        if (previousRevenue.compareTo(BigDecimal.ZERO) > 0) {
+            return currentRevenue.subtract(previousRevenue)
+                    .divide(previousRevenue, 4, java.math.RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(100))
+                    .doubleValue();
+        }
+        return currentRevenue.compareTo(BigDecimal.ZERO) > 0 ? 100.0 : 0.0;
     }
 
     @Override

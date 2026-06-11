@@ -13,6 +13,10 @@ import java.util.List;
 @AllArgsConstructor
 public class RevenueDashboardResponse {
     private BigDecimal totalRevenue;
+    private BigDecimal purchaseRevenue;
+    private BigDecimal rentalRevenue;
     private Double growthRate;
+    private Double purchaseGrowthRate;
+    private Double rentalGrowthRate;
     private List<RevenueStatResponse> dailyStats;
 }

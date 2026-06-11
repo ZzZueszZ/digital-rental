@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.web.common.enums.RentalOrderStatus;
+import org.web.common.enums.PaymentStatus;
 import org.web.rentals.model.RentalOrder;
 import org.web.users.model.User;
 
@@ -37,4 +38,16 @@ public interface RentalOrderRepository extends JpaRepository<RentalOrder, Long> 
     long countRentedUnitsInPeriod(@Param("productId") Long productId, 
                                   @Param("startDate") LocalDateTime startDate, 
                                   @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT new org.web.dashboard.dto.RevenueStatResponse(" +
+           "CAST(FUNCTION('DATE', COALESCE(r.rentalFeePaidAt, r.createdAt)) AS java.time.LocalDate), SUM(r.rentalFee)) " +
+           "FROM RentalOrder r " +
+           "WHERE r.paymentStatus = :paymentStatus " +
+           "AND COALESCE(r.rentalFeePaidAt, r.createdAt) BETWEEN :startDate AND :endDate " +
+           "GROUP BY FUNCTION('DATE', COALESCE(r.rentalFeePaidAt, r.createdAt)) " +
+           "ORDER BY FUNCTION('DATE', COALESCE(r.rentalFeePaidAt, r.createdAt)) ASC")
+    List<org.web.dashboard.dto.RevenueStatResponse> getRentalFeeRevenueStats(
+            @Param("paymentStatus") PaymentStatus paymentStatus,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
 }

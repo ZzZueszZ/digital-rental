@@ -31,7 +31,7 @@ import { useAuthSession } from "@/components/auth/Guards";
 import { Role } from "@/constants/enum/role";
 
 const navigationItems = [
-  { label: "Thiết bị", href: "/rentals", icon: Camera },
+  { label: "Thiết bị", href: "/products", icon: Camera },
   { label: "Sản phẩm mới", href: "/#product-section", icon: Package },
   { label: "An toàn", href: "/trust", icon: ShieldCheck },
   { label: "Về chúng tôi", href: "/about", icon: Info },

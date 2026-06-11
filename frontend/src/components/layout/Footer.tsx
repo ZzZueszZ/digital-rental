@@ -33,8 +33,8 @@ const footerGroups = [
     links: [
       { label: "Trung tâm an toàn", href: "/trust" },
       { label: "Quy trình thuê", href: "/rental-process" },
-      { label: "Chính sách giao nhận", href: "#" },
-      { label: "Bảo hành và đổi trả", href: "#" },
+      { label: "Chính sách giao nhận", href: "/delivery-policy" },
+      { label: "Bảo hành và đổi trả", href: "/warranty-returns" },
     ],
   },
 ];
@@ -127,13 +127,22 @@ export function Footer() {
           </div>
 
           <div className="flex gap-5 text-xs font-normal text-zinc-400">
-            <Link href="#" className="transition-colors hover:text-zinc-900">
+            <Link
+              href="/privacy"
+              className="transition-colors hover:text-zinc-900"
+            >
               Bảo mật
             </Link>
-            <Link href="#" className="transition-colors hover:text-zinc-900">
+            <Link
+              href="/terms"
+              className="transition-colors hover:text-zinc-900"
+            >
               Điều khoản
             </Link>
-            <Link href="#" className="transition-colors hover:text-zinc-900">
+            <Link
+              href="/cookies"
+              className="transition-colors hover:text-zinc-900"
+            >
               Cookie
             </Link>
           </div>

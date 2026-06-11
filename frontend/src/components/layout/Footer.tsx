@@ -31,10 +31,10 @@ const footerGroups = [
   {
     title: "Hỗ trợ",
     links: [
-      { label: "Trung tâm trợ giúp", href: "/about" },
+      { label: "Trung tâm an toàn", href: "/trust" },
+      { label: "Quy trình thuê", href: "/rental-process" },
       { label: "Chính sách giao nhận", href: "#" },
       { label: "Bảo hành và đổi trả", href: "#" },
-      { label: "Điều khoản dịch vụ", href: "#" },
     ],
   },
 ];
@@ -61,18 +61,18 @@ export function Footer() {
 
             <div className="mt-6 space-y-2.5 text-sm font-normal text-zinc-500">
               <a
-                href="tel:0909123456"
+                href="tel:0376600545"
                 className="flex items-center gap-2.5 transition-colors hover:text-zinc-900"
               >
                 <Phone className="h-4 w-4 text-zinc-400" />
-                0909 123 456
+                037 6600 545
               </a>
               <a
-                href="mailto:support@digitalrental.vn"
+                href="mailto:adminlenshub@gmail.com"
                 className="flex items-center gap-2.5 transition-colors hover:text-zinc-900"
               >
                 <Mail className="h-4 w-4 text-zinc-400" />
-                support@digitalrental.vn
+                adminlenshub@gmail.com
               </a>
               <p className="flex items-start gap-2.5">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />

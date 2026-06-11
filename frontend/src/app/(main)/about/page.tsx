@@ -113,7 +113,8 @@ const milestones = [
   {
     year: "2024",
     title: "Hoàn thiện hệ sinh thái",
-    description: "Kết hợp mua bán, cho thuê, eKYC và thanh toán trên một nền tảng.",
+    description:
+      "Kết hợp mua bán, cho thuê, eKYC và thanh toán trên một nền tảng.",
   },
 ];
 
@@ -121,14 +122,14 @@ const contactItems = [
   {
     icon: Phone,
     label: "Hotline hỗ trợ",
-    value: "0909 123 456",
-    href: "tel:0909123456",
+    value: "037 6600 545",
+    href: "tel:0376600545",
   },
   {
     icon: Mail,
     label: "Email liên hệ",
-    value: "support@digitalrental.vn",
-    href: "mailto:support@digitalrental.vn",
+    value: "adminlenshub@gmail.com",
+    href: "mailto:adminlenshub@gmail.com",
   },
   {
     icon: MapPin,
@@ -241,7 +242,9 @@ export default function AboutPage() {
                   onClick={scrollToSupport}
                   className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50"
                 >
-                  <span style={{ color: "#27272a" }}>Liên hệ với chúng tôi</span>
+                  <span style={{ color: "#27272a" }}>
+                    Liên hệ với chúng tôi
+                  </span>
                 </button>
               </motion.div>
 
@@ -384,8 +387,8 @@ export default function AboutPage() {
               </h2>
               <div className="mt-5 space-y-4 text-sm font-normal leading-6 text-zinc-500">
                 <p>
-                  Digital Rental bắt đầu từ trải nghiệm rất thực tế của một
-                  nhóm nhiếp ảnh gia trẻ: thiết bị chuyên nghiệp có chi phí cao,
+                  Digital Rental bắt đầu từ trải nghiệm rất thực tế của một nhóm
+                  nhiếp ảnh gia trẻ: thiết bị chuyên nghiệp có chi phí cao,
                   trong khi mỗi dự án lại cần một cấu hình khác nhau.
                 </p>
                 <p>
@@ -661,7 +664,9 @@ export default function AboutPage() {
                   {isPending ? (
                     <>
                       <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                      <span style={{ color: "#ffffff" }}>Đang gửi yêu cầu...</span>
+                      <span style={{ color: "#ffffff" }}>
+                        Đang gửi yêu cầu...
+                      </span>
                     </>
                   ) : (
                     <>

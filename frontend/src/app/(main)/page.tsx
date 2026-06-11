@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import {
   ArrowRight,
@@ -95,12 +96,6 @@ const commitments = [
 ];
 
 export default function Home() {
-  const scrollToProducts = () => {
-    document
-      .getElementById("product-section")
-      ?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-white font-sans text-zinc-950 selection:bg-red-100">
       <Navbar />
@@ -143,25 +138,19 @@ export default function Home() {
                 variants={itemVariants}
                 className="flex flex-col gap-3 sm:flex-row"
               >
-                <button
-                  type="button"
-                  onClick={scrollToProducts}
+                <Link
+                  href="/products"
                   className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-950 px-6 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
                 >
                   <span style={{ color: "#ffffff" }}>Xem thiết bị</span>
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    document
-                      .getElementById("rental-process")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
+                </Link>
+                <Link
+                  href="/rental-process"
                   className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50"
                 >
                   <span style={{ color: "#27272a" }}>Xem quy trình thuê</span>
-                </button>
+                </Link>
               </motion.div>
 
               <motion.div
@@ -252,37 +241,40 @@ export default function Home() {
 
             <div className="grid gap-4 md:grid-cols-3">
               {categories.map((category, index) => (
-                <motion.article
+                <motion.div
                   key={category.title}
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08 }}
-                  className="group overflow-hidden rounded-xl border border-zinc-200 bg-white"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <Image
-                      src={category.image}
-                      alt={category.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                    />
-                  </div>
-                  <div className="p-5">
-                    <h3 className="text-lg font-medium text-zinc-950">
-                      {category.title}
-                    </h3>
-                    <p className="mt-2 min-h-10 text-sm font-normal leading-5 text-zinc-500">
-                      {category.description}
-                    </p>
-                    <button
-                      onClick={scrollToProducts}
+                  <Link
+                    href="/products"
+                    className="group block h-full overflow-hidden rounded-xl border border-zinc-200 bg-white transition-colors hover:border-zinc-300"
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <Image
+                        src={category.image}
+                        alt={category.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      />
+                    </div>
+                    <div className="p-5">
+                      <h3 className="text-lg font-medium text-zinc-950 transition-colors group-hover:text-red-600">
+                        {category.title}
+                      </h3>
+                      <p className="mt-2 min-h-10 text-sm font-normal leading-5 text-zinc-500">
+                        {category.description}
+                      </p>
+                      <span
                       className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-red-600 transition-colors hover:text-red-700"
                     >
                       Xem sản phẩm <ArrowRight className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </motion.article>
+                      </span>
+                    </div>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -295,17 +287,26 @@ export default function Home() {
           className="border-y border-zinc-200 bg-zinc-50/70 py-16 md:py-20"
         >
           <div className="container mx-auto max-w-[1320px] px-4 md:px-6 lg:px-8">
-            <div className="mb-10 max-w-xl">
-              <p className="mb-2 text-sm font-medium text-red-600">
-                Quy trình thuê
-              </p>
-              <h2 className="text-3xl font-semibold tracking-tight text-zinc-950">
-                Bốn bước, thông tin rõ ràng
-              </h2>
-              <p className="mt-3 text-sm font-normal leading-6 text-zinc-500">
-                Từ chọn máy đến nhận thiết bị, mọi chi phí và trạng thái đều
-                được hiển thị trong tài khoản của bạn.
-              </p>
+            <div className="mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+              <div className="max-w-xl">
+                <p className="mb-2 text-sm font-medium text-red-600">
+                  Quy trình thuê
+                </p>
+                <h2 className="text-3xl font-semibold tracking-tight text-zinc-950">
+                  Bốn bước, thông tin rõ ràng
+                </h2>
+                <p className="mt-3 text-sm font-normal leading-6 text-zinc-500">
+                  Từ chọn máy đến nhận thiết bị, mọi chi phí và trạng thái đều
+                  được hiển thị trong tài khoản của bạn.
+                </p>
+              </div>
+              <Link
+                href="/rental-process"
+                className="inline-flex h-10 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950"
+              >
+                Xem quy trình đầy đủ
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -371,6 +372,14 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+
+              <Link
+                href="/trust"
+                className="mt-6 inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950"
+              >
+                Xem trung tâm an toàn
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </div>
           </div>
         </section>
@@ -442,14 +451,13 @@ export default function Home() {
                     phẩm.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={scrollToProducts}
+                <Link
+                  href="/products"
                   className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-white px-6 text-sm font-medium text-zinc-950 transition-colors hover:bg-zinc-100"
                 >
                   <span style={{ color: "#09090b" }}>Khám phá thiết bị</span>
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </button>
+                </Link>
               </div>
             </div>
           </div>

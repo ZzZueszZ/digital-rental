@@ -113,6 +113,13 @@ export function ProductListSection() {
               So sánh giá mua, giá thuê và chọn thiết bị phù hợp với dự án.
             </p>
           </div>
+          <Link
+            href="/products"
+            className="inline-flex h-10 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950"
+          >
+            Xem tất cả thiết bị
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
         </div>
 
         {/* Product Grid */}

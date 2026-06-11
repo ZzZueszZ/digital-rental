@@ -121,7 +121,7 @@ export function ProductListSection() {
             {[...Array(pageSize)].map((_, i) => (
               <div
                 key={i}
-                className="h-[390px] animate-pulse rounded-xl bg-zinc-100"
+                className="h-[420px] animate-pulse rounded-xl bg-zinc-100"
               />
             ))}
           </div>
@@ -131,19 +131,13 @@ export function ProductListSection() {
               <Link
                 key={product.id}
                 href={`/products/${product.id}`}
-                className="group relative flex min-h-[390px] cursor-pointer flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white transition-colors hover:border-zinc-300"
+                className="group relative flex min-h-[420px] cursor-pointer flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white transition-colors hover:border-zinc-300"
               >
                 {/* Image Wrapper */}
                 <div className="relative flex h-[210px] w-full items-center justify-center overflow-hidden border-b border-zinc-100 bg-zinc-50 p-4">
                   <div className="absolute left-3 top-3 z-10 rounded-lg border border-zinc-200 bg-white/90 px-2.5 py-1 text-xs font-normal text-zinc-700 backdrop-blur-md">
                     {product.brand}
                   </div>
-                  {product.forRent && product.rentPricePerDay && (
-                    <div className="absolute bottom-3 right-3 z-10 rounded-lg border border-red-100 bg-red-50 px-2.5 py-1.5 text-[11px] font-normal text-red-700">
-                      {formatVND(product.rentPricePerDay)} / ngày
-                    </div>
-                  )}
-
                   {product.mainImageUrl ? (
                     <Image
                       src={getImageUrl(product.mainImageUrl)}
@@ -168,29 +162,45 @@ export function ProductListSection() {
                     </h3>
                   </div>
 
-                  <div className="mt-4 flex items-end justify-between border-t border-zinc-100 pt-4">
-                    <div>
-                      {product.forSale && product.salePrice ? (
-                        <p className="text-xs font-normal text-zinc-500">
-                          Giá mua
-                          <span className="mt-1 block text-lg font-semibold text-zinc-900">
-                            {formatVND(product.salePrice)}
+                  <div className="mt-4 border-t border-zinc-100 pt-4">
+                    <div className="grid gap-2.5">
+                      {product.forRent && product.rentPricePerDay > 0 && (
+                        <div className="flex items-end justify-between gap-3">
+                          <span className="text-xs font-normal text-zinc-500">
+                            Giá thuê
                           </span>
-                        </p>
-                      ) : (
-                        <p className="text-xs font-normal text-zinc-500">
-                          Chỉ cho thuê
-                        </p>
+                          <p className="text-right text-base font-semibold text-red-600">
+                            {formatVND(product.rentPricePerDay)}
+                            <span className="ml-1 text-[11px] font-normal text-zinc-400">
+                              / ngày
+                            </span>
+                          </p>
+                        </div>
+                      )}
+
+                      {product.forSale && product.salePrice > 0 && (
+                        <div className="flex items-end justify-between gap-3">
+                          <span className="text-xs font-normal text-zinc-500">
+                            Giá bán
+                          </span>
+                          <p className="text-right text-base font-semibold text-zinc-900">
+                            {formatVND(product.salePrice)}
+                          </p>
+                        </div>
                       )}
                     </div>
 
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-9 w-9 rounded-xl bg-zinc-100 text-zinc-500 transition-colors group-hover:bg-zinc-950 group-hover:text-white"
-                    >
-                      <ArrowRight className="w-4 h-4" />
-                    </Button>
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-xs font-normal text-zinc-400">
+                        Xem chi tiết
+                      </span>
+                      <span
+                        aria-label={`Xem chi tiết ${product.name}`}
+                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-100 text-zinc-500 transition-colors group-hover:bg-zinc-950 group-hover:text-white"
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </Link>

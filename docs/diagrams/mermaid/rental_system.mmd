@@ -1,0 +1,121 @@
+erDiagram
+    USERS {
+        bigint id PK
+        varchar email UK
+    }
+
+    PRODUCTS {
+        bigint id PK
+        varchar name
+        decimal rent_price_per_day
+    }
+
+    DEVICES {
+        bigint id PK
+        bigint product_id FK
+        varchar serial_number UK
+        varchar status
+        text condition_details
+    }
+
+    RENTAL_ORDERS {
+        bigint id PK
+        bigint user_id FK
+        varchar code UK
+        datetime start_date
+        datetime end_date
+        varchar status
+        decimal rental_fee
+        decimal estimated_deposit_amount
+        decimal final_deposit_amount
+        varchar deposit_status
+        varchar risk_level
+        varchar payment_status
+    }
+
+    RENTAL_ORDER_ITEMS {
+        bigint id PK
+        bigint rental_order_id FK
+        bigint product_id FK
+        bigint device_id FK
+        decimal price_per_day
+        text condition_before_handover
+        text condition_after_return
+    }
+
+    RENTAL_CONTRACTS {
+        bigint id PK
+        bigint rental_order_id FK
+        varchar contract_number UK
+        text terms_and_conditions
+        varchar contract_hash
+        varchar status
+        datetime signed_at
+        bigint signer_user_id
+        boolean is_locked
+    }
+
+    RENTAL_PAYMENTS {
+        bigint id PK
+        bigint rental_order_id FK
+        varchar payment_type
+        decimal amount
+        varchar payment_method
+        varchar transaction_code
+        varchar status
+        datetime paid_at
+    }
+
+    RENTAL_HANDOVER_REPORTS {
+        bigint id PK
+        bigint rental_order_id FK
+        bigint staff_id FK
+        varchar serial_number
+        varchar body_condition
+        varchar accessory_condition
+        decimal final_deposit_amount
+    }
+
+    RENTAL_RETURN_REPORTS {
+        bigint id PK
+        bigint rental_order_id FK
+        bigint staff_id FK
+        datetime return_date
+        int late_days
+        decimal total_penalty
+        decimal refund_amount
+        decimal extra_payment_amount
+    }
+
+    RENTAL_REFUNDS {
+        bigint id PK
+        bigint rental_order_id FK
+        decimal amount
+        varchar status
+        varchar refund_method
+    }
+
+    DEVICE_CONDITION_REPORTS {
+        bigint id PK
+        bigint device_id FK
+        bigint rental_order_id FK
+        varchar type
+        text condition_notes
+    }
+
+    USERS ||--o{ RENTAL_ORDERS : "đặt thuê"
+    USERS ||--o{ RENTAL_HANDOVER_REPORTS : "lập bàn giao"
+    USERS ||--o{ RENTAL_RETURN_REPORTS : "lập hoàn trả"
+
+    PRODUCTS ||--o{ DEVICES : "gồm"
+    RENTAL_ORDERS ||--|{ RENTAL_ORDER_ITEMS : "gồm"
+    PRODUCTS ||--o{ RENTAL_ORDER_ITEMS : "được thuê"
+    DEVICES o|--o{ RENTAL_ORDER_ITEMS : "được gán"
+
+    RENTAL_ORDERS ||--o| RENTAL_CONTRACTS : "có"
+    RENTAL_ORDERS ||--o{ RENTAL_PAYMENTS : "phát sinh"
+    RENTAL_ORDERS ||--o| RENTAL_HANDOVER_REPORTS : "có"
+    RENTAL_ORDERS ||--o| RENTAL_RETURN_REPORTS : "có"
+    RENTAL_ORDERS ||--o{ RENTAL_REFUNDS : "phát sinh"
+    RENTAL_ORDERS ||--o{ DEVICE_CONDITION_REPORTS : "có"
+    DEVICES ||--o{ DEVICE_CONDITION_REPORTS : "được kiểm tra"

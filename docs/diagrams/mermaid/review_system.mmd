@@ -1,0 +1,83 @@
+erDiagram
+    USERS {
+        bigint id PK
+        varchar email UK
+    }
+
+    PRODUCTS {
+        bigint id PK
+        varchar name
+        decimal rating_average
+        int review_count
+    }
+
+    ORDERS {
+        bigint id PK
+        bigint user_id FK
+        varchar code UK
+        varchar status
+    }
+
+    REVIEWS {
+        bigint id PK
+        bigint user_id FK
+        bigint product_id FK
+        bigint order_id FK
+        int rating
+        text content
+        boolean hidden
+        datetime created_at
+        datetime updated_at
+    }
+
+    REVIEW_IMAGES {
+        bigint id PK
+        bigint review_id FK
+        varchar image_url
+    }
+
+    REVIEW_REPORTERS {
+        bigint review_id PK, FK
+        bigint user_id PK, FK
+    }
+
+    SUPPORT_TICKETS {
+        bigint id PK
+        bigint processed_by_id FK
+        varchar name
+        varchar phone
+        varchar email
+        varchar subject
+        text message
+        varchar status
+        text internal_note
+        text reply_message
+        datetime resolved_at
+        datetime created_at
+        datetime updated_at
+    }
+
+    AUDIT_LOGS {
+        bigint id PK
+        bigint actor_user_id
+        varchar target_type
+        bigint target_id
+        varchar action
+        varchar description
+        text old_value
+        text new_value
+        varchar ip_address
+        varchar user_agent
+        datetime created_at
+    }
+
+    USERS ||--o{ REVIEWS : "viết đánh giá"
+    PRODUCTS ||--o{ REVIEWS : "được đánh giá"
+    ORDERS o|--o{ REVIEWS : "xác nhận giao dịch"
+
+    REVIEWS ||--o{ REVIEW_IMAGES : "có hình ảnh"
+    REVIEWS ||--o{ REVIEW_REPORTERS : "bị báo cáo"
+    USERS ||--o{ REVIEW_REPORTERS : "báo cáo"
+
+    USERS o|--o{ SUPPORT_TICKETS : "xử lý"
+    USERS o|..o{ AUDIT_LOGS : "thực hiện hành động"

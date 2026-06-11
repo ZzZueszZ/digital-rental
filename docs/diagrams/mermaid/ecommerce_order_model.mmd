@@ -1,0 +1,108 @@
+erDiagram
+    USERS {
+        bigint id PK
+        varchar email UK
+    }
+
+    PRODUCTS {
+        bigint id PK
+        varchar name
+        decimal sale_price
+        int quantity
+        boolean is_for_sale
+    }
+
+    CART_ITEMS {
+        bigint id PK
+        bigint user_id FK
+        bigint product_id FK
+        int quantity
+        datetime created_at
+        datetime updated_at
+    }
+
+    ORDERS {
+        bigint id PK
+        bigint user_id FK
+        varchar code UK
+        decimal total_price
+        varchar status
+        varchar payment_method
+        varchar payment_status
+        decimal shipping_fee
+        decimal discount_amount
+        decimal shipping_discount
+        varchar voucher_code
+        varchar shipping_voucher_code
+        varchar shipping_name
+        varchar shipping_phone
+        varchar shipping_address
+        datetime confirmed_at
+        datetime shipped_at
+        datetime delivered_at
+        datetime completed_at
+        datetime canceled_at
+        varchar payment_transaction_no
+        varchar payment_response_code
+        text payment_raw_payload
+        datetime created_at
+        datetime updated_at
+    }
+
+    ORDER_ITEMS {
+        bigint id PK
+        bigint order_id FK
+        bigint product_id FK
+        int quantity
+        decimal unit_price
+        decimal subtotal
+        varchar size
+        datetime created_at
+        datetime updated_at
+    }
+
+    VOUCHERS {
+        bigint id PK
+        varchar code UK
+        varchar name
+        text description
+        varchar type
+        varchar scope
+        decimal discount_value
+        decimal max_discount_amount
+        decimal min_order_value
+        int max_usage_per_user
+        int max_usage
+        int used_count
+        datetime start_date
+        datetime end_date
+        varchar status
+        datetime created_at
+        datetime updated_at
+    }
+
+    PAYMENT_TRANSACTION_LOGS {
+        bigint id PK
+        bigint order_id FK
+        varchar provider
+        varchar status
+        decimal amount
+        varchar currency
+        varchar transaction_id
+        varchar order_code
+        varchar response_code
+        text raw_payload
+        varchar note
+        datetime created_at
+    }
+
+    USERS ||--o{ CART_ITEMS : "có giỏ hàng"
+    PRODUCTS ||--o{ CART_ITEMS : "được thêm vào"
+
+    USERS ||--o{ ORDERS : "đặt mua"
+    ORDERS ||--|{ ORDER_ITEMS : "gồm"
+    PRODUCTS ||--o{ ORDER_ITEMS : "được mua"
+
+    ORDERS ||--o{ PAYMENT_TRANSACTION_LOGS : "có giao dịch"
+
+    VOUCHERS |o..o{ ORDERS : "được áp dụng bằng mã"

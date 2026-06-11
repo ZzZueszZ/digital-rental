@@ -1,0 +1,102 @@
+erDiagram
+    USERS {
+        bigint id PK
+        varchar email UK
+        varchar phone UK
+        varchar password_hash
+        varchar account_status
+        varchar kyc_status
+        varchar trust_level
+        boolean email_verified
+        boolean phone_verified
+        boolean enabled
+        boolean account_non_locked
+        int failed_login_attempts
+        datetime last_login_at
+        datetime created_at
+        datetime updated_at
+    }
+
+    USER_PROFILES {
+        bigint user_id PK, FK
+        varchar full_name
+        varchar first_name
+        varchar last_name
+        varchar gender
+        date date_of_birth
+        varchar avatar_url
+        varchar occupation
+        varchar company_name
+    }
+
+    SHIPPING_ADDRESSES {
+        bigint id PK
+        bigint user_id FK
+        varchar receiver_name
+        varchar receiver_phone
+        varchar full_address
+        varchar province
+        varchar district
+        varchar ward
+        boolean is_default
+    }
+
+    ROLES {
+        bigint id PK
+        varchar code UK
+        varchar description
+    }
+
+    PERMISSIONS {
+        bigint id PK
+        varchar name UK
+        varchar description
+    }
+
+    USER_ROLES {
+        bigint user_id PK, FK
+        bigint role_id PK, FK
+    }
+
+    ROLE_PERMISSIONS {
+        bigint role_id PK, FK
+        bigint permission_id PK, FK
+    }
+
+    REFRESH_TOKENS {
+        bigint id PK
+        bigint user_id FK
+        varchar token UK
+        datetime expires_at
+        boolean revoked
+        datetime created_at
+        datetime revoked_at
+    }
+
+    ACCOUNT_ACTIVATION_TOKENS {
+        bigint id PK
+        bigint user_id FK
+        varchar token UK
+        datetime expires_at
+        boolean used
+        datetime used_at
+    }
+
+    PASSWORD_RESET_TOKENS {
+        bigint id PK
+        bigint user_id FK
+        varchar otp_code
+        datetime expires_at
+        boolean used
+        datetime used_at
+    }
+
+    USERS ||--|| USER_PROFILES : "có hồ sơ"
+    USERS ||--o{ SHIPPING_ADDRESSES : "có địa chỉ"
+    USERS ||--o{ USER_ROLES : "được gán"
+    ROLES ||--o{ USER_ROLES : "gán cho người dùng"
+    ROLES ||--o{ ROLE_PERMISSIONS : "được cấp"
+    PERMISSIONS ||--o{ ROLE_PERMISSIONS : "thuộc vai trò"
+    USERS ||--o{ REFRESH_TOKENS : "có"
+    USERS ||--o{ ACCOUNT_ACTIVATION_TOKENS : "kích hoạt"
+    USERS ||--o{ PASSWORD_RESET_TOKENS : "đặt lại mật khẩu"

@@ -1,0 +1,97 @@
+---
+id: 34731621-03fc-4e34-bc93-68685323fd21
+---
+erDiagram
+    CATEGORIES {
+        bigint id PK
+        varchar code UK
+        varchar name
+        varchar description
+        boolean is_active
+        datetime created_at
+        datetime updated_at
+    }
+
+    PRODUCTS {
+        bigint id PK
+        bigint category_id FK
+        varchar name
+        text description
+        decimal rent_price_per_day
+        decimal sale_price
+        boolean is_for_rent
+        boolean is_for_sale
+        varchar main_image_url
+        varchar brand
+        boolean is_active
+        int quantity
+        int rental_quantity
+        decimal rating_average
+        int review_count
+        datetime deleted_at
+        datetime created_at
+        datetime updated_at
+    }
+
+    PRODUCT_IMAGES {
+        bigint id PK
+        bigint product_id FK
+        varchar image_url
+        datetime created_at
+        datetime updated_at
+    }
+
+    PRODUCT_SPECIFICATIONS {
+        bigint id PK
+        bigint product_id FK
+        varchar spec_key
+        text spec_value
+    }
+
+    PRODUCT_PRICE_HISTORIES {
+        bigint id PK
+        bigint product_id FK
+        bigint changed_by FK
+        varchar price_type
+        decimal old_price
+        decimal new_price
+        datetime created_at
+        datetime updated_at
+    }
+
+    DEVICES {
+        bigint id PK
+        bigint product_id FK
+        varchar serial_number UK
+        varchar status
+        text condition_details
+        datetime created_at
+        datetime updated_at
+    }
+
+    INVENTORY_AUDIT_LOGS {
+        bigint id PK
+        bigint product_id FK
+        bigint changed_by FK
+        int old_stock
+        int new_stock
+        varchar stock_type
+        text reason
+        datetime created_at
+        datetime updated_at
+    }
+
+    USERS {
+        bigint id PK
+        varchar email UK
+    }
+
+    CATEGORIES ||--o{ PRODUCTS : "phân loại"
+    PRODUCTS ||--o{ PRODUCT_IMAGES : "có hình ảnh"
+    PRODUCTS ||--o{ PRODUCT_SPECIFICATIONS : "có thông số"
+    PRODUCTS ||--o{ PRODUCT_PRICE_HISTORIES : "có lịch sử giá"
+    PRODUCTS ||--o{ DEVICES : "gồm thiết bị vật lý"
+    PRODUCTS ||--o{ INVENTORY_AUDIT_LOGS : "có lịch sử kho"
+
+    USERS ||--o{ PRODUCT_PRICE_HISTORIES : "thay đổi giá"
+    USERS ||--o{ INVENTORY_AUDIT_LOGS : "điều chỉnh kho"

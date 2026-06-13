@@ -18,6 +18,10 @@ export interface RevenueDashboardResponse {
   dailyStats: RevenueStatResponse[];
 }
 export type RevenueMode = 'total' | 'purchase' | 'rental';
+export interface RevenueReportFile {
+  blob: Blob;
+  filename: string;
+}
 export interface OrderStatResponse {
   totalOrders: number;
   byStatus: Record<string, number>;
@@ -62,6 +66,41 @@ export const DASHBOARD_KEYS = {
 export const getRevenueStats = async () => {
   const { data } = await http.get<IBackendRes<RevenueDashboardResponse>>('/dashboard/revenue');
   return data;
+};
+
+export const exportRevenueReport = async (
+  type: RevenueMode = 'total',
+): Promise<RevenueReportFile> => {
+  const response = await http.get<Blob>('/dashboard/revenue/export', {
+    params: { type },
+    responseType: 'blob',
+    headers: {
+      Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    },
+  });
+
+  return {
+    blob: response.data,
+    filename: resolveDownloadFilename(
+      response.headers['content-disposition'],
+      `revenue-report-${type}.xlsx`,
+    ),
+  };
+};
+
+const resolveDownloadFilename = (
+  contentDisposition: string | undefined,
+  fallback: string,
+) => {
+  if (!contentDisposition) return fallback;
+
+  const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+  if (utf8Match?.[1]) {
+    return decodeURIComponent(utf8Match[1]);
+  }
+
+  const asciiMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+  return asciiMatch?.[1] || fallback;
 };
 
 export const getOrderStats = async () => {

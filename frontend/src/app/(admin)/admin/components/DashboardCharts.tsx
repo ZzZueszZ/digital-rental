@@ -1,5 +1,6 @@
 "use client";
 
+import { Download } from "lucide-react";
 import {
   Area,
   AreaChart,
@@ -30,6 +31,8 @@ interface DashboardChartsProps {
   dailyOrders: DailyOrderStatResponse[];
   revenueMode: RevenueMode;
   onRevenueModeChange: (mode: RevenueMode) => void;
+  onExportRevenueReport: () => void;
+  isExportingRevenue?: boolean;
 }
 
 const tooltipStyle = {
@@ -44,6 +47,8 @@ export function DashboardCharts({
   dailyOrders,
   revenueMode,
   onRevenueModeChange,
+  onExportRevenueReport,
+  isExportingRevenue = false,
 }: DashboardChartsProps) {
   const revenueOptions: Array<{
     mode: RevenueMode;
@@ -91,11 +96,19 @@ export function DashboardCharts({
               </CardDescription>
             </div>
             <Button
+              type="button"
               variant="outline"
               size="sm"
-              className="h-9 rounded-xl border-zinc-200 bg-white px-4 text-[13px] font-medium text-zinc-700 hover:bg-zinc-950 hover:text-white"
+              onClick={onExportRevenueReport}
+              disabled={isExportingRevenue}
+              className="h-9 rounded-xl border-zinc-200 bg-white px-4 text-[13px] font-medium text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950"
             >
-              Xuất báo cáo
+              {isExportingRevenue ? (
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-700" />
+              ) : (
+                <Download className="mr-2 h-4 w-4" />
+              )}
+              {isExportingRevenue ? "Đang xuất..." : "Xuất báo cáo"}
             </Button>
           </div>
           <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -114,7 +127,7 @@ export function DashboardCharts({
                 >
                   <span className="block text-xs font-medium">{option.label}</span>
                   <span className="mt-1 block truncate text-sm font-semibold text-zinc-950">
-                    {new Intl.NumberFormat("vi-VN").format(option.value)} ₫
+                    {new Intl.NumberFormat("vi-VN").format(option.value)} đ
                   </span>
                 </button>
               );
@@ -158,7 +171,7 @@ export function DashboardCharts({
                 <RechartsTooltip
                   contentStyle={tooltipStyle}
                   formatter={(value) => [
-                    `${new Intl.NumberFormat("vi-VN").format(Number(value))} ₫`,
+                    `${new Intl.NumberFormat("vi-VN").format(Number(value))} đ`,
                     "Doanh thu",
                   ]}
                   itemStyle={{

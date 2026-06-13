@@ -5,6 +5,9 @@ import org.web.dashboard.dto.*;
 import org.web.dashboard.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +35,27 @@ public class DashboardController {
                 "Lấy thống kê doanh thu thành công!",
                 dashboardService.getRevenueStats(from, to)
         ));
+    }
+
+    @GetMapping("/revenue/export")
+    @PreAuthorize("hasAuthority('DASHBOARD_READ')")
+    public ResponseEntity<byte[]> exportRevenueReport(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(required = false, defaultValue = "total") String type
+    ) {
+        if (from == null) from = LocalDate.now().minusDays(30);
+        if (to == null) to = LocalDate.now();
+
+        RevenueReportType reportType = RevenueReportType.from(type);
+        byte[] file = dashboardService.exportRevenueReport(from, to, reportType);
+        String filename = "revenue-report-" + reportType.fileSuffix() + "-" + from + "_to_" + to + ".xlsx";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(file.length)
+                .body(file);
     }
 
     // ORDERS

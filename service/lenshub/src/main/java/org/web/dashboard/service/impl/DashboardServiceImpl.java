@@ -1,5 +1,13 @@
 package org.web.dashboard.service.impl;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.web.common.enums.AccountStatus;
 import org.web.common.enums.OrderStatus;
 import org.web.common.enums.PaymentStatus;
@@ -18,6 +26,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -77,6 +87,86 @@ public class DashboardServiceImpl implements DashboardService {
                 .rentalGrowthRate(calculateGrowthRate(rentalRevenue, previousRentalRevenue))
                 .dailyStats(mergeRevenueStats(purchaseStats, rentalStats))
                 .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public byte[] exportRevenueReport(LocalDate from, LocalDate to, RevenueReportType type) {
+        RevenueDashboardResponse revenue = getRevenueStats(from, to);
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("Doanh thu");
+            CellStyle titleStyle = createTitleStyle(workbook);
+            CellStyle headerStyle = createHeaderStyle(workbook);
+            CellStyle moneyStyle = createMoneyStyle(workbook);
+            CellStyle dateStyle = createDateStyle(workbook);
+
+            int rowIndex = 0;
+            Row titleRow = sheet.createRow(rowIndex++);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue(resolveReportTitle(type));
+            titleCell.setCellStyle(titleStyle);
+
+            sheet.createRow(rowIndex++).createCell(0).setCellValue(
+                    "Thời gian: " + from + " đến " + to
+            );
+            sheet.createRow(rowIndex++);
+
+            Row summaryHeader = sheet.createRow(rowIndex++);
+            createStyledCell(summaryHeader, 0, "Chỉ tiêu", headerStyle);
+            createStyledCell(summaryHeader, 1, "Giá trị", headerStyle);
+
+            if (type == RevenueReportType.TOTAL || type == RevenueReportType.PURCHASE) {
+                rowIndex = writeSummaryRow(sheet, rowIndex, "Doanh thu bán hàng", revenue.getPurchaseRevenue(), moneyStyle);
+            }
+            if (type == RevenueReportType.TOTAL || type == RevenueReportType.RENTAL) {
+                rowIndex = writeSummaryRow(sheet, rowIndex, "Doanh thu cho thuê", revenue.getRentalRevenue(), moneyStyle);
+            }
+            if (type == RevenueReportType.TOTAL) {
+                rowIndex = writeSummaryRow(sheet, rowIndex, "Tổng doanh thu", revenue.getTotalRevenue(), moneyStyle);
+            }
+            sheet.createRow(rowIndex++);
+
+            Row tableHeader = sheet.createRow(rowIndex++);
+            int col = 0;
+            createStyledCell(tableHeader, col++, "Ngày", headerStyle);
+            if (type == RevenueReportType.TOTAL || type == RevenueReportType.PURCHASE) {
+                createStyledCell(tableHeader, col++, "Doanh thu bán hàng", headerStyle);
+            }
+            if (type == RevenueReportType.TOTAL || type == RevenueReportType.RENTAL) {
+                createStyledCell(tableHeader, col++, "Doanh thu cho thuê", headerStyle);
+            }
+            if (type == RevenueReportType.TOTAL) {
+                createStyledCell(tableHeader, col, "Tổng doanh thu", headerStyle);
+            }
+
+            for (RevenueStatResponse stat : revenue.getDailyStats()) {
+                Row row = sheet.createRow(rowIndex++);
+                int valueCol = 0;
+                Cell dateCell = row.createCell(valueCol++);
+                dateCell.setCellValue(stat.getDate().toString());
+                dateCell.setCellStyle(dateStyle);
+
+                if (type == RevenueReportType.TOTAL || type == RevenueReportType.PURCHASE) {
+                    createMoneyCell(row, valueCol++, stat.getPurchaseRevenue(), moneyStyle);
+                }
+                if (type == RevenueReportType.TOTAL || type == RevenueReportType.RENTAL) {
+                    createMoneyCell(row, valueCol++, stat.getRentalRevenue(), moneyStyle);
+                }
+                if (type == RevenueReportType.TOTAL) {
+                    createMoneyCell(row, valueCol, stat.getRevenue(), moneyStyle);
+                }
+            }
+
+            for (int i = 0; i < 4; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            workbook.write(out);
+            return out.toByteArray();
+        } catch (IOException e) {
+            throw new IllegalStateException("Không thể xuất báo cáo doanh thu", e);
+        }
     }
 
     private List<RevenueStatResponse> getRentalRevenueStats(LocalDateTime start, LocalDateTime end) {
@@ -152,6 +242,61 @@ public class DashboardServiceImpl implements DashboardService {
                     .doubleValue();
         }
         return currentRevenue.compareTo(BigDecimal.ZERO) > 0 ? 100.0 : 0.0;
+    }
+
+    private String resolveReportTitle(RevenueReportType type) {
+        return switch (type) {
+            case PURCHASE -> "Báo cáo doanh thu bán hàng";
+            case RENTAL -> "Báo cáo doanh thu cho thuê";
+            case TOTAL -> "Báo cáo tổng doanh thu";
+        };
+    }
+
+    private int writeSummaryRow(Sheet sheet, int rowIndex, String label, BigDecimal value, CellStyle moneyStyle) {
+        Row row = sheet.createRow(rowIndex);
+        row.createCell(0).setCellValue(label);
+        createMoneyCell(row, 1, value, moneyStyle);
+        return rowIndex + 1;
+    }
+
+    private void createStyledCell(Row row, int columnIndex, String value, CellStyle style) {
+        Cell cell = row.createCell(columnIndex);
+        cell.setCellValue(value);
+        cell.setCellStyle(style);
+    }
+
+    private void createMoneyCell(Row row, int columnIndex, BigDecimal value, CellStyle style) {
+        Cell cell = row.createCell(columnIndex);
+        cell.setCellValue(value == null ? 0 : value.doubleValue());
+        cell.setCellStyle(style);
+    }
+
+    private CellStyle createTitleStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 16);
+        style.setFont(font);
+        return style;
+    }
+
+    private CellStyle createHeaderStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        style.setFont(font);
+        style.setBorderBottom(BorderStyle.THIN);
+        return style;
+    }
+
+    private CellStyle createMoneyStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        style.setDataFormat(workbook.createDataFormat().getFormat("#,##0 \"đ\""));
+        return style;
+    }
+
+    private CellStyle createDateStyle(Workbook workbook) {
+        return workbook.createCellStyle();
     }
 
     @Override

@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { AlertTriangle, DollarSign, ShoppingCart, Users } from "lucide-react";
+import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import {
+  exportRevenueReport,
   type RevenueMode,
   useDailyOrderStats,
   useLowStockStats,
@@ -19,6 +22,8 @@ import { TopProductsCard } from "./components/TopProductsCard";
 
 export default function AdminDashboardPage() {
   const [revenueMode, setRevenueMode] = useState<RevenueMode>("total");
+  const [isExportConfirmOpen, setIsExportConfirmOpen] = useState(false);
+  const [isExportingRevenue, setIsExportingRevenue] = useState(false);
   const { data: revenueRes } = useRevenueStats();
   const { data: orderRes } = useOrderStats();
   const { data: userSummaryRes } = useUserSummaryStats();
@@ -49,6 +54,32 @@ export default function AdminDashboardPage() {
       trend: revenueData?.rentalGrowthRate ?? 0,
     },
   }[revenueMode];
+  const selectedRevenueLabel = {
+    total: "tổng doanh thu",
+    purchase: "doanh thu bán hàng",
+    rental: "doanh thu cho thuê",
+  }[revenueMode];
+
+  const handleExportRevenueReport = async () => {
+    try {
+      setIsExportingRevenue(true);
+      const { blob, filename } = await exportRevenueReport(revenueMode);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      toast.success("Đã xuất báo cáo doanh thu");
+      setIsExportConfirmOpen(false);
+    } catch {
+      toast.error("Không thể xuất báo cáo doanh thu");
+    } finally {
+      setIsExportingRevenue(false);
+    }
+  };
 
   return (
     <div className="flex-1 space-y-5 lg:space-y-6">
@@ -122,6 +153,8 @@ export default function AdminDashboardPage() {
         dailyOrders={dailyOrders}
         revenueMode={revenueMode}
         onRevenueModeChange={setRevenueMode}
+        onExportRevenueReport={() => setIsExportConfirmOpen(true)}
+        isExportingRevenue={isExportingRevenue}
       />
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
@@ -130,6 +163,20 @@ export default function AdminDashboardPage() {
       </div>
 
       <RecentActivityCard />
+
+      <ConfirmDialog
+        open={isExportConfirmOpen}
+        onOpenChange={(open) => {
+          if (!isExportingRevenue) setIsExportConfirmOpen(open);
+        }}
+        title="Xuất báo cáo doanh thu"
+        description={`Bạn muốn xuất file Excel cho ${selectedRevenueLabel} trong 30 ngày gần nhất?`}
+        confirmText="Xuất Excel"
+        cancelText="Hủy"
+        onConfirm={handleExportRevenueReport}
+        isLoading={isExportingRevenue}
+        variant="info"
+      />
     </div>
   );
 }

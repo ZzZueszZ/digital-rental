@@ -1,7 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { AlertTriangle, DollarSign, ShoppingCart, Users } from "lucide-react";
+import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import {
+  exportRevenueReport,
   useDailyOrderStats,
   useLowStockStats,
   useOrderStats,
@@ -15,7 +19,9 @@ import { RecentActivityCard } from "./components/RecentActivityCard";
 import { StatCard } from "./components/StatCard";
 import { TopProductsCard } from "./components/TopProductsCard";
 
-export default function AdminDashboardPage() {
+export default function StaffDashboardPage() {
+  const [isExportConfirmOpen, setIsExportConfirmOpen] = useState(false);
+  const [isExportingRevenue, setIsExportingRevenue] = useState(false);
   const { data: revenueRes } = useRevenueStats();
   const { data: orderRes } = useOrderStats();
   const { data: userSummaryRes } = useUserSummaryStats();
@@ -29,6 +35,20 @@ export default function AdminDashboardPage() {
   const topProducts = topProductsRes?.data || [];
   const lowStock = lowStockRes?.data || [];
   const dailyOrders = dailyOrdersRes?.data || [];
+
+  const handleExportRevenueReport = async () => {
+    try {
+      setIsExportingRevenue(true);
+      const { blob, filename } = await exportRevenueReport("total");
+      downloadBlob(blob, filename);
+      toast.success("Đã xuất báo cáo doanh thu");
+      setIsExportConfirmOpen(false);
+    } catch {
+      toast.error("Không thể xuất báo cáo doanh thu");
+    } finally {
+      setIsExportingRevenue(false);
+    }
+  };
 
   return (
     <div className="flex-1 space-y-5 lg:space-y-6">
@@ -72,7 +92,7 @@ export default function AdminDashboardPage() {
                   style: "currency",
                   currency: "VND",
                 }).format(revenueData.totalRevenue)
-              : "0 ₫"
+              : "0 đ"
           }
           trend={revenueData?.growthRate ?? 0}
           icon={DollarSign}
@@ -101,7 +121,12 @@ export default function AdminDashboardPage() {
         />
       </div>
 
-      <DashboardCharts revenueData={revenueData} dailyOrders={dailyOrders} />
+      <DashboardCharts
+        revenueData={revenueData}
+        dailyOrders={dailyOrders}
+        onExportRevenueReport={() => setIsExportConfirmOpen(true)}
+        isExportingRevenue={isExportingRevenue}
+      />
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         <LowStockCard products={lowStock} />
@@ -109,6 +134,31 @@ export default function AdminDashboardPage() {
       </div>
 
       <RecentActivityCard />
+
+      <ConfirmDialog
+        open={isExportConfirmOpen}
+        onOpenChange={(open) => {
+          if (!isExportingRevenue) setIsExportConfirmOpen(open);
+        }}
+        title="Xuất báo cáo doanh thu"
+        description="Bạn muốn xuất file Excel tổng doanh thu trong 30 ngày gần nhất?"
+        confirmText="Xuất Excel"
+        cancelText="Hủy"
+        onConfirm={handleExportRevenueReport}
+        isLoading={isExportingRevenue}
+        variant="info"
+      />
     </div>
   );
 }
+
+const downloadBlob = (blob: Blob, filename: string) => {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+};

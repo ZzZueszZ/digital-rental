@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface DashboardService {
     RevenueDashboardResponse getRevenueStats(LocalDate from, LocalDate to);
+    byte[] exportRevenueReport(LocalDate from, LocalDate to, RevenueReportType type);
     OrderStatResponse getOrderStats();
     List<TopProductResponse> getTopSellingProducts(int limit);
     List<LowStockResponse> getLowStockProducts(int threshold);

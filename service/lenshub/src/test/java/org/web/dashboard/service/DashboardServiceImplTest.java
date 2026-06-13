@@ -1,7 +1,9 @@
 package org.web.dashboard.service;
 
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.web.dashboard.dto.RevenueReportType;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,11 +18,14 @@ import org.web.rentals.repository.RentalOrderRepository;
 import org.web.rentals.repository.RentalPaymentRepository;
 import org.web.users.repository.UserRepository;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
@@ -86,6 +91,49 @@ class DashboardServiceImplTest {
         assertEquals(new BigDecimal("100"), daily.getPurchaseRevenue());
         assertEquals(new BigDecimal("350"), daily.getRentalRevenue());
         assertEquals(new BigDecimal("450"), daily.getRevenue());
+    }
+
+    @Test
+    void exportRevenueReportCreatesExcelWorkbook() throws IOException {
+        LocalDate currentDate = LocalDate.of(2026, 6, 12);
+        LocalDate previousDate = LocalDate.of(2026, 6, 11);
+
+        when(orderRepository.getRevenueStats(anyList(), any(), any()))
+                .thenReturn(
+                        List.of(stat(currentDate, "1000000")),
+                        List.of(stat(previousDate, "500000"))
+                );
+        when(rentalOrderRepository.getRentalFeeRevenueStats(any(), any(), any()))
+                .thenReturn(
+                        List.of(stat(currentDate, "300000")),
+                        List.of(stat(previousDate, "200000"))
+                );
+        when(rentalPaymentRepository.getRevenueStats(
+                any(),
+                eq(List.of(RentalPaymentType.EXTRA_FEE_OFFLINE)),
+                any(),
+                any()
+        ))
+                .thenReturn(
+                        List.of(stat(currentDate, "50000")),
+                        List.of()
+                );
+
+        byte[] file = dashboardService.exportRevenueReport(
+                currentDate,
+                currentDate,
+                RevenueReportType.TOTAL
+        );
+
+        assertTrue(file.length > 0);
+        try (var workbook = WorkbookFactory.create(new ByteArrayInputStream(file))) {
+            var sheet = workbook.getSheet("Doanh thu");
+            assertEquals("Báo cáo tổng doanh thu", sheet.getRow(0).getCell(0).getStringCellValue());
+            assertEquals("Ngày", sheet.getRow(8).getCell(0).getStringCellValue());
+            assertEquals("Doanh thu bán hàng", sheet.getRow(8).getCell(1).getStringCellValue());
+            assertEquals("Doanh thu cho thuê", sheet.getRow(8).getCell(2).getStringCellValue());
+            assertEquals("Tổng doanh thu", sheet.getRow(8).getCell(3).getStringCellValue());
+        }
     }
 
     private RevenueStatResponse stat(LocalDate date, String revenue) {

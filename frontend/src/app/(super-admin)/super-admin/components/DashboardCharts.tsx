@@ -1,5 +1,6 @@
 "use client";
 
+import { Download } from "lucide-react";
 import {
   Area,
   AreaChart,
@@ -27,6 +28,8 @@ import {
 interface DashboardChartsProps {
   revenueData: RevenueDashboardResponse | undefined;
   dailyOrders: DailyOrderStatResponse[];
+  onExportRevenueReport: () => void;
+  isExportingRevenue?: boolean;
 }
 
 const tooltipStyle = {
@@ -39,6 +42,8 @@ const tooltipStyle = {
 export function DashboardCharts({
   revenueData,
   dailyOrders,
+  onExportRevenueReport,
+  isExportingRevenue = false,
 }: DashboardChartsProps) {
   return (
     <div className="grid grid-cols-1 gap-5 xl:grid-cols-7">
@@ -54,11 +59,19 @@ export function DashboardCharts({
               </CardDescription>
             </div>
             <Button
+              type="button"
               variant="outline"
               size="sm"
-              className="h-9 rounded-xl border-zinc-200 bg-white px-4 text-[13px] font-medium text-zinc-700 hover:bg-zinc-950 hover:text-white"
+              onClick={onExportRevenueReport}
+              disabled={isExportingRevenue}
+              className="h-9 rounded-xl border-zinc-200 bg-white px-4 text-[13px] font-medium text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950"
             >
-              Xuất báo cáo
+              {isExportingRevenue ? (
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-700" />
+              ) : (
+                <Download className="mr-2 h-4 w-4" />
+              )}
+              {isExportingRevenue ? "Đang xuất..." : "Xuất báo cáo"}
             </Button>
           </div>
         </CardHeader>

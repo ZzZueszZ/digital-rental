@@ -59,6 +59,7 @@ def test_liveness_contract() -> None:
     data = response.json()["data"]
     assert set(data) == {"score", "passed", "spoof_detected", "multiple_faces_detected"}
     assert data["passed"] is False
+    assert response.json()["diagnostics"]["reason"] == "invalid_video_signature"
 
 
 def test_rejects_wrong_api_key() -> None:

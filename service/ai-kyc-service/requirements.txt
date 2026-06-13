@@ -8,7 +8,7 @@ opencv-python-headless==4.10.0.84
 --extra-index-url https://www.paddlepaddle.org.cn/packages/stable/cpu/
 paddlepaddle==3.2.0
 paddleocr==3.3.2
-# Optional production model dependencies. Install when the target CPU host can support them.
-# insightface
-# onnxruntime
-# mediapipe
+onnxruntime==1.20.1
+insightface @ https://github.com/Gourieff/Assets/raw/main/Insightface/insightface-0.7.3-cp313-cp313-win_amd64.whl ; sys_platform == "win32" and python_version >= "3.13" and platform_machine == "AMD64"
+insightface==0.7.3 ; sys_platform != "win32" or python_version < "3.13"
+mediapipe==0.10.35

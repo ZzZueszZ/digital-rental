@@ -3,8 +3,10 @@ from functools import lru_cache
 from importlib import metadata
 from typing import Any
 import logging
+import os
 import tempfile
 import unicodedata
+import warnings
 
 from app.config import get_settings
 from app.services.document_preprocessor import ImageCandidate
@@ -181,6 +183,8 @@ class PaddleOcrEngine:
     @staticmethod
     @lru_cache(maxsize=1)
     def _get_ocr() -> tuple[Any | None, str]:
+        os.environ.setdefault("DISABLE_MODEL_SOURCE_CHECK", "True")
+        warnings.filterwarnings("ignore", message="No ccache found.*")
         try:
             from paddleocr import PaddleOCR  # type: ignore
         except Exception as exc:
@@ -200,7 +204,6 @@ class PaddleOcrEngine:
                 "use_doc_unwarping": False,
                 "use_textline_orientation": True,
             },
-            {"use_angle_cls": True, "lang": "vi", "show_log": False},
             {"lang": "vi"},
         )
         last_error = ""
@@ -213,4 +216,9 @@ class PaddleOcrEngine:
             except Exception as exc:
                 logger.warning("PaddleOCR init attempt failed kwargs=%s error=%s", kwargs, exc)
                 last_error = str(exc)
+        if "No available model hosting platforms detected" in last_error:
+            return None, (
+                "PaddleOCR init failed: model files are not cached and model host is unreachable. "
+                "Run once with network access or pre-download PaddleOCR models before offline use."
+            )
         return None, f"PaddleOCR init failed: {last_error}"

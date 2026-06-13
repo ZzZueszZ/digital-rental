@@ -71,6 +71,24 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: trace # log giá trị parameter
 
 app:
+  bootstrap:
+    admin:
+      enabled: ${APP_BOOTSTRAP_ADMIN_ENABLED:false}
+      email: ${APP_BOOTSTRAP_ADMIN_EMAIL:}
+      password: ${APP_BOOTSTRAP_ADMIN_PASSWORD:}
+      full-name: ${APP_BOOTSTRAP_ADMIN_FULL_NAME:Admin Digital Rental}
+      first-name: ${APP_BOOTSTRAP_ADMIN_FIRST_NAME:Admin}
+      last-name: ${APP_BOOTSTRAP_ADMIN_LAST_NAME:Digital Rental}
+      occupation: ${APP_BOOTSTRAP_ADMIN_OCCUPATION:System Administrator}
+      company-name: ${APP_BOOTSTRAP_ADMIN_COMPANY_NAME:Digital Rental}
+    super-admin:
+      email: ${APP_BOOTSTRAP_SUPER_ADMIN_EMAIL:}
+      password: ${APP_BOOTSTRAP_SUPER_ADMIN_PASSWORD:}
+      full-name: ${APP_BOOTSTRAP_SUPER_ADMIN_FULL_NAME:Super Admin}
+      first-name: ${APP_BOOTSTRAP_SUPER_ADMIN_FIRST_NAME:Super}
+      last-name: ${APP_BOOTSTRAP_SUPER_ADMIN_LAST_NAME:Admin}
+      occupation: ${APP_BOOTSTRAP_SUPER_ADMIN_OCCUPATION:Super Administrator}
+      company-name: ${APP_BOOTSTRAP_SUPER_ADMIN_COMPANY_NAME:Digital Rental}
   e2ee:
     enabled: ${APP_E2EE_ENABLED:false}
   jwt:

@@ -3,6 +3,7 @@ package org.web.seeders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.web.authentication.repository.AppRoleRepository;
@@ -24,33 +25,74 @@ public class AdminUserSeeder implements CommandLineRunner {
     private final AppRoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserProfileRepository userProfileRepository;
+    private final Environment environment;
 
     @Override
     public void run(String... args) {
-
-        if (!userRepository.existsByEmail("tuhocbackend@gmail.com")) {
-            var adminRole = roleRepository.findByCode("ADMIN").orElseThrow();
-            User admin = User.builder()
-                    .email("tuhocbackend@gmail.com")
-                    .passwordHash(passwordEncoder.encode("Admin@123"))
-                    .roles(Set.of(adminRole))
-                    .accountStatus(AccountStatus.ACTIVE)
-                    .build();
-            User savedAdmin = userRepository.save(admin);
-            createProfile(savedAdmin, "Admin LensHub", "Admin", "LensHub", Gender.MALE, "System Administrator", "LensHub Corp");
+        if (!environment.getProperty("app.bootstrap.admin.enabled", Boolean.class, false)) {
+            return;
         }
 
-        if (!userRepository.existsByEmail("superadmin@gmail.com")) {
-            var superAdminRole = roleRepository.findByCode("SUPER_ADMIN").orElseThrow();
-            User superAdmin = User.builder()
-                    .email("superadmin@gmail.com")
-                    .passwordHash(passwordEncoder.encode("Admin@123"))
-                    .roles(Set.of(superAdminRole))
-                    .accountStatus(AccountStatus.ACTIVE)
-                    .build();
-            User savedSuperAdmin = userRepository.save(superAdmin);
-            createProfile(savedSuperAdmin, "Super Admin", "Super", "Admin", Gender.MALE, "Super Administrator", "LensHub Corp");
+        seedAccount(
+                "ADMIN",
+                requiredProperty("app.bootstrap.admin.email"),
+                requiredProperty("app.bootstrap.admin.password"),
+                propertyOrDefault("app.bootstrap.admin.full-name", "Admin Digital Rental"),
+                propertyOrDefault("app.bootstrap.admin.first-name", "Admin"),
+                propertyOrDefault("app.bootstrap.admin.last-name", "Digital Rental"),
+                propertyOrDefault("app.bootstrap.admin.occupation", "System Administrator"),
+                propertyOrDefault("app.bootstrap.admin.company-name", "Digital Rental")
+        );
+
+        seedAccount(
+                "SUPER_ADMIN",
+                requiredProperty("app.bootstrap.super-admin.email"),
+                requiredProperty("app.bootstrap.super-admin.password"),
+                propertyOrDefault("app.bootstrap.super-admin.full-name", "Super Admin"),
+                propertyOrDefault("app.bootstrap.super-admin.first-name", "Super"),
+                propertyOrDefault("app.bootstrap.super-admin.last-name", "Admin"),
+                propertyOrDefault("app.bootstrap.super-admin.occupation", "Super Administrator"),
+                propertyOrDefault("app.bootstrap.super-admin.company-name", "Digital Rental")
+        );
+    }
+
+    private void seedAccount(
+            String roleCode,
+            String email,
+            String password,
+            String fullName,
+            String firstName,
+            String lastName,
+            String occupation,
+            String companyName
+    ) {
+        if (userRepository.existsByEmail(email)) {
+            return;
         }
+
+        var role = roleRepository.findByCode(roleCode).orElseThrow();
+        User user = User.builder()
+                .email(email)
+                .passwordHash(passwordEncoder.encode(password))
+                .roles(Set.of(role))
+                .accountStatus(AccountStatus.ACTIVE)
+                .emailVerified(true)
+                .build();
+        User savedUser = userRepository.save(user);
+        createProfile(savedUser, fullName, firstName, lastName, Gender.MALE, occupation, companyName);
+    }
+
+    private String requiredProperty(String key) {
+        String value = environment.getProperty(key);
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException("Missing required admin bootstrap env: " + key);
+        }
+        return value.trim();
+    }
+
+    private String propertyOrDefault(String key, String fallback) {
+        String value = environment.getProperty(key);
+        return value == null || value.isBlank() ? fallback : value.trim();
     }
 
     private void createProfile(User user, String fullName, String firstName, String lastName,

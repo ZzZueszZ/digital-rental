@@ -131,7 +131,7 @@ Implemented endpoints:
 - `POST /dmp/liveness/v3`: liveness video contract.
 - `GET /health`: service health check.
 
-The MVP is CPU-only, uses lazy optional imports for heavier model packages, and includes fallback logic plus API contract tests.
+The MVP is CPU-only, uses lazy optional imports for heavier model packages, and includes API contract tests. Face match now fails closed when InsightFace/ONNX Runtime is unavailable instead of using whole-image perceptual similarity. Liveness now validates real video metadata before model work, samples bounded frames, runs active pose through an optional MediaPipe Face Landmarker model, and can run passive ONNX anti-spoof on CPU. Missing liveness models fail closed while keeping the Java-compatible `data` response stable and putting debug details in `diagnostics`.
 
 ## Documentation Gaps
 

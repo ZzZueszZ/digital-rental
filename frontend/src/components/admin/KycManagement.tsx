@@ -1,40 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { identityService, KycSessionResponse } from "@/services/identity";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { AdminFormDialog } from "@/components/common/AdminFormDialog";
-import { Badge } from "@/components/ui/badge";
-import { Pagination } from "@/app/(staff)/staff/components/Pagination";
+import { useEffect, useMemo, useState } from "react";
 import {
   CheckCircle2,
-  XCircle,
   Eye,
+  Fingerprint,
   Loader2,
   RefreshCw,
   Search,
   ShieldCheck,
-  Fingerprint,
+  Sparkles,
+  UserCheck,
+  XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminFormDialog } from "@/components/common/AdminFormDialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Pagination } from "@/app/(staff)/staff/components/Pagination";
 import { cn } from "@/lib/utils";
+import { identityService, KycSessionResponse } from "@/services/identity";
 
 type KycRiskLevel = NonNullable<KycSessionResponse["riskLevel"]>;
 
 const riskMeta: Record<KycRiskLevel, { label: string; className: string }> = {
   LOW_RISK: {
-    label: "Low",
-    className: "bg-emerald-50 text-emerald-700 border-emerald-100",
+    label: "Thấp",
+    className: "border-emerald-100 bg-emerald-50 text-emerald-700",
   },
   MEDIUM_RISK: {
-    label: "Medium",
-    className: "bg-amber-50 text-amber-700 border-amber-100",
+    label: "Trung bình",
+    className: "border-amber-100 bg-amber-50 text-amber-700",
   },
   HIGH_RISK: {
-    label: "High",
-    className: "bg-red-50 text-red-700 border-red-100",
+    label: "Cao",
+    className: "border-red-100 bg-red-50 text-red-700",
   },
 };
 
@@ -49,7 +51,6 @@ export default function KycManagement() {
     totalPages: number;
     totalElements: number;
   } | null>(null);
-
   const [selectedSession, setSelectedSession] =
     useState<KycSessionResponse | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -73,9 +74,11 @@ export default function KycManagement() {
           totalPages: res.pagination.totalPages,
           totalElements: res.pagination.totalElements,
         });
+      } else {
+        setPagination(null);
       }
     } catch (err) {
-      toast.error("Không thể tải danh sách phiên eKYC");
+      toast.error("Không thể tải danh sách hồ sơ eKYC");
       console.error(err);
     } finally {
       setLoading(false);
@@ -85,6 +88,34 @@ export default function KycManagement() {
   useEffect(() => {
     fetchPendingSessions();
   }, [page]);
+
+  const filteredSessions = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return sessions;
+    return sessions.filter((session) =>
+      [
+        session.fullName,
+        session.identityNumber,
+        session.userEmail,
+      ].some((value) => value?.toLowerCase().includes(q)),
+    );
+  }, [searchQuery, sessions]);
+
+  const stats = useMemo(() => {
+    const highRisk = sessions.filter((s) => s.riskLevel === "HIGH_RISK").length;
+    const needsManual = sessions.filter((s) => s.manualReviewRequired).length;
+    const avgFaceMatch =
+      sessions.length === 0
+        ? 0
+        : sessions.reduce((sum, s) => sum + (s.faceMatchScore ?? 0), 0) /
+          sessions.length;
+    return {
+      total: pagination?.totalElements ?? sessions.length,
+      highRisk,
+      needsManual,
+      avgFaceMatch,
+    };
+  }, [pagination?.totalElements, sessions]);
 
   const handleOpenDetail = (session: KycSessionResponse) => {
     setSelectedSession(session);
@@ -112,13 +143,13 @@ export default function KycManagement() {
       });
       toast.success(
         resolveAction === "approve"
-          ? "Đã phê duyệt eKYC thành công!"
-          : "Đã từ chối eKYC của khách hàng!",
+          ? "Đã phê duyệt eKYC thành công"
+          : "Đã từ chối hồ sơ eKYC",
       );
       setIsResolveOpen(false);
       setIsDetailOpen(false);
       setSelectedSession(null);
-      fetchPendingSessions();
+      await fetchPendingSessions();
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
       toast.error(err.response?.data?.message || "Xử lý eKYC thất bại");
@@ -128,47 +159,58 @@ export default function KycManagement() {
     }
   };
 
-  const filteredSessions = sessions.filter((s) => {
-    const q = searchQuery.toLowerCase();
-    return (
-      (s.fullName && s.fullName.toLowerCase().includes(q)) ||
-      (s.identityNumber && s.identityNumber.includes(q)) ||
-      (s.userEmail && s.userEmail.toLowerCase().includes(q))
-    );
-  });
-
   return (
-    <div className="space-y-6">
-      {/* Main Table Card */}
-      <div className="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden">
-        {/* Header containing Title & Filters */}
-        <div className="px-5 py-4 sm:py-5 border-b border-zinc-50">
-          <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
-            {/* Left: Title + Subtitle */}
+    <div className="space-y-5">
+      <section className="rounded-xl border border-zinc-200/80 bg-white p-5 sm:p-6">
+        <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+          <div className="max-w-2xl">
+            <span className="mb-3 inline-flex rounded-full border border-red-100 bg-red-50 px-3 py-1 text-[13px] font-medium text-red-600">
+              Kiểm duyệt định danh
+            </span>
+            <h2 className="text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">
+              Duyệt hồ sơ eKYC.
+            </h2>
+            <p className="mt-2 text-sm font-medium leading-6 text-zinc-500">
+              Kiểm tra OCR, đối chiếu khuôn mặt, liveness và mức độ rủi ro trước
+              khi xác minh người thuê.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-sm sm:min-w-[360px]">
+            <MetricCard label="Chờ duyệt" value={stats.total} />
+            <MetricCard label="Rủi ro cao" value={stats.highRisk} tone="red" />
+            <MetricCard label="Cần xem tay" value={stats.needsManual} />
+            <MetricCard
+              label="Khớp mặt TB"
+              value={`${(stats.avgFaceMatch * 100).toFixed(0)}%`}
+              tone="green"
+            />
+          </div>
+        </div>
+      </section>
+
+      <div className="overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-none">
+        <div className="border-b border-zinc-100 px-5 py-4">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-100/20">
-                <ShieldCheck
-                  className="w-4.5 h-4.5 text-white"
-                  strokeWidth={2}
-                />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600 text-white">
+                <ShieldCheck className="h-4 w-4" />
               </div>
               <div>
-                <h2 className="text-2xl text-zinc-950 tracking-tight leading-tight">
-                  Duyệt hồ sơ eKYC
-                </h2>
-                <p className="text-[14px] text-zinc-500 font-medium ml-1">
-                  Phê duyệt & kiểm tra tính hợp lệ của hồ sơ định danh điện tử
+                <h3 className="text-xl font-semibold tracking-tight text-zinc-950">
+                  Danh sách hồ sơ
+                </h3>
+                <p className="mt-1 text-sm font-medium text-zinc-500">
+                  Chỉ hiển thị hồ sơ đang chờ xét duyệt.
                 </p>
               </div>
             </div>
 
-            {/* Right: Search + Refresh */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="relative flex-1 xl:w-72 group">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-zinc-950 transition-colors duration-200" />
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="relative w-full sm:w-80">
+                <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
                 <Input
-                  placeholder="Tìm theo tên, email, CCCD..."
-                  className="pl-10 h-10 rounded-xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:border-red-500/30 transition-all text-xs font-medium text-zinc-900 placeholder:text-zinc-400"
+                  placeholder="Tìm tên, email, CCCD..."
+                  className="h-11 rounded-xl border-zinc-200 bg-white pl-10 text-sm font-medium text-zinc-900 placeholder:text-zinc-400 focus-visible:border-red-200 focus-visible:ring-red-100"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -177,131 +219,114 @@ export default function KycManagement() {
                 />
               </div>
               <Button
+                type="button"
                 onClick={fetchPendingSessions}
                 variant="outline"
-                className="h-10 px-4 border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600 hover:text-zinc-950 font-bold text-xs shrink-0 rounded-xl flex items-center gap-2 transition-all active:scale-95 shadow-[0_2px_6px_rgba(0,0,0,0.02)]"
+                className="h-11 rounded-xl border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950"
               >
-                <RefreshCw className="h-4 w-4" />
+                <RefreshCw className="mr-2 h-4 w-4" />
                 Làm mới
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Loading Spinner */}
         {loading ? (
-          <div className="p-16 flex flex-col items-center justify-center gap-4">
-            <Loader2 className="w-8 h-8 text-red-600 animate-spin" />
-            <p className="text-xs font-bold text-zinc-400">
+          <div className="flex flex-col items-center justify-center gap-3 p-16">
+            <Loader2 className="h-8 w-8 animate-spin text-red-600" />
+            <p className="text-sm font-medium text-zinc-500">
               Đang tải danh sách hồ sơ...
             </p>
           </div>
         ) : filteredSessions.length === 0 ? (
-          <div className="p-20 text-center">
-            <div className="w-16 h-16 rounded-full bg-zinc-50 flex items-center justify-center mx-auto mb-4 border border-zinc-100">
-              <Fingerprint className="w-8 h-8 text-zinc-400" />
+          <div className="p-16 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-zinc-100 bg-zinc-50">
+              <Fingerprint className="h-7 w-7 text-zinc-400" />
             </div>
-            <p className="text-sm font-bold text-zinc-900">
+            <p className="text-base font-semibold text-zinc-950">
               Không có hồ sơ nào đang chờ duyệt
             </p>
-            <p className="text-xs text-zinc-400 font-medium mt-1">
-              Toàn bộ yêu cầu eKYC đã được giải quyết.
+            <p className="mt-1 text-sm font-medium text-zinc-500">
+              Toàn bộ yêu cầu eKYC hiện tại đã được xử lý.
             </p>
           </div>
         ) : (
           <>
-            {/* Desktop Table (>= md) */}
-            <div className="hidden md:block overflow-x-auto">
+            <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-zinc-50/50 border-b border-zinc-100">
+                  <tr className="border-b border-zinc-100 bg-zinc-50/70">
                     {[
                       "Khách hàng",
                       "Số CCCD",
-                      "Khớp mặt AI",
-                      "OCR Confidence",
-                      "Risk",
+                      "AI match",
+                      "OCR",
+                      "Rủi ro",
                       "Thời gian gửi",
                       "Thao tác",
-                    ].map((col, i) => (
+                    ].map((column) => (
                       <th
-                        key={i}
+                        key={column}
                         className={cn(
-                          "px-6 py-4 text-[13px] font-semibold text-zinc-400 whitespace-nowrap",
-                          col === "Thao tác" && "text-right",
+                          "px-6 py-4 text-sm font-medium text-zinc-500 whitespace-nowrap",
+                          column === "Thao tác" && "text-right",
                         )}
                       >
-                        {col}
+                        {column}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-50">
+                <tbody className="divide-y divide-zinc-100">
                   {filteredSessions.map((session) => (
                     <tr
                       key={session.id}
                       onClick={() => handleOpenDetail(session)}
-                      className="hover:bg-zinc-50/50 cursor-pointer transition-colors"
+                      className="cursor-pointer transition-colors hover:bg-zinc-50/70"
                     >
                       <td className="px-6 py-4">
-                        <div className="flex flex-col">
-                          <span className="font-bold text-zinc-900 text-sm">
-                            {session.fullName || "Chưa cập nhật"}
-                          </span>
-                          <span className="text-xs text-zinc-400 font-medium">
-                            {session.userEmail}
-                          </span>
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-100 bg-zinc-50 text-sm font-semibold text-zinc-700">
+                            {getInitial(session.fullName || session.userEmail)}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-zinc-950">
+                              {session.fullName || "Chưa cập nhật"}
+                            </p>
+                            <p className="truncate text-xs font-medium text-zinc-500">
+                              {session.userEmail}
+                            </p>
+                          </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 font-bold text-zinc-700 text-sm">
-                        {session.identityNumber}
+                      <td className="px-6 py-4 text-sm font-medium text-zinc-700">
+                        {session.identityNumber || "---"}
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-bold text-zinc-800">
-                            {((session.faceMatchScore ?? 0.95) * 100).toFixed(
-                              0,
-                            )}
-                            %
-                          </span>
-                          <Badge
-                            variant="outline"
-                            className={
-                              (session.faceMatchPassed ?? true)
-                                ? "bg-emerald-50 text-emerald-700 border-emerald-100 font-bold"
-                                : "bg-red-50 text-red-700 border-red-100 font-bold"
-                            }
-                          >
-                            {(session.faceMatchPassed ?? true)
-                              ? "Hợp lệ"
-                              : "Lỗi khớp"}
-                          </Badge>
-                        </div>
+                        <FaceBadge session={session} />
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-zinc-600">
-                        {((session.ocrConfidence ?? 0.96) * 100).toFixed(0)}%
+                      <td className="px-6 py-4 text-sm font-medium text-zinc-700">
+                        {formatRatioPercent(session.ocrConfidence)}
                       </td>
                       <td className="px-6 py-4">
                         <RiskBadge session={session} />
                       </td>
-                      <td className="px-6 py-4 text-xs text-zinc-400 font-semibold">
-                        {session.submittedAt
-                          ? new Date(session.submittedAt).toLocaleString(
-                              "vi-VN",
-                            )
-                          : "Vừa xong"}
+                      <td className="px-6 py-4 text-sm font-medium text-zinc-500">
+                        {formatDateTime(session.submittedAt)}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <Button
+                          type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleOpenDetail(session);
                           }}
-                          variant="ghost"
-                          size="icon"
-                          className="h-9 w-9 rounded-xl hover:bg-zinc-100"
+                          variant="outline"
+                          size="sm"
+                          className="h-9 rounded-xl border-zinc-200 bg-white text-sm font-medium !text-zinc-700 hover:bg-zinc-100 hover:!text-zinc-950 [&_svg]:!text-zinc-500 hover:[&_svg]:!text-zinc-700"
                         >
-                          <Eye className="h-4.5 w-4.5 text-zinc-500" />
+                          <Eye className="mr-2 h-4 w-4" />
+                          Xem
                         </Button>
                       </td>
                     </tr>
@@ -310,68 +335,37 @@ export default function KycManagement() {
               </table>
             </div>
 
-            {/* Mobile List (< md) */}
-            <div className="md:hidden divide-y divide-zinc-50">
+            <div className="divide-y divide-zinc-100 md:hidden">
               {filteredSessions.map((session) => (
-                <div
+                <button
                   key={session.id}
+                  type="button"
                   onClick={() => handleOpenDetail(session)}
-                  className="p-4 space-y-3 cursor-pointer hover:bg-zinc-50/55 transition-colors"
+                  className="w-full p-4 text-left transition-colors hover:bg-zinc-50"
                 >
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-bold text-zinc-900">
+                      <p className="text-sm font-semibold text-zinc-950">
                         {session.fullName || "Chưa cập nhật"}
                       </p>
-                      <p className="text-xs text-zinc-400 font-medium">
+                      <p className="mt-1 text-xs font-medium text-zinc-500">
                         {session.userEmail}
                       </p>
                     </div>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenDetail(session);
-                      }}
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 rounded-xl hover:bg-zinc-100"
-                    >
-                      <Eye className="h-4 w-4 text-zinc-500" />
-                    </Button>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 text-xs">
-                    <span className="bg-zinc-50 border border-zinc-200/50 text-zinc-600 px-2 py-0.5 rounded-xl font-semibold">
-                      CCCD: {session.identityNumber}
-                    </span>
-                    <span
-                      className={cn(
-                        "px-2 py-0.5 rounded-xl font-bold border",
-                        (session.faceMatchPassed ?? true)
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                          : "bg-red-50 text-red-700 border-red-100",
-                      )}
-                    >
-                      AI Match:{" "}
-                      {((session.faceMatchScore ?? 0.95) * 100).toFixed(0)}%
-                    </span>
-                    <span className="bg-zinc-50 border border-zinc-200/50 text-zinc-500 px-2 py-0.5 rounded-xl font-semibold">
-                      OCR: {((session.ocrConfidence ?? 0.96) * 100).toFixed(0)}%
-                    </span>
                     <RiskBadge session={session} />
                   </div>
-
-                  <p className="text-[10px] text-zinc-400 font-semibold">
-                    Gửi lúc:{" "}
-                    {session.submittedAt
-                      ? new Date(session.submittedAt).toLocaleString("vi-VN")
-                      : "Vừa xong"}
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <MiniTag>CCCD: {session.identityNumber || "---"}</MiniTag>
+                    <MiniTag>AI: {formatRatioPercent(session.faceMatchScore)}</MiniTag>
+                    <MiniTag>OCR: {formatRatioPercent(session.ocrConfidence)}</MiniTag>
+                  </div>
+                  <p className="mt-3 text-xs font-medium text-zinc-400">
+                    Gửi lúc: {formatDateTime(session.submittedAt)}
                   </p>
-                </div>
+                </button>
               ))}
             </div>
 
-            {/* Pagination Controls */}
             {pagination && (
               <Pagination
                 page={page}
@@ -385,322 +379,177 @@ export default function KycManagement() {
         )}
       </div>
 
-      {/* Detail Dialog */}
       {selectedSession && (
         <AdminFormDialog
           open={isDetailOpen}
           onOpenChange={setIsDetailOpen}
           icon={ShieldCheck}
-          iconClassName="bg-red-600 text-white shadow-lg shadow-red-100"
+          iconClassName="bg-red-600 text-white"
           title={`Chi tiết hồ sơ eKYC #${selectedSession.id}`}
-          description="Xem chi tiết thông tin OCR trích xuất và hình ảnh tài liệu đối chiếu"
-          maxWidth="max-w-4xl"
-          hideFooter={true}
+          description="Kiểm tra thông tin OCR, AI face match, liveness và tài liệu đối chiếu."
+          maxWidth="max-w-5xl"
+          hideFooter
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column: OCR Fields */}
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-sm font-semibold text-zinc-700 mb-4">
-                  Thông tin OCR trích xuất
-                </h3>
-                <div className="bg-zinc-50 p-6 rounded-xl border border-black/5 space-y-4">
-                  <DetailRow
-                    label="Số CCCD"
-                    value={selectedSession.identityNumber}
-                  />
-                  <DetailRow
-                    label="Họ và tên"
-                    value={selectedSession.fullName}
-                  />
-                  <DetailRow
-                    label="Ngày sinh"
-                    value={
-                      selectedSession.dateOfBirth
-                        ? String(selectedSession.dateOfBirth)
-                        : ""
-                    }
-                  />
-                  <DetailRow
-                    label="Giới tính"
-                    value={
-                      selectedSession.gender === "MALE"
-                        ? "Nam"
-                        : selectedSession.gender === "FEMALE"
-                          ? "Nữ"
-                          : "Khác"
-                    }
-                  />
-                  <DetailRow
-                    label="Quốc tịch"
-                    value={selectedSession.nationality}
-                  />
-                  <DetailRow
-                    label="Quê quán"
-                    value={selectedSession.placeOfOrigin}
-                  />
-                  <DetailRow
-                    label="Nơi thường trú"
-                    value={selectedSession.placeOfResidence}
-                  />
-                  <DetailRow
-                    label="Ngày cấp"
-                    value={
-                      selectedSession.issuedDate
-                        ? String(selectedSession.issuedDate)
-                        : ""
-                    }
-                  />
-                  <DetailRow
-                    label="Ngày hết hạn"
-                    value={
-                      selectedSession.expiryDate
-                        ? String(selectedSession.expiryDate)
-                        : ""
-                    }
-                  />
-                </div>
-              </div>
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+            <div className="space-y-5">
+              <InfoCard
+                title="Thông tin OCR"
+                icon={UserCheck}
+                rows={[
+                  ["Số CCCD", selectedSession.identityNumber],
+                  ["Họ và tên", selectedSession.fullName],
+                  ["Ngày sinh", selectedSession.dateOfBirth],
+                  ["Giới tính", formatGender(selectedSession.gender)],
+                  ["Quốc tịch", selectedSession.nationality],
+                  ["Quê quán", selectedSession.placeOfOrigin],
+                  ["Nơi thường trú", selectedSession.placeOfResidence],
+                  ["Ngày cấp", selectedSession.issuedDate],
+                  ["Ngày hết hạn", selectedSession.expiryDate],
+                ]}
+              />
 
-              <div>
-                <h3 className="text-sm font-semibold text-zinc-700 mb-4">
-                  Đánh giá khớp mặt AI
-                </h3>
-                <div className="bg-zinc-50 p-6 rounded-xl border border-black/5 space-y-3">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-zinc-500">
-                      Độ khớp mặt selfie vs ảnh CCCD:
-                    </span>
-                    <span className="font-bold text-red-600">
-                      {((selectedSession.faceMatchScore ?? 0.95) * 100).toFixed(
-                        1,
-                      )}
-                      %
-                    </span>
+              <div className="rounded-xl border border-zinc-200 bg-white p-4">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-600">
+                    <Sparkles className="h-4 w-4" />
                   </div>
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-zinc-500">
-                      Trạng thái so sánh khuôn mặt:
-                    </span>
-                    <Badge
-                      variant="outline"
-                      className="bg-emerald-50 text-emerald-700 border-emerald-100 font-bold"
-                    >
-                      {(selectedSession.faceMatchPassed ?? true)
-                        ? "Hợp lệ (Pass)"
-                        : "Không hợp lệ"}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-zinc-700 mb-4">
-                  AI risk scoring
-                </h3>
-                <div className="bg-zinc-50 p-6 rounded-2xl border border-black/5 space-y-3">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-zinc-500">
-                      Risk level:
-                    </span>
-                    <RiskBadge session={selectedSession} />
-                  </div>
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-zinc-500">
-                      Risk score:
-                    </span>
-                    <span className="font-bold text-zinc-800">
-                      {formatRiskScore(selectedSession.riskScore)}
-                    </span>
-                  </div>
-                  <div className="text-xs">
-                    <span className="font-semibold text-zinc-500 block mb-1">
-                      Reason:
-                    </span>
-                    <p className="font-medium text-zinc-700 leading-relaxed">
-                      {selectedSession.riskReason || "---"}
+                  <div>
+                    <h4 className="text-base font-semibold text-zinc-950">
+                      Đánh giá AI
+                    </h4>
+                    <p className="text-sm font-medium text-zinc-500">
+                      Face match, liveness và risk scoring.
                     </p>
                   </div>
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-zinc-500">
-                      Liveness score:
-                    </span>
-                    <span className="font-bold text-red-600">
-                      {formatRatioPercent(selectedSession.livenessScore)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-zinc-500">
-                      Liveness status:
-                    </span>
-                    <Badge
-                      variant="outline"
-                      className={
-                        (selectedSession.livenessPassed ?? false)
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-100 font-bold"
-                          : "bg-amber-50 text-amber-700 border-amber-100 font-bold"
-                      }
-                    >
-                      {(selectedSession.livenessPassed ?? false)
-                        ? "Pass"
-                        : "Needs review"}
-                    </Badge>
-                  </div>
-                  {(selectedSession.spoofDetected ||
-                    selectedSession.multipleFacesDetected) && (
-                    <div className="text-xs font-semibold text-red-700 bg-red-50 border border-red-100 rounded-xl p-3">
-                      {selectedSession.spoofDetected ? "Spoof detected. " : ""}
-                      {selectedSession.multipleFacesDetected
-                        ? "Multiple faces detected."
-                        : ""}
-                    </div>
-                  )}
                 </div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <ScoreTile
+                    label="Face match"
+                    value={formatRatioPercent(selectedSession.faceMatchScore)}
+                    status={
+                      selectedSession.faceMatchPassed ?? false
+                        ? "Đạt"
+                        : "Cần kiểm tra"
+                    }
+                  />
+                  <ScoreTile
+                    label="Liveness"
+                    value={formatRatioPercent(selectedSession.livenessScore)}
+                    status={
+                      selectedSession.livenessPassed ?? false
+                        ? "Đạt"
+                        : "Cần kiểm tra"
+                    }
+                  />
+                  <ScoreTile
+                    label="Risk score"
+                    value={formatRiskScore(selectedSession.riskScore)}
+                    status={selectedSession.riskLevel || "N/A"}
+                  />
+                  <ScoreTile
+                    label="OCR confidence"
+                    value={formatRatioPercent(selectedSession.ocrConfidence)}
+                    status="OCR"
+                  />
+                </div>
+                <p className="mt-4 rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-sm font-medium leading-6 text-zinc-600">
+                  {selectedSession.riskReason || "Chưa có ghi chú rủi ro."}
+                </p>
               </div>
             </div>
 
-            {/* Right Column: Visual Images */}
-            <div className="space-y-6">
-              <h3 className="text-sm font-semibold text-zinc-700">
-                Hình ảnh tài liệu đã tải lên
-              </h3>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <span className="text-[11px] font-bold text-zinc-500 block text-center">
-                    Mặt trước CCCD
-                  </span>
-                  <div className="aspect-[1.6/1] rounded-xl overflow-hidden border border-black/5 bg-zinc-100 flex items-center justify-center relative">
-                    {selectedSession.frontImageUrl ? (
-                      <a
-                        href={getImageUrl(selectedSession.frontImageUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full h-full"
-                      >
-                        <img
-                          src={getImageUrl(selectedSession.frontImageUrl)}
-                          className="w-full h-full object-contain hover:scale-105 transition-transform"
-                          alt="Front"
-                        />
-                      </a>
-                    ) : (
-                      <span className="text-xs text-zinc-400">
-                        Không có ảnh
-                      </span>
-                    )}
+            <div className="space-y-5">
+              <div className="rounded-xl border border-zinc-200 bg-white p-4">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <h4 className="text-base font-semibold text-zinc-950">
+                      Tài liệu đối chiếu
+                    </h4>
+                    <p className="text-sm font-medium text-zinc-500">
+                      Bấm vào ảnh để mở kích thước đầy đủ.
+                    </p>
                   </div>
+                  <RiskBadge session={selectedSession} />
                 </div>
-
-                <div className="space-y-2">
-                  <span className="text-[11px] font-bold text-zinc-500 block text-center">
-                    Mặt sau CCCD
-                  </span>
-                  <div className="aspect-[1.6/1] rounded-xl overflow-hidden border border-black/5 bg-zinc-100 flex items-center justify-center relative">
-                    {selectedSession.backImageUrl ? (
-                      <a
-                        href={getImageUrl(selectedSession.backImageUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full h-full"
-                      >
-                        <img
-                          src={getImageUrl(selectedSession.backImageUrl)}
-                          className="w-full h-full object-contain hover:scale-105 transition-transform"
-                          alt="Back"
-                        />
-                      </a>
-                    ) : (
-                      <span className="text-xs text-zinc-400">
-                        Không có ảnh
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-2 col-span-2 flex flex-col items-center">
-                  <span className="text-[11px] font-bold text-zinc-500 block">
-                    Ảnh Selfie chân dung
-                  </span>
-                  <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-white shadow bg-zinc-100 flex items-center justify-center relative">
-                    {selectedSession.selfieImageUrl ? (
-                      <a
-                        href={getImageUrl(selectedSession.selfieImageUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full h-full"
-                      >
-                        <img
-                          src={getImageUrl(selectedSession.selfieImageUrl)}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform"
-                          alt="Selfie"
-                        />
-                      </a>
-                    ) : (
-                      <span className="text-xs text-zinc-400">
-                        Không có ảnh
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="space-y-2 col-span-2">
-                  <span className="text-[11px] font-bold text-zinc-500 block text-center">
-                    Liveness video
-                  </span>
-                  <div className="rounded-xl border border-black/5 bg-zinc-100 flex items-center justify-center p-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <ImagePreview
+                    label="Mặt trước CCCD"
+                    url={selectedSession.frontImageUrl}
+                    className="aspect-[1.58/1]"
+                  />
+                  <ImagePreview
+                    label="Mặt sau CCCD"
+                    url={selectedSession.backImageUrl}
+                    className="aspect-[1.58/1]"
+                  />
+                  <ImagePreview
+                    label="Selfie"
+                    url={selectedSession.selfieImageUrl}
+                    className="aspect-square sm:col-span-2"
+                    imageClassName="object-contain"
+                  />
+                  <div className="sm:col-span-2 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                    <p className="text-sm font-semibold text-zinc-950">
+                      Liveness video
+                    </p>
                     {selectedSession.livenessVideoUrl ? (
                       <a
                         href={getImageUrl(selectedSession.livenessVideoUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs font-bold text-red-600 hover:text-zinc-950"
+                        className="mt-2 inline-flex text-sm font-medium text-red-600 hover:text-red-700"
                       >
-                        Open liveness video
+                        Mở video kiểm tra thực thể sống
                       </a>
                     ) : (
-                      <span className="text-xs text-zinc-400">No video</span>
+                      <p className="mt-2 text-sm font-medium text-zinc-500">
+                        Chưa có video.
+                      </p>
                     )}
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div className="mt-8 pt-6 border-t border-zinc-100 flex gap-3 justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsDetailOpen(false)}
-              className="h-11 px-6 rounded-xl border-black/5 text-zinc-700 bg-white"
-            >
-              Đóng
-            </Button>
-            <Button
-              type="button"
-              onClick={() => handleOpenResolve("reject")}
-              className="h-11 px-6 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 shadow"
-            >
-              <XCircle className="w-4 h-4 mr-2" /> Từ chối
-            </Button>
-            <Button
-              type="button"
-              onClick={() => handleOpenResolve("approve")}
-              className="h-11 px-6 rounded-xl bg-zinc-950 hover:bg-emerald-600 text-white font-bold shadow"
-            >
-              <CheckCircle2 className="w-4 h-4 mr-2" /> Phê duyệt
-            </Button>
+              <div className="flex flex-col-reverse gap-3 border-t border-zinc-100 pt-5 sm:flex-row sm:justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsDetailOpen(false)}
+                  className="h-11 rounded-xl border-zinc-200 bg-white px-5 text-sm font-medium !text-zinc-700 hover:bg-zinc-100 hover:!text-zinc-950"
+                >
+                  Đóng
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => handleOpenResolve("reject")}
+                  className="h-11 rounded-xl border-red-200 bg-white px-5 text-sm font-semibold !text-red-600 hover:border-red-300 hover:bg-red-50 hover:!text-red-700 [&_svg]:!text-red-600"
+                >
+                  <XCircle className="mr-2 h-4 w-4" />
+                  Từ chối
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => handleOpenResolve("approve")}
+                  className="h-11 rounded-xl bg-red-600 px-5 text-sm font-semibold !text-white shadow-md shadow-red-100 hover:bg-red-700 hover:!text-white [&_svg]:!text-white"
+                >
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  Phê duyệt
+                </Button>
+              </div>
+            </div>
           </div>
         </AdminFormDialog>
       )}
 
-      {/* Resolve Dialog */}
       <AdminFormDialog
         open={isResolveOpen}
         onOpenChange={setIsResolveOpen}
         icon={resolveAction === "approve" ? CheckCircle2 : XCircle}
         iconClassName={
           resolveAction === "approve"
-            ? "bg-emerald-600 text-white shadow-emerald-100 shadow-lg"
-            : "bg-red-600 text-white shadow-red-100 shadow-lg"
+            ? "bg-emerald-600 text-white"
+            : "bg-red-600 text-white"
         }
         title={
           resolveAction === "approve"
@@ -709,8 +558,8 @@ export default function KycManagement() {
         }
         description={
           resolveAction === "approve"
-            ? "Hồ sơ của khách hàng sẽ được phê duyệt. Trạng thái của khách hàng sẽ đổi thành VERIFIED."
-            : "Vui lòng nhập lý do từ chối hồ sơ eKYC để gửi thông báo lại cho khách hàng."
+            ? "Hồ sơ sẽ chuyển sang trạng thái VERIFIED."
+            : "Nhập lý do để khách hàng biết cần bổ sung hoặc chỉnh sửa gì."
         }
         onSubmit={(e) => {
           e.preventDefault();
@@ -721,20 +570,194 @@ export default function KycManagement() {
         submitIcon={resolveAction === "approve" ? CheckCircle2 : XCircle}
         maxWidth="max-w-md"
       >
-        <div className="space-y-4">
-          <Textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder={
-              resolveAction === "approve"
-                ? "Nhập ghi chú phê duyệt (tùy chọn)"
-                : "Lý do ảnh mờ, thông tin không trùng khớp..."
-            }
-            className="min-h-[100px] bg-zinc-50 border-black/5 focus:bg-white focus-visible:ring-red-600/20 focus-visible:border-red-600 transition-all text-xs font-medium rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.04)] resize-none text-zinc-800 placeholder:text-zinc-400"
-          />
-        </div>
+        <Textarea
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder={
+            resolveAction === "approve"
+              ? "Ghi chú phê duyệt"
+              : "Ví dụ: ảnh mờ, thông tin không trùng khớp..."
+          }
+          className="min-h-[120px] resize-none rounded-xl border-zinc-200 bg-white text-sm font-medium text-zinc-900 placeholder:text-zinc-400 focus-visible:border-red-200 focus-visible:ring-red-100"
+        />
       </AdminFormDialog>
     </div>
+  );
+}
+
+function MetricCard({
+  label,
+  value,
+  tone = "zinc",
+}: {
+  label: string;
+  value: string | number;
+  tone?: "zinc" | "red" | "green";
+}) {
+  const color = {
+    zinc: "text-zinc-950",
+    red: "text-red-600",
+    green: "text-emerald-600",
+  }[tone];
+
+  return (
+    <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3">
+      <p className="text-xs font-medium text-zinc-500">{label}</p>
+      <p className={cn("mt-1 text-lg font-semibold", color)}>{value}</p>
+    </div>
+  );
+}
+
+function InfoCard({
+  title,
+  icon: Icon,
+  rows,
+}: {
+  title: string;
+  icon: typeof UserCheck;
+  rows: Array<[string, string | undefined | null]>;
+}) {
+  return (
+    <div className="rounded-xl border border-zinc-200 bg-white p-4">
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-50 text-zinc-700">
+          <Icon className="h-4 w-4" />
+        </div>
+        <h4 className="text-base font-semibold text-zinc-950">{title}</h4>
+      </div>
+      <div className="divide-y divide-zinc-100">
+        {rows.map(([label, value]) => (
+          <DetailRow key={label} label={label} value={value || "---"} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start justify-between gap-4 py-3">
+      <span className="text-sm font-medium text-zinc-500">{label}</span>
+      <span className="max-w-[62%] text-right text-sm font-semibold text-zinc-950">
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function ScoreTile({
+  label,
+  value,
+  status,
+}: {
+  label: string;
+  value: string;
+  status: string;
+}) {
+  return (
+    <div className="rounded-xl border border-zinc-100 bg-zinc-50/70 p-3">
+      <p className="text-xs font-medium text-zinc-500">{label}</p>
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <span className="text-lg font-semibold text-zinc-950">{value}</span>
+        <span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-zinc-500 ring-1 ring-zinc-100">
+          {status}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function ImagePreview({
+  label,
+  url,
+  className,
+  imageClassName,
+}: {
+  label: string;
+  url?: string;
+  className?: string;
+  imageClassName?: string;
+}) {
+  const imageUrl = getImageUrl(url);
+
+  return (
+    <div>
+      <p className="mb-2 text-center text-xs font-medium text-zinc-500">
+        {label}
+      </p>
+      <div
+        className={cn(
+          "overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50",
+          className,
+        )}
+      >
+        {imageUrl ? (
+          <a href={imageUrl} target="_blank" rel="noopener noreferrer">
+            <img
+              src={imageUrl}
+              alt={label}
+              className={cn("h-full w-full object-contain", imageClassName)}
+            />
+          </a>
+        ) : (
+          <div className="flex h-full min-h-32 items-center justify-center text-sm font-medium text-zinc-400">
+            Chưa có ảnh
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function FaceBadge({ session }: { session: KycSessionResponse }) {
+  const passed = session.faceMatchPassed ?? false;
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        "rounded-full px-2.5 py-1 text-xs font-medium",
+        passed
+          ? "border-emerald-100 bg-emerald-50 text-emerald-700"
+          : "border-amber-100 bg-amber-50 text-amber-700",
+      )}
+    >
+      {formatRatioPercent(session.faceMatchScore)}
+    </Badge>
+  );
+}
+
+function RiskBadge({
+  session,
+}: {
+  session: Pick<KycSessionResponse, "riskLevel" | "riskScore">;
+}) {
+  if (!session.riskLevel) {
+    return (
+      <Badge
+        variant="outline"
+        className="rounded-full border-zinc-200 bg-zinc-50 px-2.5 py-1 text-xs font-medium text-zinc-500"
+      >
+        N/A
+      </Badge>
+    );
+  }
+
+  const meta = riskMeta[session.riskLevel];
+  return (
+    <Badge
+      variant="outline"
+      className={cn("rounded-full px-2.5 py-1 text-xs font-medium", meta.className)}
+    >
+      {meta.label} · {formatRiskScore(session.riskScore)}
+    </Badge>
+  );
+}
+
+function MiniTag({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-xs font-medium text-zinc-600">
+      {children}
+    </span>
   );
 }
 
@@ -748,6 +771,15 @@ function getImageUrl(url: string | null | undefined) {
   return `${baseUrl}${cleanUrl}`;
 }
 
+function getInitial(value: string) {
+  return value.trim().charAt(0).toUpperCase() || "K";
+}
+
+function formatDateTime(value?: string) {
+  if (!value) return "Vừa xong";
+  return new Date(value).toLocaleString("vi-VN");
+}
+
 function formatRatioPercent(value: number | null | undefined) {
   if (value === null || value === undefined) return "---";
   return `${(value * 100).toFixed(0)}%`;
@@ -758,38 +790,9 @@ function formatRiskScore(value: number | null | undefined) {
   return `${value.toFixed(0)}%`;
 }
 
-function RiskBadge({
-  session,
-}: {
-  session: Pick<KycSessionResponse, "riskLevel" | "riskScore">;
-}) {
-  if (!session.riskLevel) {
-    return (
-      <Badge
-        variant="outline"
-        className="bg-zinc-50 text-zinc-500 border-zinc-200 font-bold"
-      >
-        N/A
-      </Badge>
-    );
-  }
-
-  const meta = riskMeta[session.riskLevel];
-
-  return (
-    <Badge variant="outline" className={cn("font-bold", meta.className)}>
-      {meta.label} {formatRiskScore(session.riskScore)}
-    </Badge>
-  );
-}
-
-function DetailRow({ label, value }: { label: string; value?: string }) {
-  return (
-    <div className="flex justify-between items-center py-2.5 border-b border-zinc-200/50 last:border-0">
-      <span className="text-xs font-medium text-zinc-500">{label}</span>
-      <span className="text-xs font-extrabold text-zinc-800 text-right max-w-[65%] truncate">
-        {value || "---"}
-      </span>
-    </div>
-  );
+function formatGender(value?: string) {
+  if (value === "MALE") return "Nam";
+  if (value === "FEMALE") return "Nữ";
+  if (value === "OTHER") return "Khác";
+  return value || "---";
 }

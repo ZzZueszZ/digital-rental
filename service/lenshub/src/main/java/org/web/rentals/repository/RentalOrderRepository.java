@@ -50,4 +50,14 @@ public interface RentalOrderRepository extends JpaRepository<RentalOrder, Long> 
             @Param("paymentStatus") PaymentStatus paymentStatus,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT FUNCTION('DATE', r.createdAt), COUNT(r) " +
+           "FROM RentalOrder r " +
+           "WHERE r.status IN :statuses AND r.createdAt BETWEEN :startDate AND :endDate " +
+           "GROUP BY FUNCTION('DATE', r.createdAt) " +
+           "ORDER BY FUNCTION('DATE', r.createdAt) ASC")
+    List<Object[]> getDailyRentalOrderStats(
+            @Param("statuses") List<RentalOrderStatus> statuses,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
 }

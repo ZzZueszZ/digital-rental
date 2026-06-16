@@ -43,6 +43,8 @@ export interface LowStockResponse {
 export interface DailyOrderStatResponse {
   date: string;
   count: number;
+  purchaseCount: number;
+  rentalCount: number;
 }
 export interface UserStatResponse {
   totalUsers: number;

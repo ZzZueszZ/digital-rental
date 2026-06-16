@@ -13,4 +13,13 @@ import java.time.LocalDate;
 public class DailyOrderStatResponse {
     private LocalDate date;
     private Long count;
+    private Long purchaseCount;
+    private Long rentalCount;
+
+    public DailyOrderStatResponse(LocalDate date, Long count) {
+        this.date = date;
+        this.count = count;
+        this.purchaseCount = count;
+        this.rentalCount = 0L;
+    }
 }

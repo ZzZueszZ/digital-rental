@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Download } from "lucide-react";
 import {
   Area,
@@ -39,12 +40,31 @@ const tooltipStyle = {
   padding: "10px 12px",
 };
 
+type OrderChartMode = "total" | "purchase" | "rental";
+
 export function DashboardCharts({
   revenueData,
   dailyOrders,
   onExportRevenueReport,
   isExportingRevenue = false,
 }: DashboardChartsProps) {
+  const [orderMode, setOrderMode] = useState<OrderChartMode>("total");
+  const orderDataKey = {
+    total: "count",
+    purchase: "purchaseCount",
+    rental: "rentalCount",
+  }[orderMode];
+  const orderChartColor = {
+    total: "#18181b",
+    purchase: "#ef4444",
+    rental: "#059669",
+  }[orderMode];
+  const orderOptions: Array<{ mode: OrderChartMode; label: string }> = [
+    { mode: "total", label: "Tổng" },
+    { mode: "purchase", label: "Bán" },
+    { mode: "rental", label: "Thuê" },
+  ];
+
   return (
     <div className="grid grid-cols-1 gap-5 xl:grid-cols-7">
       <Card className="overflow-hidden rounded-xl border-zinc-200/80 bg-white shadow-none xl:col-span-4">
@@ -138,12 +158,32 @@ export function DashboardCharts({
 
       <Card className="overflow-hidden rounded-xl border-zinc-200/80 bg-white shadow-none xl:col-span-3">
         <CardHeader className="border-b border-zinc-100 px-5 py-4">
-          <CardTitle className="text-xl font-semibold tracking-tight text-zinc-950">
-            Đơn hàng mới
-          </CardTitle>
-          <CardDescription className="text-sm font-medium text-zinc-500">
-            Tần suất giao dịch mỗi ngày
-          </CardDescription>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <CardTitle className="text-xl font-semibold tracking-tight text-zinc-950">
+                Đơn hàng mới
+              </CardTitle>
+              <CardDescription className="text-sm font-medium text-zinc-500">
+                Tần suất giao dịch mỗi ngày
+              </CardDescription>
+            </div>
+            <div className="flex rounded-xl border border-zinc-200 bg-zinc-50 p-1">
+              {orderOptions.map((option) => (
+                <button
+                  key={option.mode}
+                  type="button"
+                  onClick={() => setOrderMode(option.mode)}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                    orderMode === option.mode
+                      ? "bg-white text-zinc-950 shadow-sm"
+                      : "text-zinc-500 hover:text-zinc-950"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="p-4 sm:p-5">
           <div className="mt-2 h-[280px] w-full sm:h-[350px]">
@@ -175,6 +215,7 @@ export function DashboardCharts({
                 <RechartsTooltip
                   cursor={{ fill: "#f4f4f5", radius: 8 }}
                   contentStyle={tooltipStyle}
+                  formatter={(value) => [Number(value), "Số đơn"]}
                   itemStyle={{
                     color: "#18181b",
                     fontWeight: 600,
@@ -187,8 +228,8 @@ export function DashboardCharts({
                   }}
                 />
                 <Bar
-                  dataKey="count"
-                  fill="#18181b"
+                  dataKey={orderDataKey}
+                  fill={orderChartColor}
                   radius={[6, 6, 0, 0]}
                   barSize={16}
                 />

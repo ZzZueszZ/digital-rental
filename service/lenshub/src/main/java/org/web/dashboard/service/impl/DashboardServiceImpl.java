@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.web.common.enums.AccountStatus;
 import org.web.common.enums.OrderStatus;
 import org.web.common.enums.PaymentStatus;
+import org.web.common.enums.RentalOrderStatus;
 import org.web.common.enums.RentalPaymentType;
 import org.web.dashboard.dto.*;
 import org.web.dashboard.service.DashboardService;
@@ -373,7 +374,51 @@ public class DashboardServiceImpl implements DashboardService {
         LocalDateTime end = to.atTime(LocalTime.MAX);
         
         List<OrderStatus> statuses = Arrays.asList(OrderStatus.COMPLETED, OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.SHIPPING, OrderStatus.DELIVERED);
-        
-        return orderRepository.getDailyOrderStats(statuses, start, end);
+        List<RentalOrderStatus> rentalStatuses = Arrays.asList(
+                RentalOrderStatus.PENDING_PAYMENT,
+                RentalOrderStatus.PAID_RENTAL_FEE,
+                RentalOrderStatus.WAITING_PICKUP,
+                RentalOrderStatus.RENTING,
+                RentalOrderStatus.RETURNED,
+                RentalOrderStatus.COMPLETED
+        );
+
+        Map<LocalDate, DailyOrderStatResponse> merged = new TreeMap<>();
+
+        for (DailyOrderStatResponse stat : orderRepository.getDailyOrderStats(statuses, start, end)) {
+            DailyOrderStatResponse daily = merged.computeIfAbsent(stat.getDate(), this::emptyDailyOrderStat);
+            long purchaseCount = stat.getCount() == null ? 0L : stat.getCount();
+            daily.setPurchaseCount(purchaseCount);
+            daily.setCount(daily.getCount() + purchaseCount);
+        }
+
+        for (Object[] row : rentalOrderRepository.getDailyRentalOrderStats(rentalStatuses, start, end)) {
+            LocalDate date = toLocalDate(row[0]);
+            long rentalCount = ((Number) row[1]).longValue();
+            DailyOrderStatResponse daily = merged.computeIfAbsent(date, this::emptyDailyOrderStat);
+            daily.setRentalCount(rentalCount);
+            daily.setCount(daily.getCount() + rentalCount);
+        }
+
+        return new ArrayList<>(merged.values());
+    }
+
+    private DailyOrderStatResponse emptyDailyOrderStat(LocalDate date) {
+        return DailyOrderStatResponse.builder()
+                .date(date)
+                .count(0L)
+                .purchaseCount(0L)
+                .rentalCount(0L)
+                .build();
+    }
+
+    private LocalDate toLocalDate(Object value) {
+        if (value instanceof LocalDate localDate) {
+            return localDate;
+        }
+        if (value instanceof java.sql.Date sqlDate) {
+            return sqlDate.toLocalDate();
+        }
+        return LocalDate.parse(value.toString());
     }
 }

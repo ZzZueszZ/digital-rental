@@ -7,7 +7,7 @@ type RouteRule = {
 };
 
 const rules: RouteRule[] = [
-  { method: "POST", path: /^\/auth\/(login|register|forgot-password|reset-password|change-password|change-email)$/, level: "CRITICAL" },
+  { method: "POST", path: /^\/auth\/(login|google|register|forgot-password|reset-password|change-password|change-email)$/, level: "CRITICAL" },
   { method: "POST", path: /^\/ekyc\/(submit|ocr-preview)$/, level: "CRITICAL" },
   { method: "PUT", path: /^\/admin\/ekyc\/\d+\/(approve|reject)$/, level: "CRITICAL" },
   { method: "POST", path: /^\/rentals\/\d+\/contract\/(send-otp|sign)$/, level: "CRITICAL" },

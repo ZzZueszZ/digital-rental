@@ -6,6 +6,7 @@ import org.web.users.dto.UserResponse;
 
 public interface AuthService {
     LoginResponse login(LoginRequest loginRequest);
+    LoginResponse loginWithGoogle(GoogleAuthRequest request);
     UserResponse register(RegisterRequest registerRequest);
     IntrospectResponse introspect(IntrospectRequest introspectRequest);
     RefreshTokenResponse refreshToken(RefreshTokenRequest request);

@@ -17,6 +17,9 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     java.util.Optional<User> findByEmail(String email);
 
     @EntityGraph(attributePaths = {"roles", "roles.permissions"})
+    java.util.Optional<User> findByGoogleProviderId(String googleProviderId);
+
+    @EntityGraph(attributePaths = {"roles", "roles.permissions"})
     java.util.Optional<User> findWithRolesById(Long id);
 
     long countByAccountStatus(AccountStatus status);

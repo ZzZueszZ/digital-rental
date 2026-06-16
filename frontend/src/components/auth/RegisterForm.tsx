@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { registerSchema, type RegisterRequest } from "@/schemas/auth/register";
 import { authService } from "@/services/auth";
 import Routers from "@/constants/routers";
+import { startGoogleOAuth } from "@/lib/google-oauth";
 
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -54,7 +55,15 @@ export function RegisterForm() {
     }
   };
 
-  const handleSocialAuthComingSoon = (provider: "Google" | "Facebook") => {
+  const handleGoogleAuth = () => {
+    try {
+      startGoogleOAuth();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Không thể mở đăng ký Google");
+    }
+  };
+
+  const handleSocialAuthComingSoon = (provider: "Facebook") => {
     toast.warning(`Đăng ký bằng ${provider} đang được phát triển.`);
   };
 
@@ -176,7 +185,7 @@ export function RegisterForm() {
       <div className="grid grid-cols-2 gap-3">
         <Button
           type="button"
-          onClick={() => handleSocialAuthComingSoon("Google")}
+          onClick={handleGoogleAuth}
           className="h-10 w-full justify-center gap-2 rounded-xl border border-zinc-200 bg-white text-xs font-medium text-zinc-800 shadow-none hover:bg-zinc-50"
         >
           <Image

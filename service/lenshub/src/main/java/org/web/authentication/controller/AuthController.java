@@ -32,6 +32,17 @@ public class AuthController {
         );
     }
 
+    @PostMapping("/google")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<LoginResponse> googleLogin(@RequestBody @Valid GoogleAuthRequest request) {
+        LoginResponse loginResponse = authService.loginWithGoogle(request);
+        return ApiResponse.successfulResponse(
+                HttpStatus.OK.value(),
+                "Google login successfully!",
+                loginResponse
+        );
+    }
+
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<UserResponse> register(@RequestBody @Valid RegisterRequest registerRequest) {

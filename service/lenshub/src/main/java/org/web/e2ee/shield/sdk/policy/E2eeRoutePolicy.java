@@ -15,7 +15,7 @@ public final class E2eeRoutePolicy {
     }
 
     private static final List<Rule> RULES = List.of(
-            critical(HttpMethod.POST, "/auth/(login|register|forgot-password|reset-password|change-password|change-email)"),
+            critical(HttpMethod.POST, "/auth/(login|google|register|forgot-password|reset-password|change-password|change-email)"),
             critical(HttpMethod.POST, "/ekyc/(submit|ocr-preview)"),
             critical(HttpMethod.PUT, "/admin/ekyc/\\d+/(approve|reject)"),
             critical(HttpMethod.POST, "/rentals/\\d+/contract/(send-otp|sign)"),

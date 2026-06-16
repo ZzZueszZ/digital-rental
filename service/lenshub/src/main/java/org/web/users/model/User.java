@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.web.authentication.model.AppRole;
 import org.web.common.enums.AccountStatus;
+import org.web.common.enums.AuthProvider;
 import org.web.common.enums.KycStatus;
 import org.web.common.enums.TrustLevel;
 import org.web.common.model.BaseAuditEntity;
@@ -37,6 +38,14 @@ public class User extends BaseAuditEntity {
 
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider", nullable = false, length = 30)
+    @Builder.Default
+    private AuthProvider authProvider = AuthProvider.LOCAL;
+
+    @Column(name = "google_provider_id", unique = true, length = 255)
+    private String googleProviderId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "account_status", nullable = false, length = 30)

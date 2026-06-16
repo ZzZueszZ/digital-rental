@@ -19,9 +19,17 @@ export interface RegisterPayload {
   password: string;
 }
 
+export interface GoogleAuthPayload {
+  code: string;
+  redirectUri: string;
+}
+
 export const authService = {
   login: (payload: LoginRequest) =>
     http.post<IBackendRes<LoginResponse>>(`${AUTH_PATH}/login`, payload),
+
+  googleLogin: (payload: GoogleAuthPayload) =>
+    http.post<IBackendRes<LoginResponse>>(`${AUTH_PATH}/google`, payload),
 
   register: (payload: RegisterPayload) =>
     http.post<IBackendRes<UserResponse>>(`${AUTH_PATH}/register`, payload),

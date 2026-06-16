@@ -23,7 +23,8 @@ import { persistRefreshTokenCookie } from "@/lib/refresh-token-client";
 import { AUTH_ME_QUERY_KEY } from "@/constants/query-keys";
 import Routers from "@/constants/routers";
 import { getValidRedirectUrl } from "@/lib/utils";
-import { Role } from "@/constants/enum/role";
+import { getRoleRedirectUrl } from "@/lib/auth-redirect";
+import { startGoogleOAuth } from "@/lib/google-oauth";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -63,7 +64,15 @@ export function LoginForm() {
     }
   };
 
-  const handleSocialAuthComingSoon = (provider: "Google" | "Facebook") => {
+  const handleGoogleAuth = () => {
+    try {
+      startGoogleOAuth();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Không thể mở đăng nhập Google");
+    }
+  };
+
+  const handleSocialAuthComingSoon = (provider: "Facebook") => {
     toast.warning(`Đăng nhập bằng ${provider} đang được phát triển.`);
   };
 
@@ -89,28 +98,7 @@ export function LoginForm() {
         return;
       }
 
-      // Priority-based redirection based on roles
-      const userRoles = (payload.user.roles || []).map(
-        (r: string | { code: string }) => {
-          if (typeof r === "string") return r.toUpperCase();
-          if (r && typeof r === "object" && r.code) return r.code.toUpperCase();
-          return "";
-        },
-      );
-
-      // Helper to check for a role with optional ROLE_ prefix
-      const hasRole = (role: Role) =>
-        userRoles.some((r) => r === role || r === `ROLE_${role}`);
-
-      if (hasRole(Role.SUPER_ADMIN)) {
-        window.location.href = Routers.SUPER_ADMIN;
-      } else if (hasRole(Role.ADMIN)) {
-        window.location.href = Routers.ADMIN;
-      } else if (hasRole(Role.STAFF)) {
-        window.location.href = Routers.STAFF;
-      } else {
-        window.location.href = Routers.HOME;
-      }
+      window.location.href = getRoleRedirectUrl(payload.user.roles);
     } catch (error: unknown) {
       const err = error as {
         response?: { data?: { message?: string }; status?: number };
@@ -258,7 +246,7 @@ export function LoginForm() {
       <div className="grid grid-cols-2 gap-3">
         <Button
           type="button"
-          onClick={() => handleSocialAuthComingSoon("Google")}
+          onClick={handleGoogleAuth}
           className="h-10 w-full justify-center gap-2 rounded-xl border border-zinc-200 bg-white text-xs font-medium text-zinc-800 shadow-none hover:bg-zinc-50"
         >
           <Image

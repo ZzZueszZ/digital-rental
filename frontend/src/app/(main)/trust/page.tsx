@@ -161,7 +161,7 @@ export default function TrustPage() {
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
-                  href="/rentals"
+                  href="/products"
                   className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-950 px-6 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
                 >
                   Xem thiết bị
@@ -375,7 +375,7 @@ export default function TrustPage() {
                   </h2>
                 </div>
                 <Link
-                  href="/rentals"
+                  href="/products"
                   className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-white px-5 text-sm font-medium text-zinc-950 transition-colors hover:bg-zinc-100"
                 >
                   Khám phá thiết bị

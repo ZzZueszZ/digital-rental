@@ -143,7 +143,7 @@ export default function RentalProcessPage() {
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
-                  href="/rentals"
+                  href="/products"
                   className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-950 px-6 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
                 >
                   Chọn thiết bị
@@ -345,7 +345,7 @@ export default function RentalProcessPage() {
                   </h2>
                 </div>
                 <Link
-                  href="/rentals"
+                  href="/products"
                   className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-red-600 px-5 text-sm font-medium text-white transition-colors hover:bg-red-700"
                 >
                   Bắt đầu chọn máy

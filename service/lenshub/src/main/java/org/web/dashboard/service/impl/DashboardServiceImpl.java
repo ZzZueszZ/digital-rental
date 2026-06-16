@@ -20,6 +20,7 @@ import org.web.orders.repository.OrderRepository;
 import org.web.products.model.Product;
 import org.web.products.repository.ProductRepository;
 import org.web.rentals.repository.RentalOrderRepository;
+import org.web.rentals.repository.RentalOrderItemRepository;
 import org.web.rentals.repository.RentalPaymentRepository;
 import org.web.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.List;
@@ -49,6 +52,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final RentalOrderRepository rentalOrderRepository;
+    private final RentalOrderItemRepository rentalOrderItemRepository;
     private final RentalPaymentRepository rentalPaymentRepository;
 
     @Override
@@ -328,7 +332,50 @@ public class DashboardServiceImpl implements DashboardService {
     @Transactional(readOnly = true)
     public List<TopProductResponse> getTopSellingProducts(int limit) {
         List<OrderStatus> validStatuses = Arrays.asList(OrderStatus.COMPLETED);
-        return orderItemRepository.findTopSellingProducts(validStatuses, PageRequest.of(0, limit));
+        Map<Long, TopProductResponse> byProduct = new LinkedHashMap<>();
+
+        orderItemRepository.findTopSellingProducts(validStatuses, PageRequest.of(0, limit))
+                .forEach(product -> byProduct.put(product.getProductId(), product));
+
+        List<RentalOrderStatus> rentalStatuses = Arrays.stream(RentalOrderStatus.values())
+                .filter(status -> status != RentalOrderStatus.CANCELLED)
+                .toList();
+
+        for (Object[] row : rentalOrderItemRepository.findTopRentedProductStats(rentalStatuses)) {
+            Long productId = ((Number) row[0]).longValue();
+            TopProductResponse product = byProduct.get(productId);
+            Long totalRented = ((Number) row[4]).longValue();
+            BigDecimal rentalRevenue = row[5] instanceof BigDecimal value ? value : BigDecimal.ZERO;
+
+            if (product == null) {
+                product = TopProductResponse.builder()
+                        .productId(productId)
+                        .productName((String) row[1])
+                        .brand((String) row[2])
+                        .imageUrl((String) row[3])
+                        .totalSold(0L)
+                        .totalRented(totalRented)
+                        .revenue(rentalRevenue)
+                        .build();
+                byProduct.put(productId, product);
+            } else {
+                product.setTotalRented(totalRented);
+                product.setRevenue(nullSafe(product.getRevenue()).add(rentalRevenue));
+            }
+        }
+
+        return byProduct.values().stream()
+                .peek(product -> {
+                    if (product.getTotalSold() == null) product.setTotalSold(0L);
+                    if (product.getTotalRented() == null) product.setTotalRented(0L);
+                    if (product.getRevenue() == null) product.setRevenue(BigDecimal.ZERO);
+                })
+                .sorted(Comparator
+                        .comparingLong((TopProductResponse product) ->
+                                product.getTotalSold() + product.getTotalRented())
+                        .reversed())
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -420,5 +467,9 @@ public class DashboardServiceImpl implements DashboardService {
             return sqlDate.toLocalDate();
         }
         return LocalDate.parse(value.toString());
+    }
+
+    private BigDecimal nullSafe(BigDecimal value) {
+        return value == null ? BigDecimal.ZERO : value;
     }
 }

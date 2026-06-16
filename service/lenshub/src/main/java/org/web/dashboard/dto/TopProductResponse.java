@@ -16,5 +16,17 @@ public class TopProductResponse {
     private String brand;
     private String imageUrl;
     private Long totalSold;
+    private Long totalRented;
     private BigDecimal revenue;
+
+    public TopProductResponse(Long productId, String productName, String brand, String imageUrl,
+                              Long totalSold, BigDecimal revenue) {
+        this.productId = productId;
+        this.productName = productName;
+        this.brand = brand;
+        this.imageUrl = imageUrl;
+        this.totalSold = totalSold;
+        this.totalRented = 0L;
+        this.revenue = revenue;
+    }
 }

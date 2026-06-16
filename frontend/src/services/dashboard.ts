@@ -32,6 +32,7 @@ export interface TopProductResponse {
   brand: string;
   imageUrl: string;
   totalSold: number;
+  totalRented: number;
   revenue: number;
 }
 export interface LowStockResponse {

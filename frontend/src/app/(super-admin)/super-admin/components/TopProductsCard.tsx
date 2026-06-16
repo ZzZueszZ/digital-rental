@@ -9,6 +9,7 @@ interface TopProduct {
   brand: string;
   imageUrl: string | null;
   totalSold: number;
+  totalRented: number;
 }
 
 interface TopProductsCardProps {
@@ -40,7 +41,7 @@ export function TopProductsCard({ products }: TopProductsCardProps) {
         <div className="space-y-1">
           {products.length === 0 ? (
             <div className="py-12 text-center text-sm font-medium text-zinc-400">
-              Chưa có dữ liệu bán hàng
+              Chưa có dữ liệu giao dịch
             </div>
           ) : (
             products.map((product, index) => (
@@ -73,12 +74,22 @@ export function TopProductsCard({ products }: TopProductsCardProps) {
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-[15px] font-semibold leading-none text-zinc-950">
-                    {product.totalSold}
+                <div className="flex flex-shrink-0 items-center gap-2">
+                  <div className="min-w-12 rounded-xl bg-zinc-50 px-2 py-1.5 text-center">
+                    <div className="text-[13px] font-semibold leading-none text-zinc-950">
+                      {product.totalSold ?? 0}
+                    </div>
+                    <div className="mt-1 text-[10px] font-medium text-zinc-400">
+                      bán
+                    </div>
                   </div>
-                  <div className="mt-1 text-[11px] font-medium text-zinc-400">
-                    lượt bán
+                  <div className="min-w-12 rounded-xl bg-red-50 px-2 py-1.5 text-center">
+                    <div className="text-[13px] font-semibold leading-none text-red-600">
+                      {product.totalRented ?? 0}
+                    </div>
+                    <div className="mt-1 text-[10px] font-medium text-red-400">
+                      thuê
+                    </div>
                   </div>
                 </div>
               </div>

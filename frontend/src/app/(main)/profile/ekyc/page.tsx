@@ -449,24 +449,24 @@ export default function EkycPage() {
   const renderOcrPreviewPanel = () => {
     if (!ocrPreview) return null;
     const fields = [
-      ["So CCCD", ocrPreview.identityNumber],
-      ["Ho va ten", ocrPreview.fullName],
-      ["Ngay sinh", ocrPreview.dateOfBirth],
-      ["Gioi tinh", ocrPreview.gender],
-      ["Quoc tich", ocrPreview.nationality],
-      ["Que quan", ocrPreview.placeOfOrigin],
-      ["Noi thuong tru", ocrPreview.placeOfResidence],
-      ["Ngay cap", ocrPreview.issuedDate],
-      ["Ngay het han", ocrPreview.expiryDate],
+      ["Số CCCD", ocrPreview.identityNumber],
+      ["Họ và tên", ocrPreview.fullName],
+      ["Ngày sinh", ocrPreview.dateOfBirth],
+      ["Giới tính", ocrPreview.gender],
+      ["Quốc tịch", ocrPreview.nationality],
+      ["Quê quán", ocrPreview.placeOfOrigin],
+      ["Nơi thường trú", ocrPreview.placeOfResidence],
+      ["Ngày cấp", ocrPreview.issuedDate],
+      ["Ngày hết hạn", ocrPreview.expiryDate],
     ];
 
     return (
-      <div className="rounded-2xl border border-zinc-100 bg-zinc-50/60 p-5 shadow-sm space-y-5">
+      <div className="rounded-2xl border border-zinc-200 bg-zinc-50/60 p-5 shadow-sm space-y-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h4 className="text-sm font-bold text-zinc-900">OCR Preview</h4>
+            <h4 className="text-sm font-semibold text-zinc-900">Thông tin OCR trích xuất</h4>
             <p className="text-xs font-medium text-zinc-500 mt-1">
-              Extracted from CCCD front/back. Retake images if data is wrong.
+              Dữ liệu được đọc từ hai mặt CCCD. Vui lòng chụp lại nếu thông tin chưa chính xác.
             </p>
           </div>
           <span className={cn(
@@ -475,25 +475,25 @@ export default function EkycPage() {
               ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
               : "bg-amber-50 text-amber-700 border border-amber-100"
           )}>
-            {ocrPreview.previewStatus || "NEEDS_REVIEW"}
+            {ocrPreview.previewStatus === "READY" ? "Sẵn sàng" : "Cần kiểm tra"}
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {fields.map(([label, value]) => (
             <div key={label} className="rounded-xl border border-white bg-white px-3 py-2 shadow-sm min-w-0">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">{label}</div>
+              <div className="text-[10px] font-semibold text-zinc-400">{label}</div>
               <div className="mt-1 text-sm font-semibold text-zinc-800 break-words">{value || "-"}</div>
             </div>
           ))}
           <div className="rounded-xl border border-white bg-white px-3 py-2 shadow-sm min-w-0">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">OCR Confidence</div>
+            <div className="text-[10px] font-semibold text-zinc-400">Độ tin cậy OCR</div>
             <div className="mt-1 text-sm font-semibold text-zinc-800">
               {typeof ocrPreview.ocrConfidence === "number" ? `${(ocrPreview.ocrConfidence * 100).toFixed(1)}%` : "-"}
             </div>
           </div>
           <div className="rounded-xl border border-white bg-white px-3 py-2 shadow-sm min-w-0">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Document Type</div>
+            <div className="text-[10px] font-semibold text-zinc-400">Loại giấy tờ</div>
             <div className="mt-1 text-sm font-semibold text-zinc-800 break-words">{ocrPreview.documentType || "-"}</div>
           </div>
         </div>
@@ -514,7 +514,7 @@ export default function EkycPage() {
 
   if (loading) {
     return (
-      <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm flex items-center justify-center min-h-[400px] animate-in fade-in slide-in-from-right-4 duration-500">
+      <div className="rounded-[28px] border border-zinc-200 bg-white p-8 shadow-[0_20px_70px_rgba(15,23,42,0.06)] md:p-10 flex items-center justify-center min-h-[400px] animate-in fade-in slide-in-from-right-4 duration-500">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 text-red-600 animate-spin" />
           <p className="text-xs font-semibold text-zinc-400">Đang kiểm tra hồ sơ định danh của bạn...</p>
@@ -526,11 +526,11 @@ export default function EkycPage() {
   // State 1: Verification Approved
   if (kycSession?.status === "APPROVED") {
     return (
-      <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm animate-in fade-in slide-in-from-right-4 duration-500">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12 pb-8 border-b border-zinc-100">
+      <div className="rounded-[28px] border border-zinc-200 bg-white p-8 shadow-[0_20px_70px_rgba(15,23,42,0.06)] md:p-10 animate-in fade-in slide-in-from-right-4 duration-500">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-10 pb-8 border-b border-zinc-100">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
+            <h1 className="text-2xl font-semibold text-zinc-950 tracking-[-0.03em] leading-tight">
                 Định danh đã xác thực
               </h1>
               <span className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-[10px] font-bold text-emerald-600 uppercase tracking-wider animate-pulse">
@@ -691,10 +691,10 @@ export default function EkycPage() {
   // State 2: Under Review / Pending Review
   if (kycSession?.status === "PENDING_REVIEW") {
     return (
-      <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm animate-in fade-in slide-in-from-right-4 duration-500">
+      <div className="rounded-[28px] border border-zinc-200 bg-white p-8 shadow-[0_20px_70px_rgba(15,23,42,0.06)] md:p-10 animate-in fade-in slide-in-from-right-4 duration-500">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12 pb-8 border-b border-zinc-100">
           <div>
-            <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
+            <h1 className="text-2xl font-semibold text-zinc-950 tracking-[-0.03em] leading-tight">
               Hồ sơ đang chờ phê duyệt
             </h1>
             <p className="text-sm text-zinc-500 font-medium mt-1">
@@ -741,10 +741,10 @@ export default function EkycPage() {
   // State 3: Rejected
   if (kycSession?.status === "REJECTED") {
     return (
-      <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm animate-in fade-in slide-in-from-right-4 duration-500">
+      <div className="rounded-[28px] border border-zinc-200 bg-white p-8 shadow-[0_20px_70px_rgba(15,23,42,0.06)] md:p-10 animate-in fade-in slide-in-from-right-4 duration-500">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12 pb-8 border-b border-zinc-100">
           <div>
-            <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
+              <h1 className="text-2xl font-semibold text-zinc-950 tracking-[-0.03em] leading-tight">
               Xác thực bị từ chối
             </h1>
             <p className="text-sm text-zinc-500 font-medium mt-1">
@@ -779,10 +779,10 @@ export default function EkycPage() {
 
   // Wizard Flow (NOT_STARTED, STARTED, CREATED)
   return (
-    <div className="bg-white border border-zinc-100 rounded-xl p-8 md:p-10 shadow-dash-sm animate-in fade-in slide-in-from-right-4 duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 pb-8 border-b border-zinc-100">
+    <div className="rounded-[28px] border border-zinc-200 bg-white p-6 shadow-[0_20px_70px_rgba(15,23,42,0.06)] sm:p-8 md:p-10 animate-in fade-in slide-in-from-right-4 duration-500">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-10 pb-8 border-b border-zinc-100">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
+          <h1 className="text-2xl font-semibold text-zinc-950 tracking-[-0.03em] leading-tight">
             Xác thực định danh (eKYC)
           </h1>
           <p className="text-sm text-zinc-500 font-medium mt-1">
@@ -791,7 +791,7 @@ export default function EkycPage() {
         </div>
 
         {/* Steps Indicators */}
-        <div className="flex items-center gap-2 bg-zinc-50 p-1.5 rounded-xl border border-black/5 shrink-0 self-start md:self-auto shadow-sm">
+        <div className="flex items-center gap-2 bg-zinc-50 p-1.5 rounded-2xl border border-zinc-200 shrink-0 self-start md:self-auto shadow-sm">
           {[1, 2, 3, 4, 5].map((num) => (
             <div
               key={num}
@@ -814,7 +814,7 @@ export default function EkycPage() {
       {step === 1 && (
         <div className="space-y-8 animate-in fade-in duration-300">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-950">Bước 1: Tải lên hoặc Chụp ảnh mặt trước CCCD</h3>
+            <h3 className="text-lg font-semibold text-zinc-950">Bước 1: Tải lên hoặc chụp ảnh mặt trước CCCD</h3>
             <p className="text-sm text-zinc-500 font-medium mt-1">
               Hình ảnh cần rõ nét, đủ ánh sáng, không bị mất góc hoặc bị lóa thông tin.
             </p>
@@ -835,7 +835,7 @@ export default function EkycPage() {
                   Chụp ảnh
                 </Button>
                 <Button onClick={stopCamera} variant="outline" className="h-10 px-5 rounded-xl border border-zinc-200 text-zinc-700 bg-white font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95">
-                  Đóng Camera
+                  Đóng camera
                 </Button>
               </div>
             </div>
@@ -881,7 +881,7 @@ export default function EkycPage() {
                           onClick={() => startCamera("front")}
                           className="h-10 px-5 rounded-xl bg-white border border-zinc-200 text-zinc-800 hover:text-zinc-950 font-semibold text-[14px] flex items-center gap-2 shadow-sm transition-all active:scale-95"
                         >
-                          <Camera className="w-4 h-4" /> Mở Camera chụp
+                          <Camera className="w-4 h-4" /> Mở camera chụp
                         </Button>
                       </div>
                     </>
@@ -907,7 +907,7 @@ export default function EkycPage() {
       {step === 2 && (
         <div className="space-y-8 animate-in fade-in duration-300">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-950">Bước 2: Tải lên hoặc Chụp ảnh mặt sau CCCD</h3>
+            <h3 className="text-lg font-semibold text-zinc-950">Bước 2: Tải lên hoặc chụp ảnh mặt sau CCCD</h3>
             <p className="text-sm text-zinc-500 font-medium mt-1">
               Hình ảnh cần rõ nét, đủ ánh sáng, không bị mất góc hoặc bị lóa thông tin.
             </p>
@@ -928,7 +928,7 @@ export default function EkycPage() {
                   Chụp ảnh
                 </Button>
                 <Button onClick={stopCamera} variant="outline" className="h-10 px-5 rounded-xl border border-zinc-200 text-zinc-700 bg-white font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95">
-                  Đóng Camera
+                  Đóng camera
                 </Button>
               </div>
             </div>
@@ -974,7 +974,7 @@ export default function EkycPage() {
                           onClick={() => startCamera("back")}
                           className="h-10 px-5 rounded-xl bg-white border border-zinc-200 text-zinc-800 hover:text-zinc-950 font-semibold text-[14px] flex items-center gap-2 shadow-sm transition-all active:scale-95"
                         >
-                          <Camera className="w-4 h-4" /> Mở Camera chụp
+                          <Camera className="w-4 h-4" /> Mở camera chụp
                         </Button>
                       </div>
                     </>
@@ -1001,10 +1001,10 @@ export default function EkycPage() {
             >
               {previewingOcr ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Extracting OCR...
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang trích xuất OCR...
                 </>
               ) : (
-                "Trich xuat thong tin & tiep tuc"
+                "Trích xuất thông tin & tiếp tục"
               )}
             </Button>
           </div>
@@ -1015,7 +1015,7 @@ export default function EkycPage() {
       {step === 3 && (
         <div className="space-y-8 animate-in fade-in duration-300">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-950">Bước 3: Chụp chân dung Selfie</h3>
+            <h3 className="text-lg font-semibold text-zinc-950">Bước 3: Chụp ảnh chân dung selfie</h3>
             <p className="text-sm text-zinc-500 font-medium mt-1">
               Ảnh chân dung của bạn bắt buộc phải chụp trực tiếp từ camera. Đảm bảo nhìn thẳng, không đội mũ, đeo kính mát hoặc khẩu trang.
             </p>
@@ -1036,7 +1036,7 @@ export default function EkycPage() {
                   Chụp ngay
                 </Button>
                 <Button onClick={stopCamera} variant="outline" className="h-10 px-5 rounded-xl border border-zinc-200 text-zinc-700 bg-white font-semibold text-[14px] hover:bg-zinc-50 hover:text-zinc-950 transition-all active:scale-95">
-                  Đóng Camera
+                  Đóng camera
                 </Button>
               </div>
             </div>
@@ -1076,7 +1076,7 @@ export default function EkycPage() {
                         onClick={() => startCamera("selfie")}
                         className="h-10 px-5 rounded-xl bg-zinc-950 hover:bg-red-600 text-white font-semibold text-[14px] flex items-center gap-2 shadow-lg shadow-zinc-200 transition-all active:scale-95"
                       >
-                        <Camera className="w-4 h-4" /> Mở Camera chụp
+                        <Camera className="w-4 h-4" /> Mở camera chụp
                       </Button>
                     </>
                   )}
@@ -1281,15 +1281,15 @@ export default function EkycPage() {
       {step === 5 && (
         <div className="space-y-8 animate-in fade-in duration-300">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-950">Bước 4: Xem lại ảnh & Gửi xác thực</h3>
+            <h3 className="text-lg font-semibold text-zinc-950">Bước 5: Kiểm tra và gửi hồ sơ xác thực</h3>
             <p className="text-sm text-zinc-500 font-medium mt-1">
-              Kiểm tra kỹ hình ảnh trước khi gửi. Hệ thống sẽ tự trích xuất thông tin CCCD và chuyển hồ sơ sang hàng chờ duyệt.
+              Kiểm tra kỹ hình ảnh trước khi gửi. Hệ thống sẽ trích xuất thông tin CCCD và chuyển hồ sơ sang hàng chờ duyệt.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4">
-              <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Trích xuất tự động</h4>
+              <h4 className="text-xs font-semibold text-zinc-400">Trích xuất tự động</h4>
               {ocrPreview && renderOcrPreviewPanel()}
               {!ocrPreview && (
               <div className="bg-zinc-50/50 p-6 rounded-2xl border border-zinc-100 space-y-4 shadow-sm">
@@ -1307,10 +1307,10 @@ export default function EkycPage() {
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Hình ảnh tài liệu</h4>
+              <h4 className="text-xs font-semibold text-zinc-400">Hình ảnh tài liệu</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <span className="text-[10px] font-bold text-zinc-400 uppercase block text-center">Mặt trước CCCD</span>
+                  <span className="text-[10px] font-semibold text-zinc-400 block text-center">Mặt trước CCCD</span>
                   <div className="aspect-[1.6/1] rounded-xl overflow-hidden border border-zinc-100 bg-zinc-50/50 flex items-center justify-center shadow-sm p-1">
                     {frontImage && (
                       <Image
@@ -1325,7 +1325,7 @@ export default function EkycPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <span className="text-[10px] font-bold text-zinc-400 uppercase block text-center">Mặt sau CCCD</span>
+                  <span className="text-[10px] font-semibold text-zinc-400 block text-center">Mặt sau CCCD</span>
                   <div className="aspect-[1.6/1] rounded-xl overflow-hidden border border-zinc-100 bg-zinc-50/50 flex items-center justify-center shadow-sm p-1">
                     {backImage && (
                       <Image
@@ -1340,7 +1340,7 @@ export default function EkycPage() {
                   </div>
                 </div>
                 <div className="space-y-2 col-span-2 flex flex-col items-center">
-                  <span className="text-[10px] font-bold text-zinc-400 uppercase block mb-1">Ảnh chụp selfie</span>
+                  <span className="text-[10px] font-semibold text-zinc-400 block mb-1">Ảnh chụp selfie</span>
                   <div className="w-20 h-20 rounded-full overflow-hidden border border-zinc-100 bg-zinc-50/50 flex items-center justify-center shadow-sm">
                     {selfieImage && (
                       <Image
@@ -1392,7 +1392,7 @@ export default function EkycPage() {
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang chạy chấm điểm AI...
                 </>
               ) : (
-                "Xác thực và Gửi hồ sơ"
+                "Xác thực và gửi hồ sơ"
               )}
             </Button>
           </div>

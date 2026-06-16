@@ -63,6 +63,10 @@ export function LoginForm() {
     }
   };
 
+  const handleSocialAuthComingSoon = (provider: "Google" | "Facebook") => {
+    toast.warning(`Đăng nhập bằng ${provider} đang được phát triển.`);
+  };
+
   const onSubmit = async (values: LoginRequest) => {
     setPendingEmail(null);
     try {
@@ -252,7 +256,11 @@ export function LoginForm() {
 
       {/* Social Login */}
       <div className="grid grid-cols-2 gap-3">
-        <Button className="h-10 w-full justify-center gap-2 rounded-xl border border-zinc-200 bg-white text-xs font-medium text-zinc-800 shadow-none hover:bg-zinc-50">
+        <Button
+          type="button"
+          onClick={() => handleSocialAuthComingSoon("Google")}
+          className="h-10 w-full justify-center gap-2 rounded-xl border border-zinc-200 bg-white text-xs font-medium text-zinc-800 shadow-none hover:bg-zinc-50"
+        >
           <Image
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             width={18}
@@ -261,7 +269,11 @@ export function LoginForm() {
           />
           Google
         </Button>
-        <Button className="h-10 w-full justify-center gap-2 rounded-xl border border-zinc-200 bg-white text-xs font-medium text-zinc-800 shadow-none hover:bg-zinc-50">
+        <Button
+          type="button"
+          onClick={() => handleSocialAuthComingSoon("Facebook")}
+          className="h-10 w-full justify-center gap-2 rounded-xl border border-zinc-200 bg-white text-xs font-medium text-zinc-800 shadow-none hover:bg-zinc-50"
+        >
           <svg
             className="w-5 h-5 fill-current text-[#1877F2]"
             viewBox="0 0 24 24"

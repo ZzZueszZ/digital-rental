@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowRight, PackageOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -16,6 +17,8 @@ interface LowStockCardProps {
 }
 
 export function LowStockCard({ products }: LowStockCardProps) {
+  const router = useRouter();
+
   const getImageUrl = (url: string | null) => {
     if (!url) return "";
     if (url.startsWith("http")) return url;
@@ -46,9 +49,11 @@ export function LowStockCard({ products }: LowStockCardProps) {
             </div>
           ) : (
             products.map((product) => (
-              <div
+              <button
+                type="button"
                 key={product.productId}
-                className="group flex items-center justify-between rounded-xl border border-transparent p-2 transition-all hover:border-red-100 hover:bg-red-50/30"
+                onClick={() => router.push(`/staff/products/${product.productId}`)}
+                className="group flex w-full items-center justify-between rounded-xl border border-transparent p-2 text-left transition-all hover:border-red-100 hover:bg-red-50/30"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-white">
@@ -76,14 +81,18 @@ export function LowStockCard({ products }: LowStockCardProps) {
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-zinc-300 transition-colors group-hover:text-red-500" />
-              </div>
+              </button>
             ))
           )}
         </div>
       </div>
 
       <div className="border-t border-zinc-100 p-3">
-        <Button className="h-9 w-full rounded-xl bg-zinc-950 text-[13px] font-medium text-white hover:bg-red-600">
+        <Button
+          type="button"
+          onClick={() => router.push("/staff/products")}
+          className="h-9 w-full rounded-xl bg-zinc-950 text-[13px] font-medium text-white hover:bg-red-600"
+        >
           Kiểm kê ngay
         </Button>
       </div>

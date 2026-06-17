@@ -97,6 +97,8 @@ export interface RentalReturnReportResponse {
   lensConditionAfter: string;
   batteryConditionAfter: string;
   accessoryConditionAfter: string;
+  earlyReturnDays: number;
+  earlyReturnRefundAmount: number;
   lateDays: number;
   lateFee: number;
   damageFee: number;
@@ -188,6 +190,7 @@ export interface ReturnReportRequest {
   lensConditionAfter: string;
   batteryConditionAfter: string;
   accessoryConditionAfter: string;
+  earlyReturnDays: number;
   lateDays: number;
   lateFee: number;
   damageFee: number;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Calendar,
   Search,
@@ -140,7 +140,44 @@ export function RentalManageView({
   const [itemConditions, setItemConditions] = useState<Record<number, string>>(
     {},
   );
+  const [returnDate, setReturnDate] = useState(
+    () => new Date().toISOString().slice(0, 10),
+  );
+  const [earlyReturnDays, setEarlyReturnDays] = useState<number>(0);
+  const [lateReturnDays, setLateReturnDays] = useState<number>(0);
   const [damageFee, setDamageFee] = useState<number>(0);
+
+  const returnSettlement = useMemo(() => {
+    const dailyRentalTotal =
+      selectedRental?.items.reduce(
+        (total, item) => total + (item.pricePerDay || 0),
+        0,
+      ) || 0;
+    const deposit =
+      selectedRental?.finalDepositAmount ??
+      selectedRental?.estimatedDepositAmount ??
+      0;
+    const earlyRefund = Math.max(0, earlyReturnDays) * dailyRentalTotal;
+    const lateFee = Math.max(0, lateReturnDays) * dailyRentalTotal * 1.5;
+    const damage = Math.max(0, damageFee);
+    const totalPenalty = lateFee + damage;
+    const refundAmount = Math.max(0, deposit + earlyRefund - totalPenalty);
+    const extraPaymentAmount = Math.max(
+      0,
+      totalPenalty - deposit - earlyRefund,
+    );
+
+    return {
+      dailyRentalTotal,
+      deposit,
+      earlyRefund,
+      lateFee,
+      damage,
+      totalPenalty,
+      refundAmount,
+      extraPaymentAmount,
+    };
+  }, [damageFee, earlyReturnDays, lateReturnDays, selectedRental]);
 
   const handleOpenApprove = async (rental: RentalOrderResponse) => {
     setSelectedRental(rental);
@@ -150,7 +187,6 @@ export function RentalManageView({
     setAvailableDevicesMap({});
     setIsApproveOpen(true);
     setLoadingDevices(true);
-
     try {
       const map: Record<number, DeviceResponse[]> = {};
       for (const item of rental.items) {
@@ -267,6 +303,9 @@ export function RentalManageView({
   const handleOpenReturn = (rental: RentalOrderResponse) => {
     setSelectedRental(rental);
     setInspectorName("");
+    setReturnDate(new Date().toISOString().slice(0, 10));
+    setEarlyReturnDays(0);
+    setLateReturnDays(0);
     setDamageFee(0);
     const initConditions: Record<number, string> = {};
     rental.items.forEach((item) => {
@@ -282,18 +321,23 @@ export function RentalManageView({
       toast.error("Vui lòng nhập tên nhân viên nhận trả");
       return;
     }
+    if (earlyReturnDays > 0 && lateReturnDays > 0) {
+      toast.error("Không thể vừa trả sớm vừa trả trễ trong cùng biên bản");
+      return;
+    }
     try {
       await returnReportMutation.mutateAsync({
         id: selectedRental.id,
         req: {
-          returnDate: new Date().toISOString(),
+          returnDate: `${returnDate}T00:00:00`,
           bodyConditionAfter: "Bình thường",
           lensConditionAfter: "Bình thường",
           batteryConditionAfter: "Bình thường",
           accessoryConditionAfter: "Bình thường",
-          lateDays: 0,
-          lateFee: 0,
-          damageFee: damageFee,
+          earlyReturnDays: Math.max(0, earlyReturnDays),
+          lateDays: Math.max(0, lateReturnDays),
+          lateFee: returnSettlement.lateFee,
+          damageFee: returnSettlement.damage,
           missingAccessoryFee: 0,
           note: `Nhân viên kiểm tra: ${inspectorName}`,
           itemConditions: itemConditions,
@@ -1008,14 +1052,113 @@ export function RentalManageView({
 
             <div className="space-y-2">
               <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
-                Phí phạt hỏng hóc phát sinh (VND)
+                Ngày trả thực tế
+              </label>
+              <input
+                type="date"
+                value={returnDate}
+                onChange={(e) => setReturnDate(e.target.value)}
+                className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm text-zinc-900"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+                  Số ngày trả sớm
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  value={earlyReturnDays}
+                  onChange={(e) =>
+                    setEarlyReturnDays(Math.max(0, Number(e.target.value)))
+                  }
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm text-emerald-600"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+                  Số ngày trả trễ
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  value={lateReturnDays}
+                  onChange={(e) =>
+                    setLateReturnDays(Math.max(0, Number(e.target.value)))
+                  }
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm text-red-600"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+                Phí hư hại / phát sinh khác (VND)
               </label>
               <input
                 type="number"
+                min={0}
                 value={damageFee}
-                onChange={(e) => setDamageFee(Number(e.target.value))}
+                onChange={(e) => setDamageFee(Math.max(0, Number(e.target.value)))}
                 className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm text-red-600"
               />
+            </div>
+
+            <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-4 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-zinc-500">Đơn giá thuê/ngày</span>
+                <span className="font-bold text-zinc-950">
+                  {formatVND(returnSettlement.dailyRentalTotal)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-zinc-500">Tiền cọc đã thu</span>
+                <span className="font-bold text-zinc-950">
+                  {formatVND(returnSettlement.deposit)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-emerald-600">Hoàn phí trả sớm</span>
+                <span className="font-bold text-emerald-600">
+                  +{formatVND(returnSettlement.earlyRefund)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-red-600">Phụ thu quá ngày</span>
+                <span className="font-bold text-red-600">
+                  -{formatVND(returnSettlement.lateFee)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-red-600">Phí hư hại / phát sinh</span>
+                <span className="font-bold text-red-600">
+                  -{formatVND(returnSettlement.damage)}
+                </span>
+              </div>
+              <div className="border-t border-zinc-200 pt-2 mt-2 flex items-center justify-between">
+                <span className="font-bold text-zinc-950">
+                  {returnSettlement.extraPaymentAmount > 0
+                    ? "Khách cần thanh toán thêm"
+                    : "Dự kiến hoàn khách"}
+                </span>
+                <span
+                  className={cn(
+                    "text-base font-black",
+                    returnSettlement.extraPaymentAmount > 0
+                      ? "text-red-600"
+                      : "text-emerald-600",
+                  )}
+                >
+                  {formatVND(
+                    returnSettlement.extraPaymentAmount > 0
+                      ? returnSettlement.extraPaymentAmount
+                      : returnSettlement.refundAmount,
+                  )}
+                </span>
+              </div>
             </div>
 
             <div className="space-y-3">

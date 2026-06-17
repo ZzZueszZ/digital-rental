@@ -4,7 +4,7 @@ import { use } from "react";
 import {
   ArrowLeft,
   Package,
-    Tag,
+  Tag,
   Edit2,
   Trash2,
   RotateCcw,
@@ -29,7 +29,13 @@ import Image from "next/image";
 import { useState, useMemo } from "react";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { ProductDialog } from "../components/ProductDialog";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   useUpdateProductInfo,
   useProduct,
@@ -40,7 +46,15 @@ import {
   useUpdateProductPrice,
 } from "@/services/product";
 import { useAdjustStock, useInventoryLogs } from "@/services/inventory";
-import { useGetDevicesByProduct, useCreateDevice, useUpdateDevice, useUpdateDeviceStatus, useDeleteDevice, DeviceResponse, DeviceStatus } from "@/services/rental";
+import {
+  useGetDevicesByProduct,
+  useCreateDevice,
+  useUpdateDevice,
+  useUpdateDeviceStatus,
+  useDeleteDevice,
+  DeviceResponse,
+  DeviceStatus,
+} from "@/services/rental";
 import { useCategories } from "@/services/category";
 import {
   ProductInfoUpdateRequest,
@@ -113,8 +127,12 @@ export default function ProductDetailPage({
   const [rentalStockInput, setRentalStockInput] = useState("");
   const [saleStockReason, setSaleStockReason] = useState("");
   const [rentalStockReason, setRentalStockReason] = useState("");
-  const [saleStockAction, setSaleStockAction] = useState<"IMPORT" | "EXPORT">("IMPORT");
-  const [rentalStockAction, setRentalStockAction] = useState<"IMPORT" | "EXPORT">("IMPORT");
+  const [saleStockAction, setSaleStockAction] = useState<"IMPORT" | "EXPORT">(
+    "IMPORT",
+  );
+  const [rentalStockAction, setRentalStockAction] = useState<
+    "IMPORT" | "EXPORT"
+  >("IMPORT");
   const adjustStockMutation = useAdjustStock(productId);
   const { data: devicesRes } = useGetDevicesByProduct(productId);
   const devices = devicesRes?.data || [];
@@ -122,15 +140,19 @@ export default function ProductDetailPage({
   const updateDeviceMutation = useUpdateDevice(productId);
   const updateDeviceStatusMutation = useUpdateDeviceStatus(productId);
   const deleteDeviceMutation = useDeleteDevice(productId);
-  
+
   const [showDeviceForm, setShowDeviceForm] = useState(false);
   const [deviceSerial, setDeviceSerial] = useState("");
   const [deviceCondition, setDeviceCondition] = useState("");
 
-  const [selectedDevice, setSelectedDevice] = useState<DeviceResponse | null>(null);
+  const [selectedDevice, setSelectedDevice] = useState<DeviceResponse | null>(
+    null,
+  );
   const [editDeviceSerial, setEditDeviceSerial] = useState("");
   const [editDeviceCondition, setEditDeviceCondition] = useState("");
-  const [editDeviceStatus, setEditDeviceStatus] = useState<DeviceStatus>(DeviceStatus.AVAILABLE);
+  const [editDeviceStatus, setEditDeviceStatus] = useState<DeviceStatus>(
+    DeviceStatus.AVAILABLE,
+  );
 
   const handleBack = () => router.push("/super-admin/products");
 
@@ -200,7 +222,9 @@ export default function ProductDetailPage({
     }
 
     if (saleStockAction === "EXPORT" && quantity > product.quantity) {
-      toast.error(`Số lượng xuất vượt quá kho bán hiện có (${product.quantity})`);
+      toast.error(
+        `Số lượng xuất vượt quá kho bán hiện có (${product.quantity})`,
+      );
       return;
     }
 
@@ -210,16 +234,19 @@ export default function ProductDetailPage({
         type: "SALE",
         reason: saleStockReason.trim() || undefined,
       });
-      toast.success(`${saleStockAction === "IMPORT" ? "Nhập" : "Xuất"} kho bán thành công`);
+      toast.success(
+        `${saleStockAction === "IMPORT" ? "Nhập" : "Xuất"} kho bán thành công`,
+      );
       setSaleStockInput("");
       setSaleStockReason("");
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
-      toast.error(err.response?.data?.message || "Không thể điều chỉnh kho bán");
+      toast.error(
+        err.response?.data?.message || "Không thể điều chỉnh kho bán",
+      );
     }
   };
 
-  
   const handleCreateDevice = async () => {
     if (!deviceSerial.trim()) {
       toast.error("Vui lòng nhập Số Serial");
@@ -229,7 +256,7 @@ export default function ProductDetailPage({
       await createDeviceMutation.mutateAsync({
         productId,
         serialNumber: deviceSerial.trim(),
-        conditionDetails: deviceCondition.trim() || "Mới"
+        conditionDetails: deviceCondition.trim() || "Mới",
       });
       toast.success("Thêm thiết bị thành công");
       setDeviceSerial("");
@@ -240,7 +267,7 @@ export default function ProductDetailPage({
       toast.error(err.response?.data?.message || "Không thể thêm thiết bị");
     }
   };
-  
+
   const handleSaveDeviceEdit = async () => {
     if (!selectedDevice) return;
     try {
@@ -249,8 +276,8 @@ export default function ProductDetailPage({
         req: {
           serialNumber: editDeviceSerial.trim(),
           conditionDetails: editDeviceCondition.trim(),
-          status: editDeviceStatus
-        }
+          status: editDeviceStatus,
+        },
       });
       toast.success("Cập nhật thiết bị thành công");
       setSelectedDevice(null);
@@ -264,7 +291,8 @@ export default function ProductDetailPage({
     setConfirmConfig({
       open: true,
       title: "Xóa thiết bị vật lý?",
-      description: "Hành động này sẽ xóa vĩnh viễn thiết bị vật lý khỏi hệ thống và giảm số lượng kho thuê tương ứng. Bạn có chắc chắn muốn tiếp tục?",
+      description:
+        "Hành động này sẽ xóa vĩnh viễn thiết bị vật lý khỏi hệ thống và giảm số lượng kho thuê tương ứng. Bạn có chắc chắn muốn tiếp tục?",
       variant: "danger",
       onConfirm: async () => {
         try {
@@ -276,7 +304,7 @@ export default function ProductDetailPage({
           const err = error as { response?: { data?: { message?: string } } };
           toast.error(err.response?.data?.message || "Lỗi khi xóa thiết bị");
         }
-      }
+      },
     });
   };
 
@@ -291,7 +319,9 @@ export default function ProductDetailPage({
     }
 
     if (rentalStockAction === "EXPORT" && quantity > currentRentalStock) {
-      toast.error(`Số lượng xuất vượt quá kho thuê hiện có (${currentRentalStock})`);
+      toast.error(
+        `Số lượng xuất vượt quá kho thuê hiện có (${currentRentalStock})`,
+      );
       return;
     }
 
@@ -301,12 +331,16 @@ export default function ProductDetailPage({
         type: "RENTAL",
         reason: rentalStockReason.trim() || undefined,
       });
-      toast.success(`${rentalStockAction === "IMPORT" ? "Nhập" : "Xuất"} kho thuê thành công`);
+      toast.success(
+        `${rentalStockAction === "IMPORT" ? "Nhập" : "Xuất"} kho thuê thành công`,
+      );
       setRentalStockInput("");
       setRentalStockReason("");
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
-      toast.error(err.response?.data?.message || "Không thể điều chỉnh kho thuê");
+      toast.error(
+        err.response?.data?.message || "Không thể điều chỉnh kho thuê",
+      );
     }
   };
 
@@ -314,9 +348,7 @@ export default function ProductDetailPage({
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-20 gap-4">
         <div className="w-12 h-12 border-4 border-zinc-100 border-t-zinc-950 rounded-full animate-spin" />
-        <p className="text-sm font-medium text-zinc-500">
-          Đang tải dữ liệu...
-        </p>
+        <p className="text-sm font-medium text-zinc-500">Đang tải dữ liệu...</p>
       </div>
     );
 
@@ -377,7 +409,12 @@ export default function ProductDetailPage({
                     : "bg-red-50 text-red-600",
                 )}
               >
-                <span className={cn("h-1.5 w-1.5 rounded-full", !isDeleted ? "bg-emerald-500" : "bg-red-500")} />
+                <span
+                  className={cn(
+                    "h-1.5 w-1.5 rounded-full",
+                    !isDeleted ? "bg-emerald-500" : "bg-red-500",
+                  )}
+                />
                 {!isDeleted ? "Hoạt động" : "Đã xóa"}
               </Badge>
             </div>
@@ -482,10 +519,14 @@ export default function ProductDetailPage({
         <div className="xl:col-span-5 space-y-6">
           {/* Status & Inventory Card */}
           <div className="bg-white p-5 sm:p-6 rounded-xl border border-zinc-100 shadow-sm space-y-6">
-            <div className={cn(
-              "grid gap-4",
-              product.isForSale && product.isForRent ? "grid-cols-3" : "grid-cols-2"
-            )}>
+            <div
+              className={cn(
+                "grid gap-4",
+                product.isForSale && product.isForRent
+                  ? "grid-cols-3"
+                  : "grid-cols-2",
+              )}
+            >
               {product.isForSale && (
                 <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-100 flex flex-col items-center text-center relative group/stock">
                   <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center mb-3 group-hover/stock:scale-110 transition-transform">
@@ -542,7 +583,9 @@ export default function ProductDetailPage({
                   Trạng thái
                 </span>
                 <span className="text-sm font-semibold text-indigo-950">
-                  {(!product.isForRent && product.isForSale) ? "Sẵn sàng bán" : "Sẵn sàng thuê"}
+                  {!product.isForRent && product.isForSale
+                    ? "Sẵn sàng bán"
+                    : "Sẵn sàng thuê"}
                 </span>
               </div>
             </div>
@@ -554,7 +597,9 @@ export default function ProductDetailPage({
                 onClick={() => setShowStockForm((prev) => !prev)}
                 className="w-full h-11 rounded-xl bg-zinc-950 text-white border-0 text-sm font-semibold shadow-dash-sm hover:bg-zinc-800 hover:shadow-dash-md transition-all duration-200 ease-in-out"
               >
-                {showStockForm ? "Ẩn form chỉnh tồn kho" : "Chỉnh tồn kho trực tiếp"}
+                {showStockForm
+                  ? "Ẩn form chỉnh tồn kho"
+                  : "Chỉnh tồn kho trực tiếp"}
               </Button>
 
               {showStockForm && (
@@ -562,7 +607,9 @@ export default function ProductDetailPage({
                   <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out  hover:shadow-dash-md">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <h4 className="text-sm font-semibold text-emerald-950">kho bán</h4>
+                        <h4 className="text-sm font-semibold text-emerald-950">
+                          kho bán
+                        </h4>
                         <p className="text-xs font-medium text-emerald-700/70">
                           Nhập số lượng cần cộng thêm hoặc trừ bớt.
                         </p>
@@ -603,7 +650,8 @@ export default function ProductDetailPage({
 
                     <label className="space-y-1 block">
                       <span className="text-xs font-semibold text-zinc-700">
-                        số lượng {saleStockAction === "IMPORT" ? "nhập thêm" : "trừ bớt"}
+                        số lượng{" "}
+                        {saleStockAction === "IMPORT" ? "nhập thêm" : "trừ bớt"}
                       </span>
                       <input
                         type="number"
@@ -615,7 +663,9 @@ export default function ProductDetailPage({
                       />
                     </label>
                     <label className="space-y-1 block">
-                      <span className="text-xs font-semibold text-zinc-700">lý do chỉnh kho bán</span>
+                      <span className="text-xs font-semibold text-zinc-700">
+                        Lý do chỉnh kho bán
+                      </span>
                       <input
                         type="text"
                         value={saleStockReason}
@@ -639,7 +689,9 @@ export default function ProductDetailPage({
                   <div className="rounded-xl border border-amber-100 bg-amber-50/50 p-4 space-y-4 shadow-dash-sm transition-all duration-200 ease-in-out  hover:shadow-dash-md">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <h4 className="text-sm font-semibold text-amber-950">Quản lý kho thuê (Serial)</h4>
+                        <h4 className="text-sm font-semibold text-amber-950">
+                          Quản lý kho thuê (Serial)
+                        </h4>
                         <p className="text-xs font-medium text-amber-700/70">
                           Quản lý độc lập từng thiết bị cho thuê.
                         </p>
@@ -651,7 +703,9 @@ export default function ProductDetailPage({
 
                     <div className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1">
                       {devices.length === 0 ? (
-                        <div className="text-xs text-center py-4 text-amber-600/70">Chưa có thiết bị nào.</div>
+                        <div className="text-xs text-center py-4 text-amber-600/70">
+                          Chưa có thiết bị nào.
+                        </div>
                       ) : (
                         devices.map((d: DeviceResponse) => (
                           <div
@@ -665,25 +719,40 @@ export default function ProductDetailPage({
                             className="flex items-center justify-between bg-white border border-amber-100 rounded-xl p-2 text-sm cursor-pointer hover:bg-amber-50/50 hover:border-amber-200 transition-all duration-150"
                           >
                             <div className="flex flex-col">
-                              <span className="font-semibold text-zinc-900">SN: {d.serialNumber}</span>
-                              <span className="text-xs text-zinc-500 line-clamp-1">{d.conditionDetails}</span>
+                              <span className="font-semibold text-zinc-900">
+                                SN: {d.serialNumber}
+                              </span>
+                              <span className="text-xs text-zinc-500 line-clamp-1">
+                                {d.conditionDetails}
+                              </span>
                             </div>
                             <span
                               className={cn(
                                 "text-[10px] font-semibold px-2 py-1 rounded-xl border transition-all duration-150",
-                                d.status === "AVAILABLE" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
-                                d.status === "RESERVED" ? "bg-amber-50 text-amber-700 border-amber-100" :
-                                d.status === "RENTED" ? "bg-blue-50 text-blue-700 border-blue-100" :
-                                d.status === "MAINTENANCE" ? "bg-zinc-50 text-zinc-700 border-zinc-100" :
-                                d.status === "DAMAGED" ? "bg-rose-50 text-rose-700 border-rose-100" :
-                                "bg-red-50 text-red-700 border-red-100"
+                                d.status === "AVAILABLE"
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                                  : d.status === "RESERVED"
+                                    ? "bg-amber-50 text-amber-700 border-amber-100"
+                                    : d.status === "RENTED"
+                                      ? "bg-blue-50 text-blue-700 border-blue-100"
+                                      : d.status === "MAINTENANCE"
+                                        ? "bg-zinc-50 text-zinc-700 border-zinc-100"
+                                        : d.status === "DAMAGED"
+                                          ? "bg-rose-50 text-rose-700 border-rose-100"
+                                          : "bg-red-50 text-red-700 border-red-100",
                               )}
                             >
-                              {d.status === "AVAILABLE" ? "Sẵn sàng" :
-                               d.status === "RESERVED" ? "Đặt trước" :
-                               d.status === "RENTED" ? "Thuê" :
-                               d.status === "MAINTENANCE" ? "Bảo trì" :
-                               d.status === "DAMAGED" ? "Hỏng" : "Mất"}
+                              {d.status === "AVAILABLE"
+                                ? "Sẵn sàng"
+                                : d.status === "RESERVED"
+                                  ? "Đặt trước"
+                                  : d.status === "RENTED"
+                                    ? "Thuê"
+                                    : d.status === "MAINTENANCE"
+                                      ? "Bảo trì"
+                                      : d.status === "DAMAGED"
+                                        ? "Hỏng"
+                                        : "Mất"}
                             </span>
                           </div>
                         ))
@@ -701,7 +770,9 @@ export default function ProductDetailPage({
                     ) : (
                       <div className="bg-white p-3 rounded-xl border border-amber-200 space-y-3">
                         <label className="space-y-1 block">
-                          <span className="text-xs font-semibold text-zinc-700">Số Serial</span>
+                          <span className="text-xs font-semibold text-zinc-700">
+                            Số Serial
+                          </span>
                           <input
                             type="text"
                             value={deviceSerial}
@@ -711,7 +782,9 @@ export default function ProductDetailPage({
                           />
                         </label>
                         <label className="space-y-1 block">
-                          <span className="text-xs font-semibold text-zinc-700">Tình trạng (Tùy chọn)</span>
+                          <span className="text-xs font-semibold text-zinc-700">
+                            Tình trạng (Tùy chọn)
+                          </span>
                           <input
                             type="text"
                             value={deviceCondition}
@@ -721,8 +794,22 @@ export default function ProductDetailPage({
                           />
                         </label>
                         <div className="flex gap-2">
-                          <Button type="button" onClick={() => setShowDeviceForm(false)} variant="outline" className="flex-1 h-9 rounded-xl text-xs font-semibold border-amber-200 text-amber-700">Hủy</Button>
-                          <Button type="button" onClick={handleCreateDevice} disabled={createDeviceMutation.isPending} className="flex-1 h-9 rounded-xl bg-amber-600 text-white text-xs font-semibold">Lưu</Button>
+                          <Button
+                            type="button"
+                            onClick={() => setShowDeviceForm(false)}
+                            variant="outline"
+                            className="flex-1 h-9 rounded-xl text-xs font-semibold border-amber-200 text-amber-700"
+                          >
+                            Hủy
+                          </Button>
+                          <Button
+                            type="button"
+                            onClick={handleCreateDevice}
+                            disabled={createDeviceMutation.isPending}
+                            className="flex-1 h-9 rounded-xl bg-amber-600 text-white text-xs font-semibold"
+                          >
+                            Lưu
+                          </Button>
                         </div>
                       </div>
                     )}
@@ -911,17 +998,29 @@ export default function ProductDetailPage({
         isPending={updatePriceMutation.isPending}
       />
 
-      <Dialog open={!!selectedDevice} onOpenChange={(open) => !open && setSelectedDevice(null)}>
-        <DialogContent showCloseButton={false} className="sm:max-w-md !p-0 !gap-0 overflow-hidden border border-zinc-100 shadow-dash-overlay rounded-xl bg-white">
+      <Dialog
+        open={!!selectedDevice}
+        onOpenChange={(open) => !open && setSelectedDevice(null)}
+      >
+        <DialogContent
+          showCloseButton={false}
+          className="sm:max-w-md !p-0 !gap-0 overflow-hidden border border-zinc-100 shadow-dash-overlay rounded-xl bg-white"
+        >
           <div className="p-6">
             <DialogHeader className="text-left space-y-1">
-              <DialogTitle className="text-lg font-semibold tracking-tight text-zinc-950">Chỉnh sửa thiết bị vật lý</DialogTitle>
-              <p className="text-xs font-medium text-zinc-500">Mã thiết bị: #{selectedDevice?.id}</p>
+              <DialogTitle className="text-lg font-semibold tracking-tight text-zinc-950">
+                Chỉnh sửa thiết bị vật lý
+              </DialogTitle>
+              <p className="text-xs font-medium text-zinc-500">
+                Mã thiết bị: #{selectedDevice?.id}
+              </p>
             </DialogHeader>
 
             <div className="mt-4 space-y-4">
               <label className="space-y-1 block">
-                <span className="text-xs font-semibold text-zinc-700">Số Serial (Serial Number)</span>
+                <span className="text-xs font-semibold text-zinc-700">
+                  Số Serial (Serial Number)
+                </span>
                 <input
                   type="text"
                   value={editDeviceSerial}
@@ -932,7 +1031,9 @@ export default function ProductDetailPage({
               </label>
 
               <label className="space-y-1 block">
-                <span className="text-xs font-semibold text-zinc-700">Tình trạng (Condition Details)</span>
+                <span className="text-xs font-semibold text-zinc-700">
+                  Tình trạng (Condition Details)
+                </span>
                 <input
                   type="text"
                   value={editDeviceCondition}
@@ -943,7 +1044,9 @@ export default function ProductDetailPage({
               </label>
 
               <div className="space-y-2">
-                <span className="text-xs font-semibold text-zinc-700 block">Trạng thái hiện tại</span>
+                <span className="text-xs font-semibold text-zinc-700 block">
+                  Trạng thái hiện tại
+                </span>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.values(DeviceStatus).map((status) => {
                     const isSelected = editDeviceStatus === status;
@@ -952,27 +1055,39 @@ export default function ProductDetailPage({
                     switch (status) {
                       case DeviceStatus.AVAILABLE:
                         label = "Sẵn sàng";
-                        colorClasses = isSelected ? "bg-emerald-500 text-white border-emerald-500" : "bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50/50";
+                        colorClasses = isSelected
+                          ? "bg-emerald-500 text-white border-emerald-500"
+                          : "bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50/50";
                         break;
                       case DeviceStatus.RESERVED:
                         label = "Đặt trước";
-                        colorClasses = isSelected ? "bg-amber-500 text-white border-amber-500" : "bg-white text-amber-700 border-amber-200 hover:bg-amber-50/50";
+                        colorClasses = isSelected
+                          ? "bg-amber-500 text-white border-amber-500"
+                          : "bg-white text-amber-700 border-amber-200 hover:bg-amber-50/50";
                         break;
                       case DeviceStatus.RENTED:
                         label = "Đang cho thuê";
-                        colorClasses = isSelected ? "bg-blue-500 text-white border-blue-500" : "bg-white text-blue-700 border-blue-200 hover:bg-blue-50/50";
+                        colorClasses = isSelected
+                          ? "bg-blue-500 text-white border-blue-500"
+                          : "bg-white text-blue-700 border-blue-200 hover:bg-blue-50/50";
                         break;
                       case DeviceStatus.MAINTENANCE:
                         label = "Bảo trì";
-                        colorClasses = isSelected ? "bg-zinc-600 text-white border-zinc-600" : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50/50";
+                        colorClasses = isSelected
+                          ? "bg-zinc-600 text-white border-zinc-600"
+                          : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50/50";
                         break;
                       case DeviceStatus.DAMAGED:
                         label = "Hỏng hóc";
-                        colorClasses = isSelected ? "bg-rose-500 text-white border-rose-500" : "bg-white text-rose-700 border-rose-200 hover:bg-rose-50/50";
+                        colorClasses = isSelected
+                          ? "bg-rose-500 text-white border-rose-500"
+                          : "bg-white text-rose-700 border-rose-200 hover:bg-rose-50/50";
                         break;
                       case DeviceStatus.LOST:
                         label = "Bị mất";
-                        colorClasses = isSelected ? "bg-red-600 text-white border-red-600" : "bg-white text-red-700 border-red-200 hover:bg-red-50/50";
+                        colorClasses = isSelected
+                          ? "bg-red-600 text-white border-red-600"
+                          : "bg-white text-red-700 border-red-200 hover:bg-red-50/50";
                         break;
                     }
                     return (
@@ -982,7 +1097,7 @@ export default function ProductDetailPage({
                         onClick={() => setEditDeviceStatus(status)}
                         className={cn(
                           "px-3 py-2 text-xs font-semibold rounded-xl border text-center transition-all duration-150 active:scale-[0.98]",
-                          colorClasses
+                          colorClasses,
                         )}
                       >
                         {label}
@@ -998,8 +1113,12 @@ export default function ProductDetailPage({
             <Button
               type="button"
               variant="ghost"
-              onClick={() => selectedDevice && handleConfirmDeleteDevice(selectedDevice.id)}
-              disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
+              onClick={() =>
+                selectedDevice && handleConfirmDeleteDevice(selectedDevice.id)
+              }
+              disabled={
+                deleteDeviceMutation.isPending || updateDeviceMutation.isPending
+              }
               className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl font-semibold h-10 px-4 transition-all"
             >
               <Trash2 className="w-4 h-4 mr-1.5" />
@@ -1010,7 +1129,10 @@ export default function ProductDetailPage({
                 type="button"
                 variant="outline"
                 onClick={() => setSelectedDevice(null)}
-                disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
+                disabled={
+                  deleteDeviceMutation.isPending ||
+                  updateDeviceMutation.isPending
+                }
                 className="rounded-xl font-semibold border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-100 h-10 px-4 transition-all"
               >
                 Hủy
@@ -1018,10 +1140,15 @@ export default function ProductDetailPage({
               <Button
                 type="button"
                 onClick={handleSaveDeviceEdit}
-                disabled={deleteDeviceMutation.isPending || updateDeviceMutation.isPending}
+                disabled={
+                  deleteDeviceMutation.isPending ||
+                  updateDeviceMutation.isPending
+                }
                 className="rounded-xl font-semibold h-10 px-5 shadow-sm text-white bg-red-600 hover:bg-red-700  transition-all"
               >
-                {updateDeviceMutation.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+                {updateDeviceMutation.isPending
+                  ? "Đang lưu..."
+                  : "Lưu thay đổi"}
               </Button>
             </div>
           </DialogFooter>

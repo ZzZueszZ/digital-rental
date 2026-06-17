@@ -16,6 +16,8 @@ public class RentalReturnReportResponse {
     private String lensConditionAfter;
     private String batteryConditionAfter;
     private String accessoryConditionAfter;
+    private int earlyReturnDays;
+    private BigDecimal earlyReturnRefundAmount;
     private int lateDays;
     private BigDecimal lateFee;
     private BigDecimal damageFee;

@@ -615,7 +615,7 @@ export default function ProductDetailPage({
                       />
                     </label>
                     <label className="space-y-1 block">
-                      <span className="text-xs font-semibold text-zinc-700">lý do chỉnh kho bán</span>
+                      <span className="text-xs font-semibold text-zinc-700">Lý do chỉnh kho bán</span>
                       <input
                         type="text"
                         value={saleStockReason}

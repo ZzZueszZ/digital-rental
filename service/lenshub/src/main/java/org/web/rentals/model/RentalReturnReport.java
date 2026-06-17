@@ -48,6 +48,14 @@ public class RentalReturnReport extends BaseAuditEntity {
     @Builder.Default
     private int lateDays = 0;
 
+    @Column(name = "early_return_days")
+    @Builder.Default
+    private int earlyReturnDays = 0;
+
+    @Column(name = "early_return_refund_amount", precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal earlyReturnRefundAmount = BigDecimal.ZERO;
+
     @Column(name = "late_fee", precision = 12, scale = 2)
     @Builder.Default
     private BigDecimal lateFee = BigDecimal.ZERO;

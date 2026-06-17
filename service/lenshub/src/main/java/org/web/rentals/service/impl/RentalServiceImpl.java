@@ -28,6 +28,7 @@ import org.web.users.repository.UserRepository;
 import org.web.users.repository.UserProfileRepository;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -528,10 +529,26 @@ public class RentalServiceImpl implements RentalService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái RENTING để lập biên bản trả.");
         }
 
-        BigDecimal totalPenalty = request.getLateFee().add(request.getDamageFee()).add(request.getMissingAccessoryFee());
+        int earlyReturnDays = Math.max(0, request.getEarlyReturnDays());
+        int lateDays = Math.max(0, request.getLateDays());
+        if (earlyReturnDays > 0 && lateDays > 0) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Không thể vừa trả sớm vừa trả trễ trong cùng một biên bản.");
+        }
+
+        BigDecimal dailyRentalTotal = calculateDailyRentalTotal(order);
+        BigDecimal earlyReturnRefundAmount = dailyRentalTotal
+                .multiply(BigDecimal.valueOf(earlyReturnDays))
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal lateFee = dailyRentalTotal
+                .multiply(BigDecimal.valueOf(lateDays))
+                .multiply(BigDecimal.valueOf(1.5))
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal damageFee = safeAmount(request.getDamageFee());
+        BigDecimal missingAccessoryFee = safeAmount(request.getMissingAccessoryFee());
+        BigDecimal totalPenalty = lateFee.add(damageFee).add(missingAccessoryFee);
         BigDecimal finalDeposit = order.getFinalDepositAmount() != null ? order.getFinalDepositAmount() : BigDecimal.ZERO;
 
-        BigDecimal refundAmount = finalDeposit.subtract(totalPenalty);
+        BigDecimal refundAmount = finalDeposit.add(earlyReturnRefundAmount).subtract(totalPenalty);
         BigDecimal extraPaymentAmount = BigDecimal.ZERO;
 
         if (refundAmount.compareTo(BigDecimal.ZERO) < 0) {
@@ -542,15 +559,17 @@ public class RentalServiceImpl implements RentalService {
         RentalReturnReport report = RentalReturnReport.builder()
                 .rentalOrder(order)
                 .staff(staff)
-                .returnDate(LocalDateTime.now())
+                .returnDate(request.getReturnDate() != null ? request.getReturnDate() : LocalDateTime.now())
                 .bodyConditionAfter(request.getBodyConditionAfter())
                 .lensConditionAfter(request.getLensConditionAfter())
                 .batteryConditionAfter(request.getBatteryConditionAfter())
                 .accessoryConditionAfter(request.getAccessoryConditionAfter())
-                .lateDays(request.getLateDays())
-                .lateFee(request.getLateFee())
-                .damageFee(request.getDamageFee())
-                .missingAccessoryFee(request.getMissingAccessoryFee())
+                .earlyReturnDays(earlyReturnDays)
+                .earlyReturnRefundAmount(earlyReturnRefundAmount)
+                .lateDays(lateDays)
+                .lateFee(lateFee)
+                .damageFee(damageFee)
+                .missingAccessoryFee(missingAccessoryFee)
                 .totalPenalty(totalPenalty)
                 .refundAmount(refundAmount)
                 .extraPaymentAmount(extraPaymentAmount)
@@ -566,7 +585,7 @@ public class RentalServiceImpl implements RentalService {
         for (RentalOrderItem item : order.getItems()) {
             Device device = item.getDevice();
             if (device != null) {
-                if (request.getDamageFee().compareTo(BigDecimal.ZERO) > 0) {
+                if (damageFee.compareTo(BigDecimal.ZERO) > 0 || missingAccessoryFee.compareTo(BigDecimal.ZERO) > 0) {
                     device.setStatus(DeviceStatus.DAMAGED);
                 } else {
                     device.setStatus(DeviceStatus.AVAILABLE);
@@ -812,6 +831,21 @@ public class RentalServiceImpl implements RentalService {
                 .orElse(order.getUser().getEmail());
     }
 
+    private BigDecimal calculateDailyRentalTotal(RentalOrder order) {
+        if (order.getItems() == null || order.getItems().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return order.getItems().stream()
+                .map(RentalOrderItem::getPricePerDay)
+                .map(this::safeAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal safeAmount(BigDecimal value) {
+        return value != null ? value : BigDecimal.ZERO;
+    }
+
     // Hand-written DTO Converters
     private RentalOrderResponse mapToResponse(RentalOrder order) {
         if (order == null) return null;
@@ -894,6 +928,8 @@ public class RentalServiceImpl implements RentalService {
                 .lensConditionAfter(report.getLensConditionAfter())
                 .batteryConditionAfter(report.getBatteryConditionAfter())
                 .accessoryConditionAfter(report.getAccessoryConditionAfter())
+                .earlyReturnDays(report.getEarlyReturnDays())
+                .earlyReturnRefundAmount(safeAmount(report.getEarlyReturnRefundAmount()))
                 .lateDays(report.getLateDays())
                 .lateFee(report.getLateFee())
                 .damageFee(report.getDamageFee())

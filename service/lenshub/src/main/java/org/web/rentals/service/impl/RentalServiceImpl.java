@@ -815,7 +815,49 @@ public class RentalServiceImpl implements RentalService {
         terms.append("Điều 2: Tiền cọc sẽ được hoàn lại đầy đủ sau khi thiết bị được trả và hoàn tất thẩm định không có lỗi/hư hỏng.\n");
         terms.append("Điều 3: Trường hợp trả trễ hạn, mức phạt là 150% phí thuê hàng ngày của mỗi ngày trễ hạn.\n");
         terms.append("Điều 4: Mọi tranh chấp sẽ được ưu tiên thương lượng giữa 2 bên.");
+        appendExpandedRentalContractTerms(terms);
         return terms.toString();
+    }
+
+    private void appendExpandedRentalContractTerms(StringBuilder terms) {
+        terms.append("\nV. QUY TRÌNH BÀN GIAO THIẾT BỊ\n");
+        terms.append("Bên cho thuê kiểm tra thiết bị, serial, phụ kiện và tình trạng trước khi bàn giao.\n");
+        terms.append("Bên thuê phải kiểm tra lại thiết bị khi nhận. Nếu tiếp nhận thiết bị, bên thuê được xem là đã đồng ý với tình trạng ghi nhận trong biên bản bàn giao.\n");
+
+        terms.append("\nVI. QUYỀN VÀ NGHĨA VỤ CỦA BÊN A\n");
+        terms.append("Bên A có trách nhiệm cung cấp thiết bị đúng mô tả, hỗ trợ kỹ thuật cơ bản và hoàn tiền cọc/hoàn phí hợp lệ sau khi đối soát.\n");
+        terms.append("Bên A có quyền từ chối bàn giao nếu bên thuê chưa hoàn tất eKYC, chưa ký hợp đồng, chưa thanh toán phí thuê hoặc tiền cọc theo quy định.\n");
+
+        terms.append("\nVII. QUYỀN VÀ NGHĨA VỤ CỦA BÊN B\n");
+        terms.append("Bên B có trách nhiệm sử dụng thiết bị đúng mục đích, bảo quản cẩn thận, không tự ý tháo lắp, sửa chữa, cho thuê lại hoặc chuyển giao cho bên thứ ba.\n");
+        terms.append("Bên B phải trả thiết bị đúng hạn, đúng tình trạng đã nhận và phối hợp xác minh khi có tranh chấp về thiết bị.\n");
+
+        terms.append("\nVIII. QUY ĐỊNH VỀ HƯ HỎNG, MẤT MÁT VÀ BỒI THƯỜNG\n");
+        terms.append("Nếu thiết bị hư hỏng, mất mát hoặc thiếu phụ kiện, bên B phải thanh toán chi phí sửa chữa, thay thế hoặc bồi thường theo kết quả thẩm định.\n");
+        terms.append("Chi phí phát sinh được trừ vào tiền cọc và/hoặc khoản hoàn phí trả sớm. Nếu chi phí vượt quá số tiền được khấu trừ, bên B phải thanh toán phần chênh lệch.\n");
+
+        terms.append("\nIX. QUY ĐỊNH VỀ TRẢ TRỄ, TRẢ SỚM VÀ GIA HẠN\n");
+        terms.append("Trả trễ bị tính phụ thu 150% phí thuê mỗi ngày cho mỗi ngày quá hạn.\n");
+        terms.append("Trả sớm có thể được hoàn phần phí thuê của số ngày chưa sử dụng sau khi trừ các khoản phát sinh, nếu chính sách tại thời điểm xử lý cho phép.\n");
+        terms.append("Mọi yêu cầu gia hạn phải được bên A xác nhận trước khi hết hạn thuê và phụ thu sẽ được tính theo đơn giá hiện hành.\n");
+
+        terms.append("\nX. XỬ LÝ VI PHẠM VÀ CHẤM DỨT HỢP ĐỒNG\n");
+        terms.append("Hợp đồng có thể bị chấm dứt nếu bên B cung cấp thông tin sai, không thanh toán, không trả thiết bị hoặc vi phạm nghiêm trọng nghĩa vụ bảo quản.\n");
+        terms.append("Bên A có quyền ghi nhận sự cố, tạm giữ tiền cọc và thực hiện các biện pháp cần thiết để bảo vệ tài sản.\n");
+
+        terms.append("\nXI. BẢO MẬT VÀ XÁC THỰC ĐIỆN TỬ\n");
+        terms.append("Bên B đồng ý việc hệ thống sử dụng thông tin tài khoản, eKYC, OTP, chữ ký điện tử và nhật ký thao tác để xác minh giao dịch thuê.\n");
+        terms.append("Dữ liệu nhạy cảm được bảo vệ theo cơ chế xác thực, phân quyền và các lớp bảo mật của hệ thống, bao gồm E2EE-SHIELD đối với API phù hợp.\n");
+
+        terms.append("\nXII. GIẢI QUYẾT TRANH CHẤP\n");
+        terms.append("Mọi tranh chấp phát sinh sẽ được ưu tiên giải quyết bằng thương lượng trên cơ sở dữ liệu đơn thuê, hợp đồng, biên bản bàn giao, biên bản hoàn trả và nhật ký hệ thống.\n");
+
+        terms.append("\nXIII. CAM KẾT CỦA CÁC BÊN\n");
+        terms.append("Các bên cam kết thông tin cung cấp là trung thực, đã đọc và đồng ý với toàn bộ nội dung hợp đồng trước khi ký điện tử.\n");
+        terms.append("Hợp đồng có hiệu lực từ thời điểm được ký điện tử bởi các bên trên hệ thống Digital Rental.\n");
+
+        terms.append("\nPHỤ LỤC ĐÍNH KÈM\n");
+        terms.append("Phụ lục gồm: thông tin thiết bị/serial, biên bản bàn giao, biên bản hoàn trả, bảng tính phí phát sinh, lịch sử thanh toán và nhật ký ký điện tử nếu có.");
     }
 
     private String resolveRenterName(RentalOrder order) {

@@ -193,6 +193,18 @@ export function RentalDetailDialog({
         (term, index) => `<p><strong>Điều ${index + 1}:</strong> ${term}</p>`,
       )
       .join("");
+    const expandedContractTerms = `
+      <p><strong>V. Quy trình bàn giao thiết bị:</strong> Digital Rental kiểm tra thiết bị, serial, phụ kiện và tình trạng trước khi bàn giao. Người thuê cần kiểm tra lại khi nhận; nếu tiếp nhận thiết bị thì được xem là đồng ý với tình trạng ghi nhận trong biên bản bàn giao.</p>
+      <p><strong>VI. Quyền và nghĩa vụ của bên cho thuê:</strong> Cung cấp thiết bị đúng mô tả, hỗ trợ kỹ thuật cơ bản, ghi nhận biên bản giao nhận và hoàn tiền cọc/hoàn phí hợp lệ sau khi đối soát. Bên cho thuê có quyền từ chối bàn giao nếu người thuê chưa hoàn tất eKYC, chưa ký hợp đồng hoặc chưa thanh toán theo quy định.</p>
+      <p><strong>VII. Quyền và nghĩa vụ của bên thuê:</strong> Sử dụng thiết bị đúng mục đích, bảo quản cẩn thận, không tự ý tháo lắp, sửa chữa, cho thuê lại hoặc chuyển giao cho bên thứ ba. Người thuê phải trả thiết bị đúng hạn, đúng tình trạng và phối hợp xác minh khi có tranh chấp.</p>
+      <p><strong>VIII. Hư hỏng, mất mát và bồi thường:</strong> Nếu thiết bị hư hỏng, mất mát hoặc thiếu phụ kiện, người thuê thanh toán chi phí sửa chữa, thay thế hoặc bồi thường theo kết quả thẩm định. Chi phí phát sinh được khấu trừ vào tiền cọc và/hoặc khoản hoàn phí trả sớm; nếu vượt quá số được khấu trừ, người thuê thanh toán phần chênh lệch.</p>
+      <p><strong>IX. Trả trễ, trả sớm và gia hạn:</strong> Trả trễ bị tính phụ thu 150% phí thuê mỗi ngày cho mỗi ngày quá hạn. Trả sớm có thể được hoàn phần phí thuê của số ngày chưa sử dụng sau khi trừ các khoản phát sinh, nếu chính sách tại thời điểm xử lý cho phép. Mọi yêu cầu gia hạn cần được xác nhận trước khi hết hạn thuê.</p>
+      <p><strong>X. Xử lý vi phạm và chấm dứt hợp đồng:</strong> Hợp đồng có thể bị chấm dứt nếu người thuê cung cấp thông tin sai, không thanh toán, không trả thiết bị hoặc vi phạm nghiêm trọng nghĩa vụ bảo quản. Digital Rental có quyền ghi nhận sự cố, tạm giữ tiền cọc và thực hiện biện pháp cần thiết để bảo vệ tài sản.</p>
+      <p><strong>XI. Bảo mật và xác thực điện tử:</strong> Người thuê đồng ý việc hệ thống sử dụng thông tin tài khoản, eKYC, OTP, chữ ký điện tử và nhật ký thao tác để xác minh giao dịch thuê. Dữ liệu nhạy cảm được bảo vệ theo cơ chế xác thực, phân quyền và các lớp bảo mật của hệ thống, bao gồm E2EE-SHIELD đối với API phù hợp.</p>
+      <p><strong>XII. Giải quyết tranh chấp:</strong> Mọi tranh chấp được ưu tiên giải quyết bằng thương lượng trên cơ sở dữ liệu đơn thuê, hợp đồng, biên bản bàn giao, biên bản hoàn trả, lịch sử thanh toán và nhật ký hệ thống.</p>
+      <p><strong>XIII. Cam kết của các bên:</strong> Các bên cam kết thông tin cung cấp là trung thực, đã đọc và đồng ý với toàn bộ nội dung hợp đồng trước khi ký điện tử. Hợp đồng có hiệu lực từ thời điểm được ký điện tử bởi các bên trên hệ thống Digital Rental.</p>
+      <p><strong>Phụ lục đính kèm:</strong> Thông tin thiết bị/serial, biên bản bàn giao, biên bản hoàn trả, bảng tính phí phát sinh, lịch sử thanh toán và nhật ký ký điện tử nếu có.</p>
+    `;
 
     printWindow.document.write(`
       <html>
@@ -413,6 +425,7 @@ export function RentalDetailDialog({
           <div class="section-title">IV. Điều khoản hợp đồng</div>
           <div class="content-box">
             ${legalTerms}
+            ${expandedContractTerms}
           </div>
 
           <div class="signatures-container">

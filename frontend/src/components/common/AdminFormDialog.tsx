@@ -49,10 +49,10 @@ export function AdminFormDialog({
       />
 
       {/* Dialog */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-5 sm:p-8">
         <div
           className={cn(
-            "relative w-full bg-white rounded-xl shadow-dash-overlay overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 border border-zinc-100",
+            "relative w-full max-h-[calc(100vh-96px)] bg-white rounded-xl shadow-dash-overlay overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 border border-zinc-100 flex flex-col",
             maxWidth,
           )}
         >
@@ -92,15 +92,15 @@ export function AdminFormDialog({
           {/* Form */}
           <form
             onSubmit={onSubmit}
-            className="flex flex-col max-h-[calc(100vh-140px)]"
+            className="flex min-h-0 flex-1 flex-col"
           >
-            <div className="px-6 py-5 space-y-4 overflow-y-auto custom-scrollbar">
+            <div className="px-6 pt-5 pb-8 space-y-4 overflow-y-auto custom-scrollbar">
               {children}
             </div>
 
             {/* Actions / Footer */}
             {!hideFooter && (
-              <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex items-center justify-end gap-3 mt-auto">
+              <div className="px-6 pt-5 pb-8 bg-white border-t border-zinc-100 flex items-center justify-end gap-3 mt-auto shadow-[0_-12px_24px_rgba(24,24,27,0.03)]">
                 <button
                   type="button"
                   onClick={() => onOpenChange(false)}

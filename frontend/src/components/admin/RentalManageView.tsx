@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { DateInput } from "@/components/ui/date-input";
 import {
   Select,
   SelectContent,
@@ -146,6 +147,14 @@ export function RentalManageView({
   const [earlyReturnDays, setEarlyReturnDays] = useState<number>(0);
   const [lateReturnDays, setLateReturnDays] = useState<number>(0);
   const [damageFee, setDamageFee] = useState<number>(0);
+
+  const formatMoneyInput = (value: number) =>
+    new Intl.NumberFormat("vi-VN").format(Math.max(0, value || 0));
+
+  const parseMoneyInput = (value: string) => {
+    const numericValue = value.replace(/[^\d]/g, "");
+    return numericValue ? Number(numericValue) : 0;
+  };
 
   const returnSettlement = useMemo(() => {
     const dailyRentalTotal =
@@ -897,11 +906,18 @@ export function RentalManageView({
                   Cập nhật số tiền đặt cọc (VND)
                 </label>
                 <input
-                  type="number"
-                  value={depositAmount}
-                  onChange={(e) => setDepositAmount(Number(e.target.value))}
+                  type="text"
+                  inputMode="numeric"
+                  value={formatMoneyInput(depositAmount)}
+                  onChange={(e) =>
+                    setDepositAmount(parseMoneyInput(e.target.value))
+                  }
+                  placeholder="Ví dụ: 1.000.000"
                   className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm"
                 />
+                <p className="text-[11px] text-zinc-500">
+                  Hệ thống tự định dạng dấu chấm, ví dụ 1000000 thành 1.000.000 đ.
+                </p>
               </div>
 
               <div className="space-y-3">
@@ -1054,11 +1070,11 @@ export function RentalManageView({
               <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
                 Ngày trả thực tế
               </label>
-              <input
-                type="date"
+              <DateInput
                 value={returnDate}
-                onChange={(e) => setReturnDate(e.target.value)}
-                className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm text-zinc-900"
+                onChange={setReturnDate}
+                placeholder="dd/mm/yyyy"
+                className="!h-10 !px-3 !pr-12 !rounded-xl !border-zinc-200 !shadow-none !text-sm !font-bold focus:!border-zinc-950"
               />
             </div>
 
@@ -1099,12 +1115,16 @@ export function RentalManageView({
                 Phí hư hại / phát sinh khác (VND)
               </label>
               <input
-                type="number"
-                min={0}
-                value={damageFee}
-                onChange={(e) => setDamageFee(Math.max(0, Number(e.target.value)))}
+                type="text"
+                inputMode="numeric"
+                value={formatMoneyInput(damageFee)}
+                onChange={(e) => setDamageFee(parseMoneyInput(e.target.value))}
+                placeholder="Ví dụ: 500.000"
                 className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm text-red-600"
               />
+              <p className="text-[11px] text-zinc-500">
+                Chỉ nhập số tiền phát sinh do hư hại hoặc thiếu phụ kiện. Phí trả trễ đã tự tính theo số ngày.
+              </p>
             </div>
 
             <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-4 space-y-2 text-xs">

@@ -176,6 +176,7 @@ public class IdentityServiceImpl implements IdentityService {
         identity.setPlaceOfOrigin(ocrResult.getExtractedPlaceOfOrigin());
         identity.setPlaceOfResidence(ocrResult.getExtractedPlaceOfResidence());
         identity.setIssuedDate(ocrResult.getExtractedIssuedDate());
+        identity.setIssuedPlace(extractIssuedPlaceFromRawOcr(ocrResult));
         identity.setExpiryDate(ocrResult.getExtractedExpiryDate());
         identity.setIdentityVerificationStatus(IdentityVerificationStatus.VERIFIED);
         identity.setOcrExtracted(true);
@@ -183,6 +184,41 @@ public class IdentityServiceImpl implements IdentityService {
         identity.setVerifiedAt(LocalDateTime.now());
 
         userIdentityRepository.save(identity);
+    }
+
+    private String extractIssuedPlaceFromRawOcr(VerificationResult result) {
+        if (result == null || result.getRawOcrJson() == null || result.getRawOcrJson().isBlank()) {
+            return null;
+        }
+        String raw = result.getRawOcrJson();
+        for (String key : List.of("issue_place", "issued_place", "issue_loc", "issue_by", "issued_by", "place_issue")) {
+            String value = extractJsonStringValue(raw, key);
+            if (value != null && !value.isBlank()) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    private String extractJsonStringValue(String rawJson, String key) {
+        String pattern = "\"" + key + "\"";
+        int keyIndex = rawJson.indexOf(pattern);
+        if (keyIndex < 0) {
+            return null;
+        }
+        int colonIndex = rawJson.indexOf(':', keyIndex + pattern.length());
+        if (colonIndex < 0) {
+            return null;
+        }
+        int firstQuote = rawJson.indexOf('"', colonIndex + 1);
+        if (firstQuote < 0) {
+            return null;
+        }
+        int secondQuote = rawJson.indexOf('"', firstQuote + 1);
+        if (secondQuote < 0) {
+            return null;
+        }
+        return rawJson.substring(firstQuote + 1, secondQuote);
     }
 
     private Gender parseGender(String value) {

@@ -166,7 +166,7 @@ export function RentalManageView({
       selectedRental?.finalDepositAmount ??
       selectedRental?.estimatedDepositAmount ??
       0;
-    const earlyRefund = Math.max(0, earlyReturnDays) * dailyRentalTotal;
+    const earlyRefund = Math.max(0, earlyReturnDays) * dailyRentalTotal * 0.8;
     const lateFee = Math.max(0, lateReturnDays) * dailyRentalTotal * 1.5;
     const damage = Math.max(0, damageFee);
     const totalPenalty = lateFee + damage;
@@ -1141,7 +1141,7 @@ export function RentalManageView({
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-emerald-600">Hoàn phí trả sớm</span>
+                <span className="text-emerald-600">Hoàn phí trả sớm (80%)</span>
                 <span className="font-bold text-emerald-600">
                   +{formatVND(returnSettlement.earlyRefund)}
                 </span>

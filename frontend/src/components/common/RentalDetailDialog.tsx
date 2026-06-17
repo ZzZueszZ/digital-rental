@@ -66,6 +66,14 @@ export function RentalDetailDialog({
   const [otpCode, setOtpCode] = useState("");
   const [isRetryingPayment, setIsRetryingPayment] = useState(false);
 
+  const escapeHtml = (value?: string | null) =>
+    (value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
   const handleRetryPayment = async () => {
     try {
       setIsRetryingPayment(true);
@@ -205,6 +213,17 @@ export function RentalDetailDialog({
       <p><strong>XIII. Cam kết của các bên:</strong> Các bên cam kết thông tin cung cấp là trung thực, đã đọc và đồng ý với toàn bộ nội dung hợp đồng trước khi ký điện tử. Hợp đồng có hiệu lực từ thời điểm được ký điện tử bởi các bên trên hệ thống Digital Rental.</p>
       <p><strong>Phụ lục đính kèm:</strong> Thông tin thiết bị/serial, biên bản bàn giao, biên bản hoàn trả, bảng tính phí phát sinh, lịch sử thanh toán và nhật ký ký điện tử nếu có.</p>
     `;
+    const rawContractTerms = rental.contract.termsAndConditions || "";
+    const expandedTermsStart = rawContractTerms.search(/\nV\.\s/);
+    const printableContractTerms =
+      expandedTermsStart >= 0
+        ? rawContractTerms.slice(expandedTermsStart).trim()
+        : rawContractTerms;
+    const contractTermsHtml = printableContractTerms
+      ? `<pre style="white-space: pre-wrap; font-family: 'Times New Roman', Times, serif; font-size: 14px; line-height: 1.65; margin: 0;">${escapeHtml(
+          printableContractTerms,
+        )}</pre>`
+      : `${legalTerms}${expandedContractTerms}`;
 
     printWindow.document.write(`
       <html>
@@ -424,8 +443,7 @@ export function RentalDetailDialog({
 
           <div class="section-title">IV. Điều khoản hợp đồng</div>
           <div class="content-box">
-            ${legalTerms}
-            ${expandedContractTerms}
+            ${contractTermsHtml}
           </div>
 
           <div class="signatures-container">

@@ -17,6 +17,11 @@ import org.web.common.enums.ReportType;
 import org.web.common.exceptions.ApplicationException;
 import org.web.products.model.Product;
 import org.web.products.repository.ProductRepository;
+import org.web.identity.model.UserIdentity;
+import org.web.identity.model.VerificationResult;
+import org.web.identity.repository.UserIdentityRepository;
+import org.web.identity.repository.VerificationResultRepository;
+import org.web.identity.repository.VerificationSessionRepository;
 import org.web.rentals.dto.request.*;
 import org.web.rentals.dto.response.*;
 import org.web.rentals.model.*;
@@ -50,6 +55,9 @@ public class RentalServiceImpl implements RentalService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
+    private final UserIdentityRepository userIdentityRepository;
+    private final VerificationSessionRepository verificationSessionRepository;
+    private final VerificationResultRepository verificationResultRepository;
     private final ShippingAddressRepository shippingAddressRepository;
     private final RentalHandoverReportRepository rentalHandoverReportRepository;
     private final RentalReturnReportRepository rentalReturnReportRepository;
@@ -113,8 +121,13 @@ public class RentalServiceImpl implements RentalService {
             }
         }
 
-        String shippingName = user.getEmail();
-        String shippingPhone = user.getPhone() != null ? user.getPhone() : "Chưa cập nhật";
+        ShippingAddress contactAddress = resolveRentalContactAddress(user, request.getShippingAddressId());
+        String shippingName = contactAddress != null && StringUtils.hasText(contactAddress.getReceiverName())
+                ? contactAddress.getReceiverName()
+                : user.getEmail();
+        String shippingPhone = contactAddress != null && StringUtils.hasText(contactAddress.getReceiverPhone())
+                ? contactAddress.getReceiverPhone()
+                : (user.getPhone() != null ? user.getPhone() : "Chưa cập nhật");
         String pickupTime = StringUtils.hasText(request.getPickupTimeSlot()) ? request.getPickupTimeSlot() : "Giờ hành chính";
         String shippingAddress = "Nhận tại cửa hàng. Khung giờ: " + pickupTime;
 
@@ -142,6 +155,17 @@ public class RentalServiceImpl implements RentalService {
         RentalOrder saved = rentalOrderRepository.save(order);
         auditLogService.logAction("RENTAL_ORDER", saved.getId(), "CREATE_ORDER", "Khách hàng đặt thuê thiết bị. Đơn hàng: " + saved.getCode(), null, saved.getStatus().name());
         return mapToResponse(saved);
+    }
+
+    private ShippingAddress resolveRentalContactAddress(User user, Long shippingAddressId) {
+        if (user == null) {
+            return null;
+        }
+        if (shippingAddressId != null) {
+            return shippingAddressRepository.findByIdAndUser(shippingAddressId, user)
+                    .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Địa chỉ nhận hàng không tồn tại"));
+        }
+        return shippingAddressRepository.findByUserAndIsDefaultTrue(user).orElse(null);
     }
 
     @Override
@@ -538,6 +562,7 @@ public class RentalServiceImpl implements RentalService {
         BigDecimal dailyRentalTotal = calculateDailyRentalTotal(order);
         BigDecimal earlyReturnRefundAmount = dailyRentalTotal
                 .multiply(BigDecimal.valueOf(earlyReturnDays))
+                .multiply(BigDecimal.valueOf(0.8))
                 .setScale(2, RoundingMode.HALF_UP);
         BigDecimal lateFee = dailyRentalTotal
                 .multiply(BigDecimal.valueOf(lateDays))
@@ -760,67 +785,105 @@ public class RentalServiceImpl implements RentalService {
 
     private String buildRentalContractTerms(RentalOrder order) {
         String renterName = resolveRenterName(order);
-        String renterEmail = order.getUser() != null ? order.getUser().getEmail() : "Chưa cập nhật";
-        String renterIdentity = renterName.equals(renterEmail)
-                ? renterEmail
-                : renterName + " (" + renterEmail + ")";
-        String renterPhone = StringUtils.hasText(order.getShippingPhone())
-                ? order.getShippingPhone()
-                : "Chưa cập nhật";
+        User user = order.getUser();
+        UserIdentity identity = user != null
+                ? userIdentityRepository.findByUserId(user.getId()).orElse(null)
+                : null;
+        VerificationResult latestOcr = resolveLatestOcrResult(user);
+        renterName = firstText(
+                identity != null ? identity.getFullName() : null,
+                latestOcr != null ? latestOcr.getExtractedFullName() : null,
+                renterName
+        );
+        String renterEmail = user != null ? user.getEmail() : "Chưa cập nhật";
+        String renterPhone = resolveContactPhone(user, order.getShippingPhone());
         String receiveAddress = StringUtils.hasText(order.getShippingAddress())
                 ? order.getShippingAddress()
                 : "Nhận tại cửa hàng Digital Rental";
+        String identityNumber = firstText(
+                identity != null ? identity.getIdentityNumber() : null,
+                latestOcr != null ? latestOcr.getExtractedIdentityNumber() : null,
+                "Chưa cập nhật"
+        );
+        String issuedDate = identity != null && identity.getIssuedDate() != null
+                ? formatDate(identity.getIssuedDate())
+                : (latestOcr != null ? formatDate(latestOcr.getExtractedIssuedDate()) : "Chưa cập nhật");
+        String issuedPlace = firstText(
+                identity != null ? identity.getIssuedPlace() : null,
+                extractIssuedPlaceFromRawOcr(latestOcr),
+                "Chưa cập nhật"
+        );
+        String permanentAddress = firstText(
+                identity != null ? identity.getPlaceOfResidence() : null,
+                latestOcr != null ? latestOcr.getExtractedPlaceOfResidence() : null,
+                "Chưa cập nhật"
+        );
+        String currentAddress = resolveCurrentAddress(user, receiveAddress);
+        String verificationLevel = user != null
+                ? user.getKycStatus() + " / " + user.getTrustLevel()
+                : "Chưa cập nhật";
         BigDecimal depositAmount = order.getFinalDepositAmount() != null
                 ? order.getFinalDepositAmount()
                 : (order.getEstimatedDepositAmount() != null ? order.getEstimatedDepositAmount() : BigDecimal.ZERO);
         String paymentNote = order.getPaymentMethod() == PaymentMethod.ONLINE
-                ? "Đã thanh toán Online"
+                ? "Đã thanh toán online"
                 : "Thanh toán theo phương thức " + order.getPaymentMethod();
 
         StringBuilder terms = new StringBuilder();
         terms.append("HỢP ĐỒNG THUÊ THIẾT BỊ HÌNH ẢNH KỸ THUẬT SỐ\n");
         terms.append("Mã hợp đồng: CTR-").append(order.getCode()).append("\n\n");
 
+        terms.append("I. THÔNG TIN CÁC BÊN\n");
         terms.append("BÊN CHO THUÊ: Cửa hàng Digital Rental\n");
-        terms.append("BÊN THUÊ:\n");
-        terms.append("- Họ tên / Email: ").append(renterIdentity).append("\n");
-        terms.append("- Số điện thoại: ").append(renterPhone).append("\n");
-        terms.append("- Địa điểm nhận thiết bị: ").append(receiveAddress).append("\n\n");
+        terms.append("- Đại diện: Cửa hàng Digital Rental\n");
+        terms.append("- Hotline: 037 6600 545\n");
+        terms.append("- Email hỗ trợ: adminlenshub@gmail.com\n\n");
 
-        terms.append("THÔNG TIN THIẾT BỊ THUÊ:\n");
+        terms.append("BÊN THUÊ:\n");
+        terms.append("- Họ tên: ").append(renterName).append("\n");
+        terms.append("- Email: ").append(renterEmail).append("\n");
+        terms.append("- Số điện thoại: ").append(renterPhone).append("\n");
+        terms.append("- CCCD: ").append(identityNumber).append("\n");
+        terms.append("- Ngày cấp: ").append(issuedDate).append("\n");
+        terms.append("- Nơi cấp: ").append(issuedPlace).append("\n");
+        terms.append("- Địa chỉ thường trú: ").append(permanentAddress).append("\n");
+        terms.append("- Địa chỉ hiện tại: ").append(currentAddress).append("\n");
+        terms.append("- Mức xác thực: ").append(verificationLevel).append("\n\n");
+
+        terms.append("II. THÔNG TIN THIẾT BỊ CHO THUÊ\n");
+        terms.append("Danh sách thiết bị, serial và giá trị tài sản làm căn cứ bồi thường:\n");
         for (RentalOrderItem item : order.getItems()) {
             Product product = item.getProduct();
             Device device = item.getDevice();
-            terms.append("- ").append(product != null ? product.getName() : "Thiết bị");
-            if (device != null) {
-                terms.append(" (Số Serial: ").append(device.getSerialNumber())
-                        .append(" - Tình trạng: ")
-                        .append(StringUtils.hasText(device.getConditionDetails()) ? device.getConditionDetails() : "Chưa cập nhật")
-                        .append(")");
-            } else {
-                terms.append(" (Số Serial: sẽ được cập nhật khi bàn giao)");
-            }
+            BigDecimal assetValue = product != null && product.getSalePrice() != null
+                    ? product.getSalePrice()
+                    : BigDecimal.ZERO;
+            terms.append("- Thiết bị: ").append(product != null ? product.getName() : "Thiết bị")
+                    .append(" | Serial: ").append(device != null ? device.getSerialNumber() : "Sẽ cập nhật khi bàn giao")
+                    .append(" | Giá trị tài sản: ").append(formatAmount(assetValue)).append(" VND")
+                    .append(" | Đơn giá thuê/ngày: ").append(formatAmount(item.getPricePerDay())).append(" VND")
+                    .append(" | Tình trạng: ")
+                    .append(device != null && StringUtils.hasText(device.getConditionDetails()) ? device.getConditionDetails() : "Chưa cập nhật");
             terms.append("\n");
         }
         terms.append("\n");
 
-        terms.append("ĐIỀU KHOẢN CHI TIẾT:\n");
+        terms.append("III. THỜI HẠN THUÊ\n");
         terms.append("- Thời gian thuê: Từ ").append(order.getStartDate().toLocalDate())
                 .append(" đến ").append(order.getEndDate().toLocalDate()).append("\n");
-        terms.append("- Tổng phí thuê: ").append(order.getRentalFee()).append(" VND (").append(paymentNote).append(")\n");
-        terms.append("- Tiền cọc thiết bị: ").append(depositAmount).append(" VND (Thanh toán trực tiếp tại cửa hàng)\n");
-        terms.append("- Đánh giá mức độ rủi ro: ").append(order.getRiskLevel() != null ? order.getRiskLevel() : "Chưa đánh giá").append("\n\n");
+        terms.append("- Địa điểm nhận thiết bị: ").append(receiveAddress).append("\n\n");
 
-        terms.append("Điều 1: Bên thuê có trách nhiệm tự kiểm tra và bàn giao đúng tình trạng như biên bản nhận.\n");
-        terms.append("Điều 2: Tiền cọc sẽ được hoàn lại đầy đủ sau khi thiết bị được trả và hoàn tất thẩm định không có lỗi/hư hỏng.\n");
-        terms.append("Điều 3: Trường hợp trả trễ hạn, mức phạt là 150% phí thuê hàng ngày của mỗi ngày trễ hạn.\n");
-        terms.append("Điều 4: Mọi tranh chấp sẽ được ưu tiên thương lượng giữa 2 bên.");
+        terms.append("IV. GIÁ THUÊ, TIỀN ĐẶT CỌC VÀ THANH TOÁN\n");
+        terms.append("- Tổng phí thuê: ").append(formatAmount(order.getRentalFee())).append(" VND (").append(paymentNote).append(")\n");
+        terms.append("- Tiền cọc thiết bị: ").append(formatAmount(depositAmount)).append(" VND (thanh toán trực tiếp tại cửa hàng nếu chưa thu online)\n");
+        terms.append("- Đánh giá mức độ rủi ro: ").append(order.getRiskLevel() != null ? order.getRiskLevel() : "Chưa đánh giá").append("\n");
+        terms.append("- Tiền cọc được đối soát sau khi thiết bị được trả và kiểm tra tình trạng thực tế.\n");
         appendExpandedRentalContractTerms(terms);
         return terms.toString();
     }
 
     private void appendExpandedRentalContractTerms(StringBuilder terms) {
-        terms.append("\nV. QUY TRÌNH BÀN GIAO THIẾT BỊ\n");
+        terms.append("\n\nV. QUY TRÌNH BÀN GIAO THIẾT BỊ\n");
         terms.append("Bên cho thuê kiểm tra thiết bị, serial, phụ kiện và tình trạng trước khi bàn giao.\n");
         terms.append("Bên thuê phải kiểm tra lại thiết bị khi nhận. Nếu tiếp nhận thiết bị, bên thuê được xem là đã đồng ý với tình trạng ghi nhận trong biên bản bàn giao.\n");
 
@@ -834,16 +897,29 @@ public class RentalServiceImpl implements RentalService {
 
         terms.append("\nVIII. QUY ĐỊNH VỀ HƯ HỎNG, MẤT MÁT VÀ BỒI THƯỜNG\n");
         terms.append("Nếu thiết bị hư hỏng, mất mát hoặc thiếu phụ kiện, bên B phải thanh toán chi phí sửa chữa, thay thế hoặc bồi thường theo kết quả thẩm định.\n");
+        terms.append("- Mất thiết bị: bên B bồi thường 100% giá trị thị trường hoặc giá trị tài sản ghi trong hợp đồng, tùy mức được bên A xác định tại thời điểm xử lý.\n");
+        terms.append("- Hư hỏng sửa được: bên B thanh toán toàn bộ chi phí sửa chữa, kiểm tra, vận chuyển và thời gian thiết bị ngừng khai thác nếu có.\n");
+        terms.append("- Hư hỏng không sửa được: bên B bồi thường giá trị còn lại hoặc giá trị thay thế của thiết bị theo kết quả thẩm định.\n");
         terms.append("Chi phí phát sinh được trừ vào tiền cọc và/hoặc khoản hoàn phí trả sớm. Nếu chi phí vượt quá số tiền được khấu trừ, bên B phải thanh toán phần chênh lệch.\n");
+
+        terms.append("\nVIII-A. ĐIỀU KHOẢN MẤT CẮP\n");
+        terms.append("Nếu thiết bị bị mất cắp, bên B phải thông báo cho bên A trong vòng 02 giờ kể từ thời điểm phát hiện sự việc.\n");
+        terms.append("Bên B phải trình báo cơ quan công an có thẩm quyền và cung cấp biên bản tiếp nhận/trình báo cho bên A.\n");
+        terms.append("Việc có biên bản công an không miễn trừ nghĩa vụ bồi thường, hoàn trả hoặc thanh toán các khoản phát sinh theo hợp đồng.\n");
 
         terms.append("\nIX. QUY ĐỊNH VỀ TRẢ TRỄ, TRẢ SỚM VÀ GIA HẠN\n");
         terms.append("Trả trễ bị tính phụ thu 150% phí thuê mỗi ngày cho mỗi ngày quá hạn.\n");
-        terms.append("Trả sớm có thể được hoàn phần phí thuê của số ngày chưa sử dụng sau khi trừ các khoản phát sinh, nếu chính sách tại thời điểm xử lý cho phép.\n");
+        terms.append("Trả sớm được hoàn 80% phí thuê của số ngày chưa sử dụng, sau khi trừ các khoản phát sinh nếu có.\n");
         terms.append("Mọi yêu cầu gia hạn phải được bên A xác nhận trước khi hết hạn thuê và phụ thu sẽ được tính theo đơn giá hiện hành.\n");
+
+        terms.append("\nIX-A. CẤM CHO THUÊ LẠI VÀ CHUYỂN GIAO THIẾT BỊ\n");
+        terms.append("Bên B không được cho người khác mượn, cho thuê lại, cầm cố, thế chấp, chuyển giao quyền sử dụng hoặc giao thiết bị cho bên thứ ba khi chưa có chấp thuận bằng văn bản của bên A.\n");
+        terms.append("Nếu vi phạm, bên A có quyền chấm dứt hợp đồng ngay, yêu cầu hoàn trả thiết bị và xử lý toàn bộ thiệt hại phát sinh.\n");
 
         terms.append("\nX. XỬ LÝ VI PHẠM VÀ CHẤM DỨT HỢP ĐỒNG\n");
         terms.append("Hợp đồng có thể bị chấm dứt nếu bên B cung cấp thông tin sai, không thanh toán, không trả thiết bị hoặc vi phạm nghiêm trọng nghĩa vụ bảo quản.\n");
         terms.append("Bên A có quyền ghi nhận sự cố, tạm giữ tiền cọc và thực hiện các biện pháp cần thiết để bảo vệ tài sản.\n");
+        terms.append("Nếu quá hạn 07 ngày mà bên B không liên hệ hoặc không hoàn trả thiết bị, hành vi có thể bị xem xét là chiếm giữ trái phép tài sản. Bên A có quyền sử dụng hồ sơ eKYC, hợp đồng, biên bản bàn giao, nhật ký hệ thống và chứng từ liên quan để làm việc với cơ quan có thẩm quyền.\n");
 
         terms.append("\nXI. BẢO MẬT VÀ XÁC THỰC ĐIỆN TỬ\n");
         terms.append("Bên B đồng ý việc hệ thống sử dụng thông tin tài khoản, eKYC, OTP, chữ ký điện tử và nhật ký thao tác để xác minh giao dịch thuê.\n");
@@ -858,6 +934,112 @@ public class RentalServiceImpl implements RentalService {
 
         terms.append("\nPHỤ LỤC ĐÍNH KÈM\n");
         terms.append("Phụ lục gồm: thông tin thiết bị/serial, biên bản bàn giao, biên bản hoàn trả, bảng tính phí phát sinh, lịch sử thanh toán và nhật ký ký điện tử nếu có.");
+    }
+
+    private String resolveCurrentAddress(User user, String fallback) {
+        if (user == null) {
+            return defaultText(fallback, "Chưa cập nhật");
+        }
+        return shippingAddressRepository.findByUserAndIsDefaultTrue(user)
+                .map(ShippingAddress::getFullAddress)
+                .filter(StringUtils::hasText)
+                .orElse(defaultText(fallback, "Chưa cập nhật"));
+    }
+
+    private String resolveContactPhone(User user, String orderPhone) {
+        if (!isMissingText(orderPhone)) {
+            return orderPhone;
+        }
+        if (user == null) {
+            return "Chưa cập nhật";
+        }
+        return shippingAddressRepository.findByUserAndIsDefaultTrue(user)
+                .map(ShippingAddress::getReceiverPhone)
+                .filter(phone -> !isMissingText(phone))
+                .orElse(!isMissingText(user.getPhone()) ? user.getPhone() : "Chưa cập nhật");
+    }
+
+    private VerificationResult resolveLatestOcrResult(User user) {
+        if (user == null) {
+            return null;
+        }
+        return verificationSessionRepository.findByUserId(user.getId()).stream()
+                .sorted((a, b) -> {
+                    if (a.getCreatedAt() == null && b.getCreatedAt() == null) return 0;
+                    if (a.getCreatedAt() == null) return 1;
+                    if (b.getCreatedAt() == null) return -1;
+                    return b.getCreatedAt().compareTo(a.getCreatedAt());
+                })
+                .map(session -> verificationResultRepository.findByVerificationSessionId(session.getId()).orElse(null))
+                .filter(result -> result != null
+                        && (StringUtils.hasText(result.getExtractedIdentityNumber())
+                            || StringUtils.hasText(result.getExtractedFullName())
+                            || StringUtils.hasText(result.getExtractedPlaceOfResidence())))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String extractIssuedPlaceFromRawOcr(VerificationResult result) {
+        if (result == null || !StringUtils.hasText(result.getRawOcrJson())) {
+            return null;
+        }
+        String raw = result.getRawOcrJson();
+        for (String key : List.of("issue_place", "issued_place", "issue_loc", "issue_by", "issued_by", "place_issue")) {
+            String value = extractJsonStringValue(raw, key);
+            if (StringUtils.hasText(value)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    private String extractJsonStringValue(String rawJson, String key) {
+        String pattern = "\"" + key + "\"";
+        int keyIndex = rawJson.indexOf(pattern);
+        if (keyIndex < 0) {
+            return null;
+        }
+        int colonIndex = rawJson.indexOf(':', keyIndex + pattern.length());
+        if (colonIndex < 0) {
+            return null;
+        }
+        int firstQuote = rawJson.indexOf('"', colonIndex + 1);
+        if (firstQuote < 0) {
+            return null;
+        }
+        int secondQuote = rawJson.indexOf('"', firstQuote + 1);
+        if (secondQuote < 0) {
+            return null;
+        }
+        return rawJson.substring(firstQuote + 1, secondQuote);
+    }
+
+    private String formatDate(LocalDate date) {
+        return date != null ? date.toString() : "Chưa cập nhật";
+    }
+
+    private String formatAmount(BigDecimal amount) {
+        return safeAmount(amount).setScale(0, RoundingMode.HALF_UP).toPlainString();
+    }
+
+    private String defaultText(String value, String fallback) {
+        return StringUtils.hasText(value) ? value : fallback;
+    }
+
+    private String firstText(String first, String second, String fallback) {
+        if (!isMissingText(first)) {
+            return first;
+        }
+        if (!isMissingText(second)) {
+            return second;
+        }
+        return fallback;
+    }
+
+    private boolean isMissingText(String value) {
+        return !StringUtils.hasText(value)
+                || "Chưa cập nhật".equalsIgnoreCase(value.trim())
+                || "N/A".equalsIgnoreCase(value.trim());
     }
 
     private String resolveRenterName(RentalOrder order) {

@@ -11,6 +11,7 @@ import org.web.common.enums.PaymentStatus;
 import org.web.common.enums.OrderStatus;
 import org.web.common.enums.RentalOrderStatus;
 import org.web.common.exceptions.ApplicationException;
+import org.web.common.mails.MailService;
 import org.web.orders.model.Order;
 import org.web.orders.repository.OrderRepository;
 import org.web.payments.model.PaymentTransactionLog;
@@ -32,6 +33,7 @@ public class VnPayService {
     private final PaymentTransactionLogRepository paymentTransactionLogRepository;
     private final org.web.rentals.repository.RentalOrderRepository rentalOrderRepository;
     private final RentalService rentalService;
+    private final MailService mailService;
 
     public String createPaymentUrl(Long orderId, Long userId, HttpServletRequest request) {
 
@@ -149,6 +151,9 @@ public class VnPayService {
 
         orderRepository.save(order);
         savePaymentLog(order, success ? PaymentStatus.SUCCESS : PaymentStatus.FAILED, paidAmount, transactionNo, rspCode, vnpParams.toString());
+        if (success) {
+            mailService.sendOrderPaymentSuccessEmail(order);
+        }
 
         return buildReturnResponse(
                 order.getCode(),
@@ -272,6 +277,7 @@ public class VnPayService {
             order.setPaymentResponseCode(rspCode);
             order.setPaymentRawPayload(vnpParams.toString());
             rentalOrderRepository.save(order);
+            mailService.sendRentalPaymentSuccessEmail(order);
         } else {
             order.setPaymentStatus(PaymentStatus.FAILED);
             order.setPaymentResponseCode(rspCode);

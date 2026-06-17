@@ -16,6 +16,7 @@ import org.web.carts.repository.CartItemRepository;
 import org.web.common.enums.OrderStatus;
 import org.web.common.enums.PaymentStatus;
 import org.web.common.exceptions.ApplicationException;
+import org.web.common.mails.MailService;
 import org.web.common.service.AuditLogService;
 import org.web.orders.dto.request.CheckoutFromCartRequest;
 import org.web.orders.dto.request.CheckoutItemRequest;
@@ -52,6 +53,7 @@ public class OrderServiceImpl implements OrderService {
     private final AuditLogService auditLogService;
     private final ShippingAddressRepository shippingAddressRepository;
     private final org.web.reviews.repository.ReviewRepository reviewRepository;
+    private final MailService mailService;
 
     @Override
     @Transactional
@@ -167,6 +169,7 @@ public class OrderServiceImpl implements OrderService {
 
         order = orderRepository.save(order);
         auditLogService.logAction("ORDER", order.getId(), "CREATE_ORDER", "Created order " + order.getCode(), null, null);
+        mailService.sendOrderPlacedEmail(order);
 
         return orderMapper.toOrderResponse(order);
     }
@@ -301,6 +304,7 @@ public class OrderServiceImpl implements OrderService {
         cartItemRepository.deleteAll(selectedItems);
 
         auditLogService.logAction("ORDER", order.getId(), "CREATE_ORDER", "Created order from cart " + order.getCode(), null, null);
+        mailService.sendOrderPlacedEmail(order);
 
         return orderMapper.toOrderResponse(order);
     }

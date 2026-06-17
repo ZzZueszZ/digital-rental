@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.web.orders.model.Order;
 import org.web.orders.model.OrderItem;
@@ -20,11 +21,17 @@ import java.util.Locale;
 @Service
 public class MailService {
 
+    private static final String SUPPORT_PHONE = "037 6600 545";
+    private static final String SUPPORT_EMAIL = "adminlenshub@gmail.com";
+
     @Autowired
     private JavaMailSender mailSender;
 
     @Value("${app.mail.from:no-reply@zyna.dev}")
     private String fromEmail;
+
+    @Value("${app.public-base-url:http://localhost:8080}")
+    private String publicBaseUrl;
 
     public void sendActivationEmail(User user, String activationLink) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -123,18 +130,11 @@ public class MailService {
             return;
         }
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromEmail);
-        message.setTo(order.getUser().getEmail());
-        message.setSubject("Digital Rental - Thanh toán đơn mua thành công #" + order.getCode());
-        message.setText(buildOrderPaymentSuccessText(order));
-
-        try {
-            mailSender.send(message);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Failed to send order success email to: " + order.getUser().getEmail());
-        }
+        sendHtmlEmail(
+                order.getUser().getEmail(),
+                "Digital Rental - Thanh toán đơn mua thành công #" + order.getCode(),
+                buildOrderPaymentSuccessHtml(order)
+        );
     }
 
     public void sendOrderPlacedEmail(Order order) {
@@ -142,18 +142,11 @@ public class MailService {
             return;
         }
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromEmail);
-        message.setTo(order.getUser().getEmail());
-        message.setSubject("Digital Rental - Đã tiếp nhận đơn hàng #" + order.getCode());
-        message.setText(buildOrderPlacedText(order));
-
-        try {
-            mailSender.send(message);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Failed to send order placed email to: " + order.getUser().getEmail());
-        }
+        sendHtmlEmail(
+                order.getUser().getEmail(),
+                "Digital Rental - Đã tiếp nhận đơn hàng #" + order.getCode(),
+                buildOrderPlacedHtml(order)
+        );
     }
 
     public void sendRentalPaymentSuccessEmail(RentalOrder order) {
@@ -187,6 +180,16 @@ public class MailService {
         return content.toString();
     }
 
+    private String buildOrderPaymentSuccessHtml(Order order) {
+        return buildOrderHtml(
+                order,
+                "Thanh toán đơn hàng thành công",
+                "Digital Rental đã ghi nhận thanh toán thành công cho đơn hàng của bạn. Đơn hàng sẽ được kiểm tra, đóng gói và chuyển sang bước xử lý tiếp theo.",
+                "Đã thanh toán",
+                "Nếu có thay đổi về giao nhận, Digital Rental sẽ liên hệ qua số điện thoại nhận hàng."
+        );
+    }
+
     private String buildOrderPlacedText(Order order) {
         StringBuilder content = new StringBuilder();
         appendMailHeader(content, "TIẾP NHẬN ĐƠN HÀNG THÀNH CÔNG");
@@ -197,6 +200,89 @@ public class MailService {
         content.append("Bước tiếp theo: Digital Rental sẽ kiểm tra tồn kho và xác nhận đơn hàng trước khi giao.\n\n");
         appendMailFooter(content);
         return content.toString();
+    }
+
+    private String buildOrderPlacedHtml(Order order) {
+        return buildOrderHtml(
+                order,
+                "Tiếp nhận đơn hàng thành công",
+                "Digital Rental đã tiếp nhận đơn hàng của bạn. Vui lòng kiểm tra lại thông tin bên dưới để bảo đảm đơn hàng được xử lý chính xác.",
+                paymentStatusText(order),
+                "Digital Rental sẽ kiểm tra đơn hàng và xác nhận đơn hàng trước khi giao."
+        );
+    }
+
+    private String buildOrderHtml(Order order, String title, String intro, String paymentStatus, String nextStep) {
+        StringBuilder rows = new StringBuilder();
+        for (OrderItem item : order.getItems()) {
+            String productName = item.getProduct() != null ? item.getProduct().getName() : "Sản phẩm";
+            String imageUrl = item.getProduct() != null ? resolveImageUrl(item.getProduct().getMainImageUrl()) : "";
+            rows.append("<tr>")
+                    .append("<td style=\"padding:14px 0;border-bottom:1px solid #f1f1f1;width:74px;\">")
+                    .append(imageUrl.isBlank()
+                            ? "<div style=\"width:58px;height:58px;border-radius:14px;background:#f4f4f5;border:1px solid #e4e4e7;\"></div>"
+                            : "<img src=\"" + escapeHtml(imageUrl) + "\" alt=\"" + escapeHtml(productName) + "\" style=\"width:58px;height:58px;object-fit:contain;border-radius:14px;border:1px solid #e4e4e7;background:#fff;display:block;\"/>")
+                    .append("</td>")
+                    .append("<td style=\"padding:14px 12px;border-bottom:1px solid #f1f1f1;\">")
+                    .append("<div style=\"font-weight:700;color:#09090b;font-size:14px;line-height:1.4;\">").append(escapeHtml(productName)).append("</div>")
+                    .append("<div style=\"margin-top:5px;color:#71717a;font-size:12px;\">Số lượng: ").append(item.getQuantity()).append("</div>")
+                    .append("</td>")
+                    .append("<td style=\"padding:14px 0;border-bottom:1px solid #f1f1f1;text-align:right;white-space:nowrap;\">")
+                    .append("<div style=\"color:#71717a;font-size:12px;\">").append(formatMoney(item.getUnitPrice())).append("</div>")
+                    .append("<div style=\"margin-top:5px;font-weight:800;color:#09090b;font-size:14px;\">").append(formatMoney(item.getSubtotal())).append("</div>")
+                    .append("</td>")
+                    .append("</tr>");
+        }
+
+        return "<!doctype html>"
+                + "<html><body style=\"margin:0;padding:0;background:#f6f6f7;font-family:Arial,Helvetica,sans-serif;color:#18181b;\">"
+                + "<div style=\"max-width:720px;margin:0 auto;padding:32px 16px;\">"
+                + "<div style=\"background:#fff;border:1px solid #e4e4e7;border-radius:24px;overflow:hidden;box-shadow:0 18px 50px rgba(24,24,27,.08);\">"
+                + "<div style=\"padding:28px 32px;background:linear-gradient(135deg,#09090b,#2b0308);color:#fff;\">"
+                + "<div style=\"font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#fecaca;font-weight:700;\">Digital Rental</div>"
+                + "<h1 style=\"margin:10px 0 0;font-size:26px;line-height:1.25;\">"
+                + escapeHtml(title)
+                + "</h1>"
+                + "<p style=\"margin:12px 0 0;color:#f4f4f5;font-size:14px;line-height:1.7;\">"
+                + escapeHtml(intro)
+                + "</p>"
+                + "</div>"
+                + "<div style=\"padding:28px 32px;\">"
+                + "<div style=\"display:inline-block;padding:8px 12px;border-radius:999px;background:#fef2f2;color:#dc2626;font-weight:700;font-size:12px;margin-bottom:18px;\">Mã đơn hàng #"
+                + escapeHtml(order.getCode())
+                + "</div>"
+                + "<table style=\"width:100%;border-collapse:collapse;margin-bottom:22px;\">"
+                + infoRow("Phương thức thanh toán", paymentMethodText(order))
+                + infoRow("Trạng thái thanh toán", paymentStatus)
+                + infoRow("Người nhận", defaultText(order.getShippingName(), "Chưa cập nhật"))
+                + infoRow("Số điện thoại", defaultText(order.getShippingPhone(), "Chưa cập nhật"))
+                + infoRow("Địa chỉ nhận hàng", defaultText(order.getShippingAddress(), "Chưa cập nhật"))
+                + "</table>"
+                + "<div style=\"border:1px solid #eeeeef;border-radius:18px;padding:18px 20px;margin-bottom:22px;background:#fafafa;\">"
+                + "<div style=\"font-weight:800;color:#09090b;margin-bottom:8px;\">Tóm tắt thanh toán</div>"
+                + "<table style=\"width:100%;border-collapse:collapse;\">"
+                + totalRow("Giảm giá", formatMoney(order.getDiscountAmount()), false)
+                + totalRow("Phí giao hàng", formatMoney(order.getShippingFee()), false)
+                + totalRow("Tổng thanh toán", formatMoney(order.getTotalPrice()), true)
+                + "</table>"
+                + "</div>"
+                + "<div style=\"font-weight:800;color:#09090b;margin-bottom:8px;\">Chi tiết sản phẩm</div>"
+                + "<table style=\"width:100%;border-collapse:collapse;\">"
+                + rows
+                + "</table>"
+                + "<div style=\"margin-top:24px;padding:16px 18px;border-radius:18px;background:#f8fafc;border:1px solid #e2e8f0;color:#475569;font-size:13px;line-height:1.7;\">"
+                + "<strong style=\"color:#0f172a;\">Bước tiếp theo:</strong> "
+                + escapeHtml(nextStep)
+                + "</div>"
+                + "</div>"
+                + "<div style=\"padding:20px 32px;border-top:1px solid #f1f1f1;background:#fafafa;color:#71717a;font-size:13px;line-height:1.7;\">"
+                + "<div>Cảm ơn bạn đã tin tưởng Digital Rental.</div>"
+                + "<div>Hotline hỗ trợ: <strong style=\"color:#18181b;\">" + SUPPORT_PHONE + "</strong></div>"
+                + "<div>Email hỗ trợ: <strong style=\"color:#18181b;\">" + SUPPORT_EMAIL + "</strong></div>"
+                + "</div>"
+                + "</div>"
+                + "</div>"
+                + "</body></html>";
     }
 
     private void appendOrderSummary(StringBuilder content, Order order) {
@@ -259,8 +345,8 @@ public class MailService {
 
     private void appendMailFooter(StringBuilder content) {
         content.append("Cảm ơn bạn đã tin tưởng Digital Rental.\n");
-        content.append("Hotline hỗ trợ: 0909 123 456\n");
-        content.append("Email hỗ trợ: support@studiovisuals.vn\n\n");
+        content.append("Hotline hỗ trợ: ").append(SUPPORT_PHONE).append("\n");
+        content.append("Email hỗ trợ: ").append(SUPPORT_EMAIL).append("\n\n");
         content.append("Trân trọng,\nDigital Rental");
     }
 
@@ -297,5 +383,74 @@ public class MailService {
 
     private String defaultText(String value, String fallback) {
         return value != null && !value.isBlank() ? value : fallback;
+    }
+
+    private void sendHtmlEmail(String to, String subject, String html) {
+        try {
+            var message = mailSender.createMimeMessage();
+            var helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom(fromEmail);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(html, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to send HTML email to: " + to);
+        }
+    }
+
+    private String resolveImageUrl(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            return "";
+        }
+        if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+            return imageUrl;
+        }
+        String baseUrl = publicBaseUrl != null ? publicBaseUrl.stripTrailing() : "";
+        while (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+        return imageUrl.startsWith("/") ? baseUrl + imageUrl : baseUrl + "/" + imageUrl;
+    }
+
+    private String infoRow(String label, String value) {
+        return "<tr>"
+                + "<td style=\"padding:8px 0;color:#71717a;font-size:13px;width:180px;vertical-align:top;\">"
+                + escapeHtml(label)
+                + "</td>"
+                + "<td style=\"padding:8px 0;color:#18181b;font-size:13px;font-weight:700;line-height:1.5;\">"
+                + escapeHtml(value)
+                + "</td>"
+                + "</tr>";
+    }
+
+    private String totalRow(String label, String value, boolean strong) {
+        String valueStyle = strong
+                ? "font-size:20px;font-weight:900;color:#dc2626;"
+                : "font-size:14px;font-weight:700;color:#18181b;";
+        String rowBorder = strong ? "border-top:1px solid #e4e4e7;" : "";
+        String labelPadding = strong ? "padding:13px 0 7px;" : "padding:7px 0;";
+        String valuePadding = strong ? "padding:13px 0 7px;" : "padding:7px 0;";
+        return "<tr>"
+                + "<td style=\"" + rowBorder + labelPadding + "color:#71717a;font-size:13px;text-align:left;\">"
+                + escapeHtml(label)
+                + "</td>"
+                + "<td style=\"" + rowBorder + valuePadding + valueStyle + "text-align:right;white-space:nowrap;\">"
+                + escapeHtml(value)
+                + "</td>"
+                + "</tr>";
+    }
+
+    private String escapeHtml(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.web.orders.model.Order;
 import org.web.orders.model.OrderItem;
+import org.web.products.model.Product;
 import org.web.rentals.model.RentalOrder;
 import org.web.rentals.model.RentalOrderItem;
 import org.web.support.model.SupportTicket;
@@ -32,6 +33,9 @@ public class MailService {
 
     @Value("${app.public-base-url:http://localhost:8080}")
     private String publicBaseUrl;
+
+    @Value("${app.mail.admin:adminlenshub@gmail.com}")
+    private String adminEmail;
 
     public void sendActivationEmail(User user, String activationLink) {
         if (user == null || user.getEmail() == null) {
@@ -217,6 +221,18 @@ public class MailService {
         }
     }
 
+    public void sendLowSaleStockAlertEmail(Product product, int previousStock, int currentStock) {
+        if (product == null || adminEmail == null || adminEmail.isBlank()) {
+            return;
+        }
+
+        sendHtmlEmail(
+                adminEmail,
+                "Digital Rental - Cảnh báo tồn kho bán thấp: " + product.getName(),
+                buildLowSaleStockAlertHtml(product, previousStock, currentStock)
+        );
+    }
+
     private String buildActionHtml(String title, String intro, String buttonText, String buttonUrl, String note) {
         String body = "<p style=\"margin:0 0 18px;color:#52525b;font-size:14px;line-height:1.8;\">"
                 + escapeHtml(intro)
@@ -315,6 +331,49 @@ public class MailService {
         return buildStandardHtml(
                 "Thanh toán đơn thuê thành công",
                 "Digital Rental đã ghi nhận thanh toán phí thuê thành công cho đơn thuê của bạn.",
+                body
+        );
+    }
+
+    private String buildLowSaleStockAlertHtml(Product product, int previousStock, int currentStock) {
+        String imageUrl = resolveImageUrl(product.getMainImageUrl());
+        String body = "<div style=\"padding:18px 20px;border-radius:18px;background:#fef2f2;border:1px solid #fecaca;margin-bottom:22px;\">"
+                + "<div style=\"font-size:13px;color:#991b1b;font-weight:800;text-transform:uppercase;letter-spacing:.08em;\">Cảnh báo tồn kho</div>"
+                + "<div style=\"margin-top:8px;color:#7f1d1d;font-size:14px;line-height:1.7;\">"
+                + "Số lượng tồn bán của sản phẩm đã xuống dưới ngưỡng an toàn. Vui lòng kiểm tra và nhập thêm hàng nếu cần."
+                + "</div>"
+                + "</div>"
+                + "<table style=\"width:100%;border-collapse:collapse;margin-bottom:22px;\">"
+                + "<tr>"
+                + "<td style=\"width:92px;vertical-align:top;padding-right:16px;\">"
+                + (imageUrl.isBlank()
+                    ? "<div style=\"width:76px;height:76px;border-radius:18px;background:#f4f4f5;border:1px solid #e4e4e7;\"></div>"
+                    : "<img src=\"" + escapeHtml(imageUrl) + "\" alt=\"" + escapeHtml(product.getName()) + "\" style=\"width:76px;height:76px;object-fit:contain;border-radius:18px;border:1px solid #e4e4e7;background:#fff;display:block;\"/>")
+                + "</td>"
+                + "<td style=\"vertical-align:top;\">"
+                + "<div style=\"font-size:18px;font-weight:900;color:#09090b;line-height:1.35;\">"
+                + escapeHtml(product.getName())
+                + "</div>"
+                + "<div style=\"margin-top:6px;color:#71717a;font-size:13px;\">"
+                + escapeHtml(defaultText(product.getBrand(), "Chưa cập nhật thương hiệu"))
+                + "</div>"
+                + "</td>"
+                + "</tr>"
+                + "</table>"
+                + "<table style=\"width:100%;border-collapse:collapse;margin-bottom:22px;\">"
+                + infoRow("Mã sản phẩm", "#" + product.getId())
+                + infoRow("Tồn bán trước giao dịch", String.valueOf(previousStock))
+                + infoRow("Tồn bán hiện tại", String.valueOf(currentStock))
+                + infoRow("Ngưỡng cảnh báo", "Dưới 5 sản phẩm")
+                + infoRow("Giá bán", formatMoney(product.getSalePrice()))
+                + "</table>"
+                + "<div style=\"padding:16px 18px;border-radius:18px;background:#f8fafc;border:1px solid #e2e8f0;color:#475569;font-size:13px;line-height:1.7;\">"
+                + "<strong style=\"color:#0f172a;\">Gợi ý xử lý:</strong> Kiểm tra trang kho hàng, xác nhận số lượng thực tế và nhập thêm tồn bán để tránh thiếu hàng khi khách đặt mua."
+                + "</div>";
+
+        return buildStandardHtml(
+                "Cảnh báo tồn kho bán thấp",
+                "Digital Rental phát hiện một sản phẩm bán đã gần hết hàng sau giao dịch mới.",
                 body
         );
     }

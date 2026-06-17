@@ -1,6 +1,7 @@
 package org.web.orders.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -54,6 +55,9 @@ public class OrderServiceImpl implements OrderService {
     private final ShippingAddressRepository shippingAddressRepository;
     private final org.web.reviews.repository.ReviewRepository reviewRepository;
     private final MailService mailService;
+
+    @Value("${app.inventory.low-stock.threshold:5}")
+    private int lowSaleStockThreshold;
 
     @Override
     @Transactional
@@ -163,8 +167,10 @@ public class OrderServiceImpl implements OrderService {
         // Deduct stock
         for (CheckoutItemRequest itemReq : request.getItems()) {
              Product p = productRepository.getReferenceById(itemReq.getProductId());
-             p.setQuantity(p.getQuantity() - itemReq.getQuantity());
+             int previousStock = p.getQuantity();
+             p.setQuantity(previousStock - itemReq.getQuantity());
              productRepository.save(p);
+             notifyLowSaleStockIfNeeded(p, previousStock);
         }
 
         order = orderRepository.save(order);
@@ -296,8 +302,10 @@ public class OrderServiceImpl implements OrderService {
 
         for (CartItem cartItem : selectedItems) {
              Product p = cartItem.getProduct();
-             p.setQuantity(p.getQuantity() - cartItem.getQuantity());
+             int previousStock = p.getQuantity();
+             p.setQuantity(previousStock - cartItem.getQuantity());
              productRepository.save(p);
+             notifyLowSaleStockIfNeeded(p, previousStock);
         }
 
         order = orderRepository.save(order);
@@ -434,6 +442,16 @@ public class OrderServiceImpl implements OrderService {
                 p.setQuantity(p.getQuantity() + item.getQuantity());
                 productRepository.save(p);
             }
+        }
+    }
+
+    private void notifyLowSaleStockIfNeeded(Product product, int previousStock) {
+        if (product == null) {
+            return;
+        }
+        int currentStock = product.getQuantity();
+        if (currentStock < lowSaleStockThreshold && previousStock >= lowSaleStockThreshold) {
+            mailService.sendLowSaleStockAlertEmail(product, previousStock, currentStock);
         }
     }
 }

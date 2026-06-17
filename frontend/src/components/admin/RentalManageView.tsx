@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Calendar,
   Search,
@@ -62,6 +62,28 @@ import {
 } from "@/services/rental";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+
+const parseDateOnly = (value?: string | null) => {
+  if (!value) return null;
+  const datePart = value.split("T")[0];
+  const date = new Date(`${datePart}T00:00:00`);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const diffCalendarDays = (from: Date, to: Date) => {
+  const msPerDay = 24 * 60 * 60 * 1000;
+  return Math.round((to.getTime() - from.getTime()) / msPerDay);
+};
+
+const getTodayDateInputValue = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+type ReturnAdjustmentMode = "EARLY" | "LATE" | null;
 
 export function RentalManageView({
   portalType,
@@ -142,8 +164,10 @@ export function RentalManageView({
     {},
   );
   const [returnDate, setReturnDate] = useState(
-    () => new Date().toISOString().slice(0, 10),
+    getTodayDateInputValue,
   );
+  const [returnAdjustmentMode, setReturnAdjustmentMode] =
+    useState<ReturnAdjustmentMode>(null);
   const [earlyReturnDays, setEarlyReturnDays] = useState<number>(0);
   const [lateReturnDays, setLateReturnDays] = useState<number>(0);
   const [damageFee, setDamageFee] = useState<number>(0);
@@ -166,8 +190,27 @@ export function RentalManageView({
       selectedRental?.finalDepositAmount ??
       selectedRental?.estimatedDepositAmount ??
       0;
-    const earlyRefund = Math.max(0, earlyReturnDays) * dailyRentalTotal * 0.8;
-    const lateFee = Math.max(0, lateReturnDays) * dailyRentalTotal * 1.5;
+    const rentalStartDate = parseDateOnly(selectedRental?.startDate);
+    const rentalEndDate = parseDateOnly(selectedRental?.endDate);
+    const actualReturnDate = parseDateOnly(returnDate);
+    const isReturnDateBeforeStart =
+      !!rentalStartDate &&
+      !!actualReturnDate &&
+      actualReturnDate.getTime() < rentalStartDate.getTime();
+    const maxEarlyReturnDays =
+      rentalEndDate && actualReturnDate
+        ? Math.max(0, diffCalendarDays(actualReturnDate, rentalEndDate))
+        : 0;
+    const maxLateReturnDays =
+      rentalEndDate && actualReturnDate
+        ? Math.max(0, diffCalendarDays(rentalEndDate, actualReturnDate))
+        : 0;
+    const effectiveEarlyReturnDays =
+      returnAdjustmentMode === "EARLY" ? Math.max(0, earlyReturnDays) : 0;
+    const effectiveLateReturnDays =
+      returnAdjustmentMode === "LATE" ? Math.max(0, lateReturnDays) : 0;
+    const earlyRefund = effectiveEarlyReturnDays * dailyRentalTotal * 0.8;
+    const lateFee = effectiveLateReturnDays * dailyRentalTotal * 1.5;
     const damage = Math.max(0, damageFee);
     const totalPenalty = lateFee + damage;
     const refundAmount = Math.max(0, deposit + earlyRefund - totalPenalty);
@@ -185,8 +228,81 @@ export function RentalManageView({
       totalPenalty,
       refundAmount,
       extraPaymentAmount,
+      maxEarlyReturnDays,
+      maxLateReturnDays,
+      isReturnDateBeforeStart,
+      effectiveEarlyReturnDays,
+      effectiveLateReturnDays,
     };
-  }, [damageFee, earlyReturnDays, lateReturnDays, selectedRental]);
+  }, [
+    damageFee,
+    earlyReturnDays,
+    lateReturnDays,
+    returnAdjustmentMode,
+    returnDate,
+    selectedRental,
+  ]);
+
+  useEffect(() => {
+    if (!isReturnOpen || !selectedRental) return;
+
+    const rentalEndDate = parseDateOnly(selectedRental.endDate);
+    const actualReturnDate = parseDateOnly(returnDate);
+    if (!rentalEndDate || !actualReturnDate) return;
+
+    const computedEarlyDays = Math.max(
+      0,
+      diffCalendarDays(actualReturnDate, rentalEndDate),
+    );
+    const computedLateDays = Math.max(
+      0,
+      diffCalendarDays(rentalEndDate, actualReturnDate),
+    );
+
+    if (computedEarlyDays > 0) {
+      setReturnAdjustmentMode("EARLY");
+      setEarlyReturnDays(computedEarlyDays);
+      setLateReturnDays(0);
+      return;
+    }
+
+    if (computedLateDays > 0) {
+      setReturnAdjustmentMode("LATE");
+      setEarlyReturnDays(0);
+      setLateReturnDays(computedLateDays);
+      return;
+    }
+
+    setReturnAdjustmentMode(null);
+    setEarlyReturnDays(0);
+    setLateReturnDays(0);
+  }, [isReturnOpen, returnDate, selectedRental]);
+
+  const handleReturnAdjustmentModeChange = (mode: Exclude<ReturnAdjustmentMode, null>) => {
+    if (returnAdjustmentMode === mode) {
+      return;
+    }
+
+    setReturnAdjustmentMode(mode);
+    if (mode === "EARLY") {
+      if (returnSettlement.maxEarlyReturnDays <= 0) {
+        toast.error("Ngày trả thực tế không phát sinh số ngày trả sớm.");
+        setReturnAdjustmentMode(null);
+        return;
+      }
+      setEarlyReturnDays(returnSettlement.maxEarlyReturnDays);
+      setLateReturnDays(0);
+      return;
+    }
+
+    if (returnSettlement.maxLateReturnDays <= 0) {
+      toast.error("Ngày trả thực tế không phát sinh số ngày trả trễ.");
+      setReturnAdjustmentMode(null);
+      return;
+    }
+    setEarlyReturnDays(0);
+    setLateReturnDays(returnSettlement.maxLateReturnDays);
+  };
 
   const handleOpenApprove = async (rental: RentalOrderResponse) => {
     setSelectedRental(rental);
@@ -312,7 +428,8 @@ export function RentalManageView({
   const handleOpenReturn = (rental: RentalOrderResponse) => {
     setSelectedRental(rental);
     setInspectorName("");
-    setReturnDate(new Date().toISOString().slice(0, 10));
+    setReturnDate(getTodayDateInputValue());
+    setReturnAdjustmentMode(null);
     setEarlyReturnDays(0);
     setLateReturnDays(0);
     setDamageFee(0);
@@ -330,8 +447,33 @@ export function RentalManageView({
       toast.error("Vui lòng nhập tên nhân viên nhận trả");
       return;
     }
-    if (earlyReturnDays > 0 && lateReturnDays > 0) {
+    if (
+      returnSettlement.effectiveEarlyReturnDays > 0 &&
+      returnSettlement.effectiveLateReturnDays > 0
+    ) {
       toast.error("Không thể vừa trả sớm vừa trả trễ trong cùng biên bản");
+      return;
+    }
+    if (returnSettlement.isReturnDateBeforeStart) {
+      toast.error("Ngày trả thực tế không được trước ngày bắt đầu thuê.");
+      return;
+    }
+    if (
+      returnSettlement.effectiveEarlyReturnDays >
+      returnSettlement.maxEarlyReturnDays
+    ) {
+      toast.error(
+        `Số ngày trả sớm không hợp lệ. Theo ngày trả thực tế, tối đa ${returnSettlement.maxEarlyReturnDays} ngày.`,
+      );
+      return;
+    }
+    if (
+      returnSettlement.effectiveLateReturnDays >
+      returnSettlement.maxLateReturnDays
+    ) {
+      toast.error(
+        `Số ngày trả trễ không hợp lệ. Theo ngày trả thực tế, tối đa ${returnSettlement.maxLateReturnDays} ngày.`,
+      );
       return;
     }
     try {
@@ -343,8 +485,8 @@ export function RentalManageView({
           lensConditionAfter: "Bình thường",
           batteryConditionAfter: "Bình thường",
           accessoryConditionAfter: "Bình thường",
-          earlyReturnDays: Math.max(0, earlyReturnDays),
-          lateDays: Math.max(0, lateReturnDays),
+          earlyReturnDays: returnSettlement.effectiveEarlyReturnDays,
+          lateDays: returnSettlement.effectiveLateReturnDays,
           lateFee: returnSettlement.lateFee,
           damageFee: returnSettlement.damage,
           missingAccessoryFee: 0,
@@ -1079,34 +1221,74 @@ export function RentalManageView({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+              <div
+                className={cn(
+                  "space-y-2 rounded-2xl border p-3",
+                  returnAdjustmentMode === "EARLY"
+                    ? "border-emerald-200 bg-emerald-50/60"
+                    : "border-zinc-200 bg-white",
+                )}
+              >
+                <label className="flex items-center gap-2 text-[11px] font-bold text-zinc-600 tracking-wide">
+                  <input
+                    type="checkbox"
+                    checked={returnAdjustmentMode === "EARLY"}
+                    onChange={() => handleReturnAdjustmentModeChange("EARLY")}
+                    className="h-4 w-4 rounded border-zinc-300 accent-emerald-600"
+                  />
                   Số ngày trả sớm
                 </label>
                 <input
                   type="number"
                   min={0}
-                  value={earlyReturnDays}
-                  onChange={(e) =>
-                    setEarlyReturnDays(Math.max(0, Number(e.target.value)))
-                  }
-                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm text-emerald-600"
+                  max={returnSettlement.maxEarlyReturnDays}
+                  disabled={returnAdjustmentMode !== "EARLY"}
+                  value={returnAdjustmentMode === "EARLY" ? earlyReturnDays : 0}
+                  onChange={(e) => {
+                    setReturnAdjustmentMode("EARLY");
+                    setEarlyReturnDays(Math.max(0, Number(e.target.value)));
+                    setLateReturnDays(0);
+                  }}
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 disabled:bg-zinc-50 disabled:text-zinc-400 font-bold text-sm text-emerald-600"
                 />
+                <p className="text-[11px] text-zinc-400">
+                  Tối đa {returnSettlement.maxEarlyReturnDays} ngày theo ngày trả thực tế.
+                </p>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+              <div
+                className={cn(
+                  "space-y-2 rounded-2xl border p-3",
+                  returnAdjustmentMode === "LATE"
+                    ? "border-red-200 bg-red-50/60"
+                    : "border-zinc-200 bg-white",
+                )}
+              >
+                <label className="flex items-center gap-2 text-[11px] font-bold text-zinc-600 tracking-wide">
+                  <input
+                    type="checkbox"
+                    checked={returnAdjustmentMode === "LATE"}
+                    onChange={() => handleReturnAdjustmentModeChange("LATE")}
+                    className="h-4 w-4 rounded border-zinc-300 accent-red-600"
+                  />
                   Số ngày trả trễ
                 </label>
                 <input
                   type="number"
                   min={0}
-                  value={lateReturnDays}
-                  onChange={(e) =>
-                    setLateReturnDays(Math.max(0, Number(e.target.value)))
-                  }
-                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm text-red-600"
+                  max={returnSettlement.maxLateReturnDays}
+                  disabled={returnAdjustmentMode !== "LATE"}
+                  value={returnAdjustmentMode === "LATE" ? lateReturnDays : 0}
+                  onChange={(e) => {
+                    setReturnAdjustmentMode("LATE");
+                    setEarlyReturnDays(0);
+                    setLateReturnDays(Math.max(0, Number(e.target.value)));
+                  }}
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 disabled:bg-zinc-50 disabled:text-zinc-400 font-bold text-sm text-red-600"
                 />
+                <p className="text-[11px] text-zinc-400">
+                  Tối đa {returnSettlement.maxLateReturnDays} ngày theo ngày trả thực tế.
+                </p>
               </div>
             </div>
 

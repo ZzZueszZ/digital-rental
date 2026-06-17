@@ -559,6 +559,24 @@ public class RentalServiceImpl implements RentalService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Không thể vừa trả sớm vừa trả trễ trong cùng một biên bản.");
         }
 
+        LocalDateTime actualReturnDate = request.getReturnDate() != null ? request.getReturnDate() : LocalDateTime.now();
+        LocalDate actualReturnDay = actualReturnDate.toLocalDate();
+        if (order.getStartDate() != null && actualReturnDay.isBefore(order.getStartDate().toLocalDate())) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Ngày trả thực tế không được trước ngày bắt đầu thuê.");
+        }
+        long maxEarlyReturnDays = order.getEndDate() != null
+                ? Math.max(0, ChronoUnit.DAYS.between(actualReturnDay, order.getEndDate().toLocalDate()))
+                : 0;
+        long maxLateReturnDays = order.getEndDate() != null
+                ? Math.max(0, ChronoUnit.DAYS.between(order.getEndDate().toLocalDate(), actualReturnDay))
+                : 0;
+        if (earlyReturnDays > maxEarlyReturnDays) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Số ngày trả sớm không hợp lệ. Tối đa " + maxEarlyReturnDays + " ngày theo ngày trả thực tế.");
+        }
+        if (lateDays > maxLateReturnDays) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Số ngày trả trễ không hợp lệ. Tối đa " + maxLateReturnDays + " ngày theo ngày trả thực tế.");
+        }
+
         BigDecimal dailyRentalTotal = calculateDailyRentalTotal(order);
         BigDecimal earlyReturnRefundAmount = dailyRentalTotal
                 .multiply(BigDecimal.valueOf(earlyReturnDays))
@@ -584,7 +602,7 @@ public class RentalServiceImpl implements RentalService {
         RentalReturnReport report = RentalReturnReport.builder()
                 .rentalOrder(order)
                 .staff(staff)
-                .returnDate(request.getReturnDate() != null ? request.getReturnDate() : LocalDateTime.now())
+                .returnDate(actualReturnDate)
                 .bodyConditionAfter(request.getBodyConditionAfter())
                 .lensConditionAfter(request.getLensConditionAfter())
                 .batteryConditionAfter(request.getBatteryConditionAfter())
@@ -602,7 +620,7 @@ public class RentalServiceImpl implements RentalService {
                 .build();
         rentalReturnReportRepository.save(report);
 
-        order.setReturnedAt(LocalDateTime.now());
+        order.setReturnedAt(actualReturnDate);
         order.setAdditionalFee(totalPenalty);
         order.setStatus(RentalOrderStatus.RETURNED);
 

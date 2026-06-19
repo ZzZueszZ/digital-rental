@@ -130,19 +130,19 @@ export default function OrdersPage() {
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
       case OrderStatus.PENDING:
-        return "bg-amber-50 text-amber-600 border-amber-100";
+        return "bg-amber-50 text-amber-700 border-amber-200";
       case OrderStatus.CONFIRMED:
-        return "bg-blue-50 text-blue-600 border-blue-100";
+        return "bg-blue-50 text-blue-700 border-blue-200";
       case OrderStatus.SHIPPING:
-        return "bg-indigo-50 text-indigo-600 border-indigo-100";
+        return "bg-indigo-50 text-indigo-700 border-indigo-200";
       case OrderStatus.DELIVERED:
-        return "bg-emerald-50 text-emerald-600 border-emerald-100";
+        return "bg-emerald-50 text-emerald-700 border-emerald-200";
       case OrderStatus.COMPLETED:
-        return "bg-emerald-600 text-white border-emerald-600";
+        return "bg-emerald-50 text-emerald-700 border-emerald-200";
       case OrderStatus.CANCELED:
-        return "bg-red-50 text-red-600 border-red-100";
+        return "bg-red-50 text-red-700 border-red-200";
       default:
-        return "bg-zinc-50 text-zinc-500 border-zinc-100";
+        return "bg-zinc-50 text-zinc-600 border-zinc-200";
     }
   };
 
@@ -168,21 +168,21 @@ export default function OrdersPage() {
   const getRentalStatusColor = (status: RentalOrderStatus) => {
     switch (status) {
       case RentalOrderStatus.PENDING_PAYMENT:
-        return "bg-amber-100 text-amber-800 border-amber-200";
+        return "bg-amber-50 text-amber-700 border-amber-200";
       case RentalOrderStatus.PAID_RENTAL_FEE:
-        return "bg-blue-50 text-blue-600 border-blue-100";
+        return "bg-blue-50 text-blue-700 border-blue-200";
       case RentalOrderStatus.WAITING_PICKUP:
-        return "bg-indigo-50 text-indigo-600 border-indigo-100";
+        return "bg-indigo-50 text-indigo-700 border-indigo-200";
       case RentalOrderStatus.RENTING:
-        return "bg-purple-50 text-purple-600 border-purple-100";
+        return "bg-purple-50 text-purple-700 border-purple-200";
       case RentalOrderStatus.RETURNED:
-        return "bg-zinc-100 text-zinc-600 border-zinc-200";
+        return "bg-sky-50 text-sky-700 border-sky-200";
       case RentalOrderStatus.COMPLETED:
-        return "bg-emerald-600 text-white border-emerald-600";
+        return "bg-emerald-50 text-emerald-700 border-emerald-200";
       case RentalOrderStatus.CANCELLED:
-        return "bg-red-50 text-red-600 border-red-100";
+        return "bg-red-50 text-red-700 border-red-200";
       default:
-        return "bg-zinc-50 text-zinc-500 border-zinc-100";
+        return "bg-zinc-50 text-zinc-600 border-zinc-200";
     }
   };
 

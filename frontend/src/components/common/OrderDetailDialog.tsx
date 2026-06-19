@@ -217,10 +217,10 @@ export function OrderDetailDialog({
                     className={cn(
                       "text-[11px] font-bold px-2 py-0.5 rounded-xl tracking-tighter border",
                       order.paymentStatus === PaymentStatus.SUCCESS
-                        ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                         : order.paymentStatus === PaymentStatus.PENDING
-                          ? "bg-amber-50 text-amber-600 border-amber-100"
-                          : "bg-red-50 text-red-600 border-red-100",
+                          ? "bg-amber-50 text-amber-700 border-amber-200"
+                          : "bg-red-50 text-red-700 border-red-200",
                     )}
                   >
                     {order.paymentStatus === PaymentStatus.SUCCESS
@@ -331,19 +331,19 @@ export function OrderDetailDialog({
 function getStatusStyles(status: OrderStatus) {
   switch (status) {
     case OrderStatus.PENDING:
-      return "bg-amber-50 text-amber-600 border-amber-100";
+      return "bg-amber-50 text-amber-700 border-amber-200";
     case OrderStatus.CONFIRMED:
-      return "bg-blue-50 text-blue-600 border-blue-100";
+      return "bg-blue-50 text-blue-700 border-blue-200";
     case OrderStatus.SHIPPING:
-      return "bg-indigo-50 text-indigo-600 border-indigo-100";
+      return "bg-indigo-50 text-indigo-700 border-indigo-200";
     case OrderStatus.DELIVERED:
-      return "bg-emerald-50 text-emerald-600 border-emerald-100";
+      return "bg-emerald-50 text-emerald-700 border-emerald-200";
     case OrderStatus.COMPLETED:
-      return "bg-emerald-50 text-emerald-600 border-emerald-100";
+      return "bg-emerald-50 text-emerald-700 border-emerald-200";
     case OrderStatus.CANCELED:
-      return "bg-red-50 text-red-600 border-red-100";
+      return "bg-red-50 text-red-700 border-red-200";
     default:
-      return "bg-zinc-50 text-zinc-500 border-zinc-100";
+      return "bg-zinc-50 text-zinc-600 border-zinc-200";
   }
 }
 

@@ -115,15 +115,15 @@ export function ProductTableRow({
           </div>
         </div>
       </td>
-      <td className="px-6 py-3.5">
+      <td className="px-6 py-3.5 min-w-[110px]">
         <Badge
           className={cn(
-            "rounded-xl px-2.5 py-1 text-xs font-semibold border-0 ring-0 shadow-none",
+            "w-fit min-w-max shrink-0 whitespace-nowrap rounded-xl px-2.5 py-1 text-xs font-semibold border ring-0 shadow-none",
             !isDeleted
               ? product.active
-                ? "bg-emerald-50 text-emerald-600"
-                : "bg-zinc-100 text-zinc-500"
-              : "bg-red-50 text-red-600",
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                : "bg-zinc-50 text-zinc-600 border border-zinc-200"
+              : "bg-red-50 text-red-700 border border-red-200",
           )}
         >
           {!isDeleted ? (product.active ? "Hoạt động" : "Ẩn") : "Đã xóa"}
@@ -214,12 +214,12 @@ export function ProductMobileCard({
               </span>
               <Badge
                 className={cn(
-                  "rounded-full px-2 py-0 text-[9px] font-semibold  tracking-tight border-0",
+                  "w-fit min-w-max shrink-0 whitespace-nowrap rounded-full px-2 py-0 text-[9px] font-semibold tracking-tight border-0",
                   !isDeleted
                     ? product.active
-                      ? "bg-emerald-50 text-emerald-600"
-                      : "bg-zinc-100 text-zinc-500"
-                    : "bg-red-50 text-red-600",
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      : "bg-zinc-50 text-zinc-600 border border-zinc-200"
+                    : "bg-red-50 text-red-700 border border-red-200",
                 )}
               >
                 {!isDeleted ? (product.active ? "Hoạt động" : "Ẩn") : "Đã xóa"}

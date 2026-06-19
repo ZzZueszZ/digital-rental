@@ -178,7 +178,7 @@ export default function UsersAdminPage() {
     return (
       <span
         className={cn(
-          "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full",
+          "inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-semibold px-2.5 py-1 rounded-full",
           config.badge,
         )}
       >
@@ -192,7 +192,7 @@ export default function UsersAdminPage() {
     switch (status) {
       case KycStatus.VERIFIED:
         return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span className="inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
             <ShieldCheck className="w-3.5 h-3.5" />
             Đã xác minh
           </span>
@@ -200,21 +200,21 @@ export default function UsersAdminPage() {
       case KycStatus.PENDING:
       case KycStatus.MANUAL_REVIEW:
         return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+          <span className="inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
             <Clock className="w-3.5 h-3.5 animate-pulse" />
             Chờ duyệt
           </span>
         );
       case KycStatus.REJECTED:
         return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">
+          <span className="inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-semibold px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">
             <AlertCircle className="w-3.5 h-3.5" />
             Từ chối
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-zinc-50 text-zinc-500 border border-zinc-200">
+          <span className="inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-semibold px-2.5 py-1 rounded-full bg-zinc-50 text-zinc-500 border border-zinc-200">
             <AlertCircle className="w-3.5 h-3.5" strokeWidth={2} />
             Chưa eKYC
           </span>
@@ -517,7 +517,7 @@ export default function UsersAdminPage() {
                 <div className="mt-3 flex flex-wrap items-center gap-2 pl-13">
                   <span
                     className={cn(
-                      "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full",
+                      "inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-semibold px-2.5 py-1 rounded-full",
                       statusCfg.badge,
                     )}
                   >

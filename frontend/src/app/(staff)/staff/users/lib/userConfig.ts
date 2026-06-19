@@ -36,12 +36,12 @@ export const STATUS_CONFIG: Record<
   DISABLED: {
     label: "Vô hiệu",
     dot: "bg-zinc-400",
-    badge: "bg-zinc-100 text-zinc-500 border border-zinc-200 ring-0",
+    badge: "bg-zinc-50 text-zinc-600 border border-zinc-200 ring-0",
   },
   DELETED: {
     label: "Đã xóa",
     dot: "bg-zinc-800",
-    badge: "bg-zinc-900 text-white border-0 ring-0",
+    badge: "bg-red-50 text-red-700 border border-red-200 ring-0",
   },
 };
 

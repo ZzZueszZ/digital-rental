@@ -48,22 +48,22 @@ export function VoucherTableRow({
       case "ACTIVE":
         return {
           label: "Hoạt động",
-          className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+          className: "bg-emerald-50 text-emerald-700 border-emerald-200",
         };
       case "DRAFT":
         return {
           label: "Bản nháp",
-          className: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+          className: "bg-amber-50 text-amber-700 border-amber-200",
         };
       case "EXPIRED":
         return {
           label: "Hết hạn",
-          className: "bg-red-500/10 text-red-600 border-red-500/20",
+          className: "bg-red-50 text-red-700 border-red-200",
         };
       case "INACTIVE":
         return {
           label: "Vô hiệu",
-          className: "bg-zinc-100 text-zinc-500 border-zinc-200",
+          className: "bg-zinc-50 text-zinc-600 border-zinc-200",
         };
       default:
         return { label: status, className: "bg-zinc-100 text-zinc-500" };
@@ -108,7 +108,7 @@ export function VoucherTableRow({
           <div className="flex items-center gap-2">
             <Badge
               className={cn(
-                "rounded-xl px-2.5 py-1 text-[10px] font-semibold border-0 ring-0 shadow-none",
+                "w-fit min-w-max shrink-0 whitespace-nowrap rounded-xl px-2.5 py-1 text-[10px] font-semibold border ring-0 shadow-none",
                 status.className,
               )}
             >
@@ -214,12 +214,12 @@ export function VoucherMobileCard({
       case "ACTIVE":
         return {
           label: "Hoạt động",
-          className: "bg-emerald-500/10 text-emerald-600",
+          className: "bg-emerald-50 text-emerald-700 border-emerald-200",
         };
       case "DRAFT":
-        return { label: "Nháp", className: "bg-amber-500/10 text-amber-600" };
+        return { label: "Nháp", className: "bg-amber-50 text-amber-700 border-amber-200" };
       default:
-        return { label: status, className: "bg-zinc-100 text-zinc-500" };
+        return { label: status, className: "bg-zinc-50 text-zinc-600 border-zinc-200" };
     }
   };
 
@@ -244,7 +244,7 @@ export function VoucherMobileCard({
         <Badge
           variant="outline"
           className={cn(
-            "text-[9px]  font-semibold px-2 py-0.5 border-0",
+            "w-fit min-w-max shrink-0 whitespace-nowrap text-[9px] font-semibold px-2 py-0.5 border",
             status.className,
           )}
         >

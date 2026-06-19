@@ -84,7 +84,7 @@ const STATUS_CONFIG: Record<
   DELETED: {
     label: "Đã xóa",
     dot: "bg-zinc-800",
-    badge: "bg-zinc-900 text-white border-0",
+    badge: "bg-red-50 text-red-700 border border-red-200",
   },
 };
 

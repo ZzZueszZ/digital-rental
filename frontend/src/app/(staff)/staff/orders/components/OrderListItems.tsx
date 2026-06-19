@@ -85,10 +85,10 @@ export function OrderTableRow({
           </span>
         </div>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-6 py-4 min-w-[120px]">
         <div
           className={cn(
-            "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl border text-[11px] font-semibold",
+            "inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap px-2.5 py-1 rounded-xl border text-[11px] font-semibold",
             getStatusStyles(order.status),
           )}
         >
@@ -165,7 +165,7 @@ export function OrderMobileCard({
         </div>
         <div
           className={cn(
-            "px-2.5 py-1 rounded-xl border text-[11px] font-semibold",
+            "inline-flex w-fit min-w-max shrink-0 items-center whitespace-nowrap px-2.5 py-1 rounded-xl border text-[11px] font-semibold",
             getStatusStyles(order.status),
           )}
         >
@@ -230,19 +230,19 @@ export function OrderMobileCard({
 function getStatusStyles(status: OrderStatus) {
   switch (status) {
     case OrderStatus.PENDING:
-      return "bg-amber-50 text-amber-600 border-amber-100";
+      return "bg-amber-50 text-amber-700 border-amber-200";
     case OrderStatus.CONFIRMED:
-      return "bg-blue-50 text-blue-600 border-blue-100";
+      return "bg-blue-50 text-blue-700 border-blue-200";
     case OrderStatus.SHIPPING:
-      return "bg-indigo-50 text-indigo-600 border-indigo-100";
+      return "bg-indigo-50 text-indigo-700 border-indigo-200";
     case OrderStatus.DELIVERED:
-      return "bg-emerald-50 text-emerald-600 border-emerald-100";
+      return "bg-emerald-50 text-emerald-700 border-emerald-200";
     case OrderStatus.COMPLETED:
-      return "bg-emerald-50 text-emerald-600 border-emerald-100";
+      return "bg-emerald-50 text-emerald-700 border-emerald-200";
     case OrderStatus.CANCELED:
-      return "bg-red-50 text-red-600 border-red-100";
+      return "bg-red-50 text-red-700 border-red-200";
     default:
-      return "bg-zinc-50 text-zinc-500 border-zinc-100";
+      return "bg-zinc-50 text-zinc-600 border-zinc-200";
   }
 }
 

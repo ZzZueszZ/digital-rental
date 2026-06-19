@@ -1296,7 +1296,7 @@ export default function ProductDetailPage({
                 </p>
               </div>
             </div>
-            <Badge className="bg-emerald-600 text-white text-xs font-semibold px-3 py-1 rounded-xl">
+            <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold px-3 py-1 rounded-xl">
               {inventoryPagination?.totalElements || 0}
             </Badge>
           </div>

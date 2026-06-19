@@ -52,10 +52,10 @@ export function CategoryTableRow({
       <td className="px-6 py-3">
         <Badge
           className={cn(
-            "rounded-xl px-2.5 py-1 text-xs font-semibold border-0 ring-0 shadow-none",
+            "w-fit min-w-max shrink-0 whitespace-nowrap rounded-xl px-2.5 py-1 text-xs font-semibold border ring-0 shadow-none",
             category.isActive
-              ? "bg-emerald-50 text-emerald-600"
-              : "bg-zinc-900 text-white",
+              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+              : "bg-zinc-50 text-zinc-600 border border-zinc-200",
           )}
         >
           {category.isActive ? "Hoạt động" : "Vô hiệu"}
@@ -95,10 +95,10 @@ export function CategoryMobileCard({
               </span>
               <Badge
                 className={cn(
-                  "rounded-xl px-1.5 py-0 text-[8px] font-semibold  border-0 ring-0",
+                  "w-fit min-w-max shrink-0 whitespace-nowrap rounded-xl px-1.5 py-0 text-[8px] font-semibold border-0 ring-0",
                   category.isActive
-                    ? "bg-emerald-50 text-emerald-600"
-                    : "bg-zinc-900 text-white",
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    : "bg-zinc-50 text-zinc-600 border border-zinc-200",
                 )}
               >
                 {category.isActive ? "HĐ" : "Vô hiệu"}

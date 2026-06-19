@@ -598,6 +598,121 @@ export function RentalManageView({
     }
   };
 
+  const renderRentalActionMenu = (
+    rental: RentalOrderResponse,
+    mode: "icon" | "button" = "icon",
+  ) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={cn(
+          "outline-none transition-colors duration-200",
+          mode === "icon"
+            ? "inline-flex h-8 w-8 items-center justify-center rounded-xl hover:bg-zinc-100"
+            : "inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-red-600 text-xs font-semibold text-white hover:bg-red-700",
+        )}
+      >
+        {mode === "icon" ? (
+          <MoreHorizontal className="w-4 h-4 text-zinc-500" />
+        ) : (
+          <>
+            <MoreHorizontal className="w-3.5 h-3.5" />
+            Thao tác
+          </>
+        )}
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        align="end"
+        className="w-56 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
+      >
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="text-[10px] font-semibold text-zinc-400 px-2 py-1.5 tracking-tight">
+            Tác vụ quản trị
+          </DropdownMenuLabel>
+
+          <DropdownMenuItem
+            className="cursor-pointer flex items-center gap-2"
+            onClick={() => handleOpenDetail(rental.id)}
+          >
+            <Eye className="w-3.5 h-3.5 text-zinc-400" /> Chi tiết
+          </DropdownMenuItem>
+
+          {rental.status === RentalOrderStatus.PAID_RENTAL_FEE && (
+            <DropdownMenuItem
+              className="cursor-pointer flex items-center gap-2"
+              onClick={() => handleOpenApprove(rental)}
+            >
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              Chuẩn bị thiết bị
+            </DropdownMenuItem>
+          )}
+
+          {rental.status === RentalOrderStatus.WAITING_PICKUP && (
+            <>
+              {!rental.contract ||
+              !(rental.contract.isLocked || rental.contract.locked) ? (
+                <DropdownMenuItem
+                  className="flex items-center gap-2 text-amber-600 focus:text-amber-600 focus:bg-amber-50/50 bg-amber-50/30"
+                  disabled
+                >
+                  <Clock className="w-3.5 h-3.5 text-amber-500" />
+                  Chờ khách ký HĐ
+                </DropdownMenuItem>
+              ) : !rental.finalDepositAmount &&
+                rental.finalDepositAmount !== 0 ? (
+                <DropdownMenuItem
+                  className="cursor-pointer flex items-center gap-2"
+                  onClick={() => handleOpenHandover(rental)}
+                >
+                  <FileText className="w-3.5 h-3.5 text-blue-500" />
+                  Lập BB bàn giao
+                </DropdownMenuItem>
+              ) : rental.depositStatus !== "PAID" ? (
+                <DropdownMenuItem
+                  className="cursor-pointer flex items-center gap-2"
+                  onClick={() =>
+                    handlePayDeposit(rental.id, rental.finalDepositAmount || 0)
+                  }
+                >
+                  <CreditCard className="w-3.5 h-3.5 text-indigo-500" />
+                  Thu tiền cọc
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem
+                  className="cursor-pointer flex items-center gap-2"
+                  onClick={() => handleHandoverDevices(rental.id)}
+                >
+                  <Check className="w-3.5 h-3.5 text-emerald-500" />
+                  Bàn giao máy
+                </DropdownMenuItem>
+              )}
+            </>
+          )}
+
+          {rental.status === RentalOrderStatus.RENTING && (
+            <DropdownMenuItem
+              className="cursor-pointer flex items-center gap-2"
+              onClick={() => handleOpenReturn(rental)}
+            >
+              <FileText className="w-3.5 h-3.5 text-purple-500" />
+              Nhận trả máy
+            </DropdownMenuItem>
+          )}
+
+          {rental.status === RentalOrderStatus.RETURNED && (
+            <DropdownMenuItem
+              className="cursor-pointer flex items-center gap-2"
+              onClick={() => handleSettle(rental.id)}
+            >
+              <Check className="w-3.5 h-3.5 text-emerald-500" />
+              Quyết toán & Hoàn cọc
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
   const filteredRentals = rentals.filter(
     (r) =>
       r.code.toLowerCase().includes(search.toLowerCase()) ||
@@ -742,88 +857,319 @@ export function RentalManageView({
 
         {/* Table List */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
-                  Đơn thuê
-                </th>
-                <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
-                  Khách hàng
-                </th>
-                <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
-                  Thời hạn thuê
-                </th>
-                <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
-                  Phí thuê & Cọc
-                </th>
-                <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
-                  Trạng thái
-                </th>
-                <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400 text-right">
-                  Thao tác
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-50">
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i} className="animate-pulse">
-                    <td colSpan={6} className="px-8 py-6">
-                      <div className="h-12 bg-zinc-50 rounded-xl w-full" />
+          <div className="hidden md:block">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-zinc-50/50 border-b border-zinc-100">
+                  <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
+                    Đơn thuê
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
+                    Khách hàng
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
+                    Thời hạn thuê
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
+                    Phí thuê & Cọc
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
+                    Trạng thái
+                  </th>
+                  <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400 text-right">
+                    Thao tác
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-50">
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td colSpan={6} className="px-8 py-6">
+                        <div className="h-12 bg-zinc-50 rounded-xl w-full" />
+                      </td>
+                    </tr>
+                  ))
+                ) : filteredRentals.length === 0 ? (
+                  <tr>
+                    <td colSpan={6}>
+                      <EmptyState
+                        title="Không tìm thấy đơn thuê nào"
+                        description="Hãy đổi bộ lọc hoặc từ khóa tìm kiếm."
+                      />
                     </td>
                   </tr>
-                ))
-              ) : filteredRentals.length === 0 ? (
-                <tr>
-                  <td colSpan={6}>
-                    <EmptyState
-                      title="Không tìm thấy đơn thuê nào"
-                      description="Hãy đổi bộ lọc hoặc từ khóa tìm kiếm."
-                    />
-                  </td>
-                </tr>
-              ) : (
-                filteredRentals.map((rental) => (
-                  <tr
-                    key={rental.id}
-                    onClick={() => handleOpenDetail(rental.id)}
-                    className="cursor-pointer hover:bg-zinc-50/50 transition-all duration-200"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-semibold text-zinc-950">
-                          #{rental.code}
+                ) : (
+                  filteredRentals.map((rental) => (
+                    <tr
+                      key={rental.id}
+                      onClick={() => handleOpenDetail(rental.id)}
+                      className="cursor-pointer hover:bg-zinc-50/50 transition-all duration-200"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-semibold text-zinc-950">
+                            #{rental.code}
+                          </span>
+                          <span className="text-[10px] text-zinc-400 font-semibold mt-1">
+                            {rental.items.length} thiết bị
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="text-xs font-semibold text-zinc-950">
+                            {rental.shippingName}
+                          </span>
+                          <span className="text-[11px] text-zinc-400 mt-0.5">
+                            {rental.userEmail}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-600">
+                          <span>{rental.startDate.split("T")[0]}</span>
+                          <ArrowRight className="w-3 h-3 text-zinc-300" />
+                          <span>{rental.endDate.split("T")[0]}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="text-xs font-semibold text-red-600">
+                            {formatVND(rental.rentalFee)}
+                          </span>
+                          <span className="text-[10px] text-amber-600 font-semibold mt-0.5">
+                            Cọc:{" "}
+                            {formatVND(
+                              rental.finalDepositAmount ??
+                                rental.estimatedDepositAmount ??
+                                0,
+                            )}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 min-w-[120px]">
+                        <span
+                          className={cn(
+                            "inline-flex w-fit min-w-max shrink-0 items-center justify-center whitespace-nowrap px-2.5 py-1 rounded-xl text-[11px] font-semibold border",
+                            getStatusColor(rental.status),
+                          )}
+                        >
+                          {getStatusLabel(rental.status)}
                         </span>
-                        <span className="text-[10px] text-zinc-400 font-semibold mt-1">
-                          {rental.items.length} thiết bị
+                      </td>
+                      <td
+                        className="px-6 py-4 text-right"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <DropdownMenu>
+                          <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-xl hover:bg-zinc-100 outline-none transition-colors duration-200">
+                            <MoreHorizontal className="w-4 h-4 text-zinc-500" />
+                          </DropdownMenuTrigger>
+
+                          <DropdownMenuContent
+                            align="end"
+                            className="w-56 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
+                          >
+                            <DropdownMenuGroup>
+                              <DropdownMenuLabel className="text-[10px] font-semibold text-zinc-400 px-2 py-1.5 tracking-wide ">
+                                Tác vụ quản trị
+                              </DropdownMenuLabel>
+
+                              <DropdownMenuItem
+                                className="cursor-pointer flex items-center gap-2"
+                                onClick={() => handleOpenDetail(rental.id)}
+                              >
+                                <Eye className="w-3.5 h-3.5 text-zinc-400" />{" "}
+                                Chi tiết
+                              </DropdownMenuItem>
+
+                              {/* PAID_RENTAL_FEE: Prepare devices */}
+                              {rental.status ===
+                                RentalOrderStatus.PAID_RENTAL_FEE && (
+                                <DropdownMenuItem
+                                  className="cursor-pointer flex items-center gap-2"
+                                  onClick={() => handleOpenApprove(rental)}
+                                >
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />{" "}
+                                  Chuẩn bị thiết bị
+                                </DropdownMenuItem>
+                              )}
+
+                              {/* WAITING_PICKUP actions */}
+                              {rental.status ===
+                                RentalOrderStatus.WAITING_PICKUP && (
+                                <>
+                                  {/* Case 1: Contract not signed/locked */}
+                                  {!rental.contract ||
+                                  !(
+                                    rental.contract.isLocked ||
+                                    rental.contract.locked
+                                  ) ? (
+                                    <DropdownMenuItem
+                                      className="flex items-center gap-2 text-amber-600 focus:text-amber-600 focus:bg-amber-50/50 bg-amber-50/30"
+                                      disabled
+                                    >
+                                      <Clock className="w-3.5 h-3.5 text-amber-500" />{" "}
+                                      Chờ khách ký HĐ (Online)
+                                    </DropdownMenuItem>
+                                  ) : (
+                                    <>
+                                      {/* Case 2: Handover report not created yet (finalDepositAmount is null/undefined) */}
+                                      {!rental.finalDepositAmount &&
+                                      rental.finalDepositAmount !== 0 ? (
+                                        <DropdownMenuItem
+                                          className="cursor-pointer flex items-center gap-2"
+                                          onClick={() =>
+                                            handleOpenHandover(rental)
+                                          }
+                                        >
+                                          <FileText className="w-3.5 h-3.5 text-blue-500" />{" "}
+                                          Lập BB bàn giao
+                                        </DropdownMenuItem>
+                                      ) : (
+                                        <>
+                                          {/* Case 3: Deposit not collected */}
+                                          {rental.depositStatus !== "PAID" ? (
+                                            <DropdownMenuItem
+                                              className="cursor-pointer flex items-center gap-2"
+                                              onClick={() =>
+                                                handlePayDeposit(
+                                                  rental.id,
+                                                  rental.finalDepositAmount ||
+                                                    0,
+                                                )
+                                              }
+                                            >
+                                              <CreditCard className="w-3.5 h-3.5 text-indigo-500" />{" "}
+                                              Thu tiền cọc
+                                            </DropdownMenuItem>
+                                          ) : (
+                                            /* Case 4: Ready to handover */
+                                            <DropdownMenuItem
+                                              className="cursor-pointer flex items-center gap-2"
+                                              onClick={() =>
+                                                handleHandoverDevices(rental.id)
+                                              }
+                                            >
+                                              <Check className="w-3.5 h-3.5 text-emerald-500" />{" "}
+                                              Bàn giao máy
+                                            </DropdownMenuItem>
+                                          )}
+                                        </>
+                                      )}
+                                    </>
+                                  )}
+                                </>
+                              )}
+
+                              {/* RENTING: Return Devices */}
+                              {rental.status === RentalOrderStatus.RENTING && (
+                                <DropdownMenuItem
+                                  className="cursor-pointer flex items-center gap-2"
+                                  onClick={() => handleOpenReturn(rental)}
+                                >
+                                  <FileText className="w-3.5 h-3.5 text-purple-500" />{" "}
+                                  Nhận trả máy
+                                </DropdownMenuItem>
+                              )}
+
+                              {/* RETURNED: Complete / Settle */}
+                              {rental.status === RentalOrderStatus.RETURNED && (
+                                <DropdownMenuItem
+                                  className="cursor-pointer flex items-center gap-2"
+                                  onClick={() => handleSettle(rental.id)}
+                                >
+                                  <Check className="w-3.5 h-3.5 text-emerald-500" />{" "}
+                                  Quyết toán & Hoàn cọc
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuGroup>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="md:hidden p-4 space-y-4">
+            {isLoading ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-48 bg-zinc-50 rounded-xl animate-pulse"
+                />
+              ))
+            ) : filteredRentals.length === 0 ? (
+              <EmptyState
+                title="Không tìm thấy đơn thuê nào"
+                description="Hãy đổi bộ lọc hoặc từ khóa tìm kiếm."
+              />
+            ) : (
+              filteredRentals.map((rental) => (
+                <div key={rental.id} className="admin-card p-4 space-y-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <span className="block truncate text-sm font-semibold text-zinc-950">
+                        #{rental.code}
+                      </span>
+                      <span className="mt-1 block text-[11px] font-medium text-zinc-400">
+                        {rental.createdAt
+                          ? new Date(rental.createdAt).toLocaleDateString(
+                              "vi-VN",
+                            )
+                          : rental.startDate.split("T")[0]}
+                      </span>
+                    </div>
+                    <span
+                      className={cn(
+                        "inline-flex w-fit min-w-max shrink-0 items-center justify-center whitespace-nowrap px-2.5 py-1 rounded-xl text-[11px] font-semibold border",
+                        getStatusColor(rental.status),
+                      )}
+                    >
+                      {getStatusLabel(rental.status)}
+                    </span>
+                  </div>
+
+                  <div className="space-y-3 border-y border-zinc-50 py-3">
+                    <div className="flex min-w-0 items-center gap-2 text-xs font-semibold text-zinc-900">
+                      <User className="h-3.5 w-3.5 shrink-0 text-zinc-400" />
+                      <span className="truncate">
+                        {rental.shippingName || rental.userEmail}
+                      </span>
+                    </div>
+                    <div className="flex min-w-0 items-center gap-2 text-xs font-medium text-zinc-500">
+                      <Calendar className="h-3.5 w-3.5 shrink-0 text-zinc-400" />
+                      <span className="truncate">
+                        {rental.startDate.split("T")[0]} -{" "}
+                        {rental.endDate.split("T")[0]}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 rounded-xl bg-zinc-50 p-3">
+                      <div className="min-w-0">
+                        <span className="block text-[10px] font-medium text-zinc-400">
+                          Thiết bị
+                        </span>
+                        <span className="mt-1 block text-xs font-semibold text-zinc-950">
+                          {rental.items.length} mục
                         </span>
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="text-xs font-semibold text-zinc-950">
-                          {rental.shippingName}
+                      <div className="min-w-0 text-right">
+                        <span className="block text-[10px] font-medium text-zinc-400">
+                          Phí thuê
                         </span>
-                        <span className="text-[11px] text-zinc-400 mt-0.5">
-                          {rental.userEmail}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-600">
-                        <span>{rental.startDate.split("T")[0]}</span>
-                        <ArrowRight className="w-3 h-3 text-zinc-300" />
-                        <span>{rental.endDate.split("T")[0]}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="text-xs font-semibold text-red-600">
+                        <span className="mt-1 block text-xs font-semibold text-red-600">
                           {formatVND(rental.rentalFee)}
                         </span>
-                        <span className="text-[10px] text-amber-600 font-semibold mt-0.5">
-                          Cọc:{" "}
+                      </div>
+                      <div className="min-w-0 col-span-2 flex items-center justify-between border-t border-zinc-100 pt-2">
+                        <span className="text-[10px] font-medium text-amber-600">
+                          Cọc dự kiến/đã chốt
+                        </span>
+                        <span className="text-xs font-semibold text-amber-700">
                           {formatVND(
                             rental.finalDepositAmount ??
                               rental.estimatedDepositAmount ??
@@ -831,151 +1177,23 @@ export function RentalManageView({
                           )}
                         </span>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 min-w-[120px]">
-                      <span
-                        className={cn(
-                          "inline-flex w-fit min-w-max shrink-0 items-center justify-center whitespace-nowrap px-2.5 py-1 rounded-xl text-[11px] font-semibold border",
-                          getStatusColor(rental.status),
-                        )}
-                      >
-                        {getStatusLabel(rental.status)}
-                      </span>
-                    </td>
-                    <td
-                      className="px-6 py-4 text-right"
-                      onClick={(e) => e.stopPropagation()}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => handleOpenDetail(rental.id)}
+                      className="h-9 w-full rounded-xl border-zinc-200 bg-white text-xs font-semibold text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950"
                     >
-                      <DropdownMenu>
-                        <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-xl hover:bg-zinc-100 outline-none transition-colors duration-200">
-                          <MoreHorizontal className="w-4 h-4 text-zinc-500" />
-                        </DropdownMenuTrigger>
-
-                        <DropdownMenuContent
-                          align="end"
-                          className="w-56 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
-                        >
-                          <DropdownMenuGroup>
-                            <DropdownMenuLabel className="text-[10px] font-semibold text-zinc-400 px-2 py-1.5 tracking-wide ">
-                              Tác vụ quản trị
-                            </DropdownMenuLabel>
-
-                            <DropdownMenuItem
-                              className="cursor-pointer flex items-center gap-2"
-                              onClick={() => handleOpenDetail(rental.id)}
-                            >
-                              <Eye className="w-3.5 h-3.5 text-zinc-400" /> Chi
-                              tiết
-                            </DropdownMenuItem>
-
-                            {/* PAID_RENTAL_FEE: Prepare devices */}
-                            {rental.status ===
-                              RentalOrderStatus.PAID_RENTAL_FEE && (
-                              <DropdownMenuItem
-                                className="cursor-pointer flex items-center gap-2"
-                                onClick={() => handleOpenApprove(rental)}
-                              >
-                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />{" "}
-                                Chuẩn bị thiết bị
-                              </DropdownMenuItem>
-                            )}
-
-                            {/* WAITING_PICKUP actions */}
-                            {rental.status ===
-                              RentalOrderStatus.WAITING_PICKUP && (
-                              <>
-                                {/* Case 1: Contract not signed/locked */}
-                                {!rental.contract ||
-                                !(
-                                  rental.contract.isLocked ||
-                                  rental.contract.locked
-                                ) ? (
-                                  <DropdownMenuItem
-                                    className="flex items-center gap-2 text-amber-600 focus:text-amber-600 focus:bg-amber-50/50 bg-amber-50/30"
-                                    disabled
-                                  >
-                                    <Clock className="w-3.5 h-3.5 text-amber-500" />{" "}
-                                    Chờ khách ký HĐ (Online)
-                                  </DropdownMenuItem>
-                                ) : (
-                                  <>
-                                    {/* Case 2: Handover report not created yet (finalDepositAmount is null/undefined) */}
-                                    {!rental.finalDepositAmount &&
-                                    rental.finalDepositAmount !== 0 ? (
-                                      <DropdownMenuItem
-                                        className="cursor-pointer flex items-center gap-2"
-                                        onClick={() =>
-                                          handleOpenHandover(rental)
-                                        }
-                                      >
-                                        <FileText className="w-3.5 h-3.5 text-blue-500" />{" "}
-                                        Lập BB bàn giao
-                                      </DropdownMenuItem>
-                                    ) : (
-                                      <>
-                                        {/* Case 3: Deposit not collected */}
-                                        {rental.depositStatus !== "PAID" ? (
-                                          <DropdownMenuItem
-                                            className="cursor-pointer flex items-center gap-2"
-                                            onClick={() =>
-                                              handlePayDeposit(
-                                                rental.id,
-                                                rental.finalDepositAmount || 0,
-                                              )
-                                            }
-                                          >
-                                            <CreditCard className="w-3.5 h-3.5 text-indigo-500" />{" "}
-                                            Thu tiền cọc
-                                          </DropdownMenuItem>
-                                        ) : (
-                                          /* Case 4: Ready to handover */
-                                          <DropdownMenuItem
-                                            className="cursor-pointer flex items-center gap-2"
-                                            onClick={() =>
-                                              handleHandoverDevices(rental.id)
-                                            }
-                                          >
-                                            <Check className="w-3.5 h-3.5 text-emerald-500" />{" "}
-                                            Bàn giao máy
-                                          </DropdownMenuItem>
-                                        )}
-                                      </>
-                                    )}
-                                  </>
-                                )}
-                              </>
-                            )}
-
-                            {/* RENTING: Return Devices */}
-                            {rental.status === RentalOrderStatus.RENTING && (
-                              <DropdownMenuItem
-                                className="cursor-pointer flex items-center gap-2"
-                                onClick={() => handleOpenReturn(rental)}
-                              >
-                                <FileText className="w-3.5 h-3.5 text-purple-500" />{" "}
-                                Nhận trả máy
-                              </DropdownMenuItem>
-                            )}
-
-                            {/* RETURNED: Complete / Settle */}
-                            {rental.status === RentalOrderStatus.RETURNED && (
-                              <DropdownMenuItem
-                                className="cursor-pointer flex items-center gap-2"
-                                onClick={() => handleSettle(rental.id)}
-                              >
-                                <Check className="w-3.5 h-3.5 text-emerald-500" />{" "}
-                                Quyết toán & Hoàn cọc
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuGroup>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                      Chi tiết
+                    </Button>
+                    {renderRentalActionMenu(rental, "button")}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
 
         {/* Pagination */}

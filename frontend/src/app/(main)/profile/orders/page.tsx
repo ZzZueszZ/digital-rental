@@ -281,7 +281,7 @@ export default function OrdersPage() {
 
       {/* Status Tabs based on selected order type */}
       {orderType === "BUY" ? (
-        <div className="flex items-center gap-1.5 bg-zinc-100/50 p-1.5 rounded-xl border border-zinc-100 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white p-1.5 overflow-x-auto no-scrollbar">
           {tabs.map((tab) => (
             <button
               key={tab.value}
@@ -290,10 +290,10 @@ export default function OrdersPage() {
                 setPage(0);
               }}
               className={cn(
-                "whitespace-nowrap px-5 py-2 rounded-xl text-xs font-semibold transition-all duration-300",
+                "whitespace-nowrap px-5 py-2 rounded-xl text-xs font-semibold border transition-all duration-300",
                 activeTab === tab.value
-                  ? "bg-zinc-950 text-white shadow-lg shadow-zinc-200"
-                  : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100",
+                  ? "bg-red-50 text-red-700 border-red-200"
+                  : "bg-white text-zinc-500 border-transparent hover:text-zinc-950 hover:border-zinc-200 hover:bg-zinc-50",
               )}
             >
               {tab.label}
@@ -301,7 +301,7 @@ export default function OrdersPage() {
           ))}
         </div>
       ) : (
-        <div className="flex items-center gap-1.5 bg-zinc-100/50 p-1.5 rounded-xl border border-zinc-100 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white p-1.5 overflow-x-auto no-scrollbar">
           {rentalTabs.map((tab) => (
             <button
               key={tab.value}
@@ -310,10 +310,10 @@ export default function OrdersPage() {
                 setPage(0);
               }}
               className={cn(
-                "whitespace-nowrap px-5 py-2 rounded-xl text-xs font-semibold transition-all duration-300",
+                "whitespace-nowrap px-5 py-2 rounded-xl text-xs font-semibold border transition-all duration-300",
                 activeRentalTab === tab.value
-                  ? "bg-zinc-950 text-white shadow-lg shadow-zinc-200"
-                  : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100",
+                  ? "bg-red-50 text-red-700 border-red-200"
+                  : "bg-white text-zinc-500 border-transparent hover:text-zinc-950 hover:border-zinc-200 hover:bg-zinc-50",
               )}
             >
               {tab.label}
@@ -396,7 +396,7 @@ export default function OrdersPage() {
                 </div>
                 <div
                   className={cn(
-                    "px-3 py-1 rounded-xl text-xs font-semibold border shadow-none",
+                    "inline-flex w-fit min-w-max shrink-0 items-center justify-center whitespace-nowrap px-3 py-1 rounded-xl text-xs font-semibold border shadow-none",
                     getStatusColor(order.status),
                   )}
                 >
@@ -519,7 +519,7 @@ export default function OrdersPage() {
                 </div>
                 <div
                   className={cn(
-                    "px-3 py-1 rounded-xl text-xs font-semibold border shadow-none",
+                    "inline-flex w-fit min-w-max shrink-0 items-center justify-center whitespace-nowrap px-3 py-1 rounded-xl text-xs font-semibold border shadow-none",
                     getRentalStatusColor(rental.status),
                   )}
                 >

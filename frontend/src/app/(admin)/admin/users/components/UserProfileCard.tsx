@@ -195,17 +195,17 @@ export function UserProfileCard({
             <img
               src={getAvatarUrl(profile.avatarUrl)}
               alt={displayName}
-              className="w-24 h-24 rounded-xl object-cover shadow-inner border-4 border-zinc-50 bg-white"
+              className="w-24 h-24 rounded-full object-cover shadow-inner border-4 border-zinc-50 bg-white"
             />
           ) : (
-            <div className="w-24 h-24 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center">
+            <div className="w-24 h-24 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center">
               <span className="text-zinc-700 font-semibold text-4xl">
                 {user.email.charAt(0).toUpperCase()}
               </span>
             </div>
           )}
           {/* Upload overlay — always available for avatar management */}
-          <div className="absolute inset-0 rounded-xl bg-zinc-950/50 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-1.5">
+          <div className="absolute inset-0 rounded-full bg-zinc-950/50 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-1.5">
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadAvatarMutation.isPending}

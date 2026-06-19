@@ -74,12 +74,12 @@ const STATUS_CONFIG: Record<
   BANNED: {
     label: "Cấm vĩnh viễn",
     dot: "bg-red-700",
-    badge: "bg-red-100 text-red-800 border border-red-300",
+    badge: "bg-red-50 text-red-700 border border-red-200",
   },
   DISABLED: {
     label: "Vô hiệu",
     dot: "bg-zinc-400",
-    badge: "bg-zinc-100 text-zinc-500 border border-zinc-200",
+    badge: "bg-zinc-50 text-zinc-600 border border-zinc-200",
   },
   DELETED: {
     label: "Đã xóa",
@@ -316,7 +316,7 @@ export function UserForm({
                   ) : (
                     <span
                       className={cn(
-                        "inline-flex items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-xl",
+                        "inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap text-[12px] font-semibold px-2.5 py-1 rounded-xl",
                         statusConfig.badge,
                       )}
                     >
@@ -342,12 +342,12 @@ export function UserForm({
                     Quyền đăng nhập
                   </p>
                   {user.accountStatus === AccountStatus.ACTIVE ? (
-                    <span className="inline-flex w-fit items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-semibold px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       Được phép đăng nhập
                     </span>
                   ) : (
-                    <span className="inline-flex w-fit items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-xl bg-red-50 text-red-700 border border-red-200">
+                    <span className="inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap text-[12px] font-semibold px-2.5 py-1 rounded-xl bg-red-50 text-red-700 border border-red-200">
                       <Lock className="w-3.5 h-3.5" />
                       Không được đăng nhập
                     </span>
@@ -361,14 +361,14 @@ export function UserForm({
                   </p>
                   <span
                     className={cn(
-                      "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-xl border",
+                      "inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-semibold px-2.5 py-1 rounded-xl border",
                       user.kycStatus === KycStatus.VERIFIED
                         ? "bg-emerald-50 border-emerald-200 text-emerald-700"
                         : user.kycStatus === KycStatus.PENDING
                           ? "bg-amber-50 border-amber-200 text-amber-700"
                           : user.kycStatus === KycStatus.REJECTED
                             ? "bg-red-50 border-red-200 text-red-700"
-                            : "bg-zinc-100 border-zinc-200 text-zinc-600",
+                            : "bg-zinc-50 border-zinc-200 text-zinc-600",
                     )}
                   >
                     {user.kycStatus === KycStatus.VERIFIED

@@ -69,12 +69,20 @@ export function ConfirmDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="sm:max-w-md !p-0 !gap-0 overflow-hidden border border-zinc-100 shadow-dash-overlay rounded-xl bg-white">
+      <DialogContent
+        showCloseButton={false}
+        className="sm:max-w-md !p-0 !gap-0 overflow-hidden border border-zinc-100 shadow-dash-overlay rounded-xl bg-white"
+      >
         <div className="p-6">
           {layout === "stacked" ? (
             <DialogHeader className="space-y-4 text-left">
               <div className="flex items-center gap-3">
-                <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-100", getIconBg())}>
+                <div
+                  className={cn(
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-100",
+                    getIconBg(),
+                  )}
+                >
                   {getIcon()}
                 </div>
                 <DialogTitle className="text-lg font-semibold tracking-tight text-zinc-950">
@@ -87,7 +95,12 @@ export function ConfirmDialog({
             </DialogHeader>
           ) : (
             <DialogHeader className="flex flex-col sm:flex-row sm:items-start gap-4 space-y-0 text-left">
-              <div className={cn("w-12 h-12 rounded-full flex items-center justify-center shrink-0 self-start shadow-sm border border-zinc-100", getIconBg())}>
+              <div
+                className={cn(
+                  "w-12 h-12 rounded-full flex items-center justify-center shrink-0 self-start shadow-sm border border-zinc-100",
+                  getIconBg(),
+                )}
+              >
                 {getIcon()}
               </div>
               <div className="space-y-1.5 pt-0.5">
@@ -102,12 +115,12 @@ export function ConfirmDialog({
           )}
         </div>
         <DialogFooter className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-100 flex flex-row justify-end gap-3 m-0 rounded-b-xl">
-          <DialogClose 
+          <DialogClose
             render={
               <Button
                 variant="outline"
                 disabled={isLoading}
-                className="rounded-xl font-bold border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-100 hover:text-zinc-950 h-10 px-5 shadow-sm transition-all"
+                className="rounded-xl font-semibold border-zinc-200 text-zinc-700 bg-white hover:bg-zinc-100 hover:text-zinc-950 h-10 px-5 shadow-sm transition-all"
               />
             }
           >
@@ -118,8 +131,11 @@ export function ConfirmDialog({
             disabled={isLoading}
             className={cn(
               "rounded-xl font-semibold h-10 px-5 shadow-sm text-white transition-all",
-              variant === "danger" ? "bg-red-600 hover:bg-red-700 shadow-md shadow-red-100" :
-              variant === "warning" ? "bg-amber-500 hover:bg-amber-600 shadow-md shadow-amber-100" : "bg-red-600 hover:bg-red-700 shadow-md shadow-red-100"
+              variant === "danger"
+                ? "bg-red-600 hover:bg-red-700 shadow-md shadow-red-100"
+                : variant === "warning"
+                  ? "bg-amber-500 hover:bg-amber-600 shadow-md shadow-amber-100"
+                  : "bg-red-600 hover:bg-red-700 shadow-md shadow-red-100",
             )}
           >
             {isLoading ? (
@@ -127,7 +143,9 @@ export function ConfirmDialog({
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ...
               </span>
-            ) : confirmText}
+            ) : (
+              confirmText
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

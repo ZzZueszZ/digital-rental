@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useMyOrders, useConfirmReceived, orderService } from "@/services/order";
+import {
+  useMyOrders,
+  useConfirmReceived,
+  orderService,
+} from "@/services/order";
 import {
   OrderStatus,
   OrderResponse,
@@ -9,13 +13,7 @@ import {
   PaymentStatus,
 } from "@/types/order";
 import { Button } from "@/components/ui/button";
-import {
-  ShoppingBag,
-  Loader2,
-  Info,
-  Calendar,
-  CreditCard,
-} from "lucide-react";
+import { ShoppingBag, Loader2, Info, Calendar, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { cn, formatVND, getImageUrl, formatDate } from "@/lib/utils";
@@ -256,7 +254,7 @@ export default function OrdersPage() {
             setActiveTab("ALL");
           }}
           className={cn(
-            "pb-2 text-sm font-bold border-b-2 transition-all duration-300 relative",
+            "pb-2 text-sm font-semibold border-b-2 transition-all duration-300 relative",
             orderType === "BUY"
               ? "border-red-600 text-red-600"
               : "border-transparent text-zinc-400 hover:text-zinc-900",
@@ -271,7 +269,7 @@ export default function OrdersPage() {
             setActiveRentalTab("ALL");
           }}
           className={cn(
-            "pb-2 text-sm font-bold border-b-2 transition-all duration-300 relative",
+            "pb-2 text-sm font-semibold border-b-2 transition-all duration-300 relative",
             orderType === "RENT"
               ? "border-red-600 text-red-600"
               : "border-transparent text-zinc-400 hover:text-zinc-900",
@@ -292,7 +290,7 @@ export default function OrdersPage() {
                 setPage(0);
               }}
               className={cn(
-                "whitespace-nowrap px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300",
+                "whitespace-nowrap px-5 py-2 rounded-xl text-xs font-semibold transition-all duration-300",
                 activeTab === tab.value
                   ? "bg-zinc-950 text-white shadow-lg shadow-zinc-200"
                   : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100",
@@ -312,7 +310,7 @@ export default function OrdersPage() {
                 setPage(0);
               }}
               className={cn(
-                "whitespace-nowrap px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300",
+                "whitespace-nowrap px-5 py-2 rounded-xl text-xs font-semibold transition-all duration-300",
                 activeRentalTab === tab.value
                   ? "bg-zinc-950 text-white shadow-lg shadow-zinc-200"
                   : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100",
@@ -336,7 +334,7 @@ export default function OrdersPage() {
           <div className="w-20 h-20 rounded-xl bg-zinc-50 flex items-center justify-center mb-6 text-zinc-200">
             <ShoppingBag className="w-10 h-10" />
           </div>
-          <h3 className="text-xl font-black text-zinc-950 tracking-tight mb-2">
+          <h3 className="text-xl font-semibold text-zinc-950 tracking-tight mb-2">
             Danh sách trống
           </h3>
           <p className="text-sm text-zinc-400 font-medium max-w-xs mb-10">
@@ -355,7 +353,7 @@ export default function OrdersPage() {
           <div className="w-20 h-20 rounded-xl bg-zinc-50 flex items-center justify-center mb-6 text-zinc-200">
             <Calendar className="w-10 h-10" />
           </div>
-          <h3 className="text-xl font-black text-zinc-950 tracking-tight mb-2">
+          <h3 className="text-xl font-semibold text-zinc-950 tracking-tight mb-2">
             Danh sách thuê trống
           </h3>
           <p className="text-sm text-zinc-400 font-medium max-w-xs mb-10">
@@ -379,19 +377,19 @@ export default function OrdersPage() {
               <div className="px-5 py-3 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/20">
                 <div className="flex items-center gap-5">
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-bold text-zinc-400 leading-none mb-1">
+                    <span className="text-[10px] font-semibold text-zinc-400 leading-none mb-1">
                       Mã đơn hàng
                     </span>
-                    <span className="text-sm font-bold text-zinc-950 tracking-tight">
+                    <span className="text-sm font-semibold text-zinc-950 tracking-tight">
                       #{order.code}
                     </span>
                   </div>
                   <div className="w-px h-6 bg-zinc-100 hidden sm:block" />
                   <div className="hidden sm:flex flex-col">
-                    <span className="text-[10px] font-bold text-zinc-400 leading-none mb-1">
+                    <span className="text-[10px] font-semibold text-zinc-400 leading-none mb-1">
                       Ngày đặt
                     </span>
-                    <span className="text-xs font-bold text-zinc-500">
+                    <span className="text-xs font-semibold text-zinc-500">
                       {formatDate(order.createdAt)}
                     </span>
                   </div>
@@ -430,7 +428,7 @@ export default function OrdersPage() {
                   </div>
                 ))}
                 {order.items.length > 2 && (
-                  <p className="text-[10px] font-bold text-zinc-300 uppercase tracking-[0.2em] pl-1">
+                  <p className="text-[10px] font-semibold text-zinc-300 tracking-wide pl-1">
                     + {order.items.length - 2} sản phẩm khác
                   </p>
                 )}
@@ -441,7 +439,7 @@ export default function OrdersPage() {
                   <span className="text-[14px] font-normal text-zinc-500">
                     Tổng thanh toán:
                   </span>
-                  <span className="text-[22px] font-bold text-red-600 tracking-tight">
+                  <span className="text-[22px] font-semibold text-red-600 tracking-tight">
                     {formatVND(order.totalPrice)}
                   </span>
                 </div>
@@ -501,19 +499,19 @@ export default function OrdersPage() {
               <div className="px-5 py-3 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/20">
                 <div className="flex items-center gap-5">
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-bold text-zinc-400 leading-none mb-1">
+                    <span className="text-[10px] font-semibold text-zinc-400 leading-none mb-1">
                       Mã đơn thuê
                     </span>
-                    <span className="text-sm font-bold text-zinc-950 tracking-tight">
+                    <span className="text-sm font-semibold text-zinc-950 tracking-tight">
                       #{rental.code}
                     </span>
                   </div>
                   <div className="w-px h-6 bg-zinc-100 hidden sm:block" />
                   <div className="hidden sm:flex flex-col">
-                    <span className="text-[10px] font-bold text-zinc-400 leading-none mb-1">
+                    <span className="text-[10px] font-semibold text-zinc-400 leading-none mb-1">
                       Thời hạn thuê
                     </span>
-                    <span className="text-xs font-bold text-zinc-500">
+                    <span className="text-xs font-semibold text-zinc-500">
                       {rental.startDate.split("T")[0]} &rarr;{" "}
                       {rental.endDate.split("T")[0]}
                     </span>
@@ -559,7 +557,7 @@ export default function OrdersPage() {
                   <span className="text-[14px] font-normal text-zinc-500">
                     Tổng phí thuê:
                   </span>
-                  <span className="text-[22px] font-bold text-red-600 tracking-tight">
+                  <span className="text-[22px] font-semibold text-red-600 tracking-tight">
                     {formatVND(rental.rentalFee)}
                   </span>
                   <span className="text-xs text-zinc-400 font-semibold">

@@ -145,17 +145,17 @@ export function ReviewFormDialog({
               <Package className="w-5 h-5 text-zinc-400" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+              <p className="text-[10px] font-semibold text-zinc-400 tracking-wide">
                 Đơn hàng
               </p>
-              <p className="text-xs font-bold text-zinc-900">{orderCode}</p>
+              <p className="text-xs font-semibold text-zinc-900">{orderCode}</p>
             </div>
           </div>
         )}
 
         {/* Rating Stars */}
         <div className="flex flex-col items-center gap-3 py-4">
-          <span className="text-sm font-bold text-zinc-500">
+          <span className="text-sm font-semibold text-zinc-500">
             Bạn thấy sản phẩm này thế nào?
           </span>
           <div className="flex items-center gap-2">
@@ -179,7 +179,7 @@ export function ReviewFormDialog({
           </div>
           <span
             className={cn(
-              "text-xs font-black uppercase tracking-widest",
+              "text-xs font-semibold tracking-wide",
               rating >= 4
                 ? "text-emerald-600"
                 : rating >= 3
@@ -203,7 +203,7 @@ export function ReviewFormDialog({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <MessageSquare className="w-4 h-4 text-zinc-400" />
-            <span className="text-xs font-bold text-zinc-900">
+            <span className="text-xs font-semibold text-zinc-900">
               Nội dung đánh giá
             </span>
           </div>
@@ -220,14 +220,14 @@ export function ReviewFormDialog({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <ImageIcon className="w-4 h-4 text-zinc-400" />
-              <span className="text-xs font-bold text-zinc-900">
+              <span className="text-xs font-semibold text-zinc-900">
                 Hình ảnh thực tế (Tối đa 5)
               </span>
             </div>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="text-[10px] font-black text-red-600 uppercase tracking-widest hover:underline"
+              className="text-[10px] font-semibold text-red-600 tracking-wide hover:underline"
             >
               Thêm ảnh
             </button>
@@ -259,7 +259,7 @@ export function ReviewFormDialog({
                 className="w-20 h-20 rounded-xl border-2 border-dashed border-zinc-100 flex flex-col items-center justify-center gap-1 hover:border-red-200 hover:bg-red-50/30 transition-all text-zinc-300 hover:text-red-400"
               >
                 <ImageIcon className="w-5 h-5" />
-                <span className="text-[10px] font-bold">Thêm</span>
+                <span className="text-[10px] font-semibold">Thêm</span>
               </button>
             )}
           </div>
@@ -279,14 +279,14 @@ export function ReviewFormDialog({
             type="button"
             variant="ghost"
             onClick={handleClose}
-            className="flex-1 h-12 rounded-xl text-zinc-500 font-bold hover:bg-zinc-50"
+            className="flex-1 h-12 rounded-xl text-zinc-500 font-semibold hover:bg-zinc-50"
           >
             Hủy bỏ
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={isPending}
-            className="flex-[2] h-12 rounded-xl bg-zinc-950 text-white font-black text-xs uppercase hover:bg-red-600 transition-all shadow-xl shadow-zinc-100"
+            className="flex-[2] h-12 rounded-xl bg-zinc-950 text-white font-semibold text-xs hover:bg-red-600 transition-all shadow-xl shadow-zinc-100"
           >
             {isPending ? (
               <Loader2 className="w-4 h-4 animate-spin mr-2" />

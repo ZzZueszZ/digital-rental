@@ -98,7 +98,9 @@ export default function CartPage() {
     return (
       <div className="py-20 flex flex-col items-center justify-center">
         <Loader2 className="w-8 h-8 text-red-600 animate-spin mb-4" />
-        <p className="text-sm font-bold text-zinc-400">Đang tải giỏ hàng...</p>
+        <p className="text-sm font-semibold text-zinc-400">
+          Đang tải giỏ hàng...
+        </p>
       </div>
     );
   }
@@ -109,7 +111,7 @@ export default function CartPage() {
         <div className="w-16 h-16 rounded-full bg-zinc-50 flex items-center justify-center mx-auto mb-6 border border-zinc-100">
           <ShoppingCart className="w-8 h-8 text-zinc-200" />
         </div>
-        <h2 className="text-2xl font-bold text-zinc-950 tracking-tight mb-2">
+        <h2 className="text-2xl font-semibold text-zinc-950 tracking-tight mb-2">
           Giỏ hàng đang trống
         </h2>
         <p className="text-zinc-500 text-sm mb-8 max-w-sm mx-auto leading-relaxed font-medium">
@@ -118,7 +120,7 @@ export default function CartPage() {
         </p>
         <Button
           onClick={() => router.push("/#product-section")}
-          className="h-10 px-8 rounded-xl bg-red-600 text-white font-bold hover:bg-zinc-900 transition-all shadow-md shadow-red-100 border-none"
+          className="h-10 px-8 rounded-xl bg-red-600 text-white font-semibold hover:bg-zinc-900 transition-all shadow-md shadow-red-100 border-none"
         >
           Khám phá thiết bị
         </Button>
@@ -235,7 +237,7 @@ export default function CartPage() {
                     >
                       <Minus className="w-3 h-3" />
                     </button>
-                    <span className="w-8 text-center font-bold text-xs text-zinc-950">
+                    <span className="w-8 text-center font-semibold text-xs text-zinc-950">
                       {item.quantity}
                     </span>
                     <button
@@ -263,7 +265,7 @@ export default function CartPage() {
                 <p className="text-[12px] font-medium text-zinc-400 mb-1">
                   Thành tiền
                 </p>
-                <p className="text-[20px] font-bold text-zinc-950 tracking-tight">
+                <p className="text-[20px] font-semibold text-zinc-950 tracking-tight">
                   {formatVND(
                     Number(item.salePrice || item.rentPricePerDay || 0) *
                       item.quantity,
@@ -294,7 +296,7 @@ export default function CartPage() {
                   <span className="text-zinc-500 font-normal text-sm">
                     Phí vận chuyển
                   </span>
-                  <span className="text-emerald-600 font-bold text-[11px] bg-emerald-50 px-2.5 py-1 rounded-xl">
+                  <span className="text-emerald-600 font-semibold text-[11px] bg-emerald-50 px-2.5 py-1 rounded-xl">
                     Miễn phí
                   </span>
                 </div>
@@ -313,7 +315,7 @@ export default function CartPage() {
                   <p className="text-zinc-400 text-[11px] font-semibold mb-1.5">
                     Tổng thanh toán
                   </p>
-                  <p className="text-[28px] font-bold tracking-tight text-red-600 leading-none">
+                  <p className="text-[28px] font-semibold tracking-tight text-red-600 leading-none">
                     {formatVND(subtotal)}
                   </p>
                 </div>
@@ -324,7 +326,7 @@ export default function CartPage() {
                 onClick={() =>
                   router.push(`/checkout?cartItemIds=${selectedIds.join(",")}`)
                 }
-                className="w-full h-12 rounded-xl bg-red-600 hover:bg-zinc-950 text-white font-black text-sm transition-all shadow-lg shadow-red-100 flex items-center justify-center gap-2 border-none group/btn disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
+                className="w-full h-12 rounded-xl bg-red-600 hover:bg-zinc-950 text-white font-semibold text-sm transition-all shadow-lg shadow-red-100 flex items-center justify-center gap-2 border-none group/btn disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
               >
                 Tiếp tục thanh toán ({selectedIds.length})
                 <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />

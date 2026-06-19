@@ -69,7 +69,7 @@ export function AdminFormDialog({
                   <Icon className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-zinc-950 tracking-tight">
+                  <h2 className="text-xl font-semibold text-zinc-950 tracking-tight">
                     {title}
                   </h2>
                   {description && (
@@ -90,10 +90,7 @@ export function AdminFormDialog({
           </div>
 
           {/* Form */}
-          <form
-            onSubmit={onSubmit}
-            className="flex min-h-0 flex-1 flex-col"
-          >
+          <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
             <div className="px-6 pt-5 pb-8 space-y-4 overflow-y-auto custom-scrollbar">
               {children}
             </div>

@@ -163,9 +163,7 @@ export function RentalManageView({
   const [itemConditions, setItemConditions] = useState<Record<number, string>>(
     {},
   );
-  const [returnDate, setReturnDate] = useState(
-    getTodayDateInputValue,
-  );
+  const [returnDate, setReturnDate] = useState(getTodayDateInputValue);
   const [returnAdjustmentMode, setReturnAdjustmentMode] =
     useState<ReturnAdjustmentMode>(null);
   const [earlyReturnDays, setEarlyReturnDays] = useState<number>(0);
@@ -278,7 +276,9 @@ export function RentalManageView({
     setLateReturnDays(0);
   }, [isReturnOpen, returnDate, selectedRental]);
 
-  const handleReturnAdjustmentModeChange = (mode: Exclude<ReturnAdjustmentMode, null>) => {
+  const handleReturnAdjustmentModeChange = (
+    mode: Exclude<ReturnAdjustmentMode, null>,
+  ) => {
     if (returnAdjustmentMode === mode) {
       return;
     }
@@ -745,22 +745,22 @@ export function RentalManageView({
           <table className="w-full text-left">
             <thead>
               <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
                   Đơn thuê
                 </th>
-                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
                   Khách hàng
                 </th>
-                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
                   Thời hạn thuê
                 </th>
-                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
                   Phí thuê & Cọc
                 </th>
-                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400">
+                <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400">
                   Trạng thái
                 </th>
-                <th className="px-6 py-3.5 text-[13px] font-bold text-zinc-400 text-right">
+                <th className="px-6 py-3.5 text-[13px] font-semibold text-zinc-400 text-right">
                   Thao tác
                 </th>
               </tr>
@@ -792,7 +792,7 @@ export function RentalManageView({
                   >
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold text-zinc-950">
+                        <span className="text-sm font-semibold text-zinc-950">
                           #{rental.code}
                         </span>
                         <span className="text-[10px] text-zinc-400 font-semibold mt-1">
@@ -802,7 +802,7 @@ export function RentalManageView({
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="text-xs font-bold text-zinc-950">
+                        <span className="text-xs font-semibold text-zinc-950">
                           {rental.shippingName}
                         </span>
                         <span className="text-[11px] text-zinc-400 mt-0.5">
@@ -819,7 +819,7 @@ export function RentalManageView({
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="text-xs font-bold text-red-600">
+                        <span className="text-xs font-semibold text-red-600">
                           {formatVND(rental.rentalFee)}
                         </span>
                         <span className="text-[10px] text-amber-600 font-semibold mt-0.5">
@@ -835,7 +835,7 @@ export function RentalManageView({
                     <td className="px-6 py-4 min-w-[120px]">
                       <span
                         className={cn(
-                          "inline-flex w-fit min-w-max shrink-0 items-center justify-center whitespace-nowrap px-2.5 py-1 rounded-xl text-[11px] font-bold border",
+                          "inline-flex w-fit min-w-max shrink-0 items-center justify-center whitespace-nowrap px-2.5 py-1 rounded-xl text-[11px] font-semibold border",
                           getStatusColor(rental.status),
                         )}
                       >
@@ -856,7 +856,7 @@ export function RentalManageView({
                           className="w-56 p-1.5 rounded-xl border-zinc-100 shadow-[0_8px_32px_rgba(0,0,0,0.12)] bg-white"
                         >
                           <DropdownMenuGroup>
-                            <DropdownMenuLabel className="text-[10px] font-bold text-zinc-400 px-2 py-1.5 tracking-widest uppercase">
+                            <DropdownMenuLabel className="text-[10px] font-semibold text-zinc-400 px-2 py-1.5 tracking-wide ">
                               Tác vụ quản trị
                             </DropdownMenuLabel>
 
@@ -1003,14 +1003,14 @@ export function RentalManageView({
           {loadingDevices ? (
             <div className="py-10 flex flex-col items-center">
               <Loader2 className="w-8 h-8 text-red-600 animate-spin mb-4" />
-              <p className="text-xs text-zinc-400 font-bold">
+              <p className="text-xs text-zinc-400 font-semibold">
                 Đang tải danh sách thiết bị vật lý...
               </p>
             </div>
           ) : (
             <div className="space-y-5">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                <label className="text-[10px] font-semibold text-zinc-400 tracking-wide block">
                   Đánh giá mức độ rủi ro (CIC)
                 </label>
                 <Select
@@ -1044,7 +1044,7 @@ export function RentalManageView({
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                <label className="text-[10px] font-semibold text-zinc-400 tracking-wide block">
                   Cập nhật số tiền đặt cọc (VND)
                 </label>
                 <input
@@ -1055,15 +1055,16 @@ export function RentalManageView({
                     setDepositAmount(parseMoneyInput(e.target.value))
                   }
                   placeholder="Ví dụ: 1.000.000"
-                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm"
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-semibold text-sm"
                 />
                 <p className="text-[11px] text-zinc-500">
-                  Hệ thống tự định dạng dấu chấm, ví dụ 1000000 thành 1.000.000 đ.
+                  Hệ thống tự định dạng dấu chấm, ví dụ 1000000 thành 1.000.000
+                  đ.
                 </p>
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">
+                <label className="text-[10px] font-semibold text-zinc-400 tracking-wide block">
                   Gán thiết bị vật lý cụ thể (Theo số Serial)
                 </label>
                 {selectedRental.items.map((item) => {
@@ -1073,7 +1074,7 @@ export function RentalManageView({
                       key={item.id}
                       className="p-3 bg-zinc-50 border border-zinc-100 rounded-xl space-y-2"
                     >
-                      <div className="text-xs font-bold text-zinc-900">
+                      <div className="text-xs font-semibold text-zinc-900">
                         {item.productName}
                       </div>
                       <Select
@@ -1111,7 +1112,7 @@ export function RentalManageView({
                         </SelectContent>
                       </Select>
                       {devs.length === 0 && (
-                        <p className="text-[10px] text-red-500 font-bold flex items-center gap-1">
+                        <p className="text-[10px] text-red-500 font-semibold flex items-center gap-1">
                           <AlertTriangle className="w-3 h-3" /> Hết thiết bị sẵn
                           sàng trong kho!
                         </p>
@@ -1141,7 +1142,7 @@ export function RentalManageView({
         >
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+              <label className="text-[11px] font-semibold text-zinc-500 tracking-wide block">
                 Tên nhân viên kiểm tra bàn giao
               </label>
               <input
@@ -1154,7 +1155,7 @@ export function RentalManageView({
             </div>
 
             <div className="space-y-3">
-              <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+              <label className="text-[11px] font-semibold text-zinc-500 tracking-wide block">
                 Mô tả tình trạng
               </label>
               {selectedRental.items.map((item) => (
@@ -1162,7 +1163,7 @@ export function RentalManageView({
                   key={item.id}
                   className="p-3 bg-zinc-50 rounded-xl space-y-2 border border-zinc-100"
                 >
-                  <div className="text-xs font-bold text-zinc-900">
+                  <div className="text-xs font-semibold text-zinc-900">
                     {item.productName} ({item.deviceSerialNumber})
                   </div>
                   <textarea
@@ -1196,7 +1197,7 @@ export function RentalManageView({
         >
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+              <label className="text-[11px] font-semibold text-zinc-500 tracking-wide block">
                 Tên nhân viên kiểm tra nhận trả
               </label>
               <input
@@ -1209,14 +1210,14 @@ export function RentalManageView({
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+              <label className="text-[11px] font-semibold text-zinc-500 tracking-wide block">
                 Ngày trả thực tế
               </label>
               <DateInput
                 value={returnDate}
                 onChange={setReturnDate}
                 placeholder="dd/mm/yyyy"
-                className="!h-10 !px-3 !pr-12 !rounded-xl !border-zinc-200 !shadow-none !text-sm !font-bold focus:!border-zinc-950"
+                className="!h-10 !px-3 !pr-12 !rounded-xl !border-zinc-200 !shadow-none !text-sm !font-semibold focus:!border-zinc-950"
               />
             </div>
 
@@ -1229,7 +1230,7 @@ export function RentalManageView({
                     : "border-zinc-200 bg-white",
                 )}
               >
-                <label className="flex items-center gap-2 text-[11px] font-bold text-zinc-600 tracking-wide">
+                <label className="flex items-center gap-2 text-[11px] font-semibold text-zinc-600 tracking-wide">
                   <input
                     type="checkbox"
                     checked={returnAdjustmentMode === "EARLY"}
@@ -1249,10 +1250,11 @@ export function RentalManageView({
                     setEarlyReturnDays(Math.max(0, Number(e.target.value)));
                     setLateReturnDays(0);
                   }}
-                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 disabled:bg-zinc-50 disabled:text-zinc-400 font-bold text-sm text-emerald-600"
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 disabled:bg-zinc-50 disabled:text-zinc-400 font-semibold text-sm text-emerald-600"
                 />
                 <p className="text-[11px] text-zinc-400">
-                  Tối đa {returnSettlement.maxEarlyReturnDays} ngày theo ngày trả thực tế.
+                  Tối đa {returnSettlement.maxEarlyReturnDays} ngày theo ngày
+                  trả thực tế.
                 </p>
               </div>
 
@@ -1264,7 +1266,7 @@ export function RentalManageView({
                     : "border-zinc-200 bg-white",
                 )}
               >
-                <label className="flex items-center gap-2 text-[11px] font-bold text-zinc-600 tracking-wide">
+                <label className="flex items-center gap-2 text-[11px] font-semibold text-zinc-600 tracking-wide">
                   <input
                     type="checkbox"
                     checked={returnAdjustmentMode === "LATE"}
@@ -1284,16 +1286,17 @@ export function RentalManageView({
                     setEarlyReturnDays(0);
                     setLateReturnDays(Math.max(0, Number(e.target.value)));
                   }}
-                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 disabled:bg-zinc-50 disabled:text-zinc-400 font-bold text-sm text-red-600"
+                  className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 disabled:bg-zinc-50 disabled:text-zinc-400 font-semibold text-sm text-red-600"
                 />
                 <p className="text-[11px] text-zinc-400">
-                  Tối đa {returnSettlement.maxLateReturnDays} ngày theo ngày trả thực tế.
+                  Tối đa {returnSettlement.maxLateReturnDays} ngày theo ngày trả
+                  thực tế.
                 </p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+              <label className="text-[11px] font-semibold text-zinc-500 tracking-wide block">
                 Phí hư hại / phát sinh khác (VND)
               </label>
               <input
@@ -1302,53 +1305,54 @@ export function RentalManageView({
                 value={formatMoneyInput(damageFee)}
                 onChange={(e) => setDamageFee(parseMoneyInput(e.target.value))}
                 placeholder="Ví dụ: 500.000"
-                className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-bold text-sm text-red-600"
+                className="w-full h-10 px-3 rounded-xl border border-zinc-200 outline-none focus:border-zinc-950 font-semibold text-sm text-red-600"
               />
               <p className="text-[11px] text-zinc-500">
-                Chỉ nhập số tiền phát sinh do hư hại hoặc thiếu phụ kiện. Phí trả trễ đã tự tính theo số ngày.
+                Chỉ nhập số tiền phát sinh do hư hại hoặc thiếu phụ kiện. Phí
+                trả trễ đã tự tính theo số ngày.
               </p>
             </div>
 
             <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-4 space-y-2 text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-zinc-500">Đơn giá thuê/ngày</span>
-                <span className="font-bold text-zinc-950">
+                <span className="font-semibold text-zinc-950">
                   {formatVND(returnSettlement.dailyRentalTotal)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-zinc-500">Tiền cọc đã thu</span>
-                <span className="font-bold text-zinc-950">
+                <span className="font-semibold text-zinc-950">
                   {formatVND(returnSettlement.deposit)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-emerald-600">Hoàn phí trả sớm (80%)</span>
-                <span className="font-bold text-emerald-600">
+                <span className="font-semibold text-emerald-600">
                   +{formatVND(returnSettlement.earlyRefund)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-red-600">Phụ thu quá ngày</span>
-                <span className="font-bold text-red-600">
+                <span className="font-semibold text-red-600">
                   -{formatVND(returnSettlement.lateFee)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-red-600">Phí hư hại / phát sinh</span>
-                <span className="font-bold text-red-600">
+                <span className="font-semibold text-red-600">
                   -{formatVND(returnSettlement.damage)}
                 </span>
               </div>
               <div className="border-t border-zinc-200 pt-2 mt-2 flex items-center justify-between">
-                <span className="font-bold text-zinc-950">
+                <span className="font-semibold text-zinc-950">
                   {returnSettlement.extraPaymentAmount > 0
                     ? "Khách cần thanh toán thêm"
                     : "Dự kiến hoàn khách"}
                 </span>
                 <span
                   className={cn(
-                    "text-base font-black",
+                    "text-base font-semibold",
                     returnSettlement.extraPaymentAmount > 0
                       ? "text-red-600"
                       : "text-emerald-600",
@@ -1364,7 +1368,7 @@ export function RentalManageView({
             </div>
 
             <div className="space-y-3">
-              <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+              <label className="text-[11px] font-semibold text-zinc-500 tracking-wide block">
                 Mô tả tình trạng
               </label>
               {selectedRental.items.map((item) => (
@@ -1372,7 +1376,7 @@ export function RentalManageView({
                   key={item.id}
                   className="p-3 bg-zinc-50 rounded-xl space-y-2 border border-zinc-100"
                 >
-                  <div className="text-xs font-bold text-zinc-900">
+                  <div className="text-xs font-semibold text-zinc-900">
                     {item.productName} ({item.deviceSerialNumber})
                   </div>
                   <textarea

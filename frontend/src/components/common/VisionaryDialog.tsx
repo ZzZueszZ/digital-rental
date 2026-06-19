@@ -50,11 +50,11 @@ export function VisionaryDialog({
             </div>
           )}
           <div className="flex-1 pr-8">
-            <DialogTitle className="text-2xl font-black text-zinc-950 tracking-tight leading-tight">
+            <DialogTitle className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
               {title}
             </DialogTitle>
             {subtitle && (
-              <DialogDescription className="text-sm text-zinc-400 font-bold mt-1 leading-relaxed">
+              <DialogDescription className="text-sm text-zinc-400 font-semibold mt-1 leading-relaxed">
                 {subtitle}
               </DialogDescription>
             )}

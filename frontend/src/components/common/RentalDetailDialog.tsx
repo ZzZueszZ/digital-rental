@@ -172,23 +172,23 @@ export function RentalDetailDialog({
     const productRows = Object.values(productGroups)
       .map(
         (item, index) => `
-          <tr>
-            <td>${index + 1}</td>
-            <td class="text-left">
-              <strong>${item.name}</strong>
-              ${
-                item.serialNumbers.length > 0
-                  ? `<div class="sub-text">Serial: ${item.serialNumbers.join(", ")}</div>`
-                  : ""
-              }
-            </td>
-            <td>${item.quantity}</td>
-            <td class="text-right">${formatVND(item.pricePerDay)}</td>
-            <td class="text-right">${formatVND(
-              item.pricePerDay * item.quantity * rentalDays,
-            )}</td>
-          </tr>
-        `,
+ <tr>
+ <td>${index + 1}</td>
+ <td class="text-left">
+ <strong>${item.name}</strong>
+ ${
+   item.serialNumbers.length > 0
+     ? `<div class="sub-text">Serial: ${item.serialNumbers.join(", ")}</div>`
+     : ""
+ }
+ </td>
+ <td>${item.quantity}</td>
+ <td class="text-right">${formatVND(item.pricePerDay)}</td>
+ <td class="text-right">${formatVND(
+   item.pricePerDay * item.quantity * rentalDays,
+ )}</td>
+ </tr>
+ `,
       )
       .join("");
     const legalTerms = [
@@ -202,17 +202,17 @@ export function RentalDetailDialog({
       )
       .join("");
     const expandedContractTerms = `
-      <p><strong>V. Quy trình bàn giao thiết bị:</strong> Digital Rental kiểm tra thiết bị, serial, phụ kiện và tình trạng trước khi bàn giao. Người thuê cần kiểm tra lại khi nhận; nếu tiếp nhận thiết bị thì được xem là đồng ý với tình trạng ghi nhận trong biên bản bàn giao.</p>
-      <p><strong>VI. Quyền và nghĩa vụ của bên cho thuê:</strong> Cung cấp thiết bị đúng mô tả, hỗ trợ kỹ thuật cơ bản, ghi nhận biên bản giao nhận và hoàn tiền cọc/hoàn phí hợp lệ sau khi đối soát. Bên cho thuê có quyền từ chối bàn giao nếu người thuê chưa hoàn tất eKYC, chưa ký hợp đồng hoặc chưa thanh toán theo quy định.</p>
-      <p><strong>VII. Quyền và nghĩa vụ của bên thuê:</strong> Sử dụng thiết bị đúng mục đích, bảo quản cẩn thận, không tự ý tháo lắp, sửa chữa, cho thuê lại hoặc chuyển giao cho bên thứ ba. Người thuê phải trả thiết bị đúng hạn, đúng tình trạng và phối hợp xác minh khi có tranh chấp.</p>
-      <p><strong>VIII. Hư hỏng, mất mát và bồi thường:</strong> Nếu thiết bị hư hỏng, mất mát hoặc thiếu phụ kiện, người thuê thanh toán chi phí sửa chữa, thay thế hoặc bồi thường theo kết quả thẩm định. Chi phí phát sinh được khấu trừ vào tiền cọc và/hoặc khoản hoàn phí trả sớm; nếu vượt quá số được khấu trừ, người thuê thanh toán phần chênh lệch.</p>
-      <p><strong>IX. Trả trễ, trả sớm và gia hạn:</strong> Trả trễ bị tính phụ thu 150% phí thuê mỗi ngày cho mỗi ngày quá hạn. Trả sớm có thể được hoàn phần phí thuê của số ngày chưa sử dụng sau khi trừ các khoản phát sinh, nếu chính sách tại thời điểm xử lý cho phép. Mọi yêu cầu gia hạn cần được xác nhận trước khi hết hạn thuê.</p>
-      <p><strong>X. Xử lý vi phạm và chấm dứt hợp đồng:</strong> Hợp đồng có thể bị chấm dứt nếu người thuê cung cấp thông tin sai, không thanh toán, không trả thiết bị hoặc vi phạm nghiêm trọng nghĩa vụ bảo quản. Digital Rental có quyền ghi nhận sự cố, tạm giữ tiền cọc và thực hiện biện pháp cần thiết để bảo vệ tài sản.</p>
-      <p><strong>XI. Bảo mật và xác thực điện tử:</strong> Người thuê đồng ý việc hệ thống sử dụng thông tin tài khoản, eKYC, OTP, chữ ký điện tử và nhật ký thao tác để xác minh giao dịch thuê. Dữ liệu nhạy cảm được bảo vệ theo cơ chế xác thực, phân quyền và các lớp bảo mật của hệ thống, bao gồm E2EE-SHIELD đối với API phù hợp.</p>
-      <p><strong>XII. Giải quyết tranh chấp:</strong> Mọi tranh chấp được ưu tiên giải quyết bằng thương lượng trên cơ sở dữ liệu đơn thuê, hợp đồng, biên bản bàn giao, biên bản hoàn trả, lịch sử thanh toán và nhật ký hệ thống.</p>
-      <p><strong>XIII. Cam kết của các bên:</strong> Các bên cam kết thông tin cung cấp là trung thực, đã đọc và đồng ý với toàn bộ nội dung hợp đồng trước khi ký điện tử. Hợp đồng có hiệu lực từ thời điểm được ký điện tử bởi các bên trên hệ thống Digital Rental.</p>
-      <p><strong>Phụ lục đính kèm:</strong> Thông tin thiết bị/serial, biên bản bàn giao, biên bản hoàn trả, bảng tính phí phát sinh, lịch sử thanh toán và nhật ký ký điện tử nếu có.</p>
-    `;
+ <p><strong>V. Quy trình bàn giao thiết bị:</strong> Digital Rental kiểm tra thiết bị, serial, phụ kiện và tình trạng trước khi bàn giao. Người thuê cần kiểm tra lại khi nhận; nếu tiếp nhận thiết bị thì được xem là đồng ý với tình trạng ghi nhận trong biên bản bàn giao.</p>
+ <p><strong>VI. Quyền và nghĩa vụ của bên cho thuê:</strong> Cung cấp thiết bị đúng mô tả, hỗ trợ kỹ thuật cơ bản, ghi nhận biên bản giao nhận và hoàn tiền cọc/hoàn phí hợp lệ sau khi đối soát. Bên cho thuê có quyền từ chối bàn giao nếu người thuê chưa hoàn tất eKYC, chưa ký hợp đồng hoặc chưa thanh toán theo quy định.</p>
+ <p><strong>VII. Quyền và nghĩa vụ của bên thuê:</strong> Sử dụng thiết bị đúng mục đích, bảo quản cẩn thận, không tự ý tháo lắp, sửa chữa, cho thuê lại hoặc chuyển giao cho bên thứ ba. Người thuê phải trả thiết bị đúng hạn, đúng tình trạng và phối hợp xác minh khi có tranh chấp.</p>
+ <p><strong>VIII. Hư hỏng, mất mát và bồi thường:</strong> Nếu thiết bị hư hỏng, mất mát hoặc thiếu phụ kiện, người thuê thanh toán chi phí sửa chữa, thay thế hoặc bồi thường theo kết quả thẩm định. Chi phí phát sinh được khấu trừ vào tiền cọc và/hoặc khoản hoàn phí trả sớm; nếu vượt quá số được khấu trừ, người thuê thanh toán phần chênh lệch.</p>
+ <p><strong>IX. Trả trễ, trả sớm và gia hạn:</strong> Trả trễ bị tính phụ thu 150% phí thuê mỗi ngày cho mỗi ngày quá hạn. Trả sớm có thể được hoàn phần phí thuê của số ngày chưa sử dụng sau khi trừ các khoản phát sinh, nếu chính sách tại thời điểm xử lý cho phép. Mọi yêu cầu gia hạn cần được xác nhận trước khi hết hạn thuê.</p>
+ <p><strong>X. Xử lý vi phạm và chấm dứt hợp đồng:</strong> Hợp đồng có thể bị chấm dứt nếu người thuê cung cấp thông tin sai, không thanh toán, không trả thiết bị hoặc vi phạm nghiêm trọng nghĩa vụ bảo quản. Digital Rental có quyền ghi nhận sự cố, tạm giữ tiền cọc và thực hiện biện pháp cần thiết để bảo vệ tài sản.</p>
+ <p><strong>XI. Bảo mật và xác thực điện tử:</strong> Người thuê đồng ý việc hệ thống sử dụng thông tin tài khoản, eKYC, OTP, chữ ký điện tử và nhật ký thao tác để xác minh giao dịch thuê. Dữ liệu nhạy cảm được bảo vệ theo cơ chế xác thực, phân quyền và các lớp bảo mật của hệ thống, bao gồm E2EE-SHIELD đối với API phù hợp.</p>
+ <p><strong>XII. Giải quyết tranh chấp:</strong> Mọi tranh chấp được ưu tiên giải quyết bằng thương lượng trên cơ sở dữ liệu đơn thuê, hợp đồng, biên bản bàn giao, biên bản hoàn trả, lịch sử thanh toán và nhật ký hệ thống.</p>
+ <p><strong>XIII. Cam kết của các bên:</strong> Các bên cam kết thông tin cung cấp là trung thực, đã đọc và đồng ý với toàn bộ nội dung hợp đồng trước khi ký điện tử. Hợp đồng có hiệu lực từ thời điểm được ký điện tử bởi các bên trên hệ thống Digital Rental.</p>
+ <p><strong>Phụ lục đính kèm:</strong> Thông tin thiết bị/serial, biên bản bàn giao, biên bản hoàn trả, bảng tính phí phát sinh, lịch sử thanh toán và nhật ký ký điện tử nếu có.</p>
+ `;
     const rawContractTerms = rental.contract.termsAndConditions || "";
     const expandedTermsStart = rawContractTerms.search(/\nV\.\s/);
     const printableContractTerms =
@@ -226,264 +226,264 @@ export function RentalDetailDialog({
       : `${legalTerms}${expandedContractTerms}`;
 
     printWindow.document.write(`
-      <html>
-        <head>
-          <title>Hop_Dong_Thue_${rental.code}</title>
-          <style>
-            body {
-              font-family: 'Times New Roman', Times, serif;
-              padding: 40px;
-              color: #000;
-              line-height: 1.6;
-              font-size: 14px;
-            }
-            .header-national {
-              text-align: center;
-              font-weight: bold;
-              margin-bottom: 30px;
-            }
-            .header-title {
-              text-align: center;
-              font-size: 20px;
-              font-weight: bold;
-              margin-bottom: 20px;
-              text-transform: uppercase;
-            }
-            .contract-info {
-              margin-bottom: 20px;
-              font-style: italic;
-              text-align: center;
-            }
-            .content-box {
-              text-align: justify;
-            }
-            .content-box p {
-              margin: 5px 0;
-            }
-            .section-title {
-              margin: 22px 0 8px;
-              font-weight: bold;
-              text-transform: uppercase;
-            }
-            .info-table,
-            .product-table {
-              width: 100%;
-              border-collapse: collapse;
-            }
-            .info-table td {
-              padding: 4px 8px 4px 0;
-              vertical-align: top;
-            }
-            .info-label {
-              width: 22%;
-              font-weight: bold;
-            }
-            .product-table th,
-            .product-table td {
-              border: 1px solid #000;
-              padding: 7px;
-              text-align: center;
-            }
-            .product-table th {
-              background: #f3f4f6;
-            }
-            .text-left {
-              text-align: left !important;
-            }
-            .text-right {
-              text-align: right !important;
-            }
-            .sub-text {
-              margin-top: 2px;
-              color: #555;
-              font-size: 11px;
-            }
-            .summary-box {
-              margin-top: 10px;
-              margin-left: auto;
-              width: 48%;
-            }
-            .summary-row {
-              display: flex;
-              justify-content: space-between;
-              padding: 3px 0;
-            }
-            .summary-total {
-              margin-top: 5px;
-              padding-top: 6px;
-              border-top: 1px solid #000;
-              font-weight: bold;
-            }
-            .signatures-container {
-              margin-top: 50px;
-              display: flex;
-              justify-content: space-between;
-            }
-            .signature-col {
-              width: 45%;
-              text-align: center;
-            }
-            .signature-title {
-              font-weight: bold;
-              margin-bottom: 15px;
-            }
-            .signature-box {
-              border: 2px dashed #059669;
-              background-color: #ecfdf5;
-              color: #047857;
-              padding: 15px;
-              border-radius: 8px;
-              font-size: 12px;
-              font-weight: bold;
-              min-height: 70px;
-            }
-            .signature-box.lessor {
-              border-color: #dc2626;
-              background-color: #fef2f2;
-              color: #b91c1c;
-            }
-            .signature-box.unassigned {
-              border-color: #d1d5db;
-              background-color: #f9fafb;
-              color: #6b7280;
-            }
-            @media print {
-              body {
-                padding: 20px;
-              }
-              .no-print {
-                display: none;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header-national">
-            CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>
-            Độc lập - Tự do - Hạnh phúc<br>
-            --------------------------
-          </div>
-          
-          <div class="header-title">HỢP ĐỒNG THUÊ THIẾT BỊ ĐIỆN TỬ</div>
-          <div class="contract-info">Số: ${rental.contract.contractNumber}</div>
+ <html>
+ <head>
+ <title>Hop_Dong_Thue_${rental.code}</title>
+ <style>
+ body {
+ font-family: 'Times New Roman', Times, serif;
+ padding: 40px;
+ color: #000;
+ line-height: 1.6;
+ font-size: 14px;
+ }
+ .header-national {
+ text-align: center;
+ font-weight: bold;
+ margin-bottom: 30px;
+ }
+ .header-title {
+ text-align: center;
+ font-size: 20px;
+ font-weight: bold;
+ margin-bottom: 20px;
+ text-transform: ;
+ }
+ .contract-info {
+ margin-bottom: 20px;
+ font-style: italic;
+ text-align: center;
+ }
+ .content-box {
+ text-align: justify;
+ }
+ .content-box p {
+ margin: 5px 0;
+ }
+ .section-title {
+ margin: 22px 0 8px;
+ font-weight: bold;
+ text-transform: ;
+ }
+ .info-table,
+ .product-table {
+ width: 100%;
+ border-collapse: collapse;
+ }
+ .info-table td {
+ padding: 4px 8px 4px 0;
+ vertical-align: top;
+ }
+ .info-label {
+ width: 22%;
+ font-weight: bold;
+ }
+ .product-table th,
+ .product-table td {
+ border: 1px solid #000;
+ padding: 7px;
+ text-align: center;
+ }
+ .product-table th {
+ background: #f3f4f6;
+ }
+ .text-left {
+ text-align: left !important;
+ }
+ .text-right {
+ text-align: right !important;
+ }
+ .sub-text {
+ margin-top: 2px;
+ color: #555;
+ font-size: 11px;
+ }
+ .summary-box {
+ margin-top: 10px;
+ margin-left: auto;
+ width: 48%;
+ }
+ .summary-row {
+ display: flex;
+ justify-content: space-between;
+ padding: 3px 0;
+ }
+ .summary-total {
+ margin-top: 5px;
+ padding-top: 6px;
+ border-top: 1px solid #000;
+ font-weight: bold;
+ }
+ .signatures-container {
+ margin-top: 50px;
+ display: flex;
+ justify-content: space-between;
+ }
+ .signature-col {
+ width: 45%;
+ text-align: center;
+ }
+ .signature-title {
+ font-weight: bold;
+ margin-bottom: 15px;
+ }
+ .signature-box {
+ border: 2px dashed #059669;
+ background-color: #ecfdf5;
+ color: #047857;
+ padding: 15px;
+ border-radius: 8px;
+ font-size: 12px;
+ font-weight: bold;
+ min-height: 70px;
+ }
+ .signature-box.lessor {
+ border-color: #dc2626;
+ background-color: #fef2f2;
+ color: #b91c1c;
+ }
+ .signature-box.unassigned {
+ border-color: #d1d5db;
+ background-color: #f9fafb;
+ color: #6b7280;
+ }
+ @media print {
+ body {
+ padding: 20px;
+ }
+ .no-print {
+ display: none;
+ }
+ }
+ </style>
+ </head>
+ <body>
+ <div class="header-national">
+ CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>
+ Độc lập - Tự do - Hạnh phúc<br>
+ --------------------------
+ </div>
 
-          <div class="section-title">I. Thông tin các bên</div>
-          <table class="info-table">
-            <tr>
-              <td class="info-label">Bên cho thuê:</td>
-              <td><strong>Digital Rental</strong></td>
-            </tr>
-            <tr>
-              <td class="info-label">Đại diện:</td>
-              <td>${rental.contract.lessorSignature || "Cửa hàng Digital Rental"}</td>
-            </tr>
-            <tr>
-              <td class="info-label">Bên thuê:</td>
-              <td><strong>${renterName}</strong></td>
-            </tr>
-            <tr>
-              <td class="info-label">Email:</td>
-              <td>${rental.userEmail || "Chưa cập nhật"}</td>
-            </tr>
-            <tr>
-              <td class="info-label">Số điện thoại:</td>
-              <td>${rental.userPhone || rental.shippingPhone || "Chưa cập nhật"}</td>
-            </tr>
-            <tr>
-              <td class="info-label">Địa điểm nhận:</td>
-              <td>${rental.shippingAddress || "Nhận tại cửa hàng Digital Rental"}</td>
-            </tr>
-          </table>
+ <div class="header-title">HỢP ĐỒNG THUÊ THIẾT BỊ ĐIỆN TỬ</div>
+ <div class="contract-info">Số: ${rental.contract.contractNumber}</div>
 
-          <div class="section-title">II. Thông tin thuê thiết bị</div>
-          <table class="info-table">
-            <tr>
-              <td class="info-label">Mã đơn thuê:</td>
-              <td>#${rental.code}</td>
-            </tr>
-            <tr>
-              <td class="info-label">Thời hạn thuê:</td>
-              <td>${formatContractDate(rental.startDate)} đến ${formatContractDate(rental.endDate)} (${rentalDays} ngày)</td>
-            </tr>
-            <tr>
-              <td class="info-label">Hình thức thanh toán:</td>
-              <td>${rental.paymentMethod === "ONLINE" ? "VNPay Online" : rental.paymentMethod}</td>
-            </tr>
-          </table>
+ <div class="section-title">I. Thông tin các bên</div>
+ <table class="info-table">
+ <tr>
+ <td class="info-label">Bên cho thuê:</td>
+ <td><strong>Digital Rental</strong></td>
+ </tr>
+ <tr>
+ <td class="info-label">Đại diện:</td>
+ <td>${rental.contract.lessorSignature || "Cửa hàng Digital Rental"}</td>
+ </tr>
+ <tr>
+ <td class="info-label">Bên thuê:</td>
+ <td><strong>${renterName}</strong></td>
+ </tr>
+ <tr>
+ <td class="info-label">Email:</td>
+ <td>${rental.userEmail || "Chưa cập nhật"}</td>
+ </tr>
+ <tr>
+ <td class="info-label">Số điện thoại:</td>
+ <td>${rental.userPhone || rental.shippingPhone || "Chưa cập nhật"}</td>
+ </tr>
+ <tr>
+ <td class="info-label">Địa điểm nhận:</td>
+ <td>${rental.shippingAddress || "Nhận tại cửa hàng Digital Rental"}</td>
+ </tr>
+ </table>
 
-          <div class="section-title">III. Danh sách thiết bị thuê</div>
-          <table class="product-table">
-            <thead>
-              <tr>
-                <th style="width: 7%">STT</th>
-                <th>Thiết bị</th>
-                <th style="width: 10%">SL</th>
-                <th style="width: 20%">Đơn giá/ngày</th>
-                <th style="width: 20%">Thành tiền</th>
-              </tr>
-            </thead>
-            <tbody>${productRows}</tbody>
-          </table>
-          <div class="summary-box">
-            <div class="summary-row">
-              <span>Phí thuê:</span>
-              <strong>${formatVND(rental.rentalFee)}</strong>
-            </div>
-            <div class="summary-row">
-              <span>Tiền cọc dự kiến:</span>
-              <strong>${formatVND(
-                rental.finalDepositAmount ?? rental.estimatedDepositAmount ?? 0,
-              )}</strong>
-            </div>
-            <div class="summary-row summary-total">
-              <span>Tổng phí thuê:</span>
-              <span>${formatVND(rental.rentalFee + rental.additionalFee)}</span>
-            </div>
-          </div>
+ <div class="section-title">II. Thông tin thuê thiết bị</div>
+ <table class="info-table">
+ <tr>
+ <td class="info-label">Mã đơn thuê:</td>
+ <td>#${rental.code}</td>
+ </tr>
+ <tr>
+ <td class="info-label">Thời hạn thuê:</td>
+ <td>${formatContractDate(rental.startDate)} đến ${formatContractDate(rental.endDate)} (${rentalDays} ngày)</td>
+ </tr>
+ <tr>
+ <td class="info-label">Hình thức thanh toán:</td>
+ <td>${rental.paymentMethod === "ONLINE" ? "VNPay Online" : rental.paymentMethod}</td>
+ </tr>
+ </table>
 
-          <div class="section-title">IV. Điều khoản hợp đồng</div>
-          <div class="content-box">
-            ${contractTermsHtml}
-          </div>
+ <div class="section-title">III. Danh sách thiết bị thuê</div>
+ <table class="product-table">
+ <thead>
+ <tr>
+ <th style="width: 7%">STT</th>
+ <th>Thiết bị</th>
+ <th style="width: 10%">SL</th>
+ <th style="width: 20%">Đơn giá/ngày</th>
+ <th style="width: 20%">Thành tiền</th>
+ </tr>
+ </thead>
+ <tbody>${productRows}</tbody>
+ </table>
+ <div class="summary-box">
+ <div class="summary-row">
+ <span>Phí thuê:</span>
+ <strong>${formatVND(rental.rentalFee)}</strong>
+ </div>
+ <div class="summary-row">
+ <span>Tiền cọc dự kiến:</span>
+ <strong>${formatVND(
+   rental.finalDepositAmount ?? rental.estimatedDepositAmount ?? 0,
+ )}</strong>
+ </div>
+ <div class="summary-row summary-total">
+ <span>Tổng phí thuê:</span>
+ <span>${formatVND(rental.rentalFee + rental.additionalFee)}</span>
+ </div>
+ </div>
 
-          <div class="signatures-container">
-            <div class="signature-col">
-              <div class="signature-title">BÊN CHO THUÊ (Ký tên)</div>
-              <div class="signature-box lessor">
-                ĐÃ KÝ ĐIỆN TỬ<br>
-                Đại diện: ${rental.contract.lessorSignature || "Digital Rental"}<br>
-                Thời gian: ${rental.contract.lessorSignedAt ? formatDate(rental.contract.lessorSignedAt) : signedAtStr || formatDate(rental.contract.generatedAt || new Date().toISOString())}
-              </div>
-            </div>
-            <div class="signature-col">
-              <div class="signature-title">BÊN THUÊ (Ký tên)</div>
-              ${
-                rental.contract.isLocked || rental.contract.locked
-                  ? `
-                <div class="signature-box">
-                  ĐÃ KÝ ĐIỆN TỬ<br>
-                  Khách hàng: ${renterName}<br>
-                  Thời gian: ${signedAtStr}
-                </div>
-              `
-                  : `
-                <div class="signature-box unassigned" style="display: flex; align-items: center; justify-content: center;">
-                  CHƯA KÝ TRỰC TUYẾN
-                </div>
-              `
-              }
-            </div>
-          </div>
+ <div class="section-title">IV. Điều khoản hợp đồng</div>
+ <div class="content-box">
+ ${contractTermsHtml}
+ </div>
 
-          <script>
-            window.onload = function() {
-              window.print();
-              setTimeout(function() { window.close(); }, 500);
-            }
-          </script>
-        </body>
-      </html>
-    `);
+ <div class="signatures-container">
+ <div class="signature-col">
+ <div class="signature-title">BÊN CHO THUÊ (Ký tên)</div>
+ <div class="signature-box lessor">
+ ĐÃ KÝ ĐIỆN TỬ<br>
+ Đại diện: ${rental.contract.lessorSignature || "Digital Rental"}<br>
+ Thời gian: ${rental.contract.lessorSignedAt ? formatDate(rental.contract.lessorSignedAt) : signedAtStr || formatDate(rental.contract.generatedAt || new Date().toISOString())}
+ </div>
+ </div>
+ <div class="signature-col">
+ <div class="signature-title">BÊN THUÊ (Ký tên)</div>
+ ${
+   rental.contract.isLocked || rental.contract.locked
+     ? `
+ <div class="signature-box">
+ ĐÃ KÝ ĐIỆN TỬ<br>
+ Khách hàng: ${renterName}<br>
+ Thời gian: ${signedAtStr}
+ </div>
+ `
+     : `
+ <div class="signature-box unassigned" style="display: flex; align-items: center; justify-content: center;">
+ CHƯA KÝ TRỰC TUYẾN
+ </div>
+ `
+ }
+ </div>
+ </div>
+
+ <script>
+ window.onload = function() {
+ window.print();
+ setTimeout(function() { window.close(); }, 500);
+ }
+ </script>
+ </body>
+ </html>
+ `);
     printWindow.document.close();
   };
 
@@ -498,13 +498,13 @@ export function RentalDetailDialog({
     const itemsHtml = rental.items
       .map(
         (item) => `
-      <tr>
-        <td style="border: 1px solid #000; padding: 8px;">${item.productName}</td>
-        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.deviceSerialNumber || "N/A"}</td>
-        <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatVND(item.pricePerDay)}/ngày</td>
-        <td style="border: 1px solid #000; padding: 8px;">${item.conditionBeforeHandover || "Bình thường"}</td>
-      </tr>
-    `,
+ <tr>
+ <td style="border: 1px solid #000; padding: 8px;">${item.productName}</td>
+ <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.deviceSerialNumber || "N/A"}</td>
+ <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatVND(item.pricePerDay)}/ngày</td>
+ <td style="border: 1px solid #000; padding: 8px;">${item.conditionBeforeHandover || "Bình thường"}</td>
+ </tr>
+ `,
       )
       .join("");
 
@@ -513,162 +513,162 @@ export function RentalDetailDialog({
       : "";
 
     printWindow.document.write(`
-      <html>
-        <head>
-          <title>Bien_Ban_Ban_Giao_${rental.code}</title>
-          <style>
-            body {
-              font-family: 'Times New Roman', Times, serif;
-              padding: 40px;
-              color: #000;
-              line-height: 1.6;
-              font-size: 14px;
-            }
-            .header-national {
-              text-align: center;
-              font-weight: bold;
-              margin-bottom: 30px;
-            }
-            .header-title {
-              text-align: center;
-              font-size: 20px;
-              font-weight: bold;
-              margin-bottom: 20px;
-              text-transform: uppercase;
-            }
-            .report-info {
-              margin-bottom: 20px;
-              font-style: italic;
-              text-align: center;
-            }
-            .section-title {
-              font-weight: bold;
-              margin-top: 20px;
-              margin-bottom: 10px;
-              text-transform: uppercase;
-            }
-            .info-table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-bottom: 20px;
-            }
-            .info-table td {
-              padding: 8px;
-              vertical-align: top;
-            }
-            .items-table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-bottom: 20px;
-            }
-            .items-table th {
-              background-color: #f3f4f6;
-              font-weight: bold;
-              border: 1px solid #000;
-            }
-            .signatures-container {
-              margin-top: 50px;
-              display: flex;
-              justify-content: space-between;
-            }
-            .signature-col {
-              width: 45%;
-              text-align: center;
-            }
-            .signature-title {
-              font-weight: bold;
-              margin-bottom: 60px;
-            }
-            @media print {
-              body {
-                padding: 20px;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header-national">
-            CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>
-            Độc lập - Tự do - Hạnh phúc<br>
-            --------------------------
-          </div>
-          
-          <div class="header-title">BIÊN BẢN BÀN GIAO THIẾT BỊ VẬT LÝ</div>
-          <div class="report-info">Mã biên bản: ${rental.handoverReport.serialNumber} • Ngày lập: ${signedAtStr}</div>
+ <html>
+ <head>
+ <title>Bien_Ban_Ban_Giao_${rental.code}</title>
+ <style>
+ body {
+ font-family: 'Times New Roman', Times, serif;
+ padding: 40px;
+ color: #000;
+ line-height: 1.6;
+ font-size: 14px;
+ }
+ .header-national {
+ text-align: center;
+ font-weight: bold;
+ margin-bottom: 30px;
+ }
+ .header-title {
+ text-align: center;
+ font-size: 20px;
+ font-weight: bold;
+ margin-bottom: 20px;
+ text-transform: ;
+ }
+ .report-info {
+ margin-bottom: 20px;
+ font-style: italic;
+ text-align: center;
+ }
+ .section-title {
+ font-weight: bold;
+ margin-top: 20px;
+ margin-bottom: 10px;
+ text-transform: ;
+ }
+ .info-table {
+ width: 100%;
+ border-collapse: collapse;
+ margin-bottom: 20px;
+ }
+ .info-table td {
+ padding: 8px;
+ vertical-align: top;
+ }
+ .items-table {
+ width: 100%;
+ border-collapse: collapse;
+ margin-bottom: 20px;
+ }
+ .items-table th {
+ background-color: #f3f4f6;
+ font-weight: bold;
+ border: 1px solid #000;
+ }
+ .signatures-container {
+ margin-top: 50px;
+ display: flex;
+ justify-content: space-between;
+ }
+ .signature-col {
+ width: 45%;
+ text-align: center;
+ }
+ .signature-title {
+ font-weight: bold;
+ margin-bottom: 60px;
+ }
+ @media print {
+ body {
+ padding: 20px;
+ }
+ }
+ </style>
+ </head>
+ <body>
+ <div class="header-national">
+ CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>
+ Độc lập - Tự do - Hạnh phúc<br>
+ --------------------------
+ </div>
 
-          <div class="section-title">1. Thông tin đơn thuê</div>
-          <table class="info-table">
-            <tr>
-              <td style="width: 25%;">Mã đơn thuê:</td>
-              <td style="font-weight: bold;">#${rental.code}</td>
-              <td style="width: 25%;">Thời hạn thuê:</td>
-              <td>Từ ${rental.startDate.split("T")[0]} đến ${rental.endDate.split("T")[0]}</td>
-            </tr>
-            <tr>
-              <td>Khách hàng:</td>
-              <td style="font-weight: bold;">${rental.shippingName}</td>
-              <td>Số điện thoại:</td>
-              <td>${rental.shippingPhone}</td>
-            </tr>
-            <tr>
-              <td>Email:</td>
-              <td>${rental.userEmail}</td>
-              <td>Địa chỉ nhận máy:</td>
-              <td>${rental.shippingAddress}</td>
-            </tr>
-          </table>
+ <div class="header-title">BIÊN BẢN BÀN GIAO THIẾT BỊ VẬT LÝ</div>
+ <div class="report-info">Mã biên bản: ${rental.handoverReport.serialNumber} • Ngày lập: ${signedAtStr}</div>
 
-          <div class="section-title">2. Thông tin bàn giao thiết bị</div>
-          <table class="info-table">
-            <tr>
-              <td style="width: 25%;">Nhân viên bàn giao:</td>
-              <td style="font-weight: bold;">${rental.handoverReport.staffName || "N/A"}</td>
-              <td style="width: 25%;">Đánh giá rủi ro (CIC):</td>
-              <td style="font-weight: bold;">${rental.handoverReport.riskLevel}</td>
-            </tr>
-            <tr>
-              <td>Tiền cọc thiết bị:</td>
-              <td style="font-weight: bold; color: #b45309;">${formatVND(rental.handoverReport.finalDepositAmount)}</td>
-              <td>Ghi chú:</td>
-              <td>${rental.handoverReport.note || "Không có ghi chú"}</td>
-            </tr>
-          </table>
+ <div class="section-title">1. Thông tin đơn thuê</div>
+ <table class="info-table">
+ <tr>
+ <td style="width: 25%;">Mã đơn thuê:</td>
+ <td style="font-weight: bold;">#${rental.code}</td>
+ <td style="width: 25%;">Thời hạn thuê:</td>
+ <td>Từ ${rental.startDate.split("T")[0]} đến ${rental.endDate.split("T")[0]}</td>
+ </tr>
+ <tr>
+ <td>Khách hàng:</td>
+ <td style="font-weight: bold;">${rental.shippingName}</td>
+ <td>Số điện thoại:</td>
+ <td>${rental.shippingPhone}</td>
+ </tr>
+ <tr>
+ <td>Email:</td>
+ <td>${rental.userEmail}</td>
+ <td>Địa chỉ nhận máy:</td>
+ <td>${rental.shippingAddress}</td>
+ </tr>
+ </table>
 
-          <div class="section-title">3. Danh sách thiết bị bàn giao</div>
-          <table class="items-table">
-            <thead>
-              <tr>
-                <th style="border: 1px solid #000; padding: 8px;">Tên sản phẩm</th>
-                <th style="border: 1px solid #000; padding: 8px; width: 20%;">Số Serial</th>
-                <th style="border: 1px solid #000; padding: 8px; width: 20%;">Đơn giá thuê</th>
-                <th style="border: 1px solid #000; padding: 8px; width: 30%;">Tình trạng bàn giao</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsHtml}
-            </tbody>
-          </table>
+ <div class="section-title">2. Thông tin bàn giao thiết bị</div>
+ <table class="info-table">
+ <tr>
+ <td style="width: 25%;">Nhân viên bàn giao:</td>
+ <td style="font-weight: bold;">${rental.handoverReport.staffName || "N/A"}</td>
+ <td style="width: 25%;">Đánh giá rủi ro (CIC):</td>
+ <td style="font-weight: bold;">${rental.handoverReport.riskLevel}</td>
+ </tr>
+ <tr>
+ <td>Tiền cọc thiết bị:</td>
+ <td style="font-weight: bold; color: #b45309;">${formatVND(rental.handoverReport.finalDepositAmount)}</td>
+ <td>Ghi chú:</td>
+ <td>${rental.handoverReport.note || "Không có ghi chú"}</td>
+ </tr>
+ </table>
 
-          <div class="signatures-container">
-            <div class="signature-col">
-              <div class="signature-title">Đại diện Khách hàng<br>(Ký & ghi rõ họ tên)</div>
-              <div style="font-style: italic; color: #555;">(Đã ký trực tuyến qua Hợp đồng số ${rental.contract?.contractNumber || "N/A"})</div>
-            </div>
-            <div class="signature-col">
-              <div class="signature-title">Đại diện Nhân viên bàn giao<br>(Ký & ghi rõ họ tên)</div>
-              <div style="font-weight: bold; margin-top: 20px;">${rental.handoverReport.staffName || ""}</div>
-            </div>
-          </div>
+ <div class="section-title">3. Danh sách thiết bị bàn giao</div>
+ <table class="items-table">
+ <thead>
+ <tr>
+ <th style="border: 1px solid #000; padding: 8px;">Tên sản phẩm</th>
+ <th style="border: 1px solid #000; padding: 8px; width: 20%;">Số Serial</th>
+ <th style="border: 1px solid #000; padding: 8px; width: 20%;">Đơn giá thuê</th>
+ <th style="border: 1px solid #000; padding: 8px; width: 30%;">Tình trạng bàn giao</th>
+ </tr>
+ </thead>
+ <tbody>
+ ${itemsHtml}
+ </tbody>
+ </table>
 
-          <script>
-            window.onload = function() {
-              window.print();
-              setTimeout(function() { window.close(); }, 500);
-            }
-          </script>
-        </body>
-      </html>
-    `);
+ <div class="signatures-container">
+ <div class="signature-col">
+ <div class="signature-title">Đại diện Khách hàng<br>(Ký & ghi rõ họ tên)</div>
+ <div style="font-style: italic; color: #555;">(Đã ký trực tuyến qua Hợp đồng số ${rental.contract?.contractNumber || "N/A"})</div>
+ </div>
+ <div class="signature-col">
+ <div class="signature-title">Đại diện Nhân viên bàn giao<br>(Ký & ghi rõ họ tên)</div>
+ <div style="font-weight: bold; margin-top: 20px;">${rental.handoverReport.staffName || ""}</div>
+ </div>
+ </div>
+
+ <script>
+ window.onload = function() {
+ window.print();
+ setTimeout(function() { window.close(); }, 500);
+ }
+ </script>
+ </body>
+ </html>
+ `);
     printWindow.document.close();
   };
 
@@ -683,13 +683,13 @@ export function RentalDetailDialog({
     const itemsHtml = rental.items
       .map(
         (item) => `
-      <tr>
-        <td style="border: 1px solid #000; padding: 8px;">${item.productName}</td>
-        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.deviceSerialNumber || "N/A"}</td>
-        <td style="border: 1px solid #000; padding: 8px;">${item.conditionBeforeHandover || "Bình thường"}</td>
-        <td style="border: 1px solid #000; padding: 8px;">${item.conditionAfterReturn || "Bình thường"}</td>
-      </tr>
-    `,
+ <tr>
+ <td style="border: 1px solid #000; padding: 8px;">${item.productName}</td>
+ <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.deviceSerialNumber || "N/A"}</td>
+ <td style="border: 1px solid #000; padding: 8px;">${item.conditionBeforeHandover || "Bình thường"}</td>
+ <td style="border: 1px solid #000; padding: 8px;">${item.conditionAfterReturn || "Bình thường"}</td>
+ </tr>
+ `,
       )
       .join("");
 
@@ -701,183 +701,183 @@ export function RentalDetailDialog({
       : "";
 
     printWindow.document.write(`
-      <html>
-        <head>
-          <title>Bien_Ban_Nhan_Tra_${rental.code}</title>
-          <style>
-            body {
-              font-family: 'Times New Roman', Times, serif;
-              padding: 40px;
-              color: #000;
-              line-height: 1.6;
-              font-size: 14px;
-            }
-            .header-national {
-              text-align: center;
-              font-weight: bold;
-              margin-bottom: 30px;
-            }
-            .header-title {
-              text-align: center;
-              font-size: 20px;
-              font-weight: bold;
-              margin-bottom: 20px;
-              text-transform: uppercase;
-            }
-            .report-info {
-              margin-bottom: 20px;
-              font-style: italic;
-              text-align: center;
-            }
-            .section-title {
-              font-weight: bold;
-              margin-top: 20px;
-              margin-bottom: 10px;
-              text-transform: uppercase;
-            }
-            .info-table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-bottom: 20px;
-            }
-            .info-table td {
-              padding: 8px;
-              vertical-align: top;
-            }
-            .items-table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-bottom: 20px;
-            }
-            .items-table th {
-              background-color: #f3f4f6;
-              font-weight: bold;
-              border: 1px solid #000;
-            }
-            .signatures-container {
-              margin-top: 50px;
-              display: flex;
-              justify-content: space-between;
-            }
-            .signature-col {
-              width: 45%;
-              text-align: center;
-            }
-            .signature-title {
-              font-weight: bold;
-              margin-bottom: 60px;
-            }
-            @media print {
-              body {
-                padding: 20px;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header-national">
-            CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>
-            Độc lập - Tự do - Hạnh phúc<br>
-            --------------------------
-          </div>
-          
-          <div class="header-title">BIÊN BẢN NHẬN TRẢ THIẾT BỊ VẬT LÝ</div>
-          <div class="report-info">Ngày lập: ${createdAtStr}</div>
+ <html>
+ <head>
+ <title>Bien_Ban_Nhan_Tra_${rental.code}</title>
+ <style>
+ body {
+ font-family: 'Times New Roman', Times, serif;
+ padding: 40px;
+ color: #000;
+ line-height: 1.6;
+ font-size: 14px;
+ }
+ .header-national {
+ text-align: center;
+ font-weight: bold;
+ margin-bottom: 30px;
+ }
+ .header-title {
+ text-align: center;
+ font-size: 20px;
+ font-weight: bold;
+ margin-bottom: 20px;
+ text-transform: ;
+ }
+ .report-info {
+ margin-bottom: 20px;
+ font-style: italic;
+ text-align: center;
+ }
+ .section-title {
+ font-weight: bold;
+ margin-top: 20px;
+ margin-bottom: 10px;
+ text-transform: ;
+ }
+ .info-table {
+ width: 100%;
+ border-collapse: collapse;
+ margin-bottom: 20px;
+ }
+ .info-table td {
+ padding: 8px;
+ vertical-align: top;
+ }
+ .items-table {
+ width: 100%;
+ border-collapse: collapse;
+ margin-bottom: 20px;
+ }
+ .items-table th {
+ background-color: #f3f4f6;
+ font-weight: bold;
+ border: 1px solid #000;
+ }
+ .signatures-container {
+ margin-top: 50px;
+ display: flex;
+ justify-content: space-between;
+ }
+ .signature-col {
+ width: 45%;
+ text-align: center;
+ }
+ .signature-title {
+ font-weight: bold;
+ margin-bottom: 60px;
+ }
+ @media print {
+ body {
+ padding: 20px;
+ }
+ }
+ </style>
+ </head>
+ <body>
+ <div class="header-national">
+ CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>
+ Độc lập - Tự do - Hạnh phúc<br>
+ --------------------------
+ </div>
 
-          <div class="section-title">1. Thông tin đơn thuê</div>
-          <table class="info-table">
-            <tr>
-              <td style="width: 25%;">Mã đơn thuê:</td>
-              <td style="font-weight: bold;">#${rental.code}</td>
-              <td style="width: 25%;">Thời hạn thuê:</td>
-              <td>Từ ${rental.startDate.split("T")[0]} đến ${rental.endDate.split("T")[0]}</td>
-            </tr>
-            <tr>
-              <td>Khách hàng:</td>
-              <td style="font-weight: bold;">${rental.shippingName}</td>
-              <td>Số điện thoại:</td>
-              <td>${rental.shippingPhone}</td>
-            </tr>
-            <tr>
-              <td>Email:</td>
-              <td>${rental.userEmail}</td>
-              <td>Địa chỉ nhận máy:</td>
-              <td>${rental.shippingAddress}</td>
-            </tr>
-          </table>
+ <div class="header-title">BIÊN BẢN NHẬN TRẢ THIẾT BỊ VẬT LÝ</div>
+ <div class="report-info">Ngày lập: ${createdAtStr}</div>
 
-          <div class="section-title">2. Thông tin nhận trả & Quyết toán</div>
-          <table class="info-table">
-            <tr>
-              <td style="width: 25%;">Nhân viên nhận trả:</td>
-              <td style="font-weight: bold;">${rental.returnReport.staffName || "N/A"}</td>
-              <td style="width: 25%;">Ngày trả thực tế:</td>
-              <td>${returnDateStr}</td>
-            </tr>
-            <tr>
-              <td>Số ngày quá hạn:</td>
-              <td style="font-weight: bold;">${rental.returnReport.lateDays} ngày</td>
-              <td>Tiền cọc ban đầu:</td>
-              <td style="font-weight: bold;">${formatVND(rental.finalDepositAmount ?? 0)}</td>
-            </tr>
-            <tr>
-              <td>Phí trễ hạn:</td>
-              <td style="color: #dc2626; font-weight: bold;">${formatVND(rental.returnReport.lateFee)}</td>
-              <td>Phí hỏng hóc phát sinh:</td>
-              <td style="color: #dc2626; font-weight: bold;">${formatVND(rental.returnReport.damageFee)}</td>
-            </tr>
-            <tr>
-              <td>Phí thiếu phụ kiện:</td>
-              <td style="color: #dc2626; font-weight: bold;">${formatVND(rental.returnReport.missingAccessoryFee)}</td>
-              <td>Tổng phí phạt phát sinh:</td>
-              <td style="color: #dc2626; font-weight: bold;">${formatVND(rental.returnReport.totalPenalty)}</td>
-            </tr>
-            <tr>
-              <td>Số tiền hoàn trả khách:</td>
-              <td style="color: #16a34a; font-weight: bold; font-size: 16px;">${formatVND(rental.returnReport.refundAmount)}</td>
-              <td>Khách phải đóng thêm:</td>
-              <td style="color: #dc2626; font-weight: bold; font-size: 16px;">${formatVND(rental.returnReport.extraPaymentAmount)}</td>
-            </tr>
-            <tr>
-              <td>Ghi chú:</td>
-              <td colspan="3">${rental.returnReport.note || "Không có ghi chú"}</td>
-            </tr>
-          </table>
+ <div class="section-title">1. Thông tin đơn thuê</div>
+ <table class="info-table">
+ <tr>
+ <td style="width: 25%;">Mã đơn thuê:</td>
+ <td style="font-weight: bold;">#${rental.code}</td>
+ <td style="width: 25%;">Thời hạn thuê:</td>
+ <td>Từ ${rental.startDate.split("T")[0]} đến ${rental.endDate.split("T")[0]}</td>
+ </tr>
+ <tr>
+ <td>Khách hàng:</td>
+ <td style="font-weight: bold;">${rental.shippingName}</td>
+ <td>Số điện thoại:</td>
+ <td>${rental.shippingPhone}</td>
+ </tr>
+ <tr>
+ <td>Email:</td>
+ <td>${rental.userEmail}</td>
+ <td>Địa chỉ nhận máy:</td>
+ <td>${rental.shippingAddress}</td>
+ </tr>
+ </table>
 
-          <div class="section-title">3. Tình trạng thiết bị khi nhận trả</div>
-          <table class="items-table">
-            <thead>
-              <tr>
-                <th style="border: 1px solid #000; padding: 8px;">Tên sản phẩm</th>
-                <th style="border: 1px solid #000; padding: 8px; width: 20%;">Số Serial</th>
-                <th style="border: 1px solid #000; padding: 8px; width: 30%;">Tình trạng lúc bàn giao</th>
-                <th style="border: 1px solid #000; padding: 8px; width: 30%;">Tình trạng lúc trả</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsHtml}
-            </tbody>
-          </table>
+ <div class="section-title">2. Thông tin nhận trả & Quyết toán</div>
+ <table class="info-table">
+ <tr>
+ <td style="width: 25%;">Nhân viên nhận trả:</td>
+ <td style="font-weight: bold;">${rental.returnReport.staffName || "N/A"}</td>
+ <td style="width: 25%;">Ngày trả thực tế:</td>
+ <td>${returnDateStr}</td>
+ </tr>
+ <tr>
+ <td>Số ngày quá hạn:</td>
+ <td style="font-weight: bold;">${rental.returnReport.lateDays} ngày</td>
+ <td>Tiền cọc ban đầu:</td>
+ <td style="font-weight: bold;">${formatVND(rental.finalDepositAmount ?? 0)}</td>
+ </tr>
+ <tr>
+ <td>Phí trễ hạn:</td>
+ <td style="color: #dc2626; font-weight: bold;">${formatVND(rental.returnReport.lateFee)}</td>
+ <td>Phí hỏng hóc phát sinh:</td>
+ <td style="color: #dc2626; font-weight: bold;">${formatVND(rental.returnReport.damageFee)}</td>
+ </tr>
+ <tr>
+ <td>Phí thiếu phụ kiện:</td>
+ <td style="color: #dc2626; font-weight: bold;">${formatVND(rental.returnReport.missingAccessoryFee)}</td>
+ <td>Tổng phí phạt phát sinh:</td>
+ <td style="color: #dc2626; font-weight: bold;">${formatVND(rental.returnReport.totalPenalty)}</td>
+ </tr>
+ <tr>
+ <td>Số tiền hoàn trả khách:</td>
+ <td style="color: #16a34a; font-weight: bold; font-size: 16px;">${formatVND(rental.returnReport.refundAmount)}</td>
+ <td>Khách phải đóng thêm:</td>
+ <td style="color: #dc2626; font-weight: bold; font-size: 16px;">${formatVND(rental.returnReport.extraPaymentAmount)}</td>
+ </tr>
+ <tr>
+ <td>Ghi chú:</td>
+ <td colspan="3">${rental.returnReport.note || "Không có ghi chú"}</td>
+ </tr>
+ </table>
 
-          <div class="signatures-container">
-            <div class="signature-col">
-              <div class="signature-title">Đại diện Khách hàng<br>(Ký & ghi rõ họ tên)</div>
-            </div>
-            <div class="signature-col">
-              <div class="signature-title">Đại diện Nhân viên nhận trả<br>(Ký & ghi rõ họ tên)</div>
-              <div style="font-weight: bold; margin-top: 20px;">${rental.returnReport.staffName || ""}</div>
-            </div>
-          </div>
+ <div class="section-title">3. Tình trạng thiết bị khi nhận trả</div>
+ <table class="items-table">
+ <thead>
+ <tr>
+ <th style="border: 1px solid #000; padding: 8px;">Tên sản phẩm</th>
+ <th style="border: 1px solid #000; padding: 8px; width: 20%;">Số Serial</th>
+ <th style="border: 1px solid #000; padding: 8px; width: 30%;">Tình trạng lúc bàn giao</th>
+ <th style="border: 1px solid #000; padding: 8px; width: 30%;">Tình trạng lúc trả</th>
+ </tr>
+ </thead>
+ <tbody>
+ ${itemsHtml}
+ </tbody>
+ </table>
 
-          <script>
-            window.onload = function() {
-              window.print();
-              setTimeout(function() { window.close(); }, 500);
-            }
-          </script>
-        </body>
-      </html>
-    `);
+ <div class="signatures-container">
+ <div class="signature-col">
+ <div class="signature-title">Đại diện Khách hàng<br>(Ký & ghi rõ họ tên)</div>
+ </div>
+ <div class="signature-col">
+ <div class="signature-title">Đại diện Nhân viên nhận trả<br>(Ký & ghi rõ họ tên)</div>
+ <div style="font-weight: bold; margin-top: 20px;">${rental.returnReport.staffName || ""}</div>
+ </div>
+ </div>
+
+ <script>
+ window.onload = function() {
+ window.print();
+ setTimeout(function() { window.close(); }, 500);
+ }
+ </script>
+ </body>
+ </html>
+ `);
     printWindow.document.close();
   };
 
@@ -972,17 +972,17 @@ export function RentalDetailDialog({
             <div className="flex items-center gap-3">
               <div
                 className={cn(
-                  "px-3 py-1 rounded-xl text-[13px] font-bold border",
+                  "px-3 py-1 rounded-xl text-[13px] font-semibold border",
                   getStatusColor(rental.status),
                 )}
               >
                 {getStatusLabel(rental.status)}
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-zinc-400 leading-none mb-1">
+                <span className="text-[10px] font-semibold text-zinc-400 leading-none mb-1">
                   Phương thức cọc
                 </span>
-                <span className="text-xs font-bold text-zinc-600">
+                <span className="text-xs font-semibold text-zinc-600">
                   {rental.paymentMethod === "ONLINE"
                     ? "VNPay Online"
                     : "Tiền mặt / COD"}
@@ -990,10 +990,10 @@ export function RentalDetailDialog({
               </div>
             </div>
             <div className="text-right">
-              <span className="text-[10px] font-bold text-zinc-400 block mb-1">
+              <span className="text-[10px] font-semibold text-zinc-400 block mb-1">
                 Thời gian thuê
               </span>
-              <span className="text-xs font-bold text-zinc-950 flex items-center gap-1">
+              <span className="text-xs font-semibold text-zinc-950 flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5 text-zinc-400" />
                 {rental.startDate.split("T")[0]} &rarr;{" "}
                 {rental.endDate.split("T")[0]}
@@ -1005,7 +1005,7 @@ export function RentalDetailDialog({
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <Package className="w-4 h-4 text-zinc-400" />
-              <h3 className="text-sm font-bold text-zinc-900">
+              <h3 className="text-sm font-semibold text-zinc-900">
                 Sản phẩm đăng ký thuê
               </h3>
             </div>
@@ -1027,7 +1027,7 @@ export function RentalDetailDialog({
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-bold text-zinc-950 truncate leading-tight">
+                      <h4 className="text-sm font-semibold text-zinc-950 truncate leading-tight">
                         {item.productName}
                       </h4>
                       <p className="text-xs font-medium text-zinc-500 mt-1">
@@ -1043,7 +1043,7 @@ export function RentalDetailDialog({
                         <span className="font-semibold text-zinc-500">
                           Số Serial gán máy:
                         </span>
-                        <span className="font-bold text-zinc-900 bg-white px-2 py-0.5 rounded-xl border border-black/5">
+                        <span className="font-semibold text-zinc-900 bg-white px-2 py-0.5 rounded-xl border border-black/5">
                           {item.deviceSerialNumber}
                         </span>
                       </div>
@@ -1079,21 +1079,23 @@ export function RentalDetailDialog({
             <div className="flex flex-col h-full space-y-3">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-zinc-400" />
-                <h3 className="text-sm font-bold text-zinc-900">
+                <h3 className="text-sm font-semibold text-zinc-900">
                   Địa chỉ nhận máy
                 </h3>
               </div>
               <div className="p-4 bg-zinc-50/50 border border-zinc-100 rounded-xl space-y-3 flex-1">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-zinc-400">
+                  <p className="text-[10px] font-semibold text-zinc-400">
                     Người nhận máy
                   </p>
-                  <p className="text-xs font-bold text-zinc-900">
+                  <p className="text-xs font-semibold text-zinc-900">
                     {rental.shippingName} • {rental.shippingPhone}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-zinc-400">Địa chỉ</p>
+                  <p className="text-[10px] font-semibold text-zinc-400">
+                    Địa chỉ
+                  </p>
                   <p className="text-xs font-medium text-zinc-500 leading-relaxed">
                     {rental.shippingAddress}
                   </p>
@@ -1105,18 +1107,18 @@ export function RentalDetailDialog({
             <div className="flex flex-col h-full space-y-3">
               <div className="flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-zinc-400" />
-                <h3 className="text-sm font-bold text-zinc-900">
+                <h3 className="text-sm font-semibold text-zinc-900">
                   Tình trạng đặt cọc
                 </h3>
               </div>
               <div className="p-4 bg-zinc-50/50 border border-zinc-100 rounded-xl space-y-3 flex-1">
                 <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-zinc-400">
+                  <span className="text-[10px] font-semibold text-zinc-400">
                     Trạng thái cọc
                   </span>
                   <span
                     className={cn(
-                      "text-[10px] font-bold px-2 py-0.5 rounded-xl uppercase border",
+                      "text-[10px] font-semibold px-2 py-0.5 rounded-xl border",
                       rental.depositStatus === "PAID" ||
                         rental.depositStatus === "PARTIALLY_DEDUCTED" ||
                         rental.depositStatus === "FULLY_DEDUCTED" ||
@@ -1134,12 +1136,12 @@ export function RentalDetailDialog({
                   </span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-zinc-200/50">
-                  <span className="text-[10px] font-bold text-zinc-400">
+                  <span className="text-[10px] font-semibold text-zinc-400">
                     Hoàn tiền cọc
                   </span>
                   <span
                     className={cn(
-                      "text-[10px] font-bold px-2 py-0.5 rounded-xl uppercase border",
+                      "text-[10px] font-semibold px-2 py-0.5 rounded-xl border",
                       rental.refundStatus === "SUCCESS"
                         ? "bg-emerald-50 text-emerald-600 border-emerald-100"
                         : "bg-zinc-50 text-zinc-500 border-zinc-100",
@@ -1159,21 +1161,21 @@ export function RentalDetailDialog({
             <div className="space-y-2.5 relative z-10">
               <div className="flex justify-between text-xs font-semibold text-zinc-400">
                 <span>Phí thuê cơ bản:</span>
-                <span className="text-zinc-950 font-bold">
+                <span className="text-zinc-950 font-semibold">
                   {formatVND(rental.rentalFee)}
                 </span>
               </div>
               {rental.additionalFee > 0 && (
                 <div className="flex justify-between text-xs font-semibold text-zinc-400">
                   <span>Phụ phí phát sinh (trễ/hỏng):</span>
-                  <span className="text-red-500 font-bold">
+                  <span className="text-red-500 font-semibold">
                     +{formatVND(rental.additionalFee)}
                   </span>
                 </div>
               )}
               <div className="flex justify-between text-xs font-semibold text-zinc-400">
                 <span>Tiền cọc thiết bị (dự kiến/đã đóng):</span>
-                <span className="text-amber-600 font-bold">
+                <span className="text-amber-600 font-semibold">
                   {formatVND(
                     rental.finalDepositAmount ??
                       rental.estimatedDepositAmount ??
@@ -1184,16 +1186,16 @@ export function RentalDetailDialog({
             </div>
             <div className="pt-4 border-t border-zinc-100 flex justify-between items-end relative z-10">
               <div>
-                <p className="text-[10px] font-bold text-zinc-400 mb-0.5">
+                <p className="text-[10px] font-semibold text-zinc-400 mb-0.5">
                   Tổng chi phí thuê thiết bị
                 </p>
-                <p className="text-[22px] font-bold text-red-600 tracking-tight leading-none">
+                <p className="text-[22px] font-semibold text-red-600 tracking-tight leading-none">
                   {formatVND(rental.rentalFee + rental.additionalFee)}
                 </p>
               </div>
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-emerald-50 rounded-xl border border-emerald-100">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="text-[10px] font-bold text-emerald-600">
+                <span className="text-[10px] font-semibold text-emerald-600">
                   Giao dịch an toàn
                 </span>
               </div>
@@ -1224,12 +1226,12 @@ export function RentalDetailDialog({
               <div className="flex items-center justify-between border-b border-black/5 pb-2">
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-zinc-500" />
-                  <span className="text-xs font-bold text-zinc-800">
+                  <span className="text-xs font-semibold text-zinc-800">
                     Hợp đồng điện tử: {rental.contract.contractNumber}
                   </span>
                 </div>
                 {rental.contract.isLocked || rental.contract.locked ? (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-xl bg-emerald-50 text-emerald-600 text-[10px] font-bold border border-emerald-100">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-xl bg-emerald-50 text-emerald-600 text-[10px] font-semibold border border-emerald-100">
                     <ShieldCheck className="w-3 h-3" />{" "}
                     {rental.contract.contractHash ===
                     "OFFLINE_PHYSICAL_SIGNATURE"
@@ -1237,7 +1239,7 @@ export function RentalDetailDialog({
                       : "Đã ký điện tử"}
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-xl bg-amber-50 text-amber-600 text-[10px] font-bold border border-amber-100">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-xl bg-amber-50 text-amber-600 text-[10px] font-semibold border border-amber-100">
                     Chờ ký
                   </span>
                 )}
@@ -1257,7 +1259,7 @@ export function RentalDetailDialog({
                         : "Chữ ký bên thuê:"}
                     </span>
                     <span
-                      className="font-bold text-zinc-950 font-mono italic underline text-right truncate max-w-[200px]"
+                      className="font-semibold text-zinc-950 font-mono italic underline text-right truncate max-w-[200px]"
                       title={rental.contract.contractHash}
                     >
                       {rental.contract.contractHash ===
@@ -1268,7 +1270,7 @@ export function RentalDetailDialog({
                   </div>
                   <Button
                     onClick={handleDownloadPDF}
-                    className="w-full h-11 bg-zinc-950 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl transition-all border-none flex items-center justify-center gap-1.5"
+                    className="w-full h-11 bg-zinc-950 hover:bg-zinc-800 text-white font-semibold text-xs rounded-xl transition-all border-none flex items-center justify-center gap-1.5"
                   >
                     <Download className="w-4 h-4" /> Tải file hợp đồng (PDF)
                   </Button>
@@ -1279,7 +1281,7 @@ export function RentalDetailDialog({
                   <Button
                     onClick={handleOpenSignForm}
                     disabled={isSendingOtp}
-                    className="w-full h-11 bg-red-600 hover:bg-zinc-950 text-white font-bold text-xs rounded-xl transition-all border-none flex items-center justify-center gap-1.5"
+                    className="w-full h-11 bg-red-600 hover:bg-zinc-950 text-white font-semibold text-xs rounded-xl transition-all border-none flex items-center justify-center gap-1.5"
                   >
                     {isSendingOtp ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -1300,7 +1302,7 @@ export function RentalDetailDialog({
                     </p>
                   </div>
                   <div>
-                    <label className="text-[11px] font-bold text-zinc-500 tracking-wide block mb-1">
+                    <label className="text-[11px] font-semibold text-zinc-500 tracking-wide block mb-1">
                       Ký xác nhận (Nhập Họ tên đầy đủ của bạn)
                     </label>
                     <input
@@ -1313,14 +1315,14 @@ export function RentalDetailDialog({
                   </div>
                   <div>
                     <div className="flex justify-between items-center mb-1">
-                      <label className="text-[11px] font-bold text-zinc-500 tracking-wide block">
+                      <label className="text-[11px] font-semibold text-zinc-500 tracking-wide block">
                         Mã OTP xác thực email
                       </label>
                       <button
                         type="button"
                         onClick={handleResendOtp}
                         disabled={isSendingOtp}
-                        className="text-[10px] font-bold text-red-600 hover:underline disabled:text-zinc-400"
+                        className="text-[10px] font-semibold text-red-600 hover:underline disabled:text-zinc-400"
                       >
                         {isSendingOtp ? "Đang gửi..." : "Gửi lại OTP"}
                       </button>
@@ -1334,7 +1336,7 @@ export function RentalDetailDialog({
                         )
                       }
                       placeholder="Nhập mã OTP 6 chữ số"
-                      className="w-full h-10 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 text-center tracking-[0.25em]"
+                      className="w-full h-10 px-3 rounded-xl border border-black/5 bg-white text-xs font-semibold text-zinc-800 outline-none focus:border-zinc-950 text-center tracking-wide"
                     />
                   </div>
                   <div className="flex gap-3">
@@ -1344,14 +1346,14 @@ export function RentalDetailDialog({
                         setShowSignForm(false);
                         setOtpCode("");
                       }}
-                      className="flex-1 h-10 rounded-xl text-xs font-bold border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
+                      className="flex-1 h-10 rounded-xl text-xs font-semibold border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
                     >
                       Hủy bỏ
                     </Button>
                     <Button
                       onClick={handleSignContract}
                       disabled={isSigning}
-                      className="flex-1 h-10 rounded-xl bg-zinc-950 text-white text-xs font-bold hover:bg-red-600 flex items-center justify-center border-none"
+                      className="flex-1 h-10 rounded-xl bg-zinc-950 text-white text-xs font-semibold hover:bg-red-600 flex items-center justify-center border-none"
                     >
                       {isSigning ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -1371,35 +1373,35 @@ export function RentalDetailDialog({
               <div className="flex items-center justify-between border-b border-black/5 pb-2">
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-blue-600" />
-                  <span className="text-xs font-bold text-zinc-800">
+                  <span className="text-xs font-semibold text-zinc-800">
                     Biên bản bàn giao: {rental.handoverReport.serialNumber}
                   </span>
                 </div>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold border border-blue-100">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-semibold border border-blue-100">
                   Đã bàn giao
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-4 text-xs font-medium text-zinc-600">
                 <div>
-                  <span className="text-[10px] text-zinc-400 block mb-0.5 uppercase tracking-wider">
+                  <span className="text-[10px] text-zinc-400 block mb-0.5 tracking-wider">
                     Nhân viên bàn giao
                   </span>
-                  <span className="font-bold text-zinc-900">
+                  <span className="font-semibold text-zinc-900">
                     {rental.handoverReport.staffName || "N/A"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-zinc-400 block mb-0.5 uppercase tracking-wider">
+                  <span className="text-[10px] text-zinc-400 block mb-0.5 tracking-wider">
                     Tiền cọc thực tế
                   </span>
-                  <span className="font-bold text-amber-600">
+                  <span className="font-semibold text-amber-600">
                     {formatVND(rental.handoverReport.finalDepositAmount)}
                   </span>
                 </div>
               </div>
               <Button
                 onClick={handleDownloadHandoverPDF}
-                className="w-full h-11 bg-zinc-950 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl transition-all border-none flex items-center justify-center gap-1.5"
+                className="w-full h-11 bg-zinc-950 hover:bg-zinc-800 text-white font-semibold text-xs rounded-xl transition-all border-none flex items-center justify-center gap-1.5"
               >
                 <Download className="w-4 h-4" /> Tải biên bản bàn giao (PDF)
               </Button>
@@ -1412,35 +1414,35 @@ export function RentalDetailDialog({
               <div className="flex items-center justify-between border-b border-black/5 pb-2">
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-purple-600" />
-                  <span className="text-xs font-bold text-zinc-800">
+                  <span className="text-xs font-semibold text-zinc-800">
                     Biên bản nhận trả máy
                   </span>
                 </div>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[10px] font-bold border border-purple-100">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[10px] font-semibold border border-purple-100">
                   Đã nhận trả
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-4 text-xs font-medium text-zinc-600">
                 <div>
-                  <span className="text-[10px] text-zinc-400 block mb-0.5 uppercase tracking-wider">
+                  <span className="text-[10px] text-zinc-400 block mb-0.5 tracking-wider">
                     Nhân viên nhận trả
                   </span>
-                  <span className="font-bold text-zinc-900">
+                  <span className="font-semibold text-zinc-900">
                     {rental.returnReport.staffName || "N/A"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-zinc-400 block mb-0.5 uppercase tracking-wider">
+                  <span className="text-[10px] text-zinc-400 block mb-0.5 tracking-wider">
                     Phí phạt & trễ hạn
                   </span>
-                  <span className="font-bold text-red-600">
+                  <span className="font-semibold text-red-600">
                     {formatVND(rental.returnReport.totalPenalty)}
                   </span>
                 </div>
               </div>
               <Button
                 onClick={handleDownloadReturnPDF}
-                className="w-full h-11 bg-zinc-950 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl transition-all border-none flex items-center justify-center gap-1.5"
+                className="w-full h-11 bg-zinc-950 hover:bg-zinc-800 text-white font-semibold text-xs rounded-xl transition-all border-none flex items-center justify-center gap-1.5"
               >
                 <Download className="w-4 h-4" /> Tải biên bản trả máy (PDF)
               </Button>

@@ -42,7 +42,7 @@ export function StatCard({
       />
 
       <div className="flex items-start justify-between mb-4">
-        <p className="text-[10px] font-semibold  tracking-[0.18em] text-zinc-400">
+        <p className="text-[10px] font-semibold tracking-wide text-zinc-400">
           {title}
         </p>
         <div

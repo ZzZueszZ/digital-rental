@@ -212,7 +212,7 @@ function Calendar({
     <div className="w-[280px] select-none">
       {/* Header: Month/Year + nav */}
       <div className="flex items-center justify-between px-1 mb-3">
-        <span className="text-sm font-bold text-zinc-900 tracking-tight">
+        <span className="text-sm font-semibold text-zinc-900 tracking-tight">
           {MONTH_NAMES[viewMonth]} {viewYear}
         </span>
         <div className="flex items-center gap-0.5">
@@ -238,7 +238,7 @@ function Calendar({
         {DAY_LABELS.map((label) => (
           <div
             key={label}
-            className="text-center text-[10px] font-semibold text-zinc-400 uppercase tracking-wider py-1"
+            className="text-center text-[10px] font-semibold text-zinc-400 tracking-wider py-1"
           >
             {label}
           </div>
@@ -277,7 +277,7 @@ function Calendar({
                 selected && "bg-zinc-950 text-white shadow-sm",
                 todayCell &&
                   !selected &&
-                  "ring-1 ring-red-600/40 text-red-600 font-bold",
+                  "ring-1 ring-red-600/40 text-red-600 font-semibold",
                 disabled &&
                   "text-zinc-200 cursor-not-allowed hover:bg-transparent",
               )}
@@ -300,7 +300,7 @@ function Calendar({
         <button
           type="button"
           onClick={goToToday}
-          className="text-[11px] font-bold text-red-600 hover:text-red-700 transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
+          className="text-[11px] font-semibold text-red-600 hover:text-red-700 transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
         >
           Hôm nay
         </button>

@@ -10,7 +10,12 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
-import { OrderResponse, OrderStatus, PaymentStatus, PaymentMethod } from "@/types/order";
+import {
+  OrderResponse,
+  OrderStatus,
+  PaymentStatus,
+  PaymentMethod,
+} from "@/types/order";
 import {
   useOrderDetail,
   useConfirmReceived,
@@ -105,26 +110,28 @@ export function OrderDetailDialog({
             <div className="flex items-center gap-3">
               <div
                 className={cn(
-                  "px-3 py-1 rounded-xl text-[13px] font-bold border",
+                  "px-3 py-1 rounded-xl text-[13px] font-semibold border",
                   getStatusStyles(order.status),
                 )}
               >
                 {getStatusLabel(order.status)}
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-zinc-400 leading-none mb-1">
+                <span className="text-[10px] font-semibold text-zinc-400 leading-none mb-1">
                   Phương thức
                 </span>
-                <span className="text-xs font-bold text-zinc-600">
-                  {order.paymentMethod === PaymentMethod.COD ? "Tiền mặt (COD)" : "VNPay Online"}
+                <span className="text-xs font-semibold text-zinc-600">
+                  {order.paymentMethod === PaymentMethod.COD
+                    ? "Tiền mặt (COD)"
+                    : "VNPay Online"}
                 </span>
               </div>
             </div>
             <div className="text-right">
-              <span className="text-[10px] font-bold text-zinc-400 block mb-1">
+              <span className="text-[10px] font-semibold text-zinc-400 block mb-1">
                 Ngày đặt hàng
               </span>
-              <span className="text-xs font-bold text-zinc-950">
+              <span className="text-xs font-semibold text-zinc-950">
                 {formatDate(order.createdAt)}
               </span>
             </div>
@@ -134,7 +141,7 @@ export function OrderDetailDialog({
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <ShoppingBag className="w-4 h-4 text-zinc-400" />
-              <h3 className="text-sm font-bold text-zinc-900">
+              <h3 className="text-sm font-semibold text-zinc-900">
                 Danh sách sản phẩm
               </h3>
             </div>
@@ -155,7 +162,7 @@ export function OrderDetailDialog({
                     />
                   </div>
                   <div className="flex-1 min-w-0 py-1">
-                    <h4 className="text-[15px] font-bold text-zinc-950 truncate leading-tight mb-1">
+                    <h4 className="text-[15px] font-semibold text-zinc-950 truncate leading-tight mb-1">
                       {item.productName}
                     </h4>
                     <p className="text-xs font-medium text-zinc-500">
@@ -163,7 +170,7 @@ export function OrderDetailDialog({
                     </p>
                   </div>
                   <div className="text-right py-1">
-                    <p className="text-sm font-black text-zinc-950">
+                    <p className="text-sm font-semibold text-zinc-950">
                       {formatVND(item.subtotal)}
                     </p>
                   </div>
@@ -178,21 +185,23 @@ export function OrderDetailDialog({
             <div className="flex flex-col h-full space-y-3">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-zinc-400" />
-                <h3 className="text-sm font-bold text-zinc-900">
+                <h3 className="text-sm font-semibold text-zinc-900">
                   Thông tin giao nhận
                 </h3>
               </div>
               <div className="p-4 bg-zinc-50/50 border border-zinc-100 rounded-xl space-y-3 shadow-[0_2px_6px_rgba(0,0,0,0.04)] flex-1">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-zinc-400">
+                  <p className="text-[10px] font-semibold text-zinc-400">
                     Người nhận
                   </p>
-                  <p className="text-xs font-bold text-zinc-900">
+                  <p className="text-xs font-semibold text-zinc-900">
                     {order.shippingName} • {order.shippingPhone}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-zinc-400">Địa chỉ</p>
+                  <p className="text-[10px] font-semibold text-zinc-400">
+                    Địa chỉ
+                  </p>
                   <p className="text-xs font-medium text-zinc-500 leading-relaxed">
                     {order.shippingAddress}
                   </p>
@@ -204,18 +213,18 @@ export function OrderDetailDialog({
             <div className="flex flex-col h-full space-y-3">
               <div className="flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-zinc-400" />
-                <h3 className="text-sm font-bold text-zinc-900">
+                <h3 className="text-sm font-semibold text-zinc-900">
                   Trạng thái thanh toán
                 </h3>
               </div>
               <div className="p-4 bg-zinc-50/50 border border-zinc-100 rounded-xl space-y-3 shadow-[0_2px_6px_rgba(0,0,0,0.04)] flex-1">
                 <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-zinc-400">
+                  <span className="text-[10px] font-semibold text-zinc-400">
                     Trạng thái
                   </span>
                   <span
                     className={cn(
-                      "text-[11px] font-bold px-2 py-0.5 rounded-xl tracking-tighter border",
+                      "text-[11px] font-semibold px-2 py-0.5 rounded-xl tracking-tighter border",
                       order.paymentStatus === PaymentStatus.SUCCESS
                         ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                         : order.paymentStatus === PaymentStatus.PENDING
@@ -231,10 +240,10 @@ export function OrderDetailDialog({
                   </span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-zinc-100/50">
-                  <span className="text-[10px] font-bold text-zinc-400">
+                  <span className="text-[10px] font-semibold text-zinc-400">
                     Ngày cập nhật
                   </span>
-                  <span className="text-xs font-bold text-zinc-900">
+                  <span className="text-xs font-semibold text-zinc-900">
                     {order.completedAt ? formatDate(order.completedAt) : "---"}
                   </span>
                 </div>
@@ -267,16 +276,16 @@ export function OrderDetailDialog({
             </div>
             <div className="pt-4 border-t border-zinc-100 flex justify-between items-end relative z-10">
               <div>
-                <p className="text-[10px] font-bold text-zinc-400 mb-0.5">
+                <p className="text-[10px] font-semibold text-zinc-400 mb-0.5">
                   Tổng cộng thanh toán
                 </p>
-                <p className="text-[24px] font-bold text-red-600 tracking-tight leading-none">
+                <p className="text-[24px] font-semibold text-red-600 tracking-tight leading-none">
                   {formatVND(order.totalPrice)}
                 </p>
               </div>
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-emerald-50 rounded-xl border border-emerald-100">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="text-[10px] font-bold text-emerald-600">
+                <span className="text-[10px] font-semibold text-emerald-600">
                   Giao dịch an toàn
                 </span>
               </div>
@@ -307,7 +316,7 @@ export function OrderDetailDialog({
               <Button
                 onClick={handleConfirmReceived}
                 disabled={isConfirming}
-                className="w-full h-12 rounded-xl bg-emerald-600 text-white font-black text-xs uppercase transition-all shadow-xl shadow-emerald-100 border-none hover:bg-zinc-950"
+                className="w-full h-12 rounded-xl bg-emerald-600 text-white font-semibold text-xs transition-all shadow-xl shadow-emerald-100 border-none hover:bg-zinc-950"
               >
                 {isConfirming ? (
                   <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -316,7 +325,7 @@ export function OrderDetailDialog({
                 )}
                 Hoàn thành đơn hàng
               </Button>
-              <p className="text-[10px] text-center text-zinc-400 font-bold mt-3 uppercase tracking-widest">
+              <p className="text-[10px] text-center text-zinc-400 font-semibold mt-3 tracking-wide">
                 Vui lòng chỉ xác nhận khi đã kiểm tra kỹ thiết bị
               </p>
             </div>

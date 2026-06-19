@@ -98,7 +98,10 @@ export function DateTimePicker({
 }: DateTimePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
-  const [popoverCoords, setPopoverCoords] = React.useState<{ top: number; left: number } | null>(null);
+  const [popoverCoords, setPopoverCoords] = React.useState<{
+    top: number;
+    left: number;
+  } | null>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const popoverRef = React.useRef<HTMLDivElement>(null);
 
@@ -120,8 +123,10 @@ export function DateTimePicker({
     const handlePosition = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft =
+          window.pageXOffset || document.documentElement.scrollLeft;
 
         const viewportWidth = window.innerWidth;
         const popoverWidth = window.innerWidth < 768 ? 350 : 480;
@@ -384,257 +389,261 @@ export function DateTimePicker({
       </button>
 
       {/* Popover Card */}
-      {mounted && typeof document !== "undefined" && isOpen && popoverCoords && createPortal(
-        <div
-          ref={popoverRef}
-          style={{
-            position: "absolute",
-            top: `${popoverCoords.top}px`,
-            left: `${popoverCoords.left}px`,
-          }}
-          className="bg-white rounded-xl border border-zinc-200/80 shadow-2xl shadow-zinc-200/60 p-4 z-[9999] flex gap-4 animate-in fade-in slide-in-from-top-2 duration-200 md:w-[480px] w-[350px] flex-col md:flex-row"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Calendar Picker (Left) */}
-          <div className="flex-1 select-none">
-            {/* Header: Month/Year */}
-            <div className="flex items-center justify-between px-1 mb-3">
-              <span className="text-sm font-bold text-zinc-900 tracking-tight">
-                {MONTH_NAMES[viewMonth]} {viewYear}
-              </span>
-              <div className="flex items-center gap-0.5">
-                <button
-                  type="button"
-                  onClick={prevMonth}
-                  className="w-7 h-7 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={nextMonth}
-                  className="w-7 h-7 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Week Labels */}
-            <div className="grid grid-cols-7 mb-1">
-              {DAY_LABELS.map((label) => (
-                <div
-                  key={label}
-                  className="text-center text-[10px] font-bold text-zinc-400 uppercase tracking-wider py-1"
-                >
-                  {label}
-                </div>
-              ))}
-            </div>
-
-            {/* Calendar Days */}
-            <div className="grid grid-cols-7 gap-y-1">
-              {usedCells.map((cell, i) => {
-                const dateDisabled = isDisabledDate(
-                  cell.year,
-                  cell.month,
-                  cell.day,
-                );
-                const isSelected =
-                  value &&
-                  selectedYear === cell.year &&
-                  selectedMonth === cell.month &&
-                  selectedDay === cell.day;
-                const isTodayCell =
-                  today.getFullYear() === cell.year &&
-                  today.getMonth() === cell.month &&
-                  today.getDate() === cell.day;
-
-                return (
+      {mounted &&
+        typeof document !== "undefined" &&
+        isOpen &&
+        popoverCoords &&
+        createPortal(
+          <div
+            ref={popoverRef}
+            style={{
+              position: "absolute",
+              top: `${popoverCoords.top}px`,
+              left: `${popoverCoords.left}px`,
+            }}
+            className="bg-white rounded-xl border border-zinc-200/80 shadow-2xl shadow-zinc-200/60 p-4 z-[9999] flex gap-4 animate-in fade-in slide-in-from-top-2 duration-200 md:w-[480px] w-[350px] flex-col md:flex-row"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Calendar Picker (Left) */}
+            <div className="flex-1 select-none">
+              {/* Header: Month/Year */}
+              <div className="flex items-center justify-between px-1 mb-3">
+                <span className="text-sm font-semibold text-zinc-900 tracking-tight">
+                  {MONTH_NAMES[viewMonth]} {viewYear}
+                </span>
+                <div className="flex items-center gap-0.5">
                   <button
-                    key={i}
                     type="button"
-                    disabled={dateDisabled}
-                    onClick={() => {
-                      if (!dateDisabled) {
-                        handleSelectDate(cell.day, cell.month, cell.year);
-                        if (!cell.isCurrentMonth) {
-                          setViewYear(cell.year);
-                          setViewMonth(cell.month);
-                        }
-                      }
-                    }}
-                    className={cn(
-                      "w-8 h-8 mx-auto rounded-full text-xs font-semibold transition-all flex items-center justify-center",
-                      !cell.isCurrentMonth && "text-zinc-300",
-                      cell.isCurrentMonth &&
-                        !isSelected &&
-                        !dateDisabled &&
-                        "text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950",
-                      isSelected &&
-                        "border border-red-500 text-red-600 font-bold bg-red-50/30",
-                      isTodayCell &&
-                        !isSelected &&
-                        "text-red-500 font-bold bg-red-50/20",
-                      dateDisabled &&
-                        "text-zinc-200 cursor-not-allowed hover:bg-transparent",
-                    )}
+                    onClick={prevMonth}
+                    className="w-7 h-7 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
                   >
-                    {cell.day}
+                    <ChevronLeft className="w-4 h-4" />
                   </button>
-                );
-              })}
-            </div>
-
-            {/* Footer */}
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-zinc-100">
-              <button
-                type="button"
-                onClick={() => {
-                  onChange?.("");
-                  setIsOpen(false);
-                }}
-                className="text-[11px] font-semibold text-zinc-400 hover:text-red-600 transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
-              >
-                Xóa
-              </button>
-              <button
-                type="button"
-                onClick={goToToday}
-                className="text-[11px] font-bold text-red-600 hover:text-red-700 transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
-              >
-                Hôm nay
-              </button>
-            </div>
-          </div>
-
-          {/* Vertical Separator */}
-          <div className="hidden md:block w-[1px] bg-zinc-100 self-stretch my-1" />
-
-          {/* Time Picker columns (Right) */}
-          <div className="flex flex-col justify-between select-none">
-            <div className="flex items-center gap-1.5 px-2 mb-2">
-              <Clock className="w-3.5 h-3.5 text-zinc-500" />
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
-                Chọn giờ
-              </span>
-            </div>
-
-            <div className="flex gap-2">
-              {/* Hours Column */}
-              <div className="flex flex-col items-center">
-                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">
-                  Giờ
-                </span>
-                <div
-                  ref={hourScrollRef}
-                  className="h-[160px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:hidden flex flex-col gap-0.5 w-11"
-                >
-                  {hoursRange.map((h) => {
-                    const isActive = selectedHour12 === h;
-                    return (
-                      <button
-                        key={h}
-                        type="button"
-                        data-active={isActive}
-                        onClick={() =>
-                          handleSelectTime(h, selectedMinute, selectedPeriod)
-                        }
-                        className={cn(
-                          "h-7 text-xs font-semibold rounded-xl flex items-center justify-center shrink-0 transition-all",
-                          isActive
-                            ? "bg-red-600 text-white font-bold shadow-md shadow-red-100"
-                            : "text-zinc-600 hover:bg-zinc-100",
-                        )}
-                      >
-                        {String(h).padStart(2, "0")}
-                      </button>
-                    );
-                  })}
+                  <button
+                    type="button"
+                    onClick={nextMonth}
+                    className="w-7 h-7 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
 
-              {/* Minutes Column */}
-              <div className="flex flex-col items-center">
-                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">
-                  Phút
-                </span>
-                <div
-                  ref={minuteScrollRef}
-                  className="h-[160px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:hidden flex flex-col gap-0.5 w-11"
-                >
-                  {minutesRange.map((m) => {
-                    const isActive = selectedMinute === m;
-                    return (
-                      <button
-                        key={m}
-                        type="button"
-                        data-active={isActive}
-                        onClick={() =>
-                          handleSelectTime(selectedHour12, m, selectedPeriod)
-                        }
-                        className={cn(
-                          "h-7 text-xs font-semibold rounded-xl flex items-center justify-center shrink-0 transition-all",
-                          isActive
-                            ? "bg-red-600 text-white font-bold shadow-md shadow-red-100"
-                            : "text-zinc-600 hover:bg-zinc-100",
-                        )}
-                      >
-                        {String(m).padStart(2, "0")}
-                      </button>
-                    );
-                  })}
-                </div>
+              {/* Week Labels */}
+              <div className="grid grid-cols-7 mb-1">
+                {DAY_LABELS.map((label) => (
+                  <div
+                    key={label}
+                    className="text-center text-[10px] font-semibold text-zinc-400 tracking-wider py-1"
+                  >
+                    {label}
+                  </div>
+                ))}
               </div>
 
-              {/* AM/PM Column */}
-              <div className="flex flex-col items-center">
-                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">
-                  Buổi
-                </span>
-                <div
-                  ref={periodScrollRef}
-                  className="h-[160px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:hidden flex flex-col gap-1 w-11"
-                >
-                  {(["AM", "PM"] as const).map((p) => {
-                    const isActive = selectedPeriod === p;
-                    return (
-                      <button
-                        key={p}
-                        type="button"
-                        data-active={isActive}
-                        onClick={() =>
-                          handleSelectTime(selectedHour12, selectedMinute, p)
+              {/* Calendar Days */}
+              <div className="grid grid-cols-7 gap-y-1">
+                {usedCells.map((cell, i) => {
+                  const dateDisabled = isDisabledDate(
+                    cell.year,
+                    cell.month,
+                    cell.day,
+                  );
+                  const isSelected =
+                    value &&
+                    selectedYear === cell.year &&
+                    selectedMonth === cell.month &&
+                    selectedDay === cell.day;
+                  const isTodayCell =
+                    today.getFullYear() === cell.year &&
+                    today.getMonth() === cell.month &&
+                    today.getDate() === cell.day;
+
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      disabled={dateDisabled}
+                      onClick={() => {
+                        if (!dateDisabled) {
+                          handleSelectDate(cell.day, cell.month, cell.year);
+                          if (!cell.isCurrentMonth) {
+                            setViewYear(cell.year);
+                            setViewMonth(cell.month);
+                          }
                         }
-                        className={cn(
-                          "h-7 text-xs font-bold rounded-xl flex items-center justify-center shrink-0 transition-all",
-                          isActive
-                            ? "bg-red-600 text-white shadow-md shadow-red-100"
-                            : "text-zinc-600 hover:bg-zinc-100",
-                        )}
-                      >
-                        {p}
-                      </button>
-                    );
-                  })}
-                </div>
+                      }}
+                      className={cn(
+                        "w-8 h-8 mx-auto rounded-full text-xs font-semibold transition-all flex items-center justify-center",
+                        !cell.isCurrentMonth && "text-zinc-300",
+                        cell.isCurrentMonth &&
+                          !isSelected &&
+                          !dateDisabled &&
+                          "text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950",
+                        isSelected &&
+                          "border border-red-500 text-red-600 font-semibold bg-red-50/30",
+                        isTodayCell &&
+                          !isSelected &&
+                          "text-red-500 font-semibold bg-red-50/20",
+                        dateDisabled &&
+                          "text-zinc-200 cursor-not-allowed hover:bg-transparent",
+                      )}
+                    >
+                      {cell.day}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange?.("");
+                    setIsOpen(false);
+                  }}
+                  className="text-[11px] font-semibold text-zinc-400 hover:text-red-600 transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
+                >
+                  Xóa
+                </button>
+                <button
+                  type="button"
+                  onClick={goToToday}
+                  className="text-[11px] font-semibold text-red-600 hover:text-red-700 transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
+                >
+                  Hôm nay
+                </button>
               </div>
             </div>
 
-            {/* Confirm Button */}
-            <div className="mt-3 pt-3 border-t border-zinc-100 flex justify-end">
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="text-[11px] font-bold text-zinc-800 hover:bg-zinc-100 transition-colors px-3 py-1.5 rounded-xl border border-zinc-200"
-              >
-                Xong
-              </button>
+            {/* Vertical Separator */}
+            <div className="hidden md:block w-[1px] bg-zinc-100 self-stretch my-1" />
+
+            {/* Time Picker columns (Right) */}
+            <div className="flex flex-col justify-between select-none">
+              <div className="flex items-center gap-1.5 px-2 mb-2">
+                <Clock className="w-3.5 h-3.5 text-zinc-500" />
+                <span className="text-[11px] font-semibold tracking-wider text-zinc-500">
+                  Chọn giờ
+                </span>
+              </div>
+
+              <div className="flex gap-2">
+                {/* Hours Column */}
+                <div className="flex flex-col items-center">
+                  <span className="text-[9px] font-semibold text-zinc-400 tracking-wide mb-1.5">
+                    Giờ
+                  </span>
+                  <div
+                    ref={hourScrollRef}
+                    className="h-[160px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:hidden flex flex-col gap-0.5 w-11"
+                  >
+                    {hoursRange.map((h) => {
+                      const isActive = selectedHour12 === h;
+                      return (
+                        <button
+                          key={h}
+                          type="button"
+                          data-active={isActive}
+                          onClick={() =>
+                            handleSelectTime(h, selectedMinute, selectedPeriod)
+                          }
+                          className={cn(
+                            "h-7 text-xs font-semibold rounded-xl flex items-center justify-center shrink-0 transition-all",
+                            isActive
+                              ? "bg-red-600 text-white font-semibold shadow-md shadow-red-100"
+                              : "text-zinc-600 hover:bg-zinc-100",
+                          )}
+                        >
+                          {String(h).padStart(2, "0")}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Minutes Column */}
+                <div className="flex flex-col items-center">
+                  <span className="text-[9px] font-semibold text-zinc-400 tracking-wide mb-1.5">
+                    Phút
+                  </span>
+                  <div
+                    ref={minuteScrollRef}
+                    className="h-[160px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:hidden flex flex-col gap-0.5 w-11"
+                  >
+                    {minutesRange.map((m) => {
+                      const isActive = selectedMinute === m;
+                      return (
+                        <button
+                          key={m}
+                          type="button"
+                          data-active={isActive}
+                          onClick={() =>
+                            handleSelectTime(selectedHour12, m, selectedPeriod)
+                          }
+                          className={cn(
+                            "h-7 text-xs font-semibold rounded-xl flex items-center justify-center shrink-0 transition-all",
+                            isActive
+                              ? "bg-red-600 text-white font-semibold shadow-md shadow-red-100"
+                              : "text-zinc-600 hover:bg-zinc-100",
+                          )}
+                        >
+                          {String(m).padStart(2, "0")}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* AM/PM Column */}
+                <div className="flex flex-col items-center">
+                  <span className="text-[9px] font-semibold text-zinc-400 tracking-wide mb-1.5">
+                    Buổi
+                  </span>
+                  <div
+                    ref={periodScrollRef}
+                    className="h-[160px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:hidden flex flex-col gap-1 w-11"
+                  >
+                    {(["AM", "PM"] as const).map((p) => {
+                      const isActive = selectedPeriod === p;
+                      return (
+                        <button
+                          key={p}
+                          type="button"
+                          data-active={isActive}
+                          onClick={() =>
+                            handleSelectTime(selectedHour12, selectedMinute, p)
+                          }
+                          className={cn(
+                            "h-7 text-xs font-semibold rounded-xl flex items-center justify-center shrink-0 transition-all",
+                            isActive
+                              ? "bg-red-600 text-white shadow-md shadow-red-100"
+                              : "text-zinc-600 hover:bg-zinc-100",
+                          )}
+                        >
+                          {p}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Confirm Button */}
+              <div className="mt-3 pt-3 border-t border-zinc-100 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className="text-[11px] font-semibold text-zinc-800 hover:bg-zinc-100 transition-colors px-3 py-1.5 rounded-xl border border-zinc-200"
+                >
+                  Xong
+                </button>
+              </div>
             </div>
-          </div>
-        </div>,
-        document.body
-      )}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

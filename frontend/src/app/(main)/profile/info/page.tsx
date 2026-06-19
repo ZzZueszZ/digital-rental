@@ -65,12 +65,10 @@ export default function InfoPage() {
           <Avatar className="w-32 h-32 border-8 border-zinc-50 shadow-inner">
             <AvatarImage
               src={
-                profile?.avatarUrl
-                  ? getImageUrl(profile.avatarUrl)
-                  : undefined
+                profile?.avatarUrl ? getImageUrl(profile.avatarUrl) : undefined
               }
             />
-            <AvatarFallback className="bg-zinc-100 text-zinc-300 font-black text-2xl">
+            <AvatarFallback className="bg-zinc-100 text-zinc-300 font-semibold text-2xl">
               {profile?.fullName?.charAt(0)}
             </AvatarFallback>
           </Avatar>
@@ -178,9 +176,7 @@ export default function InfoPage() {
             </label>
             <DateInput
               value={formData.dateOfBirth}
-              onChange={(v) =>
-                setFormData({ ...formData, dateOfBirth: v })
-              }
+              onChange={(v) => setFormData({ ...formData, dateOfBirth: v })}
               className="h-10 text-[14px] px-4"
             />
           </div>

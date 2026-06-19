@@ -26,7 +26,9 @@ export default function ResetPasswordPage() {
     try {
       const response = await authService.resetPassword(form);
       if (response.data.success) {
-        toast.success(response.data.message || "Thiết lập mật khẩu thành công.");
+        toast.success(
+          response.data.message || "Thiết lập mật khẩu thành công.",
+        );
         router.push(Routers.LOGIN);
       }
     } catch (error: unknown) {
@@ -87,7 +89,7 @@ export default function ResetPasswordPage() {
             onChange={(event) =>
               setForm({ ...form, otpCode: event.target.value })
             }
-            className="h-10 rounded-xl border-zinc-200 bg-white px-3 text-sm font-medium tracking-[0.2em] text-zinc-900 shadow-none placeholder:font-normal placeholder:tracking-normal placeholder:text-zinc-400 focus-visible:border-zinc-400 focus-visible:ring-0"
+            className="h-10 rounded-xl border-zinc-200 bg-white px-3 text-sm font-medium tracking-wide text-zinc-900 shadow-none placeholder:font-normal placeholder:tracking-normal placeholder:text-zinc-400 focus-visible:border-zinc-400 focus-visible:ring-0"
             required
           />
         </div>

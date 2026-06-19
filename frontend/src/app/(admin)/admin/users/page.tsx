@@ -395,18 +395,13 @@ export default function UsersAdminPage() {
         )}
 
         {/* ── MOBILE CARD LIST (< md) ───────────────────────────── */}
-        <div className="md:hidden divide-y divide-zinc-50">
+        <div className="md:hidden p-4 space-y-4">
           {query.isLoading &&
             Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="p-4 space-y-2 animate-pulse">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-100" />
-                  <div className="flex-1 space-y-1">
-                    <div className="h-3 bg-zinc-100 rounded-xl w-3/4" />
-                    <div className="h-2 bg-zinc-100 rounded-xl w-1/4" />
-                  </div>
-                </div>
-              </div>
+              <div
+                key={i}
+                className="h-36 rounded-xl border border-zinc-100 bg-zinc-50 animate-pulse"
+              />
             ))}
 
           {users.length === 0 && !query.isLoading && (
@@ -424,46 +419,44 @@ export default function UsersAdminPage() {
           )}
 
           {users.map((u) => {
-            const avatarColor = getAvatarColor(u.email);
             const statusCfg =
               STATUS_CONFIG[u.accountStatus] ?? STATUS_CONFIG["DISABLED"];
             return (
               <div
                 key={u.id}
-                onClick={() => router.push(`/admin/users/${u.id}`)}
                 className={cn(
-                  "p-4 transition-colors border-l-[3px] hover:border-zinc-950 cursor-pointer",
-                  selectedIds.has(u.id)
-                    ? "bg-zinc-50/80 border-zinc-950"
-                    : "border-transparent hover:bg-zinc-50",
+                  "bg-white p-4 rounded-xl border border-zinc-100 shadow-sm space-y-4 active:scale-[0.98] transition-all duration-150",
+                  selectedIds.has(u.id) && "border-zinc-300 bg-zinc-50/40",
                 )}
               >
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleSelect(u.id);
-                    }}
-                    className="shrink-0 text-zinc-400 hover:text-zinc-950 transition-colors"
-                  >
-                    {selectedIds.has(u.id) ? (
-                      <CheckSquare className="w-4 h-4 text-zinc-950" />
-                    ) : (
-                      <Square className="w-4 h-4" />
-                    )}
-                  </button>
-                  <div className="w-10 h-10 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
-                    <span className="font-semibold text-sm text-zinc-700">
-                      {u.email.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-zinc-900 truncate">
-                      {u.email}
-                    </p>
-                    <p className="text-xs text-zinc-400 font-mono">
-                      #{u.id.toString().padStart(5, "0")}
-                    </p>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSelect(u.id);
+                      }}
+                      className="shrink-0 text-zinc-400 hover:text-zinc-950 transition-colors"
+                    >
+                      {selectedIds.has(u.id) ? (
+                        <CheckSquare className="w-4 h-4 text-zinc-950" />
+                      ) : (
+                        <Square className="w-4 h-4" />
+                      )}
+                    </button>
+                    <div className="w-12 h-12 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
+                      <span className="font-semibold text-sm text-zinc-700">
+                        {u.email.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-zinc-900 truncate">
+                        {u.email}
+                      </p>
+                      <p className="text-xs text-zinc-400 font-mono mt-0.5">
+                        #{u.id.toString().padStart(5, "0")}
+                      </p>
+                    </div>
                   </div>
                   <UserActionMenu
                     userId={u.id}
@@ -514,39 +507,62 @@ export default function UsersAdminPage() {
                   />
                 </div>
 
-                <div className="mt-3 flex flex-wrap items-center gap-2 pl-13">
-                  <span
-                    className={cn(
-                      "inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-semibold px-2.5 py-1 rounded-full",
-                      statusCfg.badge,
-                    )}
-                  >
+                <div className="grid grid-cols-1 gap-3 p-3 bg-zinc-50 rounded-xl">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span
-                      className={cn("w-1.5 h-1.5 rounded-full", statusCfg.dot)}
-                    />
-                    {statusCfg.label}
-                  </span>
-                  {getKycBadge(u.kycStatus)}
-                  {u.roles.map((role: string) => (
-                    <span
-                      key={role}
                       className={cn(
-                        "inline-block text-xs font-semibold px-2 py-0.5 rounded-xl border",
-                        role === "SUPER_ADMIN" || role === "ADMIN"
-                          ? "bg-red-50 text-red-700 border-red-200"
-                          : "bg-zinc-50 text-zinc-600 border-zinc-200",
+                        "inline-flex w-fit min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-semibold px-2.5 py-1 rounded-full",
+                        statusCfg.badge,
                       )}
                     >
-                      {role}
+                      <span
+                        className={cn(
+                          "w-1.5 h-1.5 rounded-full",
+                          statusCfg.dot,
+                        )}
+                      />
+                      {statusCfg.label}
                     </span>
-                  ))}
-                  <span className="text-xs text-zinc-400 font-medium ml-auto">
-                    {new Date(u.createdAt).toLocaleDateString("vi-VN", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })}
-                  </span>
+                    {getKycBadge(u.kycStatus)}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {u.roles.map((role: string) => (
+                      <span
+                        key={role}
+                        className={cn(
+                          "inline-block text-xs font-semibold px-2 py-0.5 rounded-xl border",
+                          role === "SUPER_ADMIN" || role === "ADMIN"
+                            ? "bg-red-50 text-red-700 border-red-200"
+                            : "bg-zinc-50 text-zinc-600 border-zinc-200",
+                        )}
+                      >
+                        {role}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-zinc-50 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-1.5 text-zinc-400">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span className="text-[10px] font-semibold">
+                      {new Date(u.createdAt).toLocaleDateString("vi-VN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => router.push(`/admin/users/${u.id}`)}
+                    className="p-1.5 rounded-xl bg-zinc-50 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-all flex items-center gap-1 px-3"
+                  >
+                    <span className="text-[10px] font-semibold text-zinc-600">
+                      Chi tiết
+                    </span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
             );

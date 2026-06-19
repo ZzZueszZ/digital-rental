@@ -117,7 +117,7 @@ export function UserForm({
   const handleSubmit = async () => {
     try {
       const changedData: UserUpdateRequest = {};
-      
+
       if (formData.phone !== (user.phone || "")) {
         changedData.phone = formData.phone;
       }
@@ -133,11 +133,12 @@ export function UserForm({
       if (formData.enabled !== user.enabled) {
         changedData.enabled = formData.enabled;
       }
-      
+
       const originalRoles = [...(user.roles || [])].sort();
       const currentRoles = [...formData.roles].sort();
-      const rolesChanged = originalRoles.length !== currentRoles.length || 
-                           originalRoles.some((val, index) => val !== currentRoles[index]);
+      const rolesChanged =
+        originalRoles.length !== currentRoles.length ||
+        originalRoles.some((val, index) => val !== currentRoles[index]);
       if (rolesChanged) {
         changedData.roles = formData.roles;
       }
@@ -152,9 +153,17 @@ export function UserForm({
       toast.success("Cập nhật tài khoản thành công");
       router.push(`/super-admin/users/${userId}`);
     } catch (error) {
-      const err = error as { response?: { data?: { data?: string; message?: string } }; message?: string };
-      const serverErrorMsg = err.response?.data?.data || err.response?.data?.message || err.message;
-      toast.error(serverErrorMsg ? `Cập nhật thất bại: ${serverErrorMsg}` : "Cập nhật thất bại, vui lòng thử lại");
+      const err = error as {
+        response?: { data?: { data?: string; message?: string } };
+        message?: string;
+      };
+      const serverErrorMsg =
+        err.response?.data?.data || err.response?.data?.message || err.message;
+      toast.error(
+        serverErrorMsg
+          ? `Cập nhật thất bại: ${serverErrorMsg}`
+          : "Cập nhật thất bại, vui lòng thử lại",
+      );
     }
   };
 
@@ -220,7 +229,7 @@ export function UserForm({
               <Button
                 onClick={handleSubmit}
                 disabled={isPending}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2  whitespace-nowrap active:scale-95 border-none"
+                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 whitespace-nowrap active:scale-95 border-none"
               >
                 {isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -233,7 +242,7 @@ export function UserForm({
           ) : (
             <Button
               onClick={() => router.push(`/super-admin/users/${userId}/edit`)}
-              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2  whitespace-nowrap active:scale-95 border-none"
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 whitespace-nowrap active:scale-95 border-none"
             >
               <Edit2 className="w-4 h-4" />
               Chỉnh sửa

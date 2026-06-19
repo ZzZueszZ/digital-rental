@@ -288,8 +288,8 @@ export default function ProductsAdminPage() {
             </div>
 
             {/* Right: Search + Category + Add */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="relative flex-1 xl:w-64 group">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center xl:grid-cols-[minmax(0,1fr)_auto_auto]">
+              <div className="group relative min-w-0">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors duration-200" />
                 <Input
                   placeholder="Tìm tên thiết bị..."
@@ -309,7 +309,7 @@ export default function ProductsAdminPage() {
                   setPage(0);
                 }}
               >
-                <SelectTrigger className="!h-10 px-4 rounded-xl !border-zinc-100 !bg-zinc-50/50 text-[14px] font-medium text-zinc-700 outline-none focus:!bg-white transition-all min-w-[155px] shadow-sm">
+                <SelectTrigger className="!h-10 w-full px-4 rounded-xl !border-zinc-100 !bg-zinc-50/50 text-[14px] font-medium text-zinc-700 outline-none focus:!bg-white transition-all min-w-[155px] shadow-sm">
                   <SelectValue placeholder="Tất cả danh mục" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border border-zinc-100 shadow-dash-overlay max-h-64 bg-white p-1">
@@ -333,7 +333,7 @@ export default function ProductsAdminPage() {
 
               <Button
                 onClick={() => setDialogState({ type: "INFO", product: null })}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-red-600 transition-all duration-150 font-semibold text-[14px] flex items-center gap-2 shadow-sm whitespace-nowrap"
+                className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-zinc-950 px-5 sm:w-auto text-white hover:bg-red-600 transition-all duration-150 font-semibold text-[14px] shadow-sm whitespace-nowrap"
               >
                 <Plus className="w-4 h-4" />
                 Thêm thiết bị

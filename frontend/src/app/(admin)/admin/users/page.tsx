@@ -300,8 +300,8 @@ export default function UsersAdminPage() {
             </div>
 
             {/* Right: Search + Add */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="relative flex-1 xl:w-72 group">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+              <div className="group relative min-w-0">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-zinc-950 transition-colors duration-200" />
                 <Input
                   placeholder="Tìm theo email, ID..."
@@ -315,7 +315,7 @@ export default function UsersAdminPage() {
               </div>
               <Button
                 onClick={() => setCreateDialogOpen(true)}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2  whitespace-nowrap active:scale-95"
+                className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-zinc-950 px-5 sm:w-auto text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] whitespace-nowrap active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 Thêm thành viên
@@ -476,7 +476,7 @@ export default function UsersAdminPage() {
                           `Cấp lại mật khẩu cho ${u.email}?`,
                           "warning",
                           () => resetPasswordMutation.mutateAsync(u.id),
-                          "Đã cấp mật khẩu mới"
+                          "Đã cấp mật khẩu mới",
                         ),
                       onLock: () =>
                         requestAction(
@@ -484,7 +484,7 @@ export default function UsersAdminPage() {
                           `Khóa tài khoản ${u.email}?`,
                           "danger",
                           () => lockMutation.mutateAsync(u.id),
-                          "Tài khoản đã bị khóa"
+                          "Tài khoản đã bị khóa",
                         ),
                       onUnlock: () =>
                         requestAction(
@@ -492,7 +492,7 @@ export default function UsersAdminPage() {
                           `Mở khóa tài khoản ${u.email}?`,
                           "info",
                           () => unlockMutation.mutateAsync(u.id),
-                          "Tài khoản đã được mở khóa"
+                          "Tài khoản đã được mở khóa",
                         ),
                       onDelete: () =>
                         requestAction(
@@ -500,7 +500,7 @@ export default function UsersAdminPage() {
                           `Vô hiệu hóa tài khoản ${u.email}?`,
                           "danger",
                           () => deleteMutation.mutateAsync(u.id),
-                          "Đã vô hiệu hóa"
+                          "Đã vô hiệu hóa",
                         ),
                       onRestore: () =>
                         requestAction(
@@ -508,7 +508,7 @@ export default function UsersAdminPage() {
                           `Khôi phục tài khoản ${u.email}?`,
                           "info",
                           () => restoreMutation.mutateAsync(u.id),
-                          "Đã khôi phục tài khoản"
+                          "Đã khôi phục tài khoản",
                         ),
                     }}
                   />
@@ -680,9 +680,7 @@ export default function UsersAdminPage() {
                       {getStatusBadge(u.accountStatus)}
                     </td>
 
-                    <td className="px-6 py-3">
-                      {getKycBadge(u.kycStatus)}
-                    </td>
+                    <td className="px-6 py-3">{getKycBadge(u.kycStatus)}</td>
 
                     {/* Roles */}
                     <td className="px-6 py-3">

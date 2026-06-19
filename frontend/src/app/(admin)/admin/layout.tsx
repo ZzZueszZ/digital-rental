@@ -61,42 +61,42 @@ export default function AdminLayout({
       disableTransitionOnChange
     >
       <RoleGuard allowedRoles={allowedRoles}>
-        <div className="flex min-h-screen w-full bg-zinc-50/70 text-zinc-950">
+        <div className="flex min-h-screen w-full overflow-x-hidden bg-zinc-50/70 text-zinc-950">
           <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
           <div className="flex min-w-0 flex-1 flex-col">
             <header
               className={cn(
-                "sticky top-0 z-30 flex w-full items-center justify-between border-b border-zinc-200/80 bg-white/90 backdrop-blur-xl transition-all duration-300",
+                "sticky top-0 z-30 flex w-full items-center justify-between gap-3 border-b border-zinc-200/80 bg-white/90 backdrop-blur-xl transition-all duration-300",
                 "h-[var(--dash-navbar-h)] px-4 sm:px-6 lg:px-8 lg:pl-10",
                 "lg:ml-[var(--dash-sidebar-w)]",
               )}
             >
-              <div className="flex min-w-0 items-center gap-4 sm:gap-6">
+              <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-5">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 rounded-xl border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 lg:hidden"
+                  className="h-9 w-9 shrink-0 rounded-xl border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 lg:hidden"
                   onClick={() => setIsSidebarOpen(true)}
                 >
                   <Menu className="h-5 w-5" />
                 </Button>
 
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <h1 className="truncate text-[18px] font-semibold leading-tight tracking-tight text-zinc-950 sm:text-[20px]">
                     {pageTitle.title}
                   </h1>
-                  <span className="hidden text-[13px] font-medium leading-tight text-zinc-500 sm:block">
+                  <span className="hidden truncate text-[13px] font-medium leading-tight text-zinc-500 sm:block">
                     {pageTitle.subtitle}
                   </span>
                 </div>
               </div>
 
-              <div className="relative">
+              <div className="relative shrink-0">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className={cn(
-                    "flex items-center gap-3 rounded-xl border p-1 transition-all duration-200",
+                    "flex max-w-[44px] items-center gap-2 rounded-xl border p-1 transition-all duration-200 sm:max-w-[220px] sm:gap-3",
                     isUserMenuOpen
                       ? "border-zinc-200 bg-zinc-50"
                       : "border-zinc-200/70 bg-white hover:bg-zinc-50",
@@ -115,7 +115,7 @@ export default function AdminLayout({
                   </div>
                   <ChevronDown
                     className={cn(
-                      "mr-1 h-3.5 w-3.5 text-zinc-400 transition-transform duration-200",
+                      "mr-1 hidden h-3.5 w-3.5 text-zinc-400 transition-transform duration-200 sm:block",
                       isUserMenuOpen && "rotate-180",
                     )}
                   />
@@ -166,7 +166,7 @@ export default function AdminLayout({
 
             <main
               className={cn(
-                "flex flex-1 flex-col transition-all duration-300",
+                "flex min-w-0 flex-1 flex-col transition-all duration-300",
                 "lg:ml-[var(--dash-sidebar-w)]",
                 "p-4 sm:p-6 lg:p-8",
               )}

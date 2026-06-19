@@ -225,7 +225,7 @@ export function UserForm({
               <Button
                 onClick={handleSubmit}
                 disabled={isPending}
-                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2  whitespace-nowrap active:scale-95 border-none"
+                className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 whitespace-nowrap active:scale-95 border-none"
               >
                 {isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -238,7 +238,7 @@ export function UserForm({
           ) : (
             <Button
               onClick={() => router.push(`/admin/users/${userId}/edit`)}
-              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2  whitespace-nowrap active:scale-95 border-none"
+              className="h-10 px-5 rounded-xl bg-zinc-950 text-white hover:bg-zinc-900 transition-all duration-200 font-semibold text-[14px] flex items-center gap-2 whitespace-nowrap active:scale-95 border-none"
             >
               <Edit2 className="w-4 h-4" />
               Chỉnh sửa

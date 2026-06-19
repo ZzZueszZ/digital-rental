@@ -73,9 +73,7 @@ export function VoucherTableRow({
   const status = getStatusConfig(voucher.status);
 
   return (
-    <tr
-      className="group transition-all duration-300 hover:bg-zinc-50/50"
-    >
+    <tr className="group transition-all duration-300 hover:bg-zinc-50/50">
       <td className="px-6 py-3.5">
         <div className="flex items-center gap-4">
           <div className="w-11 h-11 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200/50 group-hover:scale-105 transition-transform duration-150">
@@ -193,7 +191,6 @@ export function VoucherTableRow({
                   <PowerOff className="w-3.5 h-3.5" /> Tạm dừng Voucher
                 </DropdownMenuItem>
               )}
-
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -217,26 +214,32 @@ export function VoucherMobileCard({
           className: "bg-emerald-50 text-emerald-700 border-emerald-200",
         };
       case "DRAFT":
-        return { label: "Nháp", className: "bg-amber-50 text-amber-700 border-amber-200" };
+        return {
+          label: "Nháp",
+          className: "bg-amber-50 text-amber-700 border-amber-200",
+        };
       default:
-        return { label: status, className: "bg-zinc-50 text-zinc-600 border-zinc-200" };
+        return {
+          label: status,
+          className: "bg-zinc-50 text-zinc-600 border-zinc-200",
+        };
     }
   };
 
   const status = getStatusConfig(voucher.status);
 
   return (
-    <div className="p-4 bg-white rounded-xl border border-zinc-100 shadow-sm space-y-4">
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-zinc-50 flex items-center justify-center">
+    <div className="space-y-4 rounded-xl border border-zinc-100 bg-white p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-50">
             <Ticket className="w-4 h-4" />
           </div>
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-zinc-950 tracking-tight">
+          <div className="flex min-w-0 flex-col">
+            <span className="truncate text-xs font-semibold tracking-tight text-zinc-950">
               {voucher.code}
             </span>
-            <span className="text-[10px] font-semibold text-zinc-400">
+            <span className="truncate text-[10px] font-medium text-zinc-500">
               {voucher.name}
             </span>
           </div>
@@ -252,9 +255,9 @@ export function VoucherMobileCard({
         </Badge>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 p-3 bg-zinc-50 rounded-xl">
-        <div className="flex flex-col">
-          <span className="text-[9px] font-semibold  text-zinc-400 tracking-tight mb-1 flex items-center gap-1">
+      <div className="grid grid-cols-1 gap-3 rounded-xl bg-zinc-50 p-3 sm:grid-cols-2">
+        <div className="flex min-w-0 flex-col">
+          <span className="mb-1 flex items-center gap-1 text-[9px] font-medium tracking-tight text-zinc-500">
             <Tag className="w-3 h-3" /> Ưu đãi
           </span>
           <span className="text-xs font-semibold text-zinc-950">
@@ -263,8 +266,8 @@ export function VoucherMobileCard({
               : `${voucher.discountValue.toLocaleString()} ₫`}
           </span>
         </div>
-        <div className="flex flex-col">
-          <span className="text-[9px] font-semibold  text-zinc-400 tracking-tight mb-1 flex items-center gap-1">
+        <div className="flex min-w-0 flex-col">
+          <span className="mb-1 flex items-center gap-1 text-[9px] font-medium tracking-tight text-zinc-500">
             <Calendar className="w-3 h-3" /> Hết hạn
           </span>
           <span className="text-xs font-semibold text-zinc-950">
@@ -275,12 +278,12 @@ export function VoucherMobileCard({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 pt-1">
+      <div className="grid grid-cols-1 gap-2 pt-1">
         {voucher.status === "ACTIVE" ? (
           <Button
             variant="outline"
             onClick={() => onDeactivate(voucher.id)}
-            className="flex-1 h-10 rounded-xl text-[10px] font-semibold  tracking-tight border-zinc-100 text-red-600 hover:bg-red-50"
+            className="h-10 w-full rounded-xl border-red-200 bg-red-50 text-[12px] font-semibold tracking-tight text-red-700 hover:bg-red-100 hover:text-red-700"
           >
             Vô hiệu
           </Button>
@@ -288,7 +291,7 @@ export function VoucherMobileCard({
           <Button
             variant="outline"
             onClick={() => onActivate(voucher.id)}
-            className="flex-1 h-10 rounded-xl text-[10px] font-semibold  tracking-tight border-zinc-100 text-emerald-600 hover:bg-emerald-50"
+            className="h-10 w-full rounded-xl border-emerald-200 bg-emerald-50 text-[12px] font-semibold tracking-tight text-emerald-700 hover:bg-emerald-100 hover:text-emerald-700"
           >
             Mở
           </Button>

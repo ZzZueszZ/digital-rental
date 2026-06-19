@@ -188,8 +188,8 @@ export default function VouchersAdminPage() {
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="relative flex-1 xl:w-72 group">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+              <div className="group relative min-w-0">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-red-600 transition-colors" />
                 <Input
                   placeholder="Tìm mã hoặc tên..."
@@ -268,7 +268,7 @@ export default function VouchersAdminPage() {
               </tbody>
             </table>
           </div>
- 
+
           {/* Mobile */}
           <div className="lg:hidden p-4 space-y-4">
             {isLoading ? (

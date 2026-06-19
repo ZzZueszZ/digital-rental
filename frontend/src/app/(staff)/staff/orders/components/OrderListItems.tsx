@@ -188,11 +188,11 @@ export function OrderMobileCard({
         </div>
       </div>
 
-      <div className="flex gap-2 pt-1">
+      <div className="grid grid-cols-1 gap-2 pt-1 sm:grid-cols-2">
         <Button
           variant="outline"
           onClick={() => onView(order.id)}
-          className="flex-1 h-9 rounded-xl border-zinc-100 text-xs font-semibold hover:bg-zinc-50"
+          className="h-9 w-full rounded-xl border-zinc-200 bg-white text-xs font-semibold text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950"
         >
           Chi tiết
         </Button>
@@ -200,7 +200,7 @@ export function OrderMobileCard({
           <DropdownMenuTrigger
             className={cn(
               buttonVariants({ variant: "default" }),
-              "flex-1 h-9 rounded-xl bg-red-600 hover:bg-red-700 text-xs font-semibold cursor-pointer outline-none text-white border-none",
+              "h-9 w-full rounded-xl border-none bg-red-600 text-xs font-semibold text-white outline-none hover:bg-red-700",
             )}
           >
             Trạng thái

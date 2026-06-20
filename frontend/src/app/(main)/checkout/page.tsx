@@ -108,6 +108,18 @@ export default function CheckoutPage() {
   const addresses = useMemo(() => addressesRes?.data || [], [addressesRes?.data]);
   const cartItems = useMemo(() => cartRes?.data || [], [cartRes?.data]);
   const directProduct = productRes?.data;
+  const directProductSaleStock = directProduct?.quantity ?? 0;
+  const directProductCanSale =
+    directProduct?.isForSale ??
+    directProduct?.forSale ??
+    (directProduct?.salePrice ?? 0) > 0;
+
+  const isDirectCheckoutUnavailable =
+    isDirectCheckout &&
+    !!directProduct &&
+    (!directProductCanSale ||
+      directProductSaleStock <= 0 ||
+      quantity > directProductSaleStock);
 
   const itemsToDisplay = useMemo(() => {
     if (isDirectCheckout) {
@@ -137,6 +149,27 @@ export default function CheckoutPage() {
       setSelectedAddressId(defaultAddr.id);
     }
   }, [addresses, selectedAddressId]);
+
+  useEffect(() => {
+    if (!isDirectCheckout || loadingProduct || !directProduct) return;
+
+    if (isDirectCheckoutUnavailable) {
+      toast.error(
+        directProductSaleStock <= 0
+          ? "Sản phẩm đã hết hàng trong kho bán"
+          : `Kho bán chỉ còn ${directProductSaleStock} sản phẩm khả dụng`,
+      );
+      router.replace(`/products/${productId}`);
+    }
+  }, [
+    directProduct,
+    directProductSaleStock,
+    isDirectCheckout,
+    isDirectCheckoutUnavailable,
+    loadingProduct,
+    productId,
+    router,
+  ]);
 
   const subtotal = itemsToDisplay.reduce((acc, item: CheckoutDisplayItem) => {
     const price = item.salePrice || item.rentPricePerDay || 0;
@@ -186,6 +219,16 @@ export default function CheckoutPage() {
   };
 
   const handleCheckout = async () => {
+    if (isDirectCheckoutUnavailable) {
+      toast.error(
+        directProductSaleStock <= 0
+          ? "Sản phẩm đã hết hàng trong kho bán"
+          : `Kho bán chỉ còn ${directProductSaleStock} sản phẩm khả dụng`,
+      );
+      router.replace(`/products/${productId}`);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       let res;

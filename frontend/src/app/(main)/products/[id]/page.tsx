@@ -271,6 +271,26 @@ export default function ProductDetailPage() {
 
   const { mutateAsync: addToCart, isPending: isAddingToCart } = useAddToCart();
 
+  const saleStock = product?.quantity ?? 0;
+  const validateSaleStock = () => {
+    if (!product?.forSale) {
+      toast.error("Sản phẩm này chưa hỗ trợ mua hàng");
+      return false;
+    }
+
+    if (saleStock <= 0) {
+      toast.error("Sản phẩm đã hết hàng trong kho bán");
+      return false;
+    }
+
+    if (quantity > saleStock) {
+      toast.error(`Kho bán chỉ còn ${saleStock} sản phẩm khả dụng`);
+      return false;
+    }
+
+    return true;
+  };
+
   const handleAddToCart = async () => {
     if (!accessToken) {
       toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng");
@@ -279,6 +299,8 @@ export default function ProductDetailPage() {
     }
 
     try {
+      if (!validateSaleStock()) return;
+
       await addToCart({ productId: Number(id), quantity });
       toast.success("Đã thêm vào giỏ hàng", {
         description: `${product?.name} x${quantity}`,
@@ -303,6 +325,8 @@ export default function ProductDetailPage() {
       router.push("/auth/login");
       return;
     }
+
+    if (!validateSaleStock()) return;
 
     router.push(`/checkout?productId=${id}&quantity=${quantity}`);
   };

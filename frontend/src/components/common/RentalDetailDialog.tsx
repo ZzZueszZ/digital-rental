@@ -376,31 +376,31 @@ export function RentalDetailDialog({
  </tr>
  <tr>
  <td class="info-label">CCCD:</td>
- <td>${rental.identityNumber || "Ch?a c?p nh?t"}</td>
+ <td>${rental.identityNumber || "Chưa cập nhật"}</td>
  </tr>
  <tr>
- <td class="info-label">Ng?y c?p:</td>
- <td>${rental.identityIssuedDate ? formatContractDate(rental.identityIssuedDate) : "Ch?a c?p nh?t"}</td>
+ <td class="info-label">Ngày cấp:</td>
+ <td>${rental.identityIssuedDate ? formatContractDate(rental.identityIssuedDate) : "Chưa cập nhật"}</td>
  </tr>
  <tr>
- <td class="info-label">N?i c?p:</td>
- <td>${rental.identityIssuedPlace || "Ch?a c?p nh?t"}</td>
+ <td class="info-label">Nơi cấp:</td>
+ <td>${rental.identityIssuedPlace || "Chưa cập nhật"}</td>
  </tr>
  <tr>
- <td class="info-label">??a ch? th??ng tr?:</td>
- <td>${rental.permanentAddress || "Ch?a c?p nh?t"}</td>
+ <td class="info-label">Địa chỉ thường trú:</td>
+ <td>${rental.permanentAddress || "Chưa cập nhật"}</td>
  </tr>
  <tr>
- <td class="info-label">??a ch? hi?n t?i:</td>
- <td>${rental.currentAddress || rental.shippingAddress || "Ch?a c?p nh?t"}</td>
+ <td class="info-label">Địa chỉ hiện tại:</td>
+ <td>${rental.currentAddress || rental.shippingAddress || "Chưa cập nhật"}</td>
  </tr>
  <tr>
- <td class="info-label">M?c x?c th?c:</td>
- <td>${rental.verificationLevel || "Ch?a c?p nh?t"}</td>
+ <td class="info-label">Mức xác thực:</td>
+ <td>${rental.verificationLevel || "Chưa cập nhật"}</td>
  </tr>
  <tr>
- <td class="info-label">??a ?i?m nh?n:</td>
- <td>${rental.shippingAddress || "Nh?n t?i c?a h?ng Digital Rental"}</td>
+ <td class="info-label">Địa điểm nhận:</td>
+ <td>${rental.shippingAddress || "Nhận tại cửa hàng Digital Rental"}</td>
  </tr> </table>
 
  <div class="section-title">II. Thông tin thuê thiết bị</div>
@@ -426,9 +426,9 @@ export function RentalDetailDialog({
  <th style="width: 7%">STT</th>
  <th>Thiết bị</th>
  <th style="width: 16%">Serial</th>
- <th style="width: 18%">Gi? tr? t?i s?n</th>
- <th style="width: 18%">??n gi?/ng?y</th>
- <th style="width: 18%">Th?nh ti?n</th>
+ <th style="width: 18%">Giá trị tài sản</th>
+ <th style="width: 18%">Đơn giá/ngày</th>
+ <th style="width: 18%">Thành tiền</th>
  </tr>
  </thead>
  <tbody>${productRows}</tbody>
@@ -1298,12 +1298,12 @@ export function RentalDetailDialog({
                     ) : (
                       <FilePenLine className="w-4 h-4" />
                     )}
-                    Ti?n h?nh k? h?p ??ng online
+                    Tiến hành ký hợp đồng online
                   </Button>
                 ) : isWaitingForPreparation ? (
                   <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-medium leading-relaxed text-amber-700">
-                    ??n thu? ?? thanh to?n ph? thu?. Vui l?ng ch? nh?n vi?n
-                    chu?n b? v? g?n thi?t b? tr??c khi k? h?p ??ng online.
+                    Đơn thuê đã thanh toán phí thuê. Vui lòng chờ nhân viên
+                    chuẩn bị và gán thiết bị trước khi ký hợp đồng online.
                   </div>
                 ) : null)
               )}

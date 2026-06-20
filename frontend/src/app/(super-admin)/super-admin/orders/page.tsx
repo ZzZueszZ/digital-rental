@@ -293,10 +293,13 @@ export default function OrdersAdminPage() {
             : "info"
         }
         isLoading={updateStatusMutation.isPending}
-        onConfirm={() =>
-          pendingStatusChange &&
-          executeUpdateStatus(pendingStatusChange.id, pendingStatusChange.status)
-        }
+        onConfirm={() => {
+          if (!pendingStatusChange) return;
+          return executeUpdateStatus(
+            pendingStatusChange.id,
+            pendingStatusChange.status,
+          );
+        }}
       />
     </div>
   );

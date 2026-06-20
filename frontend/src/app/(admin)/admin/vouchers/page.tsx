@@ -88,7 +88,7 @@ export default function VouchersAdminPage() {
   const handleActivate = (id: number) => {
     setConfirmConfig({
       open: true,
-      title: "Kích hoạt Voucher?",
+      title: "Kích hoạt voucher?",
       description:
         "Voucher này sẽ có thể áp dụng cho các đơn hàng của khách hàng.",
       variant: "info",
@@ -109,7 +109,7 @@ export default function VouchersAdminPage() {
   const handleDeactivate = (id: number) => {
     setConfirmConfig({
       open: true,
-      title: "Vô hiệu hóa Voucher?",
+      title: "Vô hiệu hóa voucher?",
       description: "Khách hàng sẽ không thể sử dụng mã giảm giá này nữa.",
       variant: "danger",
       onConfirm: async () => {
@@ -140,7 +140,7 @@ export default function VouchersAdminPage() {
       {/* KPI Stats */}
       <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Tổng Voucher"
+          title="Tổng voucher"
           value={totalElements}
           trend={0}
           icon={Ticket}
@@ -180,7 +180,7 @@ export default function VouchersAdminPage() {
                   <Ticket className="w-4.5 h-4.5 text-white" strokeWidth={2} />
                 </div>
                 <h2 className="text-2xl font-semibold text-zinc-950 tracking-tight leading-tight">
-                  Quản lý Voucher
+                  Quản lý voucher
                 </h2>
               </div>
               <p className="text-[14px] text-zinc-500 font-medium ml-12">
@@ -206,10 +206,10 @@ export default function VouchersAdminPage() {
                   setSelectedVoucher(null);
                   setIsDialogOpen(true);
                 }}
-                className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-zinc-950 px-5 text-[14px] font-semibold text-white shadow-sm transition-all duration-150 hover:bg-red-600 sm:w-auto"
+                className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-zinc-950 px-5 text-[14px] font-medium text-white shadow-sm transition-all duration-150 hover:bg-red-600 sm:w-auto"
               >
                 <Plus className="w-4 h-4" />
-                Tạo Voucher
+                Tạo voucher
               </Button>
             </div>
           </div>
@@ -223,7 +223,7 @@ export default function VouchersAdminPage() {
               <thead>
                 <tr className="bg-zinc-50/50 border-b border-zinc-100">
                   <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
-                    Mã Voucher
+                    Mã voucher
                   </th>
                   <th className="px-6 py-3.5 text-[13px] font-medium text-zinc-400">
                     Thông tin

@@ -83,7 +83,7 @@ export function VoucherTableRow({
             <Ticket className="w-5 h-5 text-zinc-400 group-hover:text-red-600 transition-colors" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-zinc-950 tracking-tight mb-0.5 group-hover:text-red-600 transition-colors duration-300">
+            <p className="text-sm font-medium text-zinc-950 tracking-tight mb-0.5 group-hover:text-red-600 transition-colors duration-300">
               {voucher.code}
             </p>
             <div className="flex items-center gap-2">
@@ -96,10 +96,10 @@ export function VoucherTableRow({
       </td>
       <td className="px-6 py-3.5">
         <div className="flex flex-col max-w-[200px]">
-          <span className="text-sm font-semibold text-zinc-900 line-clamp-1">
+          <span className="text-sm font-medium text-zinc-900 line-clamp-1">
             {voucher.name}
           </span>
-          <span className="text-xs font-medium text-zinc-400 line-clamp-1 italic">
+          <span className="text-xs font-normal text-zinc-500 line-clamp-1">
             {voucher.description || "Không có mô tả"}
           </span>
         </div>
@@ -109,14 +109,14 @@ export function VoucherTableRow({
           <div className="flex items-center gap-2">
             <Badge
               className={cn(
-                "w-fit min-w-max shrink-0 whitespace-nowrap rounded-xl px-2.5 py-1 text-[10px] font-semibold border ring-0 shadow-none",
+                "w-fit min-w-max shrink-0 whitespace-nowrap rounded-xl px-2.5 py-1 text-[10px] font-medium border ring-0 shadow-none",
                 status.className,
               )}
             >
               {status.label}
             </Badge>
           </div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500">
+          <div className="flex items-center gap-2 text-xs font-medium text-zinc-500">
             <Zap className="w-3.5 h-3.5 text-red-600" />
             <span>
               {voucher.type === "PERCENTAGE"
@@ -138,7 +138,7 @@ export function VoucherTableRow({
                 }}
               />
             </div>
-            <span className="text-xs font-semibold text-zinc-600">
+            <span className="text-xs font-medium text-zinc-600">
               {voucher.usedCount}/{voucher.maxUsage || "∞"}
             </span>
           </div>
@@ -151,7 +151,7 @@ export function VoucherTableRow({
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <Calendar className="w-3.5 h-3.5 text-zinc-300" />
-            <span className="text-xs font-semibold text-zinc-600">
+            <span className="text-xs font-medium text-zinc-600">
               {voucher.endDate
                 ? format(new Date(voucher.endDate), "dd/MM/yy", { locale: vi })
                 : "Vô thời hạn"}
@@ -176,7 +176,7 @@ export function VoucherTableRow({
           >
             <DropdownMenuGroup>
               <DropdownMenuLabel className="text-[10px] font-semibold text-zinc-500 px-3 py-1.5">
-                Tác vụ Voucher
+                Tác vụ voucher
               </DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() => onEdit(voucher)}
@@ -189,7 +189,7 @@ export function VoucherTableRow({
                   onClick={() => onActivate(voucher.id)}
                   className="cursor-pointer text-emerald-700 focus:bg-emerald-50 focus:text-emerald-700"
                 >
-                  <Power className="w-3.5 h-3.5" /> Kích hoạt Voucher
+                  <Power className="w-3.5 h-3.5" /> Kích hoạt voucher
                 </DropdownMenuItem>
               )}
               {voucher.status === "ACTIVE" && (
@@ -197,14 +197,14 @@ export function VoucherTableRow({
                   onClick={() => onDeactivate(voucher.id)}
                   className="cursor-pointer text-amber-700 focus:bg-amber-50 focus:text-amber-700"
                 >
-                  <PowerOff className="w-3.5 h-3.5" /> Tạm dừng Voucher
+                  <PowerOff className="w-3.5 h-3.5" /> Tạm dừng voucher
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem
                 onClick={() => onDelete(voucher.id)}
                 className="cursor-pointer text-red-600"
               >
-                <Trash2 className="w-3.5 h-3.5" /> Xóa Voucher
+                <Trash2 className="w-3.5 h-3.5" /> Xóa voucher
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
@@ -251,7 +251,7 @@ export function VoucherMobileCard({
             <Ticket className="w-4 h-4" />
           </div>
           <div className="flex min-w-0 flex-col">
-            <span className="truncate text-xs font-semibold tracking-tight text-zinc-950">
+            <span className="truncate text-xs font-medium text-zinc-950">
               {voucher.code}
             </span>
             <span className="truncate text-[10px] font-medium text-zinc-500">
@@ -262,7 +262,7 @@ export function VoucherMobileCard({
         <Badge
           variant="outline"
           className={cn(
-            "w-fit min-w-max shrink-0 whitespace-nowrap text-[9px] font-semibold px-2 py-0.5 border",
+            "w-fit min-w-max shrink-0 whitespace-nowrap text-[9px] font-medium px-2 py-0.5 border",
             status.className,
           )}
         >
@@ -275,7 +275,7 @@ export function VoucherMobileCard({
           <span className="mb-1 flex items-center gap-1 text-[9px] font-medium tracking-tight text-zinc-500">
             <Tag className="w-3 h-3" /> Ưu đãi
           </span>
-          <span className="text-xs font-semibold text-zinc-950">
+          <span className="text-xs font-medium text-zinc-950">
             {voucher.type === "PERCENTAGE"
               ? `${voucher.discountValue}%`
               : `${voucher.discountValue.toLocaleString()} ₫`}
@@ -285,7 +285,7 @@ export function VoucherMobileCard({
           <span className="mb-1 flex items-center gap-1 text-[9px] font-medium tracking-tight text-zinc-500">
             <Calendar className="w-3 h-3" /> Hết hạn
           </span>
-          <span className="text-xs font-semibold text-zinc-950">
+          <span className="text-xs font-medium text-zinc-950">
             {voucher.endDate
               ? format(new Date(voucher.endDate), "dd/MM/yy")
               : "∞"}
@@ -297,7 +297,7 @@ export function VoucherMobileCard({
         <Button
           variant="outline"
           onClick={() => onEdit(voucher)}
-          className="h-10 w-full rounded-xl border-zinc-200 bg-white text-[12px] font-semibold tracking-tight text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950"
+          className="h-10 w-full rounded-xl border-zinc-200 bg-white text-[12px] font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950"
         >
           Sửa
         </Button>
@@ -305,7 +305,7 @@ export function VoucherMobileCard({
           <Button
             variant="outline"
             onClick={() => onDeactivate(voucher.id)}
-            className="h-10 w-full rounded-xl border-red-200 bg-red-50 text-[12px] font-semibold tracking-tight text-red-700 hover:bg-red-100 hover:text-red-700"
+            className="h-10 w-full rounded-xl border-red-200 bg-red-50 text-[12px] font-medium text-red-700 hover:bg-red-100 hover:text-red-700"
           >
             Vô hiệu
           </Button>
@@ -313,7 +313,7 @@ export function VoucherMobileCard({
           <Button
             variant="outline"
             onClick={() => onActivate(voucher.id)}
-            className="h-10 w-full rounded-xl border-emerald-200 bg-emerald-50 text-[12px] font-semibold tracking-tight text-emerald-700 hover:bg-emerald-100 hover:text-emerald-700"
+            className="h-10 w-full rounded-xl border-emerald-200 bg-emerald-50 text-[12px] font-medium text-emerald-700 hover:bg-emerald-100 hover:text-emerald-700"
           >
             Mở
           </Button>

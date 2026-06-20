@@ -42,7 +42,7 @@ export function AdminReviewDetailDialog({
     <AdminFormDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Chi tiết Đánh giá"
+      title="Chi tiết đánh giá"
       icon={Star}
       iconClassName="bg-red-600 text-white "
       description={`Quản lý nội dung phản hồi từ khách hàng #${review.userId}`}
@@ -64,10 +64,10 @@ export function AdminReviewDetailDialog({
               )}
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-xs font-semibold text-zinc-400 mb-0.5">
+              <span className="text-xs font-medium text-zinc-500 mb-0.5">
                 Khách hàng
               </span>
-              <span className="text-sm font-semibold text-zinc-950 truncate group-hover:text-red-600 transition-colors">
+              <span className="text-sm font-medium text-zinc-950 truncate group-hover:text-red-600 transition-colors">
                 {review.userName}
               </span>
               <span className="text-[11px] font-medium text-zinc-400">
@@ -81,13 +81,13 @@ export function AdminReviewDetailDialog({
               <Package className="w-6 h-6 text-zinc-400 group-hover:text-red-600 transition-colors" />
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-xs font-semibold text-zinc-400 mb-0.5">
+              <span className="text-xs font-medium text-zinc-500 mb-0.5">
                 Sản phẩm
               </span>
-              <span className="text-sm font-semibold text-zinc-950 truncate">
+              <span className="text-sm font-medium text-zinc-950 truncate">
                 ID: #{review.productId}
               </span>
-              <div className="flex items-center gap-1 text-[11px] font-semibold text-red-600 hover:underline cursor-pointer">
+              <div className="flex items-center gap-1 text-[11px] font-medium text-red-600 hover:underline cursor-pointer">
                 Xem thiết bị <ChevronRight className="w-3 h-3" />
               </div>
             </div>
@@ -99,7 +99,7 @@ export function AdminReviewDetailDialog({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MessageSquare className="w-4 h-4 text-zinc-400" />
-              <span className="text-xs font-semibold text-zinc-900">
+              <span className="text-xs font-medium text-zinc-900">
                 Nội dung đánh giá
               </span>
             </div>
@@ -122,7 +122,7 @@ export function AdminReviewDetailDialog({
             <div className="absolute top-0 right-0 p-4 opacity-[0.03]">
               <MessageSquare className="w-24 h-24" />
             </div>
-            <p className="text-base font-medium text-zinc-600 italic leading-relaxed relative z-10">
+            <p className="text-base font-normal text-zinc-600 leading-relaxed relative z-10">
               &ldquo;{review.content}&rdquo;
             </p>
           </div>
@@ -149,13 +149,13 @@ export function AdminReviewDetailDialog({
 
         {/* Metadata */}
         <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-zinc-100">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-50 border border-zinc-100 text-[11px] font-semibold text-zinc-500">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-50 border border-zinc-100 text-[11px] font-medium text-zinc-500">
             <Calendar className="w-3.5 h-3.5" />
             {new Date(review.createdAt).toLocaleDateString("vi-VN")}
           </div>
           <div
             className={cn(
-              "flex items-center gap-2 px-3 py-1.5 rounded-xl border text-[11px] font-semibold",
+              "flex items-center gap-2 px-3 py-1.5 rounded-xl border text-[11px] font-medium",
               review.hidden
                 ? "bg-zinc-100 text-zinc-400 border-zinc-200"
                 : "bg-emerald-50 text-emerald-600 border-emerald-100",
@@ -172,7 +172,7 @@ export function AdminReviewDetailDialog({
             )}
           </div>
           {review.reporterCount > 0 && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-red-50 text-red-600 border border-red-100 text-[11px] font-semibold animate-pulse">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-red-50 text-red-600 border border-red-100 text-[11px] font-medium animate-pulse">
               <Flag className="w-3.5 h-3.5" /> {review.reporterCount} Báo cáo
             </div>
           )}
@@ -184,7 +184,7 @@ export function AdminReviewDetailDialog({
             {review.hidden ? (
               <Button
                 onClick={() => onUnhide(review.id)}
-                className="flex-1 sm:flex-none h-12 px-8 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-100 font-semibold transition-all duration-200"
+                className="flex-1 sm:flex-none h-11 px-6 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm font-medium transition-all duration-200"
               >
                 <CheckCircle2 className="w-4 h-4 mr-2" />
                 Hiển thị lại
@@ -192,7 +192,7 @@ export function AdminReviewDetailDialog({
             ) : (
               <Button
                 onClick={() => onHide(review.id)}
-                className="flex-1 sm:flex-none h-12 px-8 rounded-xl bg-zinc-950 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-100 font-semibold transition-all duration-200"
+                className="flex-1 sm:flex-none h-11 px-6 rounded-xl bg-zinc-950 text-white hover:bg-zinc-800 shadow-sm font-medium transition-all duration-200"
               >
                 <EyeOff className="w-4 h-4 mr-2" />
                 Ẩn đánh giá
@@ -203,7 +203,7 @@ export function AdminReviewDetailDialog({
           <Button
             variant="ghost"
             onClick={() => onDelete(review.id)}
-            className="w-full sm:w-auto h-12 px-6 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700 font-semibold transition-all duration-200"
+            className="w-full sm:w-auto h-11 px-6 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700 font-medium transition-all duration-200"
           >
             <Trash2 className="w-4 h-4 mr-2" />
             Xóa vĩnh viễn

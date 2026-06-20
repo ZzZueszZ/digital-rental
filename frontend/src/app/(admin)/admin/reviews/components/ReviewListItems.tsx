@@ -19,7 +19,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { ReviewResponse } from "@/types/review";
 import { cn, getImageUrl } from "@/lib/utils";
 
@@ -57,7 +57,7 @@ export function ReviewTableRow({
             )}
           </div>
           <div>
-            <p className="text-sm font-semibold text-zinc-950 tracking-tight mb-0.5 group-hover:text-red-600 transition-colors duration-300">
+            <p className="text-sm font-medium text-zinc-950 tracking-tight mb-0.5 group-hover:text-red-600 transition-colors duration-300">
               {review.userName}
             </p>
             <div className="flex items-center gap-2">
@@ -83,12 +83,12 @@ export function ReviewTableRow({
               />
             ))}
           </div>
-          <span className="text-sm font-medium text-zinc-600 line-clamp-2 leading-relaxed italic">
+          <span className="text-sm font-normal text-zinc-600 line-clamp-2 leading-relaxed">
             &ldquo;{review.content}&rdquo;
           </span>
           {review.images && review.images.length > 0 && (
             <div className="flex items-center gap-1 mt-2">
-              <span className="text-[10px] font-semibold text-zinc-400  tracking-tight bg-zinc-50 px-1.5 py-0.5 rounded-xl border border-zinc-100">
+              <span className="text-[10px] font-medium text-zinc-500 bg-zinc-50 px-1.5 py-0.5 rounded-xl border border-zinc-100">
                 +{review.images.length} ảnh
               </span>
             </div>
@@ -98,7 +98,7 @@ export function ReviewTableRow({
       <td className="px-6 py-4 text-center">
         <div className="flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-xl border border-zinc-100 bg-zinc-50/50 w-fit mx-auto">
           <Clock className="w-3.5 h-3.5 text-zinc-400" />
-          <span className="text-[11px] font-semibold text-zinc-600">
+          <span className="text-[11px] font-medium text-zinc-600">
             {new Date(review.createdAt).toLocaleDateString("vi-VN")}
           </span>
         </div>
@@ -107,7 +107,7 @@ export function ReviewTableRow({
         <div className="flex flex-col items-center gap-1.5">
           <div
             className={cn(
-              "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold w-fit",
+              "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium w-fit",
               review.hidden
                 ? "bg-zinc-100 text-zinc-500 border border-zinc-200"
                 : "bg-emerald-50 text-emerald-600 border border-emerald-100",
@@ -124,7 +124,7 @@ export function ReviewTableRow({
             )}
           </div>
           {review.reporterCount > 0 && (
-            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-100 text-[10px] font-semibold w-fit animate-pulse">
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-100 text-[10px] font-medium w-fit animate-pulse">
               <Flag className="w-2.5 h-2.5" /> {review.reporterCount} Báo cáo
             </div>
           )}
@@ -205,7 +205,7 @@ export function ReviewMobileCard({
             )}
           </div>
           <div>
-            <h4 className="font-semibold text-zinc-950">{review.userName}</h4>
+            <h4 className="font-medium text-zinc-950">{review.userName}</h4>
             <div className="flex items-center gap-1 mt-0.5">
               {[...Array(5)].map((_, i) => (
                 <Star
@@ -223,7 +223,7 @@ export function ReviewMobileCard({
         </div>
         <div
           className={cn(
-            "px-2.5 py-1 rounded-xl border text-[10px] font-semibold",
+            "px-2.5 py-1 rounded-xl border text-[10px] font-medium",
             review.hidden
               ? "bg-zinc-50 text-zinc-400 border-zinc-100"
               : "bg-emerald-50 text-emerald-600 border-emerald-100",
@@ -234,7 +234,7 @@ export function ReviewMobileCard({
       </div>
 
       <div className="bg-zinc-50 rounded-xl p-4 border border-zinc-100/50">
-        <p className="text-sm font-medium text-zinc-600 leading-relaxed italic">
+        <p className="text-sm font-normal text-zinc-600 leading-relaxed">
           &ldquo;{review.content}&rdquo;
         </p>
       </div>
@@ -242,7 +242,7 @@ export function ReviewMobileCard({
       <div className="flex items-center justify-between pt-2">
         <div className="flex items-center gap-2">
           <Clock className="w-3.5 h-3.5 text-zinc-400" />
-          <span className="text-[11px] font-semibold text-zinc-400  tracking-tight">
+          <span className="text-[11px] font-medium text-zinc-500">
             {new Date(review.createdAt).toLocaleDateString("vi-VN")}
           </span>
         </div>

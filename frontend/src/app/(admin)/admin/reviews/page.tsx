@@ -84,6 +84,7 @@ export default function ReviewsAdminPage() {
       await action();
       toast.success(successMsg);
       if (isDetailOpen) setIsDetailOpen(false);
+      setConfirmConfig((prev) => ({ ...prev, open: false }));
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : "Thao tác thất bại";

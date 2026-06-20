@@ -12,7 +12,7 @@ import {
   ProductSpecificationDto,
 } from "@/types/product";
 import { CategoryResponse } from "@/types/category";
-import { cn, getImageUrl } from "@/lib/utils";
+import { cn, getImageUrl, formatMoneyInput, parseMoneyInput } from "@/lib/utils";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import Image from "next/image";
 import {
@@ -412,13 +412,14 @@ export function ProductDialog({
                 </label>
                 <div className="relative">
                   <Input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     disabled={!formData.isForRent}
-                    value={formData.rentPricePerDay || ""}
+                    value={formatMoneyInput(formData.rentPricePerDay)}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        rentPricePerDay: Number(e.target.value),
+                        rentPricePerDay: parseMoneyInput(e.target.value),
                       })
                     }
                     placeholder="Giá / Ngày"
@@ -454,13 +455,14 @@ export function ProductDialog({
                 </label>
                 <div className="relative">
                   <Input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     disabled={!formData.isForSale}
-                    value={formData.salePrice || ""}
+                    value={formatMoneyInput(formData.salePrice)}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        salePrice: Number(e.target.value),
+                        salePrice: parseMoneyInput(e.target.value),
                       })
                     }
                     placeholder="Giá bán đứt"

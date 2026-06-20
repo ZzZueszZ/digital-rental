@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DollarSign, Save } from "lucide-react";
 import { ProductResponse, ProductPriceUpdateRequest } from "@/types/product";
-import { cn } from "@/lib/utils";
+import { cn, formatMoneyInput, parseMoneyInput } from "@/lib/utils";
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 
 interface ProductPriceDialogProps {
@@ -143,13 +143,14 @@ export function ProductPriceDialog({
             </Label>
             <div className="relative">
               <Input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 disabled={!formData.isForRent}
-                value={formData.rentPricePerDay || ""}
+                value={formatMoneyInput(formData.rentPricePerDay)}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    rentPricePerDay: Number(e.target.value),
+                    rentPricePerDay: parseMoneyInput(e.target.value),
                   })
                 }
                 placeholder="Ví dụ: 150000"
@@ -192,13 +193,14 @@ export function ProductPriceDialog({
             </Label>
             <div className="relative">
               <Input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 disabled={!formData.isForSale}
-                value={formData.salePrice || ""}
+                value={formatMoneyInput(formData.salePrice)}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    salePrice: Number(e.target.value),
+                    salePrice: parseMoneyInput(e.target.value),
                   })
                 }
                 placeholder="Ví dụ: 25000000"

@@ -41,7 +41,13 @@ import {
   DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import { cn, formatVND, formatDate } from "@/lib/utils";
+import {
+  cn,
+  formatVND,
+  formatDate,
+  formatMoneyInput,
+  parseMoneyInput,
+} from "@/lib/utils";
 import { Pagination } from "@/app/(staff)/staff/components/Pagination";
 import { EmptyState } from "@/app/(staff)/staff/users/components/EmptyState";
 import { StatCard } from "@/app/(staff)/staff/components/StatCard";
@@ -169,14 +175,6 @@ export function RentalManageView({
   const [earlyReturnDays, setEarlyReturnDays] = useState<number>(0);
   const [lateReturnDays, setLateReturnDays] = useState<number>(0);
   const [damageFee, setDamageFee] = useState<number>(0);
-
-  const formatMoneyInput = (value: number) =>
-    new Intl.NumberFormat("vi-VN").format(Math.max(0, value || 0));
-
-  const parseMoneyInput = (value: string) => {
-    const numericValue = value.replace(/[^\d]/g, "");
-    return numericValue ? Number(numericValue) : 0;
-  };
 
   const returnSettlement = useMemo(() => {
     const dailyRentalTotal =

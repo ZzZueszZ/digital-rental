@@ -18,7 +18,7 @@ import {
   Users,
   ShieldCheck,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatMoneyInput, parseMoneyInput } from "@/lib/utils";
 
 interface VoucherDialogProps {
   open: boolean;
@@ -248,12 +248,20 @@ export function VoucherDialog({
                     Giá trị ({formData.type === "PERCENTAGE" ? "%" : "VNĐ"})
                   </label>
                   <Input
-                    type="number"
-                    value={formData.discountValue || ""}
+                    type={formData.type === "PERCENTAGE" ? "number" : "text"}
+                    inputMode="numeric"
+                    value={
+                      formData.type === "PERCENTAGE"
+                        ? formData.discountValue || ""
+                        : formatMoneyInput(formData.discountValue)
+                    }
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        discountValue: Number(e.target.value),
+                        discountValue:
+                          formData.type === "PERCENTAGE"
+                            ? Number(e.target.value)
+                            : parseMoneyInput(e.target.value),
                       })
                     }
                     placeholder="0"
@@ -268,13 +276,14 @@ export function VoucherDialog({
                     Giảm tối đa (VNĐ)
                   </label>
                   <Input
-                    type="number"
-                    value={formData.maxDiscountAmount || ""}
+                    type="text"
+                    inputMode="numeric"
+                    value={formatMoneyInput(formData.maxDiscountAmount)}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
                         maxDiscountAmount: e.target.value
-                          ? Number(e.target.value)
+                          ? parseMoneyInput(e.target.value)
                           : undefined,
                       })
                     }
@@ -288,12 +297,13 @@ export function VoucherDialog({
                     Đơn tối thiểu (VNĐ)
                   </label>
                   <Input
-                    type="number"
-                    value={formData.minOrderValue || ""}
+                    type="text"
+                    inputMode="numeric"
+                    value={formatMoneyInput(formData.minOrderValue)}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        minOrderValue: Number(e.target.value),
+                        minOrderValue: parseMoneyInput(e.target.value),
                       })
                     }
                     placeholder="0"

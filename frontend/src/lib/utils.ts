@@ -42,6 +42,17 @@ export function formatVND(amount: number): string {
   }).format(amount);
 }
 
+export function formatMoneyInput(value?: number | null): string {
+  const amount = Number(value || 0);
+  if (!amount) return "";
+  return new Intl.NumberFormat("vi-VN").format(Math.max(0, amount));
+}
+
+export function parseMoneyInput(value: string): number {
+  const numericValue = value.replace(/[^\d]/g, "");
+  return numericValue ? Number(numericValue) : 0;
+}
+
 export function formatDate(date: string | Date): string {
   return new Date(date).toLocaleString("vi-VN", {
     year: "numeric",

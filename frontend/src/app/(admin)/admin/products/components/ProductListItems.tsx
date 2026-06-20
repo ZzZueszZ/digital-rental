@@ -28,6 +28,12 @@ interface ItemProps {
   isDeleted: boolean;
 }
 
+const isRentEnabled = (product: ProductResponse) =>
+  product.isForRent ?? product.forRent ?? product.rentPricePerDay > 0;
+
+const isSaleEnabled = (product: ProductResponse) =>
+  product.isForSale ?? product.forSale ?? product.salePrice > 0;
+
 export function ProductTableRow({
   product,
   onEdit,
@@ -85,7 +91,7 @@ export function ProductTableRow({
               variant="outline"
               className={cn(
                 "text-[10px] font-semibold px-1.5 py-0 border-0 shadow-none",
-                product.isForRent
+                isRentEnabled(product)
                   ? "bg-amber-100/50 text-amber-700"
                   : "bg-zinc-100 text-zinc-400",
               )}
@@ -102,7 +108,7 @@ export function ProductTableRow({
               variant="outline"
               className={cn(
                 "text-[10px] font-semibold px-1.5 py-0 border-0 shadow-none",
-                product.isForSale
+                isSaleEnabled(product)
                   ? "bg-blue-100/50 text-blue-700"
                   : "bg-zinc-100 text-zinc-400",
               )}
@@ -131,20 +137,17 @@ export function ProductTableRow({
       </td>
       <td className="px-6 py-3.5">
         <div className="flex flex-col gap-1.5">
-          {product.isForSale && (
+          {isSaleEnabled(product) && (
             <span className="text-xs font-medium text-zinc-600 flex items-center gap-1.5">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
               Bán: <span className="font-semibold text-zinc-900">{product.quantity}</span>
             </span>
           )}
-          {product.isForRent && (
+          {isRentEnabled(product) && (
             <span className="text-xs font-medium text-zinc-600 flex items-center gap-1.5">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" />
               Thuê: <span className="font-semibold text-zinc-900">{product.rentalQuantity ?? 0}</span>
             </span>
-          )}
-          {!product.isForSale && !product.isForRent && (
-            <span className="text-xs text-zinc-400 font-medium">Không cấu hình</span>
           )}
         </div>
       </td>
@@ -257,7 +260,7 @@ export function ProductMobileCard({
             <div
               className={cn(
                 "w-1.5 h-1.5 rounded-full",
-                product.isForRent ? "bg-amber-500" : "bg-zinc-300",
+                isRentEnabled(product) ? "bg-amber-500" : "bg-zinc-300",
               )}
             />{" "}
             Thuê ({product.rentalQuantity ?? 0})
@@ -271,7 +274,7 @@ export function ProductMobileCard({
             <div
               className={cn(
                 "w-1.5 h-1.5 rounded-full",
-                product.isForSale ? "bg-blue-500" : "bg-zinc-300",
+                isSaleEnabled(product) ? "bg-blue-500" : "bg-zinc-300",
               )}
             />{" "}
             Bán ({product.quantity})

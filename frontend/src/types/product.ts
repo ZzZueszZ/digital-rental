@@ -33,6 +33,8 @@ export interface ProductResponse {
   salePrice: number;
   isForRent: boolean;
   isForSale: boolean;
+  forRent?: boolean;
+  forSale?: boolean;
   mainImageUrl: string;
   brand: string;
   specifications: ProductSpecificationResponse[];

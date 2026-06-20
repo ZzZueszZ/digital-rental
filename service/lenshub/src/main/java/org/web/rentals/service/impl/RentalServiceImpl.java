@@ -217,9 +217,7 @@ public class RentalServiceImpl implements RentalService {
             throw new ApplicationException(HttpStatus.FORBIDDEN, "Bạn không có quyền ký hợp đồng này");
         }
 
-        if (order.getStatus() != RentalOrderStatus.PAID_RENTAL_FEE && order.getStatus() != RentalOrderStatus.WAITING_PICKUP) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái đã thanh toán hoặc chờ lấy máy để thực hiện gửi OTP.");
-        }
+        validatePreparedBeforeSigning(order);
 
         RentalContract contract = order.getContract();
         if (contract == null) {
@@ -238,6 +236,22 @@ public class RentalServiceImpl implements RentalService {
         mailService.sendContractSigningOtp(user, otp, order.getCode());
     }
 
+    private void validatePreparedBeforeSigning(RentalOrder order) {
+        if (order.getStatus() != RentalOrderStatus.WAITING_PICKUP) {
+            throw new ApplicationException(
+                    HttpStatus.BAD_REQUEST,
+                    "Chỉ được ký hợp đồng online sau khi nhân viên đã chuẩn bị và gán thiết bị cho đơn thuê."
+            );
+        }
+        if (order.getItems() == null || order.getItems().isEmpty()
+                || order.getItems().stream().anyMatch(item -> item.getDevice() == null)) {
+            throw new ApplicationException(
+                    HttpStatus.BAD_REQUEST,
+                    "Đơn thuê chưa được gán đủ thiết bị vật lý. Vui lòng chờ nhân viên chuẩn bị thiết bị trước khi ký hợp đồng."
+            );
+        }
+    }
+
     @Override
     @Transactional
     public RentalOrderResponse signContract(Long id, User user, SignContractRequest request) {
@@ -248,9 +262,7 @@ public class RentalServiceImpl implements RentalService {
             throw new ApplicationException(HttpStatus.FORBIDDEN, "Bạn không có quyền ký hợp đồng này");
         }
 
-        if (order.getStatus() != RentalOrderStatus.PAID_RENTAL_FEE && order.getStatus() != RentalOrderStatus.WAITING_PICKUP) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Đơn hàng phải ở trạng thái đã thanh toán hoặc chờ lấy máy để thực hiện ký hợp đồng.");
-        }
+        validatePreparedBeforeSigning(order);
 
         RentalContract contract = order.getContract();
         if (contract == null) {
@@ -1096,13 +1108,41 @@ public class RentalServiceImpl implements RentalService {
                     .map(UserProfile::getFullName)
                     .orElse(null)
                 : null;
+        User user = order.getUser();
+        UserIdentity identity = user != null
+                ? userIdentityRepository.findByUserId(user.getId()).orElse(null)
+                : null;
+        VerificationResult latestOcr = resolveLatestOcrResult(user);
+        String receiveAddress = StringUtils.hasText(order.getShippingAddress())
+                ? order.getShippingAddress()
+                : "Nhận tại cửa hàng Digital Rental";
         return RentalOrderResponse.builder()
                 .id(order.getId())
                 .code(order.getCode())
-                .userId(order.getUser() != null ? order.getUser().getId() : null)
+                .userId(user != null ? user.getId() : null)
                 .userFullName(userFullName)
-                .userEmail(order.getUser() != null ? order.getUser().getEmail() : null)
-                .userPhone(order.getUser() != null ? order.getUser().getPhone() : null)
+                .userEmail(user != null ? user.getEmail() : null)
+                .userPhone(user != null ? user.getPhone() : null)
+                .identityNumber(firstText(
+                        identity != null ? identity.getIdentityNumber() : null,
+                        latestOcr != null ? latestOcr.getExtractedIdentityNumber() : null,
+                        null
+                ))
+                .identityIssuedDate(identity != null && identity.getIssuedDate() != null
+                        ? identity.getIssuedDate()
+                        : (latestOcr != null ? latestOcr.getExtractedIssuedDate() : null))
+                .identityIssuedPlace(firstText(
+                        identity != null ? identity.getIssuedPlace() : null,
+                        extractIssuedPlaceFromRawOcr(latestOcr),
+                        null
+                ))
+                .permanentAddress(firstText(
+                        identity != null ? identity.getPlaceOfResidence() : null,
+                        latestOcr != null ? latestOcr.getExtractedPlaceOfResidence() : null,
+                        null
+                ))
+                .currentAddress(resolveCurrentAddress(user, receiveAddress))
+                .verificationLevel(user != null ? user.getKycStatus() + " / " + user.getTrustLevel() : null)
                 .startDate(order.getStartDate())
                 .endDate(order.getEndDate())
                 .status(order.getStatus())
@@ -1194,6 +1234,8 @@ public class RentalServiceImpl implements RentalService {
                 .productMainImageUrl(item.getProduct() != null ? item.getProduct().getMainImageUrl() : null)
                 .deviceId(item.getDevice() != null ? item.getDevice().getId() : null)
                 .deviceSerialNumber(item.getDevice() != null ? item.getDevice().getSerialNumber() : null)
+                .deviceConditionDetails(item.getDevice() != null ? item.getDevice().getConditionDetails() : null)
+                .assetValue(item.getProduct() != null ? item.getProduct().getSalePrice() : BigDecimal.ZERO)
                 .pricePerDay(item.getPricePerDay())
                 .conditionBeforeHandover(item.getConditionBeforeHandover())
                 .conditionAfterReturn(item.getConditionAfterReturn())

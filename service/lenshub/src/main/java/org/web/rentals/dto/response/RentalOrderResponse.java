@@ -6,6 +6,7 @@ import org.web.common.enums.PaymentStatus;
 import org.web.common.enums.RentalOrderStatus;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,6 +22,12 @@ public class RentalOrderResponse {
     private String userFullName;
     private String userEmail;
     private String userPhone;
+    private String identityNumber;
+    private LocalDate identityIssuedDate;
+    private String identityIssuedPlace;
+    private String permanentAddress;
+    private String currentAddress;
+    private String verificationLevel;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private RentalOrderStatus status;

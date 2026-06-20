@@ -65,6 +65,14 @@ export function RentalDetailDialog({
   const [signatureText, setSignatureText] = useState("");
   const [otpCode, setOtpCode] = useState("");
   const [isRetryingPayment, setIsRetryingPayment] = useState(false);
+  const canSignOnline =
+    !!rental &&
+    rental.status === RentalOrderStatus.WAITING_PICKUP &&
+    rental.items.every((item) => !!item.deviceId);
+  const isWaitingForPreparation =
+    !!rental &&
+    rental.status === RentalOrderStatus.PAID_RENTAL_FEE &&
+    !(rental.contract?.isLocked || rental.contract?.locked);
 
   const escapeHtml = (value?: string | null) =>
     (value || "")
@@ -90,6 +98,12 @@ export function RentalDetailDialog({
   };
 
   const handleOpenSignForm = async () => {
+    if (!canSignOnline) {
+      toast.error(
+        "Đơn thuê cần được nhân viên chuẩn bị và gán thiết bị trước khi ký hợp đồng.",
+      );
+      return;
+    }
     try {
       await sendSigningOtp(rentalId);
       toast.success("Mã OTP đã được gửi về email của bạn!");
@@ -145,48 +159,19 @@ export function RentalDetailDialog({
           (1000 * 60 * 60 * 24),
       ) + 1,
     );
-    const productGroups = rental.items.reduce<
-      Record<
-        number,
-        {
-          name: string;
-          quantity: number;
-          pricePerDay: number;
-          serialNumbers: string[];
-        }
-      >
-    >((groups, item) => {
-      const current = groups[item.productId] || {
-        name: item.productName,
-        quantity: 0,
-        pricePerDay: item.pricePerDay,
-        serialNumbers: [],
-      };
-      current.quantity += 1;
-      if (item.deviceSerialNumber) {
-        current.serialNumbers.push(item.deviceSerialNumber);
-      }
-      groups[item.productId] = current;
-      return groups;
-    }, {});
-    const productRows = Object.values(productGroups)
+    const productRows = rental.items
       .map(
         (item, index) => `
  <tr>
  <td>${index + 1}</td>
  <td class="text-left">
- <strong>${item.name}</strong>
- ${
-   item.serialNumbers.length > 0
-     ? `<div class="sub-text">Serial: ${item.serialNumbers.join(", ")}</div>`
-     : ""
- }
+ <strong>${item.productName}</strong>
+ ${item.deviceConditionDetails ? `<div class="sub-text">Tình trạng: ${escapeHtml(item.deviceConditionDetails)}</div>` : ""}
  </td>
- <td>${item.quantity}</td>
+ <td>${item.deviceSerialNumber || "Chưa gán"}</td>
+ <td class="text-right">${formatVND(item.assetValue || 0)}</td>
  <td class="text-right">${formatVND(item.pricePerDay)}</td>
- <td class="text-right">${formatVND(
-   item.pricePerDay * item.quantity * rentalDays,
- )}</td>
+ <td class="text-right">${formatVND(item.pricePerDay * rentalDays)}</td>
  </tr>
  `,
       )
@@ -390,10 +375,33 @@ export function RentalDetailDialog({
  <td>${rental.userPhone || rental.shippingPhone || "Chưa cập nhật"}</td>
  </tr>
  <tr>
- <td class="info-label">Địa điểm nhận:</td>
- <td>${rental.shippingAddress || "Nhận tại cửa hàng Digital Rental"}</td>
+ <td class="info-label">CCCD:</td>
+ <td>${rental.identityNumber || "Ch?a c?p nh?t"}</td>
  </tr>
- </table>
+ <tr>
+ <td class="info-label">Ng?y c?p:</td>
+ <td>${rental.identityIssuedDate ? formatContractDate(rental.identityIssuedDate) : "Ch?a c?p nh?t"}</td>
+ </tr>
+ <tr>
+ <td class="info-label">N?i c?p:</td>
+ <td>${rental.identityIssuedPlace || "Ch?a c?p nh?t"}</td>
+ </tr>
+ <tr>
+ <td class="info-label">??a ch? th??ng tr?:</td>
+ <td>${rental.permanentAddress || "Ch?a c?p nh?t"}</td>
+ </tr>
+ <tr>
+ <td class="info-label">??a ch? hi?n t?i:</td>
+ <td>${rental.currentAddress || rental.shippingAddress || "Ch?a c?p nh?t"}</td>
+ </tr>
+ <tr>
+ <td class="info-label">M?c x?c th?c:</td>
+ <td>${rental.verificationLevel || "Ch?a c?p nh?t"}</td>
+ </tr>
+ <tr>
+ <td class="info-label">??a ?i?m nh?n:</td>
+ <td>${rental.shippingAddress || "Nh?n t?i c?a h?ng Digital Rental"}</td>
+ </tr> </table>
 
  <div class="section-title">II. Thông tin thuê thiết bị</div>
  <table class="info-table">
@@ -417,9 +425,10 @@ export function RentalDetailDialog({
  <tr>
  <th style="width: 7%">STT</th>
  <th>Thiết bị</th>
- <th style="width: 10%">SL</th>
- <th style="width: 20%">Đơn giá/ngày</th>
- <th style="width: 20%">Thành tiền</th>
+ <th style="width: 16%">Serial</th>
+ <th style="width: 18%">Gi? tr? t?i s?n</th>
+ <th style="width: 18%">??n gi?/ng?y</th>
+ <th style="width: 18%">Th?nh ti?n</th>
  </tr>
  </thead>
  <tbody>${productRows}</tbody>
@@ -1277,7 +1286,8 @@ export function RentalDetailDialog({
                 </div>
               ) : (
                 !showSignForm &&
-                !hideSignAction && (
+                !hideSignAction &&
+                (canSignOnline ? (
                   <Button
                     onClick={handleOpenSignForm}
                     disabled={isSendingOtp}
@@ -1288,9 +1298,14 @@ export function RentalDetailDialog({
                     ) : (
                       <FilePenLine className="w-4 h-4" />
                     )}
-                    Tiến hành ký hợp đồng online
+                    Ti?n h?nh k? h?p ??ng online
                   </Button>
-                )
+                ) : isWaitingForPreparation ? (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-medium leading-relaxed text-amber-700">
+                    ??n thu? ?? thanh to?n ph? thu?. Vui l?ng ch? nh?n vi?n
+                    chu?n b? v? g?n thi?t b? tr??c khi k? h?p ??ng online.
+                  </div>
+                ) : null)
               )}
 
               {showSignForm && !hideSignAction && (

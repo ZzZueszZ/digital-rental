@@ -16,6 +16,8 @@ public class RentalOrderItemResponse {
     private String productMainImageUrl;
     private Long deviceId;
     private String deviceSerialNumber;
+    private String deviceConditionDetails;
+    private BigDecimal assetValue;
     private BigDecimal pricePerDay;
     private String conditionBeforeHandover;
     private String conditionAfterReturn;

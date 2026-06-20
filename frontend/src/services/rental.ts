@@ -53,6 +53,8 @@ export interface RentalOrderItemResponse {
   productMainImageUrl?: string;
   deviceId?: number;
   deviceSerialNumber?: string;
+  deviceConditionDetails?: string;
+  assetValue?: number;
   pricePerDay: number;
   conditionBeforeHandover?: string;
   conditionAfterReturn?: string;
@@ -118,6 +120,12 @@ export interface RentalOrderResponse {
   userFullName?: string;
   userEmail: string;
   userPhone: string;
+  identityNumber?: string;
+  identityIssuedDate?: string;
+  identityIssuedPlace?: string;
+  permanentAddress?: string;
+  currentAddress?: string;
+  verificationLevel?: string;
   startDate: string;
   endDate: string;
   status: RentalOrderStatus;

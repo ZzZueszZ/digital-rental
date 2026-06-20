@@ -291,7 +291,7 @@ function getNextStatuses(current: OrderStatus): OrderStatus[] {
     case OrderStatus.SHIPPING:
       return [OrderStatus.DELIVERED];
     case OrderStatus.DELIVERED:
-      return [];
+      return [OrderStatus.COMPLETED];
     default:
       return [];
   }

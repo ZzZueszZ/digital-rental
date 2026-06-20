@@ -21,6 +21,7 @@ import {
 import { OrderResponse, OrderStatus } from "@/types/order";
 import { OrderTableRow, OrderMobileCard } from "./components/OrderListItems";
 import { OrderDetailDialog } from "@/components/common/OrderDetailDialog";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { Pagination } from "../components/Pagination";
 import { EmptyState } from "../users/components/EmptyState";
 import { StatCard } from "../components/StatCard";
@@ -32,6 +33,10 @@ export default function OrdersAdminPage() {
 
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState<{
+    id: number;
+    status: OrderStatus;
+  } | null>(null);
 
   const { data: ordersRes, isLoading } = useAllOrders({ page, size: 10 });
   const updateStatusMutation = useUpdateOrderStatus();
@@ -54,18 +59,45 @@ export default function OrdersAdminPage() {
     setIsDetailOpen(true);
   };
 
-  const handleUpdateStatus = async (id: number, status: OrderStatus) => {
+  const executeUpdateStatus = async (id: number, status: OrderStatus) => {
     try {
       await updateStatusMutation.mutateAsync({ id, status });
-      toast.success("Cập nhật trạng thái đơn hàng thành công");
+      setPendingStatusChange(null);
+      toast.success("C?p nh?t tr?ng th?i ??n h?ng th?nh c?ng");
     } catch (error: unknown) {
       const message =
         error instanceof Error
           ? error.message
-          : "Không thể cập nhật trạng thái";
+          : "Kh?ng th? c?p nh?t tr?ng th?i";
       toast.error(message);
     }
   };
+
+  const handleUpdateStatus = (id: number, status: OrderStatus) => {
+    setPendingStatusChange({ id, status });
+  };
+
+  const pendingOrder = pendingStatusChange
+    ? orders.find((order) => order.id === pendingStatusChange.id)
+    : null;
+
+  const getStatusLabel = (status: OrderStatus) => {
+    switch (status) {
+      case OrderStatus.CONFIRMED:
+        return "?? x?c nh?n";
+      case OrderStatus.SHIPPING:
+        return "?ang giao";
+      case OrderStatus.DELIVERED:
+        return "?? giao";
+      case OrderStatus.COMPLETED:
+        return "Ho?n th?nh";
+      case OrderStatus.CANCELED:
+        return "?? h?y";
+      default:
+        return status;
+    }
+  };
+
 
   const { data: selectedOrder, isLoading: isOrderLoading } = {
     data: selectedOrderId ? orders.find((o) => o.id === selectedOrderId) : null,
@@ -243,6 +275,28 @@ export default function OrdersAdminPage() {
         order={selectedOrder || null}
         isLoading={isOrderLoading}
         isAdminView={true}
+      />
+      <ConfirmDialog
+        open={!!pendingStatusChange}
+        onOpenChange={(open) => !open && setPendingStatusChange(null)}
+        title="Xác nhận cập nhật đơn hàng"
+        description={
+          pendingStatusChange
+            ? `Chuyển đơn ${pendingOrder?.code ? `#${pendingOrder.code}` : "này"} sang trạng thái "${getStatusLabel(pendingStatusChange.status)}"?`
+            : ""
+        }
+        confirmText="Xác nhận"
+        cancelText="Hủy"
+        variant={
+          pendingStatusChange?.status === OrderStatus.CANCELED
+            ? "danger"
+            : "info"
+        }
+        isLoading={updateStatusMutation.isPending}
+        onConfirm={() =>
+          pendingStatusChange &&
+          executeUpdateStatus(pendingStatusChange.id, pendingStatusChange.status)
+        }
       />
     </div>
   );

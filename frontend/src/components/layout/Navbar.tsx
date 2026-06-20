@@ -29,6 +29,7 @@ import {
 import Routers from "@/constants/routers";
 import { useAuthSession } from "@/components/auth/Guards";
 import { Role } from "@/constants/enum/role";
+import { useMyCart } from "@/services/cart";
 
 const navigationItems = [
   { label: "Thiết bị", href: "/products", icon: Camera },
@@ -42,6 +43,13 @@ export function Navbar() {
   const { user, isAuthenticated, isLoading, logout } = useAuthSession({
     redirectToLogin: false,
   });
+  const { data: cartResponse } = useMyCart({
+    enabled: !isLoading && isAuthenticated,
+  });
+
+  const cartItemsCount =
+    cartResponse?.data?.reduce((total, item) => total + item.quantity, 0) ?? 0;
+  const cartBadgeText = cartItemsCount > 99 ? "99+" : String(cartItemsCount);
 
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
@@ -111,13 +119,13 @@ export function Navbar() {
             </Button>
 
             <Link
-              href="/profile?section=cart"
+              href="/profile/cart"
               className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-950"
               aria-label="Giỏ hàng"
             >
               <ShoppingBag className="h-4 w-4" />
               <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full border-2 border-white bg-red-600 px-0.5 text-[9px] font-medium text-white">
-                0
+                {cartBadgeText}
               </span>
             </Link>
 

@@ -14,10 +14,11 @@ export const CART_KEYS = {
   all: ["cart"] as const,
 };
 
-export const useMyCart = () => {
+export const useMyCart = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: CART_KEYS.all,
     queryFn: () => http.get<ICartRes>("/carts").then(res => res.data),
+    enabled: options?.enabled ?? true,
   });
 };
 

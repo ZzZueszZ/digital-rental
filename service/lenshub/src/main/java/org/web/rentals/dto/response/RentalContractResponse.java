@@ -16,8 +16,10 @@ public class RentalContractResponse {
     private String termsAndConditions;
     private int contractVersion;
     private String contractHash;
+    private String documentHash;
     private Long signerUserId;
     private String signerIp;
+    private String signerUserAgent;
     private org.web.common.enums.ContractStatus status;
     private LocalDateTime signedAt;
     private String lessorSignature;

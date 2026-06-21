@@ -2,6 +2,7 @@ package org.web.rentals.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -100,11 +101,30 @@ public class RentalController {
     public ResponseEntity<ApiResponse<RentalOrderResponse>> signContract(
             Authentication authentication,
             @PathVariable Long id,
-            @RequestBody @Valid SignContractRequest request
+            @RequestBody @Valid SignContractRequest request,
+            HttpServletRequest servletRequest
     ) {
         User user = getCurrentUser(authentication);
-        RentalOrderResponse response = rentalService.signContract(id, user, request);
+        RentalOrderResponse response = rentalService.signContract(
+                id,
+                user,
+                request,
+                resolveClientIp(servletRequest),
+                servletRequest.getHeader("User-Agent")
+        );
         return ResponseEntity.ok(ApiResponse.successfulResponse("Ký hợp đồng online thành công", response));
+    }
+
+    private String resolveClientIp(HttpServletRequest request) {
+        String forwardedFor = request.getHeader("X-Forwarded-For");
+        if (forwardedFor != null && !forwardedFor.isBlank()) {
+            return forwardedFor.split(",")[0].trim();
+        }
+        String realIp = request.getHeader("X-Real-IP");
+        if (realIp != null && !realIp.isBlank()) {
+            return realIp.trim();
+        }
+        return request.getRemoteAddr();
     }
 
     // ================= STAFF / ADMIN ENDPOINTS =================

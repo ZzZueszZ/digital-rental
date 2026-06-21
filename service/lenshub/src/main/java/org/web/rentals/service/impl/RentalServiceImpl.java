@@ -34,6 +34,9 @@ import org.web.users.repository.UserProfileRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -89,10 +92,7 @@ public class RentalServiceImpl implements RentalService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Ngày bắt đầu phải trước ngày trả thiết bị");
         }
 
-        long days = ChronoUnit.DAYS.between(request.getStartDate().toLocalDate(), request.getEndDate().toLocalDate());
-        if (days <= 0) {
-            days = 1; // Minimum is 1 day rental
-        }
+        long days = calculateRentalDays(request.getStartDate().toLocalDate(), request.getEndDate().toLocalDate());
 
         List<RentalOrderItem> orderItems = new ArrayList<>();
         BigDecimal totalRentalFee = BigDecimal.ZERO;
@@ -254,7 +254,7 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     @Transactional
-    public RentalOrderResponse signContract(Long id, User user, SignContractRequest request) {
+    public RentalOrderResponse signContract(Long id, User user, SignContractRequest request, String signerIp, String signerUserAgent) {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn hàng thuê"));
 
@@ -285,10 +285,14 @@ public class RentalServiceImpl implements RentalService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Mã OTP không chính xác.");
         }
 
+        LocalDateTime signedAt = LocalDateTime.now();
         contract.setContractHash(request.getSignature());
+        contract.setDocumentHash(calculateDocumentHash(contract, order, user, signedAt));
         contract.setStatus(org.web.common.enums.ContractStatus.SIGNED);
         contract.setSignerUserId(user.getId());
-        contract.setSignedAt(LocalDateTime.now());
+        contract.setSignerIp(trimToLength(signerIp, 50));
+        contract.setSignerUserAgent(trimToLength(signerUserAgent, 500));
+        contract.setSignedAt(signedAt);
         contract.setLocked(true);
         contract.setSigningOtpCode(null);
         contract.setSigningOtpExpiresAt(null);
@@ -913,56 +917,56 @@ public class RentalServiceImpl implements RentalService {
     }
 
     private void appendExpandedRentalContractTerms(StringBuilder terms) {
-        terms.append("\n\nV. QUY TRÌNH BÀN GIAO THIẾT BỊ\n");
-        terms.append("Bên cho thuê kiểm tra thiết bị, serial, phụ kiện và tình trạng trước khi bàn giao.\n");
-        terms.append("Bên thuê phải kiểm tra lại thiết bị khi nhận. Nếu tiếp nhận thiết bị, bên thuê được xem là đã đồng ý với tình trạng ghi nhận trong biên bản bàn giao.\n");
+        terms.append("\n\n4.1. QUY TRÌNH BÀN GIAO THIẾT BỊ\n");
+        terms.append("Bên A kiểm tra thiết bị, serial, phụ kiện và tình trạng trước khi bàn giao.\n");
+        terms.append("Bên B phải kiểm tra lại thiết bị khi nhận. Nếu tiếp nhận thiết bị, bên B được xem là đã đồng ý với tình trạng ghi nhận trong biên bản bàn giao.\n");
 
-        terms.append("\nVI. QUYỀN VÀ NGHĨA VỤ CỦA BÊN A\n");
+        terms.append("\n4.2. QUYỀN VÀ NGHĨA VỤ CỦA BÊN A\n");
         terms.append("Bên A có trách nhiệm cung cấp thiết bị đúng mô tả, hỗ trợ kỹ thuật cơ bản và hoàn tiền cọc/hoàn phí hợp lệ sau khi đối soát.\n");
-        terms.append("Bên A có quyền từ chối bàn giao nếu bên thuê chưa hoàn tất eKYC, chưa ký hợp đồng, chưa thanh toán phí thuê hoặc tiền cọc theo quy định.\n");
+        terms.append("Bên A có quyền từ chối bàn giao nếu bên B chưa hoàn tất eKYC, chưa ký hợp đồng, chưa thanh toán phí thuê hoặc tiền cọc theo quy định.\n");
 
-        terms.append("\nVII. QUYỀN VÀ NGHĨA VỤ CỦA BÊN B\n");
-        terms.append("Bên B có trách nhiệm sử dụng thiết bị đúng mục đích, bảo quản cẩn thận, không tự ý tháo lắp, sửa chữa, cho thuê lại hoặc chuyển giao cho bên thứ ba.\n");
+        terms.append("\n4.3. QUYỀN VÀ NGHĨA VỤ CỦA BÊN B\n");
+        terms.append("Bên B có trách nhiệm sử dụng thiết bị đúng mục đích, bảo quản cẩn thận, không tự ý tháo lắp, sửa chữa hoặc giao thiết bị cho người khác khi chưa được chấp thuận.\n");
         terms.append("Bên B phải trả thiết bị đúng hạn, đúng tình trạng đã nhận và phối hợp xác minh khi có tranh chấp về thiết bị.\n");
 
-        terms.append("\nVIII. QUY ĐỊNH VỀ HƯ HỎNG, MẤT MÁT VÀ BỒI THƯỜNG\n");
+        terms.append("\n4.4. QUY ĐỊNH VỀ HƯ HỎNG, MẤT MÁT VÀ BỒI THƯỜNG\n");
         terms.append("Nếu thiết bị hư hỏng, mất mát hoặc thiếu phụ kiện, bên B phải thanh toán chi phí sửa chữa, thay thế hoặc bồi thường theo kết quả thẩm định.\n");
         terms.append("- Mất thiết bị: bên B bồi thường 100% giá trị thị trường hoặc giá trị tài sản ghi trong hợp đồng, tùy mức được bên A xác định tại thời điểm xử lý.\n");
         terms.append("- Hư hỏng sửa được: bên B thanh toán toàn bộ chi phí sửa chữa, kiểm tra, vận chuyển và thời gian thiết bị ngừng khai thác nếu có.\n");
         terms.append("- Hư hỏng không sửa được: bên B bồi thường giá trị còn lại hoặc giá trị thay thế của thiết bị theo kết quả thẩm định.\n");
         terms.append("Chi phí phát sinh được trừ vào tiền cọc và/hoặc khoản hoàn phí trả sớm. Nếu chi phí vượt quá số tiền được khấu trừ, bên B phải thanh toán phần chênh lệch.\n");
 
-        terms.append("\nVIII-A. ĐIỀU KHOẢN MẤT CẮP\n");
+        terms.append("\n4.5. ĐIỀU KHOẢN MẤT CẮP\n");
         terms.append("Nếu thiết bị bị mất cắp, bên B phải thông báo cho bên A trong vòng 02 giờ kể từ thời điểm phát hiện sự việc.\n");
         terms.append("Bên B phải trình báo cơ quan công an có thẩm quyền và cung cấp biên bản tiếp nhận/trình báo cho bên A.\n");
         terms.append("Việc có biên bản công an không miễn trừ nghĩa vụ bồi thường, hoàn trả hoặc thanh toán các khoản phát sinh theo hợp đồng.\n");
 
-        terms.append("\nIX. QUY ĐỊNH VỀ TRẢ TRỄ, TRẢ SỚM VÀ GIA HẠN\n");
+        terms.append("\n4.6. QUY ĐỊNH VỀ TRẢ TRỄ, TRẢ SỚM VÀ GIA HẠN\n");
         terms.append("Trả trễ bị tính phụ thu 150% phí thuê mỗi ngày cho mỗi ngày quá hạn.\n");
         terms.append("Trả sớm được hoàn 80% phí thuê của số ngày chưa sử dụng, sau khi trừ các khoản phát sinh nếu có.\n");
         terms.append("Mọi yêu cầu gia hạn phải được bên A xác nhận trước khi hết hạn thuê và phụ thu sẽ được tính theo đơn giá hiện hành.\n");
 
-        terms.append("\nIX-A. CẤM CHO THUÊ LẠI VÀ CHUYỂN GIAO THIẾT BỊ\n");
+        terms.append("\n4.7. CẤM CHO THUÊ LẠI VÀ CHUYỂN GIAO THIẾT BỊ\n");
         terms.append("Bên B không được cho người khác mượn, cho thuê lại, cầm cố, thế chấp, chuyển giao quyền sử dụng hoặc giao thiết bị cho bên thứ ba khi chưa có chấp thuận bằng văn bản của bên A.\n");
         terms.append("Nếu vi phạm, bên A có quyền chấm dứt hợp đồng ngay, yêu cầu hoàn trả thiết bị và xử lý toàn bộ thiệt hại phát sinh.\n");
 
-        terms.append("\nX. XỬ LÝ VI PHẠM VÀ CHẤM DỨT HỢP ĐỒNG\n");
+        terms.append("\n4.8. XỬ LÝ VI PHẠM VÀ CHẤM DỨT HỢP ĐỒNG\n");
         terms.append("Hợp đồng có thể bị chấm dứt nếu bên B cung cấp thông tin sai, không thanh toán, không trả thiết bị hoặc vi phạm nghiêm trọng nghĩa vụ bảo quản.\n");
         terms.append("Bên A có quyền ghi nhận sự cố, tạm giữ tiền cọc và thực hiện các biện pháp cần thiết để bảo vệ tài sản.\n");
         terms.append("Nếu quá hạn 07 ngày mà bên B không liên hệ hoặc không hoàn trả thiết bị, hành vi có thể bị xem xét là chiếm giữ trái phép tài sản. Bên A có quyền sử dụng hồ sơ eKYC, hợp đồng, biên bản bàn giao, nhật ký hệ thống và chứng từ liên quan để làm việc với cơ quan có thẩm quyền.\n");
 
-        terms.append("\nXI. BẢO MẬT VÀ XÁC THỰC ĐIỆN TỬ\n");
+        terms.append("\n4.9. BẢO MẬT VÀ XÁC THỰC ĐIỆN TỬ\n");
         terms.append("Bên B đồng ý việc hệ thống sử dụng thông tin tài khoản, eKYC, OTP, chữ ký điện tử và nhật ký thao tác để xác minh giao dịch thuê.\n");
         terms.append("Dữ liệu nhạy cảm được bảo vệ theo cơ chế xác thực, phân quyền và các lớp bảo mật của hệ thống, bao gồm E2EE-SHIELD đối với API phù hợp.\n");
 
-        terms.append("\nXII. GIẢI QUYẾT TRANH CHẤP\n");
+        terms.append("\n4.10. GIẢI QUYẾT TRANH CHẤP\n");
         terms.append("Mọi tranh chấp phát sinh sẽ được ưu tiên giải quyết bằng thương lượng trên cơ sở dữ liệu đơn thuê, hợp đồng, biên bản bàn giao, biên bản hoàn trả và nhật ký hệ thống.\n");
 
-        terms.append("\nXIII. CAM KẾT CỦA CÁC BÊN\n");
+        terms.append("\n4.11. CAM KẾT CỦA CÁC BÊN\n");
         terms.append("Các bên cam kết thông tin cung cấp là trung thực, đã đọc và đồng ý với toàn bộ nội dung hợp đồng trước khi ký điện tử.\n");
         terms.append("Hợp đồng có hiệu lực từ thời điểm được ký điện tử bởi các bên trên hệ thống Digital Rental.\n");
 
-        terms.append("\nPHỤ LỤC ĐÍNH KÈM\n");
+        terms.append("\n4.12. PHỤ LỤC ĐÍNH KÈM\n");
         terms.append("Phụ lục gồm: thông tin thiết bị/serial, biên bản bàn giao, biên bản hoàn trả, bảng tính phí phát sinh, lịch sử thanh toán và nhật ký ký điện tử nếu có.");
     }
 
@@ -1096,8 +1100,45 @@ public class RentalServiceImpl implements RentalService {
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
+    private long calculateRentalDays(LocalDate startDate, LocalDate endDate) {
+        if (startDate == null || endDate == null) {
+            return 1;
+        }
+        long days = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        return Math.max(1, days);
+    }
+
     private BigDecimal safeAmount(BigDecimal value) {
         return value != null ? value : BigDecimal.ZERO;
+    }
+
+    private String calculateDocumentHash(RentalContract contract, RentalOrder order, User signer, LocalDateTime signedAt) {
+        String raw = String.join("|",
+                contract.getContractNumber() != null ? contract.getContractNumber() : "",
+                contract.getTermsAndConditions() != null ? contract.getTermsAndConditions() : "",
+                order.getCode() != null ? order.getCode() : "",
+                signer.getId() != null ? signer.getId().toString() : "",
+                signedAt != null ? signedAt.toString() : ""
+        );
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(raw.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hex = new StringBuilder(hash.length * 2);
+            for (byte b : hash) {
+                hex.append(String.format("%02x", b));
+            }
+            return hex.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 algorithm is not available", e);
+        }
+    }
+
+    private String trimToLength(String value, int maxLength) {
+        if (!StringUtils.hasText(value)) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.length() <= maxLength ? trimmed : trimmed.substring(0, maxLength);
     }
 
     // Hand-written DTO Converters
@@ -1250,8 +1291,10 @@ public class RentalServiceImpl implements RentalService {
                 .termsAndConditions(contract.getTermsAndConditions())
                 .contractVersion(contract.getContractVersion())
                 .contractHash(contract.getContractHash())
+                .documentHash(contract.getDocumentHash())
                 .signerUserId(contract.getSignerUserId())
                 .signerIp(contract.getSignerIp())
+                .signerUserAgent(contract.getSignerUserAgent())
                 .status(contract.getStatus())
                 .signedAt(contract.getSignedAt())
                 .lessorSignature(contract.getLessorSignature())

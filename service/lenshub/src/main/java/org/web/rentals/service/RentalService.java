@@ -23,7 +23,7 @@ public interface RentalService {
 
     void sendSigningOtp(Long id, User user);
 
-    RentalOrderResponse signContract(Long id, User user, SignContractRequest request);
+    RentalOrderResponse signContract(Long id, User user, SignContractRequest request, String signerIp, String signerUserAgent);
 
     RentalOrderResponse payDeposit(Long id);
 

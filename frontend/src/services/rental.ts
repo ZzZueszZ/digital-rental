@@ -66,9 +66,11 @@ export interface RentalContractResponse {
   contractVersion: number;
   termsAndConditions: string;
   contractHash?: string;
+  documentHash?: string;
   signedAt?: string;
   signerUserId?: number;
   signerIp?: string;
+  signerUserAgent?: string;
   isLocked: boolean;
   locked?: boolean;
   status: ContractStatus;

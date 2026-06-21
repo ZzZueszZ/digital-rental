@@ -82,6 +82,26 @@ export function RentalDetailDialog({
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
 
+  const parseDateOnly = (value?: string | null) => {
+    if (!value) return null;
+    const [year, month, day] = value.split("T")[0].split("-").map(Number);
+    if (!year || !month || !day) return null;
+    return new Date(year, month - 1, day);
+  };
+
+  const calculateInclusiveRentalDays = (
+    startDate?: string | null,
+    endDate?: string | null,
+  ) => {
+    const start = parseDateOnly(startDate);
+    const end = parseDateOnly(endDate);
+    if (!start || !end) return 1;
+
+    const dayMs = 1000 * 60 * 60 * 24;
+    const diffDays = Math.round((end.getTime() - start.getTime()) / dayMs) + 1;
+    return Math.max(1, diffDays);
+  };
+
   const handleRetryPayment = async () => {
     try {
       setIsRetryingPayment(true);
@@ -151,14 +171,30 @@ export function RentalDetailDialog({
       signature ||
       rental.shippingName ||
       rental.userEmail;
-    const rentalDays = Math.max(
-      1,
-      Math.ceil(
-        (new Date(rental.endDate).getTime() -
-          new Date(rental.startDate).getTime()) /
-          (1000 * 60 * 60 * 24),
-      ) + 1,
+    const rentalDays = calculateInclusiveRentalDays(
+      rental.startDate,
+      rental.endDate,
     );
+    const contractRentalFee = rental.items.reduce(
+      (total, item) => total + item.pricePerDay * rentalDays,
+      0,
+    );
+    const contractAdditionalFee = rental.additionalFee || 0;
+    const isContractSigned = !!(
+      rental.contract.isLocked || rental.contract.locked
+    );
+    const signatureDateCode = rental.contract.signedAt
+      ? rental.contract.signedAt.slice(0, 10).replace(/-/g, "")
+      : new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const signatureCode = isContractSigned
+      ? `SIG-${signatureDateCode}-${String(rental.contract.id).padStart(6, "0")}`
+      : "Chưa ký";
+    const otpStatus =
+      isContractSigned &&
+      rental.contract.contractHash !== "OFFLINE_PHYSICAL_SIGNATURE"
+        ? "Thành công"
+        : "Không áp dụng";
+    const signerDevice = rental.contract.signerUserAgent || "Chưa ghi nhận";
     const productRows = rental.items
       .map(
         (item, index) => `
@@ -176,39 +212,21 @@ export function RentalDetailDialog({
  `,
       )
       .join("");
-    const legalTerms = [
-      "Bên thuê có trách nhiệm kiểm tra thiết bị khi nhận và bàn giao đúng tình trạng trong biên bản nhận.",
-      "Tiền cọc sẽ được hoàn lại sau khi thiết bị được trả và thẩm định không có lỗi, hư hỏng hoặc thiếu phụ kiện.",
-      "Trường hợp trả trễ hạn, mức phạt là 150% phí thuê hằng ngày của mỗi ngày trễ hạn.",
-      "Mọi tranh chấp sẽ được ưu tiên thương lượng giữa hai bên.",
-    ]
-      .map(
-        (term, index) => `<p><strong>Điều ${index + 1}:</strong> ${term}</p>`,
-      )
-      .join("");
     const expandedContractTerms = `
- <p><strong>V. Quy trình bàn giao thiết bị:</strong> Digital Rental kiểm tra thiết bị, serial, phụ kiện và tình trạng trước khi bàn giao. Người thuê cần kiểm tra lại khi nhận; nếu tiếp nhận thiết bị thì được xem là đồng ý với tình trạng ghi nhận trong biên bản bàn giao.</p>
- <p><strong>VI. Quyền và nghĩa vụ của bên cho thuê:</strong> Cung cấp thiết bị đúng mô tả, hỗ trợ kỹ thuật cơ bản, ghi nhận biên bản giao nhận và hoàn tiền cọc/hoàn phí hợp lệ sau khi đối soát. Bên cho thuê có quyền từ chối bàn giao nếu người thuê chưa hoàn tất eKYC, chưa ký hợp đồng hoặc chưa thanh toán theo quy định.</p>
- <p><strong>VII. Quyền và nghĩa vụ của bên thuê:</strong> Sử dụng thiết bị đúng mục đích, bảo quản cẩn thận, không tự ý tháo lắp, sửa chữa, cho thuê lại hoặc chuyển giao cho bên thứ ba. Người thuê phải trả thiết bị đúng hạn, đúng tình trạng và phối hợp xác minh khi có tranh chấp.</p>
- <p><strong>VIII. Hư hỏng, mất mát và bồi thường:</strong> Nếu thiết bị hư hỏng, mất mát hoặc thiếu phụ kiện, người thuê thanh toán chi phí sửa chữa, thay thế hoặc bồi thường theo kết quả thẩm định. Chi phí phát sinh được khấu trừ vào tiền cọc và/hoặc khoản hoàn phí trả sớm; nếu vượt quá số được khấu trừ, người thuê thanh toán phần chênh lệch.</p>
- <p><strong>IX. Trả trễ, trả sớm và gia hạn:</strong> Trả trễ bị tính phụ thu 150% phí thuê mỗi ngày cho mỗi ngày quá hạn. Trả sớm có thể được hoàn phần phí thuê của số ngày chưa sử dụng sau khi trừ các khoản phát sinh, nếu chính sách tại thời điểm xử lý cho phép. Mọi yêu cầu gia hạn cần được xác nhận trước khi hết hạn thuê.</p>
- <p><strong>X. Xử lý vi phạm và chấm dứt hợp đồng:</strong> Hợp đồng có thể bị chấm dứt nếu người thuê cung cấp thông tin sai, không thanh toán, không trả thiết bị hoặc vi phạm nghiêm trọng nghĩa vụ bảo quản. Digital Rental có quyền ghi nhận sự cố, tạm giữ tiền cọc và thực hiện biện pháp cần thiết để bảo vệ tài sản.</p>
- <p><strong>XI. Bảo mật và xác thực điện tử:</strong> Người thuê đồng ý việc hệ thống sử dụng thông tin tài khoản, eKYC, OTP, chữ ký điện tử và nhật ký thao tác để xác minh giao dịch thuê. Dữ liệu nhạy cảm được bảo vệ theo cơ chế xác thực, phân quyền và các lớp bảo mật của hệ thống, bao gồm E2EE-SHIELD đối với API phù hợp.</p>
- <p><strong>XII. Giải quyết tranh chấp:</strong> Mọi tranh chấp được ưu tiên giải quyết bằng thương lượng trên cơ sở dữ liệu đơn thuê, hợp đồng, biên bản bàn giao, biên bản hoàn trả, lịch sử thanh toán và nhật ký hệ thống.</p>
- <p><strong>XIII. Cam kết của các bên:</strong> Các bên cam kết thông tin cung cấp là trung thực, đã đọc và đồng ý với toàn bộ nội dung hợp đồng trước khi ký điện tử. Hợp đồng có hiệu lực từ thời điểm được ký điện tử bởi các bên trên hệ thống Digital Rental.</p>
- <p><strong>Phụ lục đính kèm:</strong> Thông tin thiết bị/serial, biên bản bàn giao, biên bản hoàn trả, bảng tính phí phát sinh, lịch sử thanh toán và nhật ký ký điện tử nếu có.</p>
+ <p><strong>4.1. QUY TRÌNH BÀN GIAO THIẾT BỊ</strong><br>Digital Rental kiểm tra thiết bị, serial, phụ kiện và tình trạng trước khi bàn giao. Người thuê cần kiểm tra lại khi nhận; nếu tiếp nhận thiết bị thì được xem là đồng ý với tình trạng ghi nhận trong biên bản bàn giao.</p>
+ <p><strong>4.2. QUYỀN VÀ NGHĨA VỤ CỦA BÊN A</strong><br>Bên A cung cấp thiết bị đúng mô tả, hỗ trợ kỹ thuật cơ bản, ghi nhận biên bản giao nhận và hoàn tiền cọc/hoàn phí hợp lệ sau khi đối soát. Bên A có quyền từ chối bàn giao nếu bên B chưa hoàn tất eKYC, chưa ký hợp đồng hoặc chưa thanh toán theo quy định.</p>
+ <p><strong>4.3. QUYỀN VÀ NGHĨA VỤ CỦA BÊN B</strong><br>Bên B sử dụng thiết bị đúng mục đích, bảo quản cẩn thận, không tự ý tháo lắp, sửa chữa hoặc giao thiết bị cho người khác khi chưa được chấp thuận. Bên B phải trả thiết bị đúng hạn, đúng tình trạng và phối hợp xác minh khi có tranh chấp.</p>
+ <p><strong>4.4. QUY ĐỊNH VỀ HƯ HỎNG, MẤT MÁT VÀ BỒI THƯỜNG</strong><br>Mất thiết bị: bồi thường 100% giá trị thị trường hoặc giá trị tài sản ghi trong hợp đồng. Hư hỏng sửa được: thanh toán toàn bộ chi phí sửa chữa, kiểm tra, vận chuyển và thời gian thiết bị ngừng khai thác nếu có. Hư hỏng không sửa được: bồi thường giá trị còn lại hoặc giá trị thay thế theo kết quả thẩm định.</p>
+ <p><strong>4.5. ĐIỀU KHOẢN MẤT CẮP</strong><br>Nếu thiết bị bị mất cắp, bên B phải thông báo cho bên A trong vòng 02 giờ, trình báo cơ quan công an có thẩm quyền và cung cấp biên bản tiếp nhận/trình báo. Biên bản công an không miễn trừ nghĩa vụ bồi thường hoặc thanh toán các khoản phát sinh.</p>
+ <p><strong>4.6. QUY ĐỊNH VỀ TRẢ TRỄ, TRẢ SỚM VÀ GIA HẠN</strong><br>Trả trễ bị tính phụ thu 150% phí thuê mỗi ngày cho mỗi ngày quá hạn. Trả sớm được hoàn 80% phí thuê của số ngày chưa sử dụng, sau khi trừ các khoản phát sinh nếu có. Mọi yêu cầu gia hạn cần được bên A xác nhận trước khi hết hạn thuê.</p>
+ <p><strong>4.7. CẤM CHO THUÊ LẠI VÀ CHUYỂN GIAO THIẾT BỊ</strong><br>Bên B không được cho người khác mượn, cho thuê lại, cầm cố, thế chấp, chuyển giao quyền sử dụng hoặc giao thiết bị cho bên thứ ba khi chưa có chấp thuận bằng văn bản của bên A.</p>
+ <p><strong>4.8. XỬ LÝ VI PHẠM VÀ CHẤM DỨT HỢP ĐỒNG</strong><br>Hợp đồng có thể bị chấm dứt nếu bên B cung cấp thông tin sai, không thanh toán, không trả thiết bị hoặc vi phạm nghiêm trọng nghĩa vụ bảo quản. Nếu quá hạn 07 ngày mà bên B không liên hệ hoặc không hoàn trả thiết bị, hành vi có thể bị xem xét là chiếm giữ trái phép tài sản.</p>
+ <p><strong>4.9. BẢO MẬT VÀ XÁC THỰC ĐIỆN TỬ</strong><br>Bên B đồng ý việc hệ thống sử dụng thông tin tài khoản, eKYC, OTP, chữ ký điện tử và nhật ký thao tác để xác minh giao dịch thuê. Dữ liệu nhạy cảm được bảo vệ theo cơ chế xác thực, phân quyền và E2EE-SHIELD đối với API phù hợp.</p>
+ <p><strong>4.10. GIẢI QUYẾT TRANH CHẤP</strong><br>Mọi tranh chấp được ưu tiên giải quyết bằng thương lượng trên cơ sở dữ liệu đơn thuê, hợp đồng, biên bản bàn giao, biên bản hoàn trả, lịch sử thanh toán và nhật ký hệ thống.</p>
+ <p><strong>4.11. CAM KẾT CỦA CÁC BÊN</strong><br>Các bên cam kết thông tin cung cấp là trung thực, đã đọc và đồng ý với toàn bộ nội dung hợp đồng trước khi ký điện tử. Hợp đồng có hiệu lực từ thời điểm được ký điện tử bởi các bên trên hệ thống Digital Rental.</p>
+ <p><strong>4.12. PHỤ LỤC ĐÍNH KÈM</strong><br>Phụ lục gồm: thông tin thiết bị/serial, biên bản bàn giao, biên bản hoàn trả, bảng tính phí phát sinh, lịch sử thanh toán và nhật ký ký điện tử nếu có.</p>
  `;
-    const rawContractTerms = rental.contract.termsAndConditions || "";
-    const expandedTermsStart = rawContractTerms.search(/\nV\.\s/);
-    const printableContractTerms =
-      expandedTermsStart >= 0
-        ? rawContractTerms.slice(expandedTermsStart).trim()
-        : rawContractTerms;
-    const contractTermsHtml = printableContractTerms
-      ? `<pre style="white-space: pre-wrap; font-family: 'Times New Roman', Times, serif; font-size: 14px; line-height: 1.65; margin: 0;">${escapeHtml(
-          printableContractTerms,
-        )}</pre>`
-      : `${legalTerms}${expandedContractTerms}`;
+    const contractTermsHtml = expandedContractTerms;
 
     printWindow.document.write(`
  <html>
@@ -332,6 +350,31 @@ export function RentalDetailDialog({
  background-color: #f9fafb;
  color: #6b7280;
  }
+ .signature-audit {
+ margin-top: 24px;
+ border: 1px solid #d1d5db;
+ padding: 12px;
+ border-radius: 8px;
+ page-break-inside: avoid;
+ }
+ .signature-audit-title {
+ font-weight: bold;
+ margin-bottom: 8px;
+ }
+ .signature-audit-table {
+ width: 100%;
+ border-collapse: collapse;
+ font-size: 12px;
+ }
+ .signature-audit-table td {
+ border-top: 1px solid #e5e7eb;
+ padding: 6px 8px;
+ vertical-align: top;
+ }
+ .signature-audit-table td:first-child {
+ width: 26%;
+ font-weight: bold;
+ }
  @media print {
  body {
  padding: 20px;
@@ -352,7 +395,7 @@ export function RentalDetailDialog({
  <div class="header-title">HỢP ĐỒNG THUÊ THIẾT BỊ ĐIỆN TỬ</div>
  <div class="contract-info">Số: ${rental.contract.contractNumber}</div>
 
- <div class="section-title">I. Thông tin các bên</div>
+ <div class="section-title">I. THÔNG TIN CÁC BÊN</div>
  <table class="info-table">
  <tr>
  <td class="info-label">Bên cho thuê:</td>
@@ -403,7 +446,7 @@ export function RentalDetailDialog({
  <td>${rental.shippingAddress || "Nhận tại cửa hàng Digital Rental"}</td>
  </tr> </table>
 
- <div class="section-title">II. Thông tin thuê thiết bị</div>
+ <div class="section-title">II. THÔNG TIN THUÊ THIẾT BỊ</div>
  <table class="info-table">
  <tr>
  <td class="info-label">Mã đơn thuê:</td>
@@ -419,7 +462,7 @@ export function RentalDetailDialog({
  </tr>
  </table>
 
- <div class="section-title">III. Danh sách thiết bị thuê</div>
+ <div class="section-title">III. DANH SÁCH THIẾT BỊ THUÊ</div>
  <table class="product-table">
  <thead>
  <tr>
@@ -436,7 +479,7 @@ export function RentalDetailDialog({
  <div class="summary-box">
  <div class="summary-row">
  <span>Phí thuê:</span>
- <strong>${formatVND(rental.rentalFee)}</strong>
+ <strong>${formatVND(contractRentalFee)}</strong>
  </div>
  <div class="summary-row">
  <span>Tiền cọc dự kiến:</span>
@@ -446,11 +489,11 @@ export function RentalDetailDialog({
  </div>
  <div class="summary-row summary-total">
  <span>Tổng phí thuê:</span>
- <span>${formatVND(rental.rentalFee + rental.additionalFee)}</span>
+ <span>${formatVND(contractRentalFee + contractAdditionalFee)}</span>
  </div>
  </div>
 
- <div class="section-title">IV. Điều khoản hợp đồng</div>
+ <div class="section-title">IV. ĐIỀU KHOẢN HỢP ĐỒNG</div>
  <div class="content-box">
  ${contractTermsHtml}
  </div>
@@ -467,7 +510,7 @@ export function RentalDetailDialog({
  <div class="signature-col">
  <div class="signature-title">BÊN THUÊ (Ký tên)</div>
  ${
-   rental.contract.isLocked || rental.contract.locked
+   isContractSigned
      ? `
  <div class="signature-box">
  ĐÃ KÝ ĐIỆN TỬ<br>
@@ -482,6 +525,32 @@ export function RentalDetailDialog({
  `
  }
  </div>
+ </div>
+
+ <div class="signature-audit">
+ <div class="signature-audit-title">Thông tin xác thực chữ ký điện tử</div>
+ <table class="signature-audit-table">
+ <tr>
+ <td>Mã chữ ký</td>
+ <td>${signatureCode}</td>
+ </tr>
+ <tr>
+ <td>Hash SHA-256 tài liệu</td>
+ <td style="word-break: break-all;">${rental.contract.documentHash || "Chưa ghi nhận"}</td>
+ </tr>
+ <tr>
+ <td>IP ký</td>
+ <td>${rental.contract.signerIp || "Chưa ghi nhận"}</td>
+ </tr>
+ <tr>
+ <td>Thiết bị ký</td>
+ <td style="word-break: break-word;">${escapeHtml(signerDevice)}</td>
+ </tr>
+ <tr>
+ <td>OTP xác thực</td>
+ <td>${otpStatus}</td>
+ </tr>
+ </table>
  </div>
 
  <script>

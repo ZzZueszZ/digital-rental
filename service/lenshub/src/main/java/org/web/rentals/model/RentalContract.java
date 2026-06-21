@@ -37,6 +37,9 @@ public class RentalContract extends BaseAuditEntity {
     @Column(name = "contract_hash", length = 255)
     private String contractHash;
 
+    @Column(name = "document_hash", length = 255)
+    private String documentHash;
+
     @Column(name = "generated_at")
     private LocalDateTime generatedAt;
 
@@ -54,6 +57,9 @@ public class RentalContract extends BaseAuditEntity {
 
     @Column(name = "signer_ip", length = 50)
     private String signerIp;
+
+    @Column(name = "signer_user_agent", length = 500)
+    private String signerUserAgent;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 30)

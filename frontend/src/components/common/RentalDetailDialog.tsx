@@ -179,7 +179,11 @@ export function RentalDetailDialog({
       (total, item) => total + item.pricePerDay * rentalDays,
       0,
     );
+    const contractDepositAmount =
+      rental.finalDepositAmount ?? rental.estimatedDepositAmount ?? 0;
     const contractAdditionalFee = rental.additionalFee || 0;
+    const contractTotalPayment =
+      contractRentalFee + contractDepositAmount + contractAdditionalFee;
     const isContractSigned = !!(
       rental.contract.isLocked || rental.contract.locked
     );
@@ -483,13 +487,11 @@ export function RentalDetailDialog({
  </div>
  <div class="summary-row">
  <span>Tiền cọc dự kiến:</span>
- <strong>${formatVND(
-   rental.finalDepositAmount ?? rental.estimatedDepositAmount ?? 0,
- )}</strong>
+ <strong>${formatVND(contractDepositAmount)}</strong>
  </div>
  <div class="summary-row summary-total">
- <span>Tổng phí thuê:</span>
- <span>${formatVND(contractRentalFee + contractAdditionalFee)}</span>
+ <span>Tổng thanh toán:</span>
+ <span>${formatVND(contractTotalPayment)}</span>
  </div>
  </div>
 

@@ -28,12 +28,14 @@ export const http = axios.create({
 });
 
 const isE2eeEnabled = process.env.NEXT_PUBLIC_E2EE_ENABLED === "true";
+const textEncoder = new TextEncoder();
 
 type E2eeRequestConfig = InternalAxiosRequestConfig & {
   _e2eeSession?: Session;
   _e2eeOriginalData?: unknown;
   _e2eeHasOriginal?: boolean;
   _e2eeRetry?: boolean;
+  _e2eeResponseOnly?: boolean;
 };
 
 // Separate axios instance for refresh – avoids interceptor loops
@@ -103,11 +105,6 @@ http.interceptors.request.use(
 
     if (shouldApplyE2ee(config)) {
       const e2eeConfig = config as E2eeRequestConfig;
-      if (!e2eeConfig._e2eeHasOriginal) {
-        e2eeConfig._e2eeOriginalData = config.data;
-        e2eeConfig._e2eeHasOriginal = true;
-      }
-
       const session = await getSession();
       const method = (config.method || "GET").toUpperCase();
       const path = resolveRequestPath(config);
@@ -120,13 +117,31 @@ http.interceptors.request.use(
         nonce: b64u.enc(nonce),
         direction: "request",
       };
+
+      e2eeConfig._e2eeSession = session;
+      config.headers = config.headers ?? {};
+      config.headers["X-E2EE-Enabled"] = "true";
+
+      if (isResponseOnlyE2eeMethod(method)) {
+        e2eeConfig._e2eeResponseOnly = true;
+        config.headers["X-E2EE-Session-Id"] = session.sessionId;
+        config.headers["X-E2EE-AAD"] = b64u.enc(
+          textEncoder.encode(JSON.stringify(aad)),
+        );
+        return config;
+      }
+
+      if (!e2eeConfig._e2eeHasOriginal) {
+        e2eeConfig._e2eeOriginalData = config.data;
+        e2eeConfig._e2eeHasOriginal = true;
+      }
+
       const { iv, ct, tag, aadBytes } = await aesGcmEncrypt(
         session.key,
         config.data ?? {},
         aad,
       );
 
-      e2eeConfig._e2eeSession = session;
       config.data = {
         sessionId: session.sessionId,
         aad: b64u.enc(aadBytes),
@@ -134,9 +149,7 @@ http.interceptors.request.use(
         cipherText: b64u.enc(ct),
         tag: b64u.enc(tag),
       };
-      config.headers = config.headers ?? {};
       config.headers["Content-Type"] = "application/json";
-      config.headers["X-E2EE-Enabled"] = "true";
     }
 
     return config;
@@ -151,16 +164,14 @@ http.interceptors.request.use(
 http.interceptors.response.use(
   async (response) => {
     if (isEncryptedEnvelope(response.data)) {
-      const session = (response.config as E2eeRequestConfig)._e2eeSession ?? await getSession();
-      response.data = await decryptE2eeResponse(
-        session.key,
-        response.data,
-        {
-          sessionId: session.sessionId,
-          method: (response.config.method || "GET").toUpperCase(),
-          path: resolveRequestPath(response.config),
-        },
-      );
+      const session =
+        (response.config as E2eeRequestConfig)._e2eeSession ??
+        (await getSession());
+      response.data = await decryptE2eeResponse(session.key, response.data, {
+        sessionId: session.sessionId,
+        method: (response.config.method || "GET").toUpperCase(),
+        path: resolveRequestPath(response.config),
+      });
     }
     useLoadingStore.getState().stopLoading();
     return response;
@@ -248,6 +259,10 @@ const shouldApplyE2ee = (config: InternalAxiosRequestConfig) => {
   return shouldEncryptRequest(method, resolveRequestPath(config));
 };
 
+const isResponseOnlyE2eeMethod = (method: string) => {
+  return method === "GET" || method === "HEAD";
+};
+
 const resolveRequestPath = (config: InternalAxiosRequestConfig) => {
   const requestUrl = config.url || "/";
   if (/^https?:\/\//i.test(requestUrl)) {
@@ -258,13 +273,13 @@ const resolveRequestPath = (config: InternalAxiosRequestConfig) => {
   const normalizedBase = baseUrl.pathname.endsWith("/")
     ? baseUrl.pathname
     : `${baseUrl.pathname}/`;
-  return new URL(requestUrl.replace(/^\/+/, ""), `${baseUrl.origin}${normalizedBase}`)
-    .pathname;
+  return new URL(
+    requestUrl.replace(/^\/+/, ""),
+    `${baseUrl.origin}${normalizedBase}`,
+  ).pathname;
 };
 
-const isEncryptedEnvelope = (
-  value: unknown,
-): value is EncryptedEnvelope => {
+const isEncryptedEnvelope = (value: unknown): value is EncryptedEnvelope => {
   if (!isE2eeEnabled || !value || typeof value !== "object") return false;
   const candidate = value as Record<string, unknown>;
   return (
@@ -284,5 +299,8 @@ const restoreOriginalE2eeData = (config: E2eeRequestConfig) => {
 
 const isExpiredE2eeSessionError = (value: unknown) => {
   if (!value || typeof value !== "object") return false;
-  return (value as Record<string, unknown>).error === "invalid_or_expired_e2ee_session";
+  return (
+    (value as Record<string, unknown>).error ===
+    "invalid_or_expired_e2ee_session"
+  );
 };

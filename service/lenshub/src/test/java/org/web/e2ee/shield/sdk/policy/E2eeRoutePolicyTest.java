@@ -21,6 +21,18 @@ class E2eeRoutePolicyTest {
                 E2eeLevel.SENSITIVE,
                 E2eeRoutePolicy.resolve("POST", "/payments/vnpay/create").orElseThrow()
         );
+        assertEquals(
+                E2eeLevel.CRITICAL,
+                E2eeRoutePolicy.resolve("GET", "/users").orElseThrow()
+        );
+        assertEquals(
+                E2eeLevel.CRITICAL,
+                E2eeRoutePolicy.resolve("GET", "/users/7/profile").orElseThrow()
+        );
+        assertEquals(
+                E2eeLevel.SENSITIVE,
+                E2eeRoutePolicy.resolve("GET", "/profile").orElseThrow()
+        );
     }
 
     @Test

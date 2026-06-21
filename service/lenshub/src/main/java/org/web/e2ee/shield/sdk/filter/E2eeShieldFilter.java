@@ -28,6 +28,8 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
     private static final Duration MAX_CLOCK_SKEW = Duration.ofMinutes(2);
     private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {};
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final String E2EE_SESSION_HEADER = "X-E2EE-Session-Id";
+    private static final String E2EE_AAD_HEADER = "X-E2EE-AAD";
 
     private final ObjectMapper objectMapper;
 
@@ -48,6 +50,10 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         String rawBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
         if (rawBody.isBlank()) {
+            if (isResponseOnlyRequest(request)) {
+                handleResponseOnlyRequest(request, response, filterChain);
+                return;
+            }
             writeError(response, HttpServletResponse.SC_BAD_REQUEST, "e2ee_payload_required");
             return;
         }
@@ -83,17 +89,64 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
             }
 
             DecryptedRequestWrapper decryptedRequest = new DecryptedRequestWrapper(request, plainBytes);
-            ContentCachingResponseWrapper cachingResponse = new ContentCachingResponseWrapper(response);
-            filterChain.doFilter(decryptedRequest, cachingResponse);
+            doFilterAndEncryptResponse(decryptedRequest, response, filterChain, encryptedPayload.getSessionId(), sessionKey);
+        } catch (SecurityException exception) {
+            writeError(response, HttpServletResponse.SC_BAD_REQUEST, exception.getMessage());
+        } catch (Exception exception) {
+            writeError(response, HttpServletResponse.SC_BAD_REQUEST, "e2ee_processing_failed");
+        }
+    }
 
-            byte[] responseBody = cachingResponse.getContentAsByteArray();
-            if (responseBody.length == 0) {
-                cachingResponse.copyBodyToResponse();
-                return;
+    private void handleResponseOnlyRequest(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
+        String sessionId = request.getHeader(E2EE_SESSION_HEADER);
+        String encodedAad = request.getHeader(E2EE_AAD_HEADER);
+        if (isBlank(sessionId) || isBlank(encodedAad)) {
+            writeError(response, HttpServletResponse.SC_BAD_REQUEST, "e2ee_response_aad_required");
+            return;
+        }
+
+        byte[] sessionKey = SessionKeyStore.get(sessionId);
+        if (sessionKey == null) {
+            writeError(response, HttpServletResponse.SC_UNAUTHORIZED, "invalid_or_expired_e2ee_session");
+            return;
+        }
+
+        try {
+            String nonce = validateAad(request, sessionId, b64uDecode(encodedAad));
+            if (!SessionKeyStore.markNonce(sessionId, nonce)) {
+                throw new SecurityException("e2ee_replay_detected");
             }
+            doFilterAndEncryptResponse(request, response, filterChain, sessionId, sessionKey);
+        } catch (SecurityException exception) {
+            writeError(response, HttpServletResponse.SC_BAD_REQUEST, exception.getMessage());
+        } catch (Exception exception) {
+            writeError(response, HttpServletResponse.SC_BAD_REQUEST, "e2ee_processing_failed");
+        }
+    }
 
+    private void doFilterAndEncryptResponse(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain,
+            String sessionId,
+            byte[] sessionKey
+    ) throws ServletException, IOException {
+        ContentCachingResponseWrapper cachingResponse = new ContentCachingResponseWrapper(response);
+        filterChain.doFilter(request, cachingResponse);
+
+        byte[] responseBody = cachingResponse.getContentAsByteArray();
+        if (responseBody.length == 0) {
+            cachingResponse.copyBodyToResponse();
+            return;
+        }
+
+        try {
             byte[] responseAad = objectMapper.writeValueAsBytes(Map.of(
-                    "sessionId", encryptedPayload.getSessionId(),
+                    "sessionId", sessionId,
                     "method", request.getMethod(),
                     "path", request.getRequestURI(),
                     "timestamp", Instant.now().toEpochMilli(),
@@ -102,7 +155,7 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
             ));
             CryptoUtil.AesSeal seal = CryptoUtil.encrypt(sessionKey, responseAad, responseBody);
             EncryptedResult encryptedResult = new EncryptedResult(
-                    encryptedPayload.getSessionId(),
+                    sessionId,
                     b64uEncode(responseAad),
                     b64uEncode(seal.iv),
                     b64uEncode(seal.ct),
@@ -114,10 +167,8 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
             byte[] encryptedBody = objectMapper.writeValueAsBytes(encryptedResult);
             response.setContentLength(encryptedBody.length);
             response.getOutputStream().write(encryptedBody);
-        } catch (SecurityException exception) {
-            writeError(response, HttpServletResponse.SC_BAD_REQUEST, exception.getMessage());
         } catch (Exception exception) {
-            writeError(response, HttpServletResponse.SC_BAD_REQUEST, "e2ee_processing_failed");
+            throw new IOException("e2ee_response_encryption_failed", exception);
         }
     }
 
@@ -129,6 +180,10 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
                 || isBlank(payload.getTag())) {
             throw new IllegalArgumentException("Missing encrypted payload field");
         }
+    }
+
+    private boolean isResponseOnlyRequest(HttpServletRequest request) {
+        return "GET".equalsIgnoreCase(request.getMethod()) || "HEAD".equalsIgnoreCase(request.getMethod());
     }
 
     private String validateAad(HttpServletRequest request, String sessionId, byte[] aadBytes) throws IOException {

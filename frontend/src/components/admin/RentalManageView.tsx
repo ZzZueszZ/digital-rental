@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Calendar,
   Search,
@@ -51,7 +52,6 @@ import {
 import { Pagination } from "@/app/(staff)/staff/components/Pagination";
 import { EmptyState } from "@/app/(staff)/staff/users/components/EmptyState";
 import { StatCard } from "@/app/(staff)/staff/components/StatCard";
-import { RentalDetailDialog } from "@/components/common/RentalDetailDialog";
 import {
   RentalOrderStatus,
   useStaffRentals,
@@ -96,6 +96,7 @@ export function RentalManageView({
 }: {
   portalType: "admin" | "staff" | "super-admin";
 }) {
+  const router = useRouter();
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<RentalOrderStatus | "ALL">(
@@ -132,8 +133,6 @@ export function RentalManageView({
   const [isRejectOpen, setIsRejectOpen] = useState(false);
   const [isHandoverOpen, setIsHandoverOpen] = useState(false);
   const [isReturnOpen, setIsReturnOpen] = useState(false);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [detailRentalId, setDetailRentalId] = useState<number | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
     title: string;
@@ -149,8 +148,7 @@ export function RentalManageView({
   });
 
   const handleOpenDetail = (id: number) => {
-    setDetailRentalId(id);
-    setIsDetailOpen(true);
+    router.push(`/${portalType}/rentals/${id}`);
   };
 
   // Form values
@@ -1610,19 +1608,6 @@ export function RentalManageView({
             </div>
           </div>
         </AdminFormDialog>
-      )}
-
-      {isDetailOpen && detailRentalId !== null && (
-        <RentalDetailDialog
-          isOpen={isDetailOpen}
-          onClose={() => {
-            setIsDetailOpen(false);
-            setDetailRentalId(null);
-          }}
-          rentalId={detailRentalId}
-          hideSignAction={true}
-          portalType={portalType}
-        />
       )}
 
       <ConfirmDialog

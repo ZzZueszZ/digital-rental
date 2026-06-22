@@ -1,5 +1,6 @@
 package org.web.seeders;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -12,6 +13,7 @@ import java.util.HashSet;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 @Order(3)
 public class RolePermissionSeeder implements CommandLineRunner {
 
@@ -145,7 +147,7 @@ public class RolePermissionSeeder implements CommandLineRunner {
 
         roleRepository.save(customer);
 
-        System.out.println(">>> RolePermissionSeeder: permissions assigned.");
+        log.info("RolePermissionSeeder: permissions assigned.");
     }
 
     private void addPerm(AppRole role, String permName) {

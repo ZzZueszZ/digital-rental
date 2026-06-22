@@ -42,33 +42,33 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
-  #      password: your_password_if_any
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
 
   config:
     import: optional:file:.env[.properties]
 
   jpa:
     hibernate:
-      ddl-auto: update # tự tạo / cập nhật bảng khi entity thay đổi (dev mode)
-    show-sql: true # log câu SQL ra console
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    show-sql: ${JPA_SHOW_SQL:false}
     properties:
       hibernate:
-        format_sql: true # định dạng SQL cho dễ đọc
+        format_sql: ${HIBERNATE_FORMAT_SQL:false}
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    open-in-view: false # khuyến nghị tắt để tránh lazy-loading lỗi
+    open-in-view: false
 
   # Nếu bạn dùng file .sql hoặc data.sql seed data
   sql:
     init:
-      mode: always
+      mode: ${SQL_INIT_MODE:never}
 
 logging:
   level:
-    org.web.identity: debug
-    org.hibernate.SQL: debug # log câu SQL
-    org.hibernate.type.descriptor.sql.BasicBinder: trace # log giá trị parameter
+    org.web.identity: ${LOG_LEVEL_IDENTITY:info}
+    org.hibernate.SQL: ${LOG_LEVEL_HIBERNATE_SQL:warn}
+    org.hibernate.type.descriptor.sql.BasicBinder: ${LOG_LEVEL_HIBERNATE_BINDER:warn}
 
 app:
   bootstrap:
@@ -97,13 +97,13 @@ app:
       client-secret: ${GOOGLE_CLIENT_SECRET:}
       redirect-uri: ${GOOGLE_REDIRECT_URI:http://localhost:3000/auth/google/callback}
   jwt:
-    secret: ${APP_JWT_SECRET:C5EH86/70awkZD1mEUtPvqsug4goTeED87QK+ZlFXo4=}
+    secret: ${APP_JWT_SECRET}
     expiration-ms: ${APP_JWT_EXPIRATION_MS:86400000}
     issuer: ${APP_JWT_ISSUER:zyna-app}
   activation:
     base-url: ${APP_ACTIVATION_BASE_URL:http://localhost:8080/api/auth/activate}
     ttl-hours: ${APP_ACTIVATION_TTL_HOURS:24}
-    jwt-secret: ${APP_ACTIVATION_JWT_SECRET:change-me-activation-secret-32bytes-long}
+    jwt-secret: ${APP_ACTIVATION_JWT_SECRET}
   mail:
     from: ${APP_MAIL_FROM:no-reply@zyna.dev}
     admin: ${APP_MAIL_ADMIN:adminlenshub@gmail.com}

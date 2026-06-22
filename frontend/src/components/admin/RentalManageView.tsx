@@ -5,15 +5,12 @@ import { useRouter } from "next/navigation";
 import {
   Calendar,
   Search,
-  Filter,
   CheckCircle2,
   Clock,
-  XCircle,
   Truck,
   Loader2,
   AlertTriangle,
   User,
-  ShieldCheck,
   ArrowRight,
   ClipboardList,
   Eye,
@@ -37,7 +34,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
@@ -45,7 +41,6 @@ import { toast } from "sonner";
 import {
   cn,
   formatVND,
-  formatDate,
   formatMoneyInput,
   parseMoneyInput,
 } from "@/lib/utils";
@@ -106,7 +101,6 @@ export function RentalManageView({
   const {
     data: rentalsRes,
     isLoading,
-    refetch,
   } = useStaffRentals({
     page,
     size: 10,
@@ -121,7 +115,6 @@ export function RentalManageView({
   const completeMutation = useCompleteRental();
 
   const rentals = rentalsRes?.data || [];
-  const pagination = rentalsRes?.meta; // page/size/total info if present, otherwise default
   const totalPages = rentalsRes?.meta?.totalPages || 1;
   const totalElements = rentalsRes?.meta?.totalElements || rentals.length;
 
@@ -130,7 +123,6 @@ export function RentalManageView({
 
   // Modals state
   const [isApproveOpen, setIsApproveOpen] = useState(false);
-  const [isRejectOpen, setIsRejectOpen] = useState(false);
   const [isHandoverOpen, setIsHandoverOpen] = useState(false);
   const [isReturnOpen, setIsReturnOpen] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -152,7 +144,6 @@ export function RentalManageView({
   };
 
   // Form values
-  const [rejectReason, setRejectReason] = useState("");
   const [depositAmount, setDepositAmount] = useState<number>(0);
   const [riskLevel, setRiskLevel] = useState<RiskLevel>(RiskLevel.LOW_RISK);
   const [deviceAssignments, setDeviceAssignments] = useState<
@@ -315,7 +306,7 @@ export function RentalManageView({
         map[item.productId] = res.data || [];
       }
       setAvailableDevicesMap(map);
-    } catch (err) {
+    } catch {
       toast.error("Lỗi khi tải danh sách thiết bị sẵn sàng");
     } finally {
       setLoadingDevices(false);

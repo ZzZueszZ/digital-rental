@@ -420,7 +420,47 @@ export function RentalDetailPageView({ portalType }: { portalType: PortalType })
       </div>
 
       <Card title="Danh sách thiết bị thuê" icon={Package}>
-        <div className="overflow-x-auto rounded-2xl border border-zinc-100">
+        <div className="space-y-3 lg:hidden">
+          {rental.items.map((item) => (
+            <div
+              key={item.id}
+              className="rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm"
+            >
+              <div className="flex items-start gap-3">
+                <ProductThumb
+                  imageUrl={item.productMainImageUrl}
+                  name={item.productName}
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-zinc-950">
+                    {item.productName}
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-zinc-500">
+                    {item.deviceConditionDetails || "Chưa ghi nhận tình trạng"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-3 rounded-2xl bg-zinc-50 p-3">
+                <MobileSpec label="Serial" value={item.deviceSerialNumber || "Chưa gán"} />
+                <MobileSpec
+                  label="Giá trị tài sản"
+                  value={formatVND(item.assetValue || 0)}
+                  alignRight
+                />
+                <MobileSpec label="Đơn giá/ngày" value={formatVND(item.pricePerDay)} />
+                <MobileSpec
+                  label="Thành tiền"
+                  value={formatVND(item.pricePerDay * rentalDays)}
+                  alignRight
+                  highlight
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="hidden overflow-x-auto rounded-2xl border border-zinc-100 lg:block">
           <table className="w-full min-w-[760px] text-left text-sm">
             <thead className="bg-zinc-50 text-xs font-medium text-zinc-500">
               <tr>
@@ -652,6 +692,32 @@ function ProductThumb({
       ) : (
         <Package className="h-5 w-5 text-zinc-300" />
       )}
+    </div>
+  );
+}
+
+function MobileSpec({
+  label,
+  value,
+  alignRight,
+  highlight,
+}: {
+  label: string;
+  value: ReactNode;
+  alignRight?: boolean;
+  highlight?: boolean;
+}) {
+  return (
+    <div className={cn("min-w-0", alignRight && "text-right")}>
+      <p className="text-[10px] font-medium text-zinc-400">{label}</p>
+      <p
+        className={cn(
+          "mt-1 break-words text-xs font-semibold text-zinc-950",
+          highlight && "text-red-600",
+        )}
+      >
+        {value}
+      </p>
     </div>
   );
 }

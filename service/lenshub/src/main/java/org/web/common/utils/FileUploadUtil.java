@@ -1,5 +1,7 @@
 package org.web.common.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.web.common.exceptions.ApplicationException;
@@ -11,6 +13,7 @@ import java.util.*;
 
 public class FileUploadUtil {
 
+    private static final Logger log = LoggerFactory.getLogger(FileUploadUtil.class);
     private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads";
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
     private static final long MAX_VIDEO_FILE_SIZE = 50 * 1024 * 1024; // 50MB
@@ -78,7 +81,7 @@ public class FileUploadUtil {
         try {
             Files.deleteIfExists(path);
         } catch (IOException e) {
-            System.err.println("Failed to delete image file: " + e.getMessage());
+            log.warn("Failed to delete image file {}", path, e);
         }
     }
 

@@ -1,5 +1,6 @@
 package org.web.common.mails;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -20,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 @Service
+@Slf4j
 public class MailService {
 
     private static final String SUPPORT_PHONE = "037 6600 545";
@@ -100,8 +102,7 @@ public class MailService {
         try {
             mailSender.send(message);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Failed to send reset password email to: " + user.getEmail());
+            log.warn("Failed to send reset password email to {}", user.getEmail(), e);
         }
     }
 
@@ -129,8 +130,7 @@ public class MailService {
         try {
             mailSender.send(message);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Failed to send support reply email to: " + ticket.getEmail());
+            log.warn("Failed to send support reply email to {}", ticket.getEmail(), e);
         }
     }
 
@@ -164,8 +164,7 @@ public class MailService {
         try {
             mailSender.send(message);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Failed to send signing OTP email to: " + user.getEmail());
+            log.warn("Failed to send signing OTP email to {}", user.getEmail(), e);
         }
     }
 
@@ -216,8 +215,7 @@ public class MailService {
         try {
             mailSender.send(message);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Failed to send rental success email to: " + order.getUser().getEmail());
+            log.warn("Failed to send rental success email to {}", order.getUser().getEmail(), e);
         }
     }
 
@@ -642,8 +640,7 @@ public class MailService {
             helper.setText(html, true);
             mailSender.send(message);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Failed to send HTML email to: " + to);
+            log.warn("Failed to send HTML email to {}", to, e);
         }
     }
 

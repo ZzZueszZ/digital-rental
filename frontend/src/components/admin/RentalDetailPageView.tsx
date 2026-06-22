@@ -22,10 +22,12 @@ import { cn, formatDate, formatVND, getImageUrl } from "@/lib/utils";
 import {
   DepositStatus,
   RentalOrderStatus,
+  useRentalDetail,
   useStaffRentalDetail,
 } from "@/services/rental";
 
-type PortalType = "admin" | "staff" | "super-admin";
+type PortalType = "admin" | "staff" | "super-admin" | "profile";
+type DetailScope = "staff" | "customer";
 
 const statusLabel: Record<RentalOrderStatus, string> = {
   [RentalOrderStatus.PENDING_PAYMENT]: "Chờ thanh toán phí",
@@ -82,13 +84,24 @@ const calculateRentalDays = (startDate?: string | null, endDate?: string | null)
   );
 };
 
-export function RentalDetailPageView({ portalType }: { portalType: PortalType }) {
+export function RentalDetailPageView({
+  portalType,
+  detailScope = "staff",
+}: {
+  portalType: PortalType;
+  detailScope?: DetailScope;
+}) {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const rentalId = Number(params.id);
-  const { data, isLoading } = useStaffRentalDetail(rentalId);
+  const staffDetail = useStaffRentalDetail(rentalId, detailScope === "staff");
+  const customerDetail = useRentalDetail(rentalId, detailScope === "customer");
+  const data = detailScope === "customer" ? customerDetail.data : staffDetail.data;
+  const isLoading =
+    detailScope === "customer" ? customerDetail.isLoading : staffDetail.isLoading;
   const rental = data?.data;
-  const backHref = `/${portalType}/rentals`;
+  const backHref =
+    portalType === "profile" ? "/profile/orders" : `/${portalType}/rentals`;
 
   if (isLoading) {
     return (

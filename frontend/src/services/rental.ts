@@ -351,11 +351,11 @@ export const useMyRentals = (params: { page?: number; size?: number; status?: Re
   });
 };
 
-export const useRentalDetail = (id: number) => {
+export const useRentalDetail = (id: number, enabled = true) => {
   return useQuery({
     queryKey: ["rentals", "detail", id],
     queryFn: () => rentalService.getRentalDetail(id),
-    enabled: !!id
+    enabled: !!id && enabled
   });
 };
 
@@ -384,11 +384,11 @@ export const useStaffRentals = (params: { page?: number; size?: number; status?:
   });
 };
 
-export const useStaffRentalDetail = (id: number) => {
+export const useStaffRentalDetail = (id: number, enabled = true) => {
   return useQuery({
     queryKey: ["rentals", "staff", "detail", id],
     queryFn: () => rentalService.getStaffRentalDetail(id),
-    enabled: !!id
+    enabled: !!id && enabled
   });
 };
 

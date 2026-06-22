@@ -24,7 +24,6 @@ import {
   rentalService,
   useMyRentals,
 } from "@/services/rental";
-import { RentalDetailDialog } from "@/components/common/RentalDetailDialog";
 
 export default function OrdersPage() {
   const [orderType, setOrderType] = useState<"BUY" | "RENT">("BUY");
@@ -56,9 +55,6 @@ export default function OrdersPage() {
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
-  const [selectedRentalId, setSelectedRentalId] = useState<number | null>(null);
-  const [isRentalDetailOpen, setIsRentalDetailOpen] = useState(false);
-
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [selectedOrderForReview, setSelectedOrderForReview] =
     useState<OrderResponse | null>(null);
@@ -70,11 +66,6 @@ export default function OrdersPage() {
   const handleShowDetail = (id: number) => {
     setSelectedOrderId(id);
     setIsDetailOpen(true);
-  };
-
-  const handleShowRentalDetail = (id: number) => {
-    setSelectedRentalId(id);
-    setIsRentalDetailOpen(true);
   };
 
   const handleReview = (order: OrderResponse) => {
@@ -590,7 +581,7 @@ export default function OrdersPage() {
                   <Button
                     variant="ghost"
                     className="h-10 px-5 rounded-xl border border-zinc-100 text-[14px] font-semibold text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50 transition-all shadow-none"
-                    onClick={() => handleShowRentalDetail(rental.id)}
+                    onClick={() => router.push(`/profile/rentals/${rental.id}`)}
                   >
                     Xem chi tiết & Hợp đồng
                   </Button>
@@ -606,14 +597,6 @@ export default function OrdersPage() {
           isOpen={isDetailOpen}
           onClose={() => setIsDetailOpen(false)}
           orderId={selectedOrderId}
-        />
-      )}
-
-      {selectedRentalId && (
-        <RentalDetailDialog
-          isOpen={isRentalDetailOpen}
-          onClose={() => setIsRentalDetailOpen(false)}
-          rentalId={selectedRentalId}
         />
       )}
 

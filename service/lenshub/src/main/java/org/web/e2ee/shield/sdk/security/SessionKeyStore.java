@@ -1,112 +1,99 @@
 package org.web.e2ee.shield.sdk.security;
 
-import java.time.Instant;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
+
 import java.util.Arrays;
-import java.util.Map;
+import java.util.Base64;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.time.Duration;
 
-public final class SessionKeyStore {
+@Service
+@RequiredArgsConstructor
+public class SessionKeyStore {
 
-    private static final long TTL_SECONDS = 30 * 60;
-    private static final long NONCE_TTL_SECONDS = 2 * 60;
-    private static final int MAX_SESSIONS = 10_000;
-    private static final int MAX_NONCES_PER_SESSION = 4_096;
-    private static final Map<String, Entry> STORE = new ConcurrentHashMap<>();
+    private static final Base64.Encoder B64_ENCODER = Base64.getUrlEncoder().withoutPadding();
+    private static final Base64.Decoder B64_DECODER = Base64.getUrlDecoder();
+    private static final String SESSION_KEY_PREFIX = "e2ee:session:";
+    private static final String NONCE_KEY_SEPARATOR = ":nonce:";
 
-    private SessionKeyStore() {
-    }
+    private final StringRedisTemplate redisTemplate;
 
-    private static final class Entry {
-        private final byte[] key;
-        private final Instant expiresAt;
-        private final Map<String, Instant> usedNonces = new ConcurrentHashMap<>();
+    @Value("${app.e2ee.session-ttl-minutes:30}")
+    private long sessionTtlMinutes;
 
-        private Entry(byte[] key, Instant expiresAt) {
-            this.key = key;
-            this.expiresAt = expiresAt;
-        }
-    }
+    @Value("${app.e2ee.nonce-ttl-minutes:2}")
+    private long nonceTtlMinutes;
 
-    public static String put(byte[] key) {
+    public String put(byte[] key) {
         if (key == null || key.length != 32) {
             throw new IllegalArgumentException("E2EE session key must be 32 bytes");
         }
 
-        cleanupExpiredSessions();
-        if (STORE.size() >= MAX_SESSIONS) {
-            throw new IllegalStateException("E2EE session capacity reached");
-        }
-
         String sessionId = UUID.randomUUID().toString();
-        STORE.put(sessionId, new Entry(
-                Arrays.copyOf(key, key.length),
-                Instant.now().plusSeconds(TTL_SECONDS)
-        ));
+        byte[] keyCopy = Arrays.copyOf(key, key.length);
+        try {
+            redisTemplate.opsForValue().set(
+                    sessionKey(sessionId),
+                    B64_ENCODER.encodeToString(keyCopy),
+                    Duration.ofMinutes(sessionTtlMinutes)
+            );
+        } finally {
+            Arrays.fill(keyCopy, (byte) 0);
+        }
         return sessionId;
     }
 
-    public static byte[] get(String sessionId) {
-        Entry entry = STORE.get(sessionId);
-        if (entry == null) {
+    public byte[] get(String sessionId) {
+        if (sessionId == null || sessionId.isBlank()) {
             return null;
         }
-        if (Instant.now().isAfter(entry.expiresAt)) {
-            removeAndClear(sessionId, entry);
+
+        String encodedKey = redisTemplate.opsForValue().get(sessionKey(sessionId));
+        if (encodedKey == null || encodedKey.isBlank()) {
             return null;
         }
-        return Arrays.copyOf(entry.key, entry.key.length);
+
+        try {
+            byte[] key = B64_DECODER.decode(encodedKey);
+            return key.length == 32 ? key : null;
+        } catch (IllegalArgumentException exception) {
+            revoke(sessionId);
+            return null;
+        }
     }
 
-    public static boolean markNonce(String sessionId, String nonce) {
-        if (nonce == null || nonce.isBlank()) {
+    public boolean markNonce(String sessionId, String nonce) {
+        if (sessionId == null || sessionId.isBlank() || nonce == null || nonce.isBlank()) {
             return false;
         }
 
-        Entry entry = STORE.get(sessionId);
-        if (entry == null || Instant.now().isAfter(entry.expiresAt)) {
-            if (entry != null) {
-                removeAndClear(sessionId, entry);
-            }
+        if (!Boolean.TRUE.equals(redisTemplate.hasKey(sessionKey(sessionId)))) {
             return false;
         }
 
-        cleanupNonces(entry);
-        if (entry.usedNonces.size() >= MAX_NONCES_PER_SESSION) {
-            return false;
+        Boolean stored = redisTemplate.opsForValue().setIfAbsent(
+                nonceKey(sessionId, nonce),
+                "1",
+                Duration.ofMinutes(nonceTtlMinutes)
+        );
+        return Boolean.TRUE.equals(stored);
+    }
+
+    public void revoke(String sessionId) {
+        if (sessionId == null || sessionId.isBlank()) {
+            return;
         }
-        return entry.usedNonces.putIfAbsent(nonce, Instant.now()) == null;
+        redisTemplate.delete(sessionKey(sessionId));
     }
 
-    public static void revoke(String sessionId) {
-        Entry entry = STORE.remove(sessionId);
-        if (entry != null) {
-            clear(entry);
-        }
+    private static String sessionKey(String sessionId) {
+        return SESSION_KEY_PREFIX + sessionId;
     }
 
-    private static void cleanupNonces(Entry entry) {
-        Instant cutoff = Instant.now().minusSeconds(NONCE_TTL_SECONDS);
-        entry.usedNonces.entrySet().removeIf(item -> item.getValue().isBefore(cutoff));
-    }
-
-    private static void cleanupExpiredSessions() {
-        Instant now = Instant.now();
-        STORE.forEach((sessionId, entry) -> {
-            if (now.isAfter(entry.expiresAt)) {
-                removeAndClear(sessionId, entry);
-            }
-        });
-    }
-
-    private static void removeAndClear(String sessionId, Entry entry) {
-        if (STORE.remove(sessionId, entry)) {
-            clear(entry);
-        }
-    }
-
-    private static void clear(Entry entry) {
-        Arrays.fill(entry.key, (byte) 0);
-        entry.usedNonces.clear();
+    private static String nonceKey(String sessionId, String nonce) {
+        return SESSION_KEY_PREFIX + sessionId + NONCE_KEY_SEPARATOR + nonce;
     }
 }

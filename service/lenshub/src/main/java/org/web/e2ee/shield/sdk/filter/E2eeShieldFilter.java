@@ -32,9 +32,11 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
     private static final String E2EE_AAD_HEADER = "X-E2EE-AAD";
 
     private final ObjectMapper objectMapper;
+    private final SessionKeyStore sessionKeyStore;
 
-    public E2eeShieldFilter(ObjectMapper objectMapper) {
+    public E2eeShieldFilter(ObjectMapper objectMapper, SessionKeyStore sessionKeyStore) {
         this.objectMapper = objectMapper;
+        this.sessionKeyStore = sessionKeyStore;
     }
 
     @Override
@@ -67,7 +69,7 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
             return;
         }
 
-        byte[] sessionKey = SessionKeyStore.get(encryptedPayload.getSessionId());
+        byte[] sessionKey = sessionKeyStore.get(encryptedPayload.getSessionId());
         if (sessionKey == null) {
             writeError(response, HttpServletResponse.SC_UNAUTHORIZED, "invalid_or_expired_e2ee_session");
             return;
@@ -84,7 +86,7 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
                     b64uDecode(encryptedPayload.getCipherText()),
                     b64uDecode(encryptedPayload.getTag())
             );
-            if (!SessionKeyStore.markNonce(encryptedPayload.getSessionId(), nonce)) {
+            if (!sessionKeyStore.markNonce(encryptedPayload.getSessionId(), nonce)) {
                 throw new SecurityException("e2ee_replay_detected");
             }
 
@@ -109,7 +111,7 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
             return;
         }
 
-        byte[] sessionKey = SessionKeyStore.get(sessionId);
+        byte[] sessionKey = sessionKeyStore.get(sessionId);
         if (sessionKey == null) {
             writeError(response, HttpServletResponse.SC_UNAUTHORIZED, "invalid_or_expired_e2ee_session");
             return;
@@ -117,7 +119,7 @@ public class E2eeShieldFilter extends OncePerRequestFilter {
 
         try {
             String nonce = validateAad(request, sessionId, b64uDecode(encodedAad));
-            if (!SessionKeyStore.markNonce(sessionId, nonce)) {
+            if (!sessionKeyStore.markNonce(sessionId, nonce)) {
                 throw new SecurityException("e2ee_replay_detected");
             }
             doFilterAndEncryptResponse(request, response, filterChain, sessionId, sessionKey);

@@ -91,6 +91,8 @@ app:
       company-name: ${APP_BOOTSTRAP_SUPER_ADMIN_COMPANY_NAME:Digital Rental}
   e2ee:
     enabled: ${APP_E2EE_ENABLED:false}
+    session-ttl-minutes: ${APP_E2EE_SESSION_TTL_MINUTES:30}
+    nonce-ttl-minutes: ${APP_E2EE_NONCE_TTL_MINUTES:2}
   oauth:
     google:
       client-id: ${GOOGLE_CLIENT_ID:}

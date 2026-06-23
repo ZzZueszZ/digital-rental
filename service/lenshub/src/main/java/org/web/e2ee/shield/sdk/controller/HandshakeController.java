@@ -38,6 +38,7 @@ public class HandshakeController {
     private static final int NONCE_SIZE_BYTES = 16;
 
     private final KeyPair serverIdentityKeyPair;
+    private final SessionKeyStore sessionKeyStore;
 
     @PostMapping("/handshake")
     public ResponseEntity<HandshakeResponse> handshake(@RequestBody HandshakeRequest request) throws Exception {
@@ -63,7 +64,7 @@ public class HandshakeController {
         byte[] sessionKey = HkdfUtil.deriveKey(sharedSecret, salt, "E2EE-SHIELD/v1", 32);
         String sessionId;
         try {
-            sessionId = SessionKeyStore.put(sessionKey);
+            sessionId = sessionKeyStore.put(sessionKey);
         } catch (IllegalStateException exception) {
             throw new ResponseStatusException(
                     HttpStatus.SERVICE_UNAVAILABLE,

@@ -38,6 +38,7 @@ public final class E2eeRoutePolicy {
             sensitive(HttpMethod.POST, "/orders/checkout"),
             sensitive(HttpMethod.POST, "/orders/checkout/carts"),
             sensitive(HttpMethod.POST, "/orders/my/\\d+/confirm-received"),
+            sensitive(HttpMethod.POST, "/orders/my/\\d+/cancel"),
             critical(HttpMethod.PATCH, "/orders/\\d+/status"),
             sensitive(HttpMethod.POST, "/payments/vnpay/create"),
             sensitive(HttpMethod.POST, "/payments/vnpay/rental-fee/create"),

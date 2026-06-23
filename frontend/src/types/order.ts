@@ -77,6 +77,10 @@ export interface OrderResponse {
   completedAt?: string;
   canceledAt?: string;
   createdAt: string;
+  cancelReason?: string;
+  canceledBy?: "CUSTOMER" | "STAFF_OR_ADMIN" | "STAFF" | "ADMIN" | "SYSTEM" | string;
+  refundRequired?: boolean;
+  refundNote?: string;
   isReviewed?: boolean;
   items: OrderItemResponse[];
 }

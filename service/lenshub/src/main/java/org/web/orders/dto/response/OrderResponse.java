@@ -40,6 +40,11 @@ public class OrderResponse {
     private LocalDateTime completedAt;
     private LocalDateTime canceledAt;
     private LocalDateTime createdAt;
+
+    private String cancelReason;
+    private String canceledBy;
+    private Boolean refundRequired;
+    private String refundNote;
     
     private Boolean isReviewed;
     private List<OrderItemResponse> items;

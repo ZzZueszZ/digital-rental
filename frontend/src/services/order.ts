@@ -45,6 +45,12 @@ export const orderService = {
     return response.data;
   },
 
+  // USER: Cancel own order before shipping
+  cancelMyOrder: async (id: number, reason: string): Promise<IOrderRes> => {
+    const response = await axios.post<IOrderRes>(`/orders/my/${id}/cancel`, { reason });
+    return response.data;
+  },
+
   // ADMIN/STAFF: Get all orders
   getAllOrders: async (params: { page?: number; size?: number }): Promise<IOrderListRes> => {
     const response = await axios.get<IOrderListRes>("/orders/admin", { params });
@@ -96,6 +102,17 @@ export const useConfirmReceived = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => orderService.confirmReceived(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    }
+  });
+};
+
+export const useCancelMyOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, reason }: { id: number; reason: string }) =>
+      orderService.cancelMyOrder(id, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     }

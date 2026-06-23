@@ -83,6 +83,11 @@ export function OrderTableRow({
               ? "Đã thanh toán"
               : "Chưa thanh toán"}
           </span>
+          {order.refundRequired && (
+            <span className="mt-1 w-fit rounded-xl border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+              Chờ hoàn tiền
+            </span>
+          )}
         </div>
       </td>
       <td className="px-6 py-4 min-w-[120px]">
@@ -171,6 +176,11 @@ export function OrderMobileCard({
         >
           {getStatusLabel(order.status)}
         </div>
+        {order.refundRequired && (
+          <div className="mt-2 w-fit rounded-xl border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
+            Chờ hoàn tiền
+          </div>
+        )}
       </div>
 
       <div className="py-3 border-y border-zinc-50 space-y-2">
@@ -186,6 +196,11 @@ export function OrderMobileCard({
             {formatVND(order.totalPrice)}
           </span>
         </div>
+        {order.status === OrderStatus.CANCELED && order.cancelReason && (
+          <div className="rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-[11px] font-medium leading-relaxed text-red-700">
+            Lý do hủy: {order.cancelReason}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-2 pt-1 sm:grid-cols-2">

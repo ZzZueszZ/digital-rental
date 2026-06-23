@@ -116,6 +116,11 @@ export function OrderDetailDialog({
               >
                 {getStatusLabel(order.status)}
               </div>
+              {order.refundRequired && (
+                <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-semibold text-amber-700">
+                  Chờ hoàn tiền
+                </div>
+              )}
               <div className="flex flex-col">
                 <span className="text-[10px] font-semibold text-zinc-400 leading-none mb-1">
                   Phương thức
@@ -136,6 +141,30 @@ export function OrderDetailDialog({
               </span>
             </div>
           </div>
+
+          {order.status === OrderStatus.CANCELED && (
+            <div className="rounded-xl border border-red-100 bg-red-50/60 p-4 space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="text-sm font-semibold text-red-700">
+                  Thông tin hủy đơn
+                </span>
+                <span className="rounded-xl border border-red-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-red-600">
+                  {order.canceledBy === "CUSTOMER"
+                    ? "Khách hàng hủy"
+                    : "Nhân viên hủy"}
+                </span>
+              </div>
+              <p className="text-sm leading-relaxed text-zinc-600">
+                {order.cancelReason || "Chưa ghi nhận lý do hủy."}
+              </p>
+              {order.refundRequired && (
+                <p className="text-xs font-medium leading-relaxed text-amber-700">
+                  {order.refundNote ||
+                    "Đơn đã thanh toán online, cần xử lý hoàn tiền thủ công."}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Items List */}
           <div className="space-y-4">

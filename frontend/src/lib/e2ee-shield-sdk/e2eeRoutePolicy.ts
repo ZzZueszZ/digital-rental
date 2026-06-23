@@ -70,6 +70,11 @@ const rules: RouteRule[] = [
     path: /^\/orders\/my\/\d+\/confirm-received$/,
     level: "SENSITIVE",
   },
+  {
+    method: "POST",
+    path: /^\/orders\/my\/\d+\/cancel$/,
+    level: "SENSITIVE",
+  },
   { method: "PATCH", path: /^\/orders\/\d+\/status$/, level: "CRITICAL" },
   { method: "POST", path: /^\/payments\/vnpay\/create$/, level: "SENSITIVE" },
   {

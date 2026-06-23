@@ -5,6 +5,7 @@ import org.web.common.enums.OrderStatus;
 import org.web.common.enums.PaymentStatus;
 import org.web.orders.dto.request.CheckoutFromCartRequest;
 import org.web.orders.dto.request.CheckoutRequest;
+import org.web.orders.dto.request.CancelOrderRequest;
 import org.web.orders.dto.response.OrderResponse;
 
 public interface OrderService {
@@ -18,6 +19,8 @@ public interface OrderService {
     OrderResponse getOrderByIdForUser(Long userId, Long orderId);
 
     OrderResponse confirmReceived(Long userId, Long orderId);
+
+    OrderResponse cancelMyOrder(Long userId, Long orderId, CancelOrderRequest request);
 
     Page<OrderResponse> getAllOrders(int page, int size);
 

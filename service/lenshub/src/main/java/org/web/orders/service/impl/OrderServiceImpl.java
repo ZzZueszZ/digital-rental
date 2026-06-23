@@ -15,6 +15,7 @@ import org.web.addresses.repository.ShippingAddressRepository;
 import org.web.carts.model.CartItem;
 import org.web.carts.repository.CartItemRepository;
 import org.web.common.enums.OrderStatus;
+import org.web.common.enums.PaymentMethod;
 import org.web.common.enums.PaymentStatus;
 import org.web.common.exceptions.ApplicationException;
 import org.web.common.mails.MailService;
@@ -22,6 +23,7 @@ import org.web.common.service.AuditLogService;
 import org.web.orders.dto.request.CheckoutFromCartRequest;
 import org.web.orders.dto.request.CheckoutItemRequest;
 import org.web.orders.dto.request.CheckoutRequest;
+import org.web.orders.dto.request.CancelOrderRequest;
 import org.web.orders.dto.response.OrderResponse;
 import org.web.orders.mapper.OrderMapper;
 import org.web.orders.model.Order;
@@ -386,6 +388,38 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
+    public OrderResponse cancelMyOrder(Long userId, Long orderId, CancelOrderRequest request) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn hàng"));
+
+        if (!order.getUser().getId().equals(userId)) {
+            throw new ApplicationException(HttpStatus.FORBIDDEN, "Bạn không có quyền hủy đơn hàng này");
+        }
+
+        if (order.getStatus() != OrderStatus.PENDING && order.getStatus() != OrderStatus.CONFIRMED) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Chỉ có thể hủy đơn hàng trước khi giao");
+        }
+
+        String reason = request != null ? request.getReason() : null;
+        if (!StringUtils.hasText(reason)) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Vui lòng nhập lý do hủy đơn hàng");
+        }
+
+        order = cancelOrder(order, reason.trim(), "CUSTOMER", true);
+        auditLogService.logAction(
+                "ORDER",
+                order.getId(),
+                "CUSTOMER_CANCEL_ORDER",
+                "Customer cancelled order " + order.getCode() + ". Reason: " + reason.trim(),
+                null,
+                order.getStatus().name()
+        );
+
+        return orderMapper.toOrderResponse(order);
+    }
+
+    @Override
+    @Transactional
     public OrderResponse updateOrderStatus(Long orderId, OrderStatus newStatus) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy đơn hàng"));
@@ -419,11 +453,12 @@ public class OrderServiceImpl implements OrderService {
             order.setDeliveredAt(now);
             order.setPaymentStatus(org.web.common.enums.PaymentStatus.SUCCESS);
         } else if (newStatus == OrderStatus.CANCELED) {
-            order.setCanceledAt(now);
-            restoreStock(order);
+            order = cancelOrder(order, "Nhân viên hủy đơn hàng", "STAFF_OR_ADMIN", true);
         }
 
-        order = orderRepository.save(order);
+        if (newStatus != OrderStatus.CANCELED) {
+            order = orderRepository.save(order);
+        }
         auditLogService.logAction("ORDER", order.getId(), "UPDATE_STATUS", "Order status changed to " + newStatus, null, null);
         
         return orderMapper.toOrderResponse(order);
@@ -443,6 +478,24 @@ public class OrderServiceImpl implements OrderService {
                 productRepository.save(p);
             }
         }
+    }
+
+    private Order cancelOrder(Order order, String reason, String canceledBy, boolean markRefund) {
+        order.setStatus(OrderStatus.CANCELED);
+        order.setCanceledAt(LocalDateTime.now());
+        order.setCancelReason(reason);
+        order.setCanceledBy(canceledBy);
+
+        boolean needsManualRefund = markRefund
+                && order.getPaymentMethod() == PaymentMethod.ONLINE
+                && order.getPaymentStatus() == PaymentStatus.SUCCESS;
+        order.setRefundRequired(needsManualRefund);
+        order.setRefundNote(needsManualRefund
+                ? "Đơn hàng đã thanh toán online, cần admin xử lý hoàn tiền thủ công."
+                : null);
+
+        restoreStock(order);
+        return orderRepository.save(order);
     }
 
     private void notifyLowSaleStockIfNeeded(Product product, int previousStock) {

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.web.common.dto.ApiResponse;
 import org.web.common.enums.OrderStatus;
 import org.web.common.enums.PaymentStatus;
+import org.web.orders.dto.request.CancelOrderRequest;
 import org.web.orders.dto.request.CheckoutFromCartRequest;
 import org.web.orders.dto.request.CheckoutRequest;
 import org.web.orders.dto.request.UpdateOrderStatusRequest;
@@ -99,6 +100,18 @@ public class OrderController {
     }
 
     // ================== STAFF / ADMIN – QUẢN LÝ ĐƠN ==================
+
+    @PostMapping("/my/{id}/cancel")
+    @PreAuthorize("hasAuthority('ORDER_READ') or hasAuthority('ORDER_WRITE')")
+    public ResponseEntity<ApiResponse<OrderResponse>> cancelMyOrder(
+            Authentication authentication,
+            @PathVariable Long id,
+            @Valid @RequestBody CancelOrderRequest request
+    ) {
+        Long userId = getCurrentUserId(authentication);
+        OrderResponse response = orderService.cancelMyOrder(userId, id, request);
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Đã hủy đơn hàng thành công", response));
+    }
 
     @GetMapping("/admin")
     @PreAuthorize("hasAuthority('ORDER_MANAGE')")

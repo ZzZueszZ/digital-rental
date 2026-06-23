@@ -57,6 +57,10 @@ public class OrderMapper {
                 .completedAt(order.getCompletedAt())
                 .canceledAt(order.getCanceledAt())
                 .createdAt(order.getCreatedAt())
+                .cancelReason(order.getCancelReason())
+                .canceledBy(order.getCanceledBy())
+                .refundRequired(Boolean.TRUE.equals(order.getRefundRequired()))
+                .refundNote(order.getRefundNote())
                 .items(itemResponses)
                 .build();
     }

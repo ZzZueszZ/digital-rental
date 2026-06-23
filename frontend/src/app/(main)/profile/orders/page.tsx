@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   useMyOrders,
   useConfirmReceived,
+  useCancelMyOrder,
   orderService,
 } from "@/services/order";
 import {
@@ -19,6 +20,22 @@ import { useRouter } from "next/navigation";
 import { cn, formatVND, getImageUrl, formatDate } from "@/lib/utils";
 import { OrderDetailDialog } from "@/components/common/OrderDetailDialog";
 import { ReviewFormDialog } from "@/components/common/ReviewFormDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   RentalOrderStatus,
   rentalService,
@@ -58,10 +75,23 @@ export default function OrdersPage() {
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [selectedOrderForReview, setSelectedOrderForReview] =
     useState<OrderResponse | null>(null);
+  const [selectedOrderForCancel, setSelectedOrderForCancel] =
+    useState<OrderResponse | null>(null);
+  const [cancelReasonPreset, setCancelReasonPreset] = useState("");
+  const [cancelReasonOther, setCancelReasonOther] = useState("");
   const [payingOrderKey, setPayingOrderKey] = useState<string | null>(null);
   const router = useRouter();
 
   const { mutateAsync: confirmReceived } = useConfirmReceived();
+  const cancelOrderMutation = useCancelMyOrder();
+
+  const cancelReasonOptions = [
+    "Đặt nhầm",
+    "Muốn đổi sản phẩm",
+    "Thay đổi địa chỉ/thông tin nhận hàng",
+    "Không còn nhu cầu",
+    "Khác",
+  ];
 
   const handleShowDetail = (id: number) => {
     setSelectedOrderId(id);
@@ -71,6 +101,48 @@ export default function OrdersPage() {
   const handleReview = (order: OrderResponse) => {
     setSelectedOrderForReview(order);
     setIsReviewOpen(true);
+  };
+
+  const openCancelDialog = (order: OrderResponse) => {
+    setSelectedOrderForCancel(order);
+    setCancelReasonPreset("");
+    setCancelReasonOther("");
+  };
+
+  const closeCancelDialog = () => {
+    if (cancelOrderMutation.isPending) return;
+    setSelectedOrderForCancel(null);
+    setCancelReasonPreset("");
+    setCancelReasonOther("");
+  };
+
+  const handleCancelOrder = async () => {
+    if (!selectedOrderForCancel) return;
+
+    const reason =
+      cancelReasonPreset === "Khác"
+        ? cancelReasonOther.trim()
+        : cancelReasonPreset.trim();
+
+    if (!reason) {
+      toast.error("Vui lòng chọn hoặc nhập lý do hủy đơn hàng");
+      return;
+    }
+
+    try {
+      await cancelOrderMutation.mutateAsync({
+        id: selectedOrderForCancel.id,
+        reason,
+      });
+      toast.success("Đã hủy đơn hàng");
+      closeCancelDialog();
+    } catch (error: unknown) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      toast.error(
+        apiError.response?.data?.message ||
+          (error instanceof Error ? error.message : "Không thể hủy đơn hàng"),
+      );
+    }
   };
 
   const handleConfirmReceived = async (id: number) => {
@@ -385,13 +457,20 @@ export default function OrdersPage() {
                     </span>
                   </div>
                 </div>
-                <div
-                  className={cn(
-                    "inline-flex w-fit min-w-max shrink-0 items-center justify-center whitespace-nowrap px-3 py-1 rounded-xl text-xs font-semibold border shadow-none",
-                    getStatusColor(order.status),
+                <div className="flex flex-wrap justify-end gap-2">
+                  <div
+                    className={cn(
+                      "inline-flex w-fit min-w-max shrink-0 items-center justify-center whitespace-nowrap px-3 py-1 rounded-xl text-xs font-semibold border shadow-none",
+                      getStatusColor(order.status),
+                    )}
+                  >
+                    {getStatusLabel(order.status)}
+                  </div>
+                  {order.refundRequired && (
+                    <div className="inline-flex w-fit min-w-max shrink-0 items-center justify-center whitespace-nowrap rounded-xl border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                      Chờ hoàn tiền
+                    </div>
                   )}
-                >
-                  {getStatusLabel(order.status)}
                 </div>
               </div>
 
@@ -434,7 +513,7 @@ export default function OrdersPage() {
                     {formatVND(order.totalPrice)}
                   </span>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   {order.paymentMethod === PaymentMethod.ONLINE &&
                     order.paymentStatus !== PaymentStatus.SUCCESS &&
                     order.status !== OrderStatus.CANCELED && (
@@ -458,6 +537,16 @@ export default function OrdersPage() {
                   >
                     Xem chi tiết
                   </Button>
+                  {(order.status === OrderStatus.PENDING ||
+                    order.status === OrderStatus.CONFIRMED) && (
+                    <Button
+                      variant="outline"
+                      className="h-10 px-5 rounded-xl border-red-100 bg-red-50 text-[14px] font-semibold text-red-600 shadow-none hover:bg-red-100 hover:text-red-700"
+                      onClick={() => openCancelDialog(order)}
+                    >
+                      Hủy đơn
+                    </Button>
+                  )}
                   {order.status === OrderStatus.DELIVERED && (
                     <Button
                       onClick={() => handleConfirmReceived(order.id)}
@@ -599,6 +688,135 @@ export default function OrdersPage() {
           orderId={selectedOrderId}
         />
       )}
+
+      <Dialog
+        open={!!selectedOrderForCancel}
+        onOpenChange={(open) => {
+          if (!open) closeCancelDialog();
+        }}
+      >
+        <DialogContent
+          showCloseButton={false}
+          className="sm:max-w-lg !p-0 !gap-0 overflow-hidden border border-zinc-100 bg-white shadow-dash-overlay"
+        >
+          <DialogHeader className="p-6 pb-4 border-b border-zinc-100">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-red-100 bg-red-50">
+                <ShoppingBag className="h-5 w-5 text-red-600" />
+              </div>
+              <div className="space-y-1">
+                <DialogTitle className="text-xl font-semibold text-zinc-950">
+                  Xác nhận hủy đơn hàng
+                </DialogTitle>
+                <DialogDescription className="text-sm font-normal leading-relaxed text-zinc-500">
+                  Vui lòng kiểm tra thông tin và cho biết lý do trước khi hủy.
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          {selectedOrderForCancel && (
+            <div className="p-6 space-y-5">
+              <div className="rounded-xl border border-zinc-100 bg-zinc-50/60 p-4 space-y-3">
+                <div className="flex items-center justify-between gap-4 text-sm">
+                  <span className="text-zinc-500">Mã đơn</span>
+                  <span className="font-semibold text-zinc-950">
+                    #{selectedOrderForCancel.code}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-4 text-sm">
+                  <span className="text-zinc-500">Tổng thanh toán</span>
+                  <span className="font-semibold text-red-600">
+                    {formatVND(selectedOrderForCancel.totalPrice)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-4 text-sm">
+                  <span className="text-zinc-500">Thanh toán</span>
+                  <span className="font-semibold text-zinc-950">
+                    {selectedOrderForCancel.paymentStatus === PaymentStatus.SUCCESS
+                      ? "Đã thanh toán"
+                      : selectedOrderForCancel.paymentStatus === PaymentStatus.FAILED
+                        ? "Thanh toán thất bại"
+                        : "Chưa thanh toán"}
+                  </span>
+                </div>
+              </div>
+
+              {selectedOrderForCancel.paymentMethod === PaymentMethod.ONLINE &&
+                selectedOrderForCancel.paymentStatus === PaymentStatus.SUCCESS && (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium leading-relaxed text-amber-700">
+                    Đơn đã thanh toán online. Sau khi hủy, đơn sẽ được chuyển
+                    sang trạng thái chờ hoàn tiền thủ công.
+                  </div>
+                )}
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-zinc-700">
+                  Lý do hủy
+                </label>
+                <Select
+                  value={cancelReasonPreset}
+                  onValueChange={(value) => {
+                    const nextValue = value ?? "";
+                    setCancelReasonPreset(nextValue);
+                    if (nextValue !== "Khác") setCancelReasonOther("");
+                  }}
+                >
+                  <SelectTrigger className="h-12 w-full rounded-xl border-zinc-200 !bg-white px-4 text-sm text-zinc-900 shadow-none hover:!bg-white focus:!bg-white data-[placeholder]:text-zinc-400">
+                    <SelectValue placeholder="Chọn lý do hủy đơn" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    {cancelReasonOptions.map((reason) => (
+                      <SelectItem key={reason} value={reason}>
+                        {reason}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {cancelReasonPreset === "Khác" && (
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-zinc-700">
+                    Mô tả lý do
+                  </label>
+                  <Textarea
+                    value={cancelReasonOther}
+                    onChange={(event) =>
+                      setCancelReasonOther(event.target.value)
+                    }
+                    placeholder="Nhập lý do hủy đơn cụ thể..."
+                    className="min-h-24 resize-none bg-white"
+                    maxLength={1000}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter className="m-0 flex-row justify-end gap-3 border-t border-zinc-100 bg-zinc-50/60 px-6 py-4">
+            <Button
+              variant="outline"
+              onClick={closeCancelDialog}
+              disabled={cancelOrderMutation.isPending}
+              className="h-10 rounded-xl border-zinc-200 bg-white px-5 font-semibold text-zinc-700 shadow-sm hover:bg-zinc-100 hover:text-zinc-950"
+            >
+              Đóng
+            </Button>
+            <Button
+              onClick={handleCancelOrder}
+              disabled={cancelOrderMutation.isPending}
+              className="h-10 rounded-xl bg-red-600 px-5 font-semibold text-white shadow-sm shadow-red-100 hover:bg-red-700"
+            >
+              {cancelOrderMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Xác nhận hủy"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {selectedOrderForReview && (
         <ReviewFormDialog

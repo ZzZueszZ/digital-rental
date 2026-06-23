@@ -77,6 +77,19 @@ public class Order extends BaseAuditEntity {
     private LocalDateTime deliveredAt;
     private LocalDateTime completedAt;
     private LocalDateTime canceledAt;
+
+    @Lob
+    private String cancelReason;
+
+    @Column(length = 30)
+    private String canceledBy;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    @Builder.Default
+    private Boolean refundRequired = false;
+
+    @Lob
+    private String refundNote;
     
     private String paymentTransactionNo;
     private String paymentResponseCode;

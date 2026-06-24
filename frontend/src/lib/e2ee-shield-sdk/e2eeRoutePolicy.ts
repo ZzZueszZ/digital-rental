@@ -18,6 +18,15 @@ const rules: RouteRule[] = [
     path: /^\/admin\/ekyc\/\d+\/(approve|reject)$/,
     level: "CRITICAL",
   },
+  { method: "GET", path: /^\/rentals\/my$/, level: "SENSITIVE" },
+  { method: "GET", path: /^\/rentals\/\d+$/, level: "SENSITIVE" },
+  {
+    method: "GET",
+    path: /^\/rentals\/\d+\/contract$/,
+    level: "SENSITIVE",
+  },
+  { method: "GET", path: /^\/rentals\/staff$/, level: "CRITICAL" },
+  { method: "GET", path: /^\/rentals\/staff\/\d+$/, level: "CRITICAL" },
   {
     method: "POST",
     path: /^\/rentals\/\d+\/contract\/(send-otp|sign)$/,
@@ -27,6 +36,16 @@ const rules: RouteRule[] = [
     method: "POST",
     path: /^\/rentals\/staff\/\d+\/(prepare|handover-report|collect-deposit|handover|return-report|complete)$/,
     level: "CRITICAL",
+  },
+  {
+    method: "GET",
+    path: /^\/rentals\/admin\/products\/\d+\/devices$/,
+    level: "SENSITIVE",
+  },
+  {
+    method: "GET",
+    path: /^\/rentals\/admin\/products\/\d+\/devices\/available$/,
+    level: "SENSITIVE",
   },
   { method: "POST", path: /^\/rentals\/admin\/devices$/, level: "SENSITIVE" },
   {

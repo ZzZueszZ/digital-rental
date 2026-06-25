@@ -103,21 +103,11 @@ public class FptKycProvider implements KycProvider {
         Path faceImage = fileResolver.resolve(faceImageUrl);
         try {
             String raw = postLiveness(video, faceImage);
-            JsonNode root = objectMapper.readTree(raw);
-            JsonNode data = root.path("data");
-            double score = firstDouble(data, "liveness_score", "live_score", "score", "prob", "liveness");
-            boolean spoofDetected = firstBoolean(data, false, "spoof_detected", "isSpoof", "spoof");
-            boolean multipleFaces = firstBoolean(data, false, "multiple_faces_detected", "multipleFaces", "multi_face");
-            boolean passed = firstBoolean(data, score >= 0.80 && !spoofDetected && !multipleFaces,
-                    "passed", "isLive", "is_live", "live", "liveness");
+            KycLivenessResult result = parseLivenessResponse(raw);
+            double score = result.getScore();
+            boolean passed = result.isPassed();
             log.info("FPT KYC liveness completed: passed={}, score={}", passed, score);
-            return KycLivenessResult.builder()
-                    .score(score)
-                    .passed(passed)
-                    .spoofDetected(spoofDetected)
-                    .multipleFacesDetected(multipleFaces)
-                    .rawResponse(raw)
-                    .build();
+            return result;
         } catch (RestClientResponseException e) {
             log.warn("FPT liveness call failed: status={}, body={}", e.getStatusCode(), e.getResponseBodyAsString());
             return livenessUnavailableResult(e.getStatusCode().value(), e.getResponseBodyAsString());
@@ -182,17 +172,48 @@ public class FptKycProvider implements KycProvider {
                 .retrieve()
                 .body(String.class);
         try {
-            JsonNode data = objectMapper.readTree(raw).path("data");
-            double similarity = data.path("similarity").asDouble(0);
-            return KycFaceMatchResult.builder()
-                    .similarity(similarity)
-                    .matched(data.path("isMatch").asBoolean(similarity >= 80))
-                    .rawResponse(raw)
-                    .build();
+            return parseFaceMatchResponse(raw);
         } catch (Exception e) {
             log.error("Failed to parse FPT facematch response: {}", e.getMessage(), e);
             throw new ApplicationException(HttpStatus.BAD_GATEWAY, "Failed to parse FPT facematch response");
         }
+    }
+
+    KycFaceMatchResult parseFaceMatchResponse(String raw) throws Exception {
+        JsonNode root = objectMapper.readTree(raw);
+        JsonNode data = payloadNode(root, "face_match");
+        double similarity = data.path("similarity").asDouble(0);
+        return KycFaceMatchResult.builder()
+                .similarity(similarity)
+                .matched(firstBoolean(data, similarity >= 80, "isMatch", "is_match", "matched"))
+                .rawResponse(raw)
+                .build();
+    }
+
+    KycLivenessResult parseLivenessResponse(String raw) throws Exception {
+        JsonNode root = objectMapper.readTree(raw);
+        JsonNode data = payloadNode(root, "liveness");
+        boolean hasScore = hasAny(data, "liveness_score", "live_score", "score", "prob", "liveness");
+        double score = firstDouble(data, "liveness_score", "live_score", "score", "prob", "liveness");
+        double spoofProbability = firstDouble(data, "spoof_prob", "spoof_probability");
+        if (!hasScore && hasAny(data, "isLive", "is_live", "live")) {
+            score = firstBoolean(data, false, "isLive", "is_live", "live") ? 1 : 0;
+        } else if (!hasScore && hasAny(data, "spoof_prob", "spoof_probability")) {
+            score = Math.max(0, 1 - spoofProbability);
+        }
+        boolean spoofDetected = firstBoolean(data, spoofProbability >= 0.50,
+                "spoof_detected", "isSpoof", "spoof");
+        boolean multipleFaces = firstBoolean(data, false,
+                "multiple_faces_detected", "multipleFaces", "multi_face");
+        boolean passed = firstBoolean(data, score >= 0.80 && !spoofDetected && !multipleFaces,
+                "passed", "isLive", "is_live", "live", "liveness");
+        return KycLivenessResult.builder()
+                .score(score)
+                .passed(passed)
+                .spoofDetected(spoofDetected)
+                .multipleFacesDetected(multipleFaces)
+                .rawResponse(raw)
+                .build();
     }
 
     private String postMultipart(String url, String headerName, Path imagePath, String paramName) {
@@ -286,10 +307,35 @@ public class FptKycProvider implements KycProvider {
     private boolean firstBoolean(JsonNode node, boolean fallback, String... fields) {
         for (String field : fields) {
             if (node.hasNonNull(field)) {
-                return node.path(field).asBoolean(fallback);
+                JsonNode value = node.path(field);
+                if (value.isTextual()) {
+                    String text = value.asText("").trim();
+                    if ("true".equalsIgnoreCase(text) || "1".equals(text)) return true;
+                    if ("false".equalsIgnoreCase(text) || "0".equals(text)) return false;
+                }
+                return value.asBoolean(fallback);
             }
         }
         return fallback;
+    }
+
+    private JsonNode payloadNode(JsonNode root, String directField) {
+        JsonNode data = root.path("data");
+        if (hasContent(data)) return data;
+        JsonNode direct = root.path(directField);
+        if (hasContent(direct)) return direct;
+        return root;
+    }
+
+    private boolean hasContent(JsonNode node) {
+        return !node.isMissingNode() && !node.isNull() && (!node.isObject() || node.size() > 0);
+    }
+
+    private boolean hasAny(JsonNode node, String... fields) {
+        for (String field : fields) {
+            if (node.hasNonNull(field)) return true;
+        }
+        return false;
     }
 
     private String sanitizeJsonText(String value) {

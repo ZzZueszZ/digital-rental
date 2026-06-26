@@ -119,7 +119,7 @@ Key patterns:
 
 - VNPay: `/payments/vnpay/create` and `/payments/vnpay/return`.
 - Rental VNPay: `/payments/vnpay/rental-fee/create` and `/payments/vnpay/rental-fee/return`.
-- eKYC: `/ekyc/ocr-preview`, `/ekyc/upload-liveness-video`, and `/ekyc/submit` support CCCD OCR preview, selfie facematch, and mandatory liveness video validation through the configured KYC provider.
+- eKYC: `/ekyc/ocr-preview`, `/ekyc/upload-liveness-video`, and `/ekyc/submit` support CCCD OCR preview, selfie facematch, and mandatory liveness video validation through the configured KYC provider. Liveness uses one direct camera recording around 6 seconds, split in UI into four timed 1.5s phases; backend upload accepts only WebM/MP4/MOV videos within 4.5s-7s and 15MB.
 - Mail: activation and password reset flows use SMTP configuration.
 - Redis: token blacklist/cache support.
 - OpenAPI: Swagger UI and API docs paths are public.
@@ -133,7 +133,7 @@ Key patterns:
 - `FPT_KYC_FACEMATCH_URL`
 - `FPT_KYC_LIVENESS_URL`
 
-OCR preview is persisted in existing verification result data. Final submit reuses OCR preview, runs facematch, requires `livenessVideoUrl`, runs liveness validation, then keeps manual review as final authority.
+OCR preview is persisted in existing verification result data. Final submit reuses OCR preview, runs facematch, requires `livenessVideoUrl`, runs liveness validation on the saved continuous video, then keeps manual review as final authority.
 
 For self-hosted local AI execution, `service/ai-kyc-service` can replace FPT network calls while keeping the same Spring provider contract. Point the three FPT URL variables to the FastAPI service:
 

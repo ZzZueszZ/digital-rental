@@ -29,6 +29,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useMyProfile } from "@/services/profile";
+import { isAxiosError } from "axios";
 
 function base64ToFile(base64String: string, filename: string): File {
   const arr = base64String.split(",");
@@ -65,7 +66,67 @@ const LIVENESS_PROMPTS = [
   },
 ] as const;
 
-const MIN_LIVENESS_STEP_MS = 1200;
+const LIVENESS_TOTAL_MS = 6000;
+const LIVENESS_PHASE_MS = 1500;
+const MIN_LIVENESS_DURATION_SECONDS = 4.5;
+const MAX_LIVENESS_DURATION_SECONDS = 7;
+
+function getSupportedLivenessMimeType() {
+  if (typeof MediaRecorder === "undefined") return "";
+  return [
+    "video/webm;codecs=vp8,opus",
+    "video/webm",
+    "video/mp4",
+  ].find((type) => MediaRecorder.isTypeSupported(type)) || "";
+}
+
+function fileExtensionFromMimeType(mimeType: string) {
+  return mimeType.includes("mp4") ? "mp4" : "webm";
+}
+
+function readVideoMetadata(blob: Blob): Promise<{ duration: number }> {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement("video");
+    const url = URL.createObjectURL(blob);
+    const cleanup = () => {
+      video.removeAttribute("src");
+      video.load();
+      URL.revokeObjectURL(url);
+    };
+
+    video.preload = "metadata";
+    video.onloadedmetadata = () => {
+      const duration = video.duration;
+      cleanup();
+      if (!Number.isFinite(duration)) {
+        reject(new Error("Video metadata is invalid"));
+        return;
+      }
+      resolve({ duration });
+    };
+    video.onerror = () => {
+      cleanup();
+      reject(new Error("Cannot read video metadata"));
+    };
+    video.src = url;
+  });
+}
+
+async function getLivenessDurationSeconds(file: File, elapsedMs: number) {
+  try {
+    const metadata = await readVideoMetadata(file);
+    return metadata.duration;
+  } catch {
+    return elapsedMs / 1000;
+  }
+}
+
+function getApiErrorMessage(error: unknown, fallback: string) {
+  if (isAxiosError<{ message?: string }>(error)) {
+    return error.response?.data?.message || error.message || fallback;
+  }
+  return error instanceof Error ? error.message : fallback;
+}
 
 export default function EkycPage() {
   const { refetch: refetchProfile } = useMyProfile();
@@ -88,6 +149,8 @@ export default function EkycPage() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<Blob[]>([]);
   const livenessShouldUploadRef = useRef(false);
+  const livenessRecordingTimeoutRef = useRef<number | null>(null);
+  const livenessRecordingStartedAtRef = useRef<number | null>(null);
 
   // Upload image URLs
   const [frontImage, setFrontImage] = useState<string | null>(null);
@@ -129,8 +192,22 @@ export default function EkycPage() {
   useEffect(() => {
     if (!recordingLiveness || !livenessStepStartedAt) return;
     const timer = window.setInterval(() => {
-      setLivenessElapsedMs(Date.now() - livenessStepStartedAt);
-    }, 150);
+      const elapsed = Math.min(
+        Date.now() - livenessStepStartedAt,
+        LIVENESS_TOTAL_MS,
+      );
+      const currentStep = Math.min(
+        LIVENESS_PROMPTS.length - 1,
+        Math.floor(elapsed / LIVENESS_PHASE_MS),
+      );
+      setLivenessElapsedMs(elapsed);
+      setLivenessStepIndex(currentStep);
+      setCompletedLivenessSteps(
+        LIVENESS_PROMPTS.map(
+          (_, index) => elapsed >= (index + 1) * LIVENESS_PHASE_MS,
+        ),
+      );
+    }, 100);
     return () => window.clearInterval(timer);
   }, [recordingLiveness, livenessStepStartedAt]);
 
@@ -166,6 +243,10 @@ export default function EkycPage() {
   };
 
   const stopCamera = () => {
+    if (livenessRecordingTimeoutRef.current) {
+      window.clearTimeout(livenessRecordingTimeoutRef.current);
+      livenessRecordingTimeoutRef.current = null;
+    }
     if (
       mediaRecorderRef.current &&
       mediaRecorderRef.current.state !== "inactive"
@@ -312,12 +393,12 @@ export default function EkycPage() {
     setLivenessStepIndex(0);
     setCompletedLivenessSteps(LIVENESS_PROMPTS.map(() => false));
     setLivenessElapsedMs(0);
-    setLivenessStepStartedAt(Date.now());
+    const recordingStartedAt = Date.now();
+    setLivenessStepStartedAt(recordingStartedAt);
+    livenessRecordingStartedAtRef.current = recordingStartedAt;
     livenessShouldUploadRef.current = false;
     recordedChunksRef.current = [];
-    const mimeType = MediaRecorder.isTypeSupported("video/webm")
-      ? "video/webm"
-      : "";
+    const mimeType = getSupportedLivenessMimeType();
     const recorder = new MediaRecorder(
       streamRef.current,
       mimeType ? { mimeType } : undefined,
@@ -332,6 +413,10 @@ export default function EkycPage() {
       const blob = new Blob(recordedChunksRef.current, {
         type: mimeType || "video/webm",
       });
+      if (livenessRecordingTimeoutRef.current) {
+        window.clearTimeout(livenessRecordingTimeoutRef.current);
+        livenessRecordingTimeoutRef.current = null;
+      }
       if (!livenessShouldUploadRef.current || blob.size === 0) {
         setUploadingImage(false);
         setRecordingLiveness(false);
@@ -340,16 +425,37 @@ export default function EkycPage() {
         livenessShouldUploadRef.current = false;
         return;
       }
-      const file = new File([blob], "liveness.webm", {
-        type: mimeType || "video/webm",
-      });
+      const fileType = mimeType || "video/webm";
+      const file = new File(
+        [blob],
+        `liveness.${fileExtensionFromMimeType(fileType)}`,
+        { type: fileType },
+      );
       try {
         setUploadingImage(true);
+        const elapsedMs = livenessRecordingStartedAtRef.current
+          ? Date.now() - livenessRecordingStartedAtRef.current
+          : LIVENESS_TOTAL_MS;
+        const duration = await getLivenessDurationSeconds(file, elapsedMs);
+        if (
+          duration < MIN_LIVENESS_DURATION_SECONDS ||
+          duration > MAX_LIVENESS_DURATION_SECONDS
+        ) {
+          toast.error(
+            "Video xác thực phải dài từ 4.5 đến 7 giây. Vui lòng quay lại.",
+          );
+          return;
+        }
         const uploadedUrl = await identityService.uploadLivenessVideo(file);
         setLivenessVideo(uploadedUrl);
         toast.success("Video xác thực khuôn mặt đã sẵn sàng");
       } catch (error) {
-        toast.error("Tải video xác thực thất bại. Vui lòng quay lại.");
+        toast.error(
+          getApiErrorMessage(
+            error,
+            "Tải video xác thực thất bại. Vui lòng quay lại.",
+          ),
+        );
         console.error(error);
       } finally {
         setUploadingImage(false);
@@ -357,11 +463,15 @@ export default function EkycPage() {
         setLivenessStepStartedAt(null);
         setLivenessElapsedMs(0);
         livenessShouldUploadRef.current = false;
+        livenessRecordingStartedAtRef.current = null;
         stopCamera();
       }
     };
     recorder.start(250);
     setRecordingLiveness(true);
+    livenessRecordingTimeoutRef.current = window.setTimeout(() => {
+      stopLivenessRecording();
+    }, LIVENESS_TOTAL_MS);
   };
 
   const stopLivenessRecording = () => {
@@ -370,6 +480,9 @@ export default function EkycPage() {
       mediaRecorderRef.current.state === "recording"
     ) {
       livenessShouldUploadRef.current = true;
+      setLivenessElapsedMs(LIVENESS_TOTAL_MS);
+      setLivenessStepIndex(LIVENESS_PROMPTS.length - 1);
+      setCompletedLivenessSteps(LIVENESS_PROMPTS.map(() => true));
       mediaRecorderRef.current.stop();
     }
   };
@@ -388,44 +501,6 @@ export default function EkycPage() {
     setLivenessStepStartedAt(null);
     setLivenessElapsedMs(0);
     stopCamera();
-  };
-
-  const validateCurrentLivenessStep = () => {
-    const video = videoRef.current;
-    const elapsed = livenessStepStartedAt
-      ? Date.now() - livenessStepStartedAt
-      : 0;
-    if (
-      !recordingLiveness ||
-      !video ||
-      video.videoWidth === 0 ||
-      video.videoHeight === 0
-    ) {
-      toast.error(
-        "Camera chưa sẵn sàng. Vui lòng giữ khuôn mặt trong khung hình.",
-      );
-      return;
-    }
-    if (elapsed < MIN_LIVENESS_STEP_MS) {
-      toast.error("Giữ tư thế thêm một chút để video rõ hơn.");
-      return;
-    }
-
-    const nextCompleted = completedLivenessSteps.map((done, index) =>
-      index === livenessStepIndex ? true : done,
-    );
-    setCompletedLivenessSteps(nextCompleted);
-
-    const isLastStep = livenessStepIndex === LIVENESS_PROMPTS.length - 1;
-    if (isLastStep) {
-      toast.success("Đã đủ góc mặt. Đang tải video xác thực...");
-      stopLivenessRecording();
-      return;
-    }
-
-    setLivenessStepIndex((current) => current + 1);
-    setLivenessStepStartedAt(Date.now());
-    setLivenessElapsedMs(0);
   };
 
   const handleStep3Submit = async () => {
@@ -1375,7 +1450,7 @@ export default function EkycPage() {
                     const progress = Math.min(
                       100,
                       Math.round(
-                        (livenessElapsedMs / MIN_LIVENESS_STEP_MS) * 100,
+                        (livenessElapsedMs / LIVENESS_TOTAL_MS) * 100,
                       ),
                     );
                     return (
@@ -1411,10 +1486,10 @@ export default function EkycPage() {
                 <div className="flex flex-wrap justify-center gap-3">
                   {recordingLiveness ? (
                     <Button
-                      onClick={validateCurrentLivenessStep}
+                      disabled
                       className="h-10 px-5 rounded-xl bg-red-600 text-white font-semibold text-[14px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95"
                     >
-                      <CheckCircle2 className="w-4 h-4 mr-2" /> Xác nhận góc này
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang ghi tự động
                     </Button>
                   ) : (
                     <Button

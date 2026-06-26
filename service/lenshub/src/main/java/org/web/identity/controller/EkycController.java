@@ -105,7 +105,7 @@ public class EkycController {
     @PostMapping(value = "/upload-liveness-video", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<Map<String, String>>> uploadLivenessVideo(@RequestParam("file") MultipartFile file) {
-        String videoUrl = FileUploadUtil.saveVideo(file);
+        String videoUrl = FileUploadUtil.saveLivenessVideo(file);
         return ResponseEntity.ok(ApiResponse.successfulResponse("Tai len video liveness thanh cong", Map.of("url", videoUrl)));
     }
 }

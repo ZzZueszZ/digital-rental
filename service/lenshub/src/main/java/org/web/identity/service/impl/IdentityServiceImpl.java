@@ -15,10 +15,13 @@ import org.web.identity.model.*;
 import org.web.identity.repository.*;
 import org.web.identity.service.IdentityService;
 import org.web.identity.service.KycVerificationProcessor;
+import org.web.storage.MinioStorageProperties;
+import org.web.storage.StorageService;
 import org.web.users.model.User;
 import org.web.users.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -34,6 +37,8 @@ public class IdentityServiceImpl implements IdentityService {
     private final RiskAssessmentRepository riskAssessmentRepository;
     private final UserRepository userRepository;
     private final KycVerificationProcessor kycVerificationProcessor;
+    private final StorageService storageService;
+    private final MinioStorageProperties minioProperties;
 
     @Override
     @Transactional
@@ -280,16 +285,28 @@ public class IdentityServiceImpl implements IdentityService {
         List<VerificationArtifact> artifacts = verificationArtifactRepository.findByVerificationSessionId(session.getId());
         for (VerificationArtifact art : artifacts) {
             if (art.getArtifactType() == VerificationArtifactType.CCCD_FRONT) {
-                builder.frontImageUrl(art.getStorageKey());
+                builder.frontImageUrl(viewUrl(art.getStorageKey()));
             } else if (art.getArtifactType() == VerificationArtifactType.CCCD_BACK) {
-                builder.backImageUrl(art.getStorageKey());
+                builder.backImageUrl(viewUrl(art.getStorageKey()));
             } else if (art.getArtifactType() == VerificationArtifactType.SELFIE_IMAGE) {
-                builder.selfieImageUrl(art.getStorageKey());
+                builder.selfieImageUrl(viewUrl(art.getStorageKey()));
             } else if (art.getArtifactType() == VerificationArtifactType.SELFIE_VIDEO) {
-                builder.livenessVideoUrl(art.getStorageKey());
+                builder.livenessVideoUrl(viewUrl(art.getStorageKey()));
             }
         }
 
         return builder.build();
+    }
+
+    private String viewUrl(String storageKey) {
+        if (storageKey == null || storageKey.isBlank()) return null;
+        if (storageKey.startsWith("/api/uploads/")) return storageKey;
+        try {
+            return storageService.presignGet(storageKey,
+                    Duration.ofMinutes(minioProperties.getDownloadExpiryMinutes()));
+        } catch (RuntimeException e) {
+            log.warn("Unable to create KYC artifact view URL", e);
+            return null;
+        }
     }
 }

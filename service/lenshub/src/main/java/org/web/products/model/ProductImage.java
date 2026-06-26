@@ -3,6 +3,7 @@ package org.web.products.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.web.common.model.BaseAuditEntity;
+import org.web.files.model.FileAsset;
 
 @Entity
 @Table(name = "product_images")
@@ -19,6 +20,10 @@ public class ProductImage extends BaseAuditEntity {
 
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asset_id")
+    private FileAsset asset;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)

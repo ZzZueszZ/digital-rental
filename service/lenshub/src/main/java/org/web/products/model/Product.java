@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.web.categories.model.Category;
 import org.web.common.model.BaseAuditEntity;
+import org.web.files.model.FileAsset;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -45,6 +46,10 @@ public class Product extends BaseAuditEntity {
 
     @Column(name = "main_image_url")
     private String mainImageUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "main_image_asset_id")
+    private FileAsset mainImageAsset;
 
     private String brand;
 

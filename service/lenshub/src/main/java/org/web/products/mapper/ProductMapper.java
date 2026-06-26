@@ -9,10 +9,16 @@ import org.web.products.model.ProductImage;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.function.Function;
+import org.web.files.model.FileAsset;
 
 public class ProductMapper {
 
     public static ProductResponse toResponse(Product product) {
+        return toResponse(product, asset -> null);
+    }
+
+    public static ProductResponse toResponse(Product product, Function<FileAsset, String> assetUrl) {
         if (product == null) return null;
 
         return ProductResponse.builder()
@@ -23,7 +29,7 @@ public class ProductMapper {
                 .salePrice(product.getSalePrice())
                 .isForRent(product.isForRent())
                 .isForSale(product.isForSale())
-                .mainImageUrl(product.getMainImageUrl())
+                .mainImageUrl(product.getMainImageAsset() != null ? assetUrl.apply(product.getMainImageAsset()) : product.getMainImageUrl())
                 .brand(product.getBrand())
                 .quantity(product.getQuantity())
                 .rentalQuantity(product.getRentalQuantity())
@@ -31,7 +37,7 @@ public class ProductMapper {
                 .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
                 .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)
                 .specifications(toSpecResponses(product.getSpecifications()))
-                .gallery(toGalleryResponses(product.getGallery()))
+                .gallery(toGalleryResponses(product.getGallery(), assetUrl))
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();
@@ -57,16 +63,24 @@ public class ProductMapper {
     }
 
     public static GalleryImageResponse toGalleryResponse(ProductImage image) {
+        return toGalleryResponse(image, asset -> null);
+    }
+
+    public static GalleryImageResponse toGalleryResponse(ProductImage image, Function<FileAsset, String> assetUrl) {
 
         if (image == null) return null;
         return GalleryImageResponse.builder()
                 .id(image.getId())
-                .url(image.getImageUrl())
+                .url(image.getAsset() != null ? assetUrl.apply(image.getAsset()) : image.getImageUrl())
                 .build();
     }
 
     public static List<GalleryImageResponse> toGalleryResponses(List<ProductImage> gallery) {
+        return toGalleryResponses(gallery, asset -> null);
+    }
+
+    public static List<GalleryImageResponse> toGalleryResponses(List<ProductImage> gallery, Function<FileAsset, String> assetUrl) {
         if (gallery == null) return Collections.emptyList();
-        return gallery.stream().map(ProductMapper::toGalleryResponse).collect(Collectors.toList());
+        return gallery.stream().map(image -> toGalleryResponse(image, assetUrl)).collect(Collectors.toList());
     }
 }

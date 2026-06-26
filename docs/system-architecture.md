@@ -1,7 +1,7 @@
 # System Architecture
 
 ## Documentation Maintenance
-**Last Updated:** 2026-06-06  
+**Last Updated:** 2026-06-26  
 **Document Version:** 1.0  
 **Maintained By:** Development Team
 
@@ -18,6 +18,7 @@ flowchart LR
   API --> Mail["SMTP Mail"]
   API --> VNPay["VNPay"]
   API --> AIKYC["service/ai-kyc-service: FastAPI KYC AI"]
+  API --> MinIO["MinIO: private object storage"]
 ```
 
 ## Backend Runtime
@@ -83,6 +84,8 @@ Development defaults in `application.yml` expect:
 
 `application.yml` imports optional `.env` properties. No verified PostgreSQL compose file exists for the active backend. `docker/docker-compose.yml` is a legacy MySQL CMS compose, and `deploy/redis/docker-compose.yml` publishes Redis on `16379` with password settings that do not currently match backend defaults.
 
+MinIO local infrastructure is configured in `docker/docker-compose.yml`. It exposes the S3 API on `9000` and Console on `9001`; `minio-init` creates the private `rental-assets` bucket and applies browser CORS for the local frontend. Backend configuration distinguishes `MINIO_INTERNAL_ENDPOINT` for backend object operations from `MINIO_PUBLIC_ENDPOINT` embedded in browser-facing presigned URLs. KYC and product-media clients upload directly to MinIO using short-lived PUT URLs; the backend persists asset metadata and generates short-lived GET URLs.
+
 ## API Architecture
 
 All JSON responses should use `ApiResponse<T>`:
@@ -117,9 +120,10 @@ Key patterns:
 
 ## Integration Points
 
+- Private file storage: authenticated `POST /files/presign-upload`, `POST /files/{assetId}/complete`, `GET /files/{assetId}/download-url`, and `DELETE /files/{assetId}` manage `FileAsset` metadata and short-lived MinIO URLs. Clients upload bytes directly to MinIO with the returned presigned PUT URL; existing eKYC/product multipart flows are migrated in later phases.
 - VNPay: `/payments/vnpay/create` and `/payments/vnpay/return`.
 - Rental VNPay: `/payments/vnpay/rental-fee/create` and `/payments/vnpay/rental-fee/return`.
-- eKYC: `/ekyc/ocr-preview`, `/ekyc/upload-liveness-video`, and `/ekyc/submit` support CCCD OCR preview, selfie facematch, and mandatory liveness video validation through the configured KYC provider. Liveness uses one direct camera recording around 6 seconds, split in UI into four timed 1.5s phases; backend upload accepts only WebM/MP4/MOV videos within 4.5s-7s and 15MB.
+- eKYC: `/ekyc/ocr-preview` and `/ekyc/submit` receive private `FileAsset` IDs for new flows. The provider resolves object keys into temporary local files, validates liveness signature/duration, and removes temporary files after use. Legacy multipart endpoints remain only for rollout compatibility.
 - Mail: activation and password reset flows use SMTP configuration.
 - Redis: token blacklist/cache support.
 - OpenAPI: Swagger UI and API docs paths are public.

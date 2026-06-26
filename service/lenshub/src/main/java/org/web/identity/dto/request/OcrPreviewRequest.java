@@ -1,16 +1,15 @@
 package org.web.identity.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.UUID;
 
 @Getter
 @Setter
 public class OcrPreviewRequest {
 
-    @NotBlank(message = "Front CCCD image is required")
     private String frontImageUrl;
-
-    @NotBlank(message = "Back CCCD image is required")
     private String backImageUrl;
+    private UUID frontImageAssetId;
+    private UUID backImageAssetId;
 }

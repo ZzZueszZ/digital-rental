@@ -12,6 +12,7 @@ import org.web.products.dto.response.PriceHistoryResponse;
 import org.web.products.dto.response.ProductResponse;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ProductService {
 
@@ -35,6 +36,8 @@ public interface ProductService {
 
     // Gallery
     List<GalleryImageResponse> addGallery(Long productId, List<MultipartFile> images);
+
+    List<GalleryImageResponse> addGalleryAssets(Long productId, List<UUID> assetIds);
     
     void deleteGalleryImage(Long productId, Long imageId);
 

@@ -1,7 +1,7 @@
 # Codebase Summary
 
 ## Documentation Maintenance
-**Last Updated:** 2026-06-06  
+**Last Updated:** 2026-06-26  
 **Document Version:** 1.0  
 **Maintained By:** Development Team
 
@@ -52,6 +52,8 @@ Module directories:
 | `support` | Support ticket creation and admin handling. |
 | `users` | User management and profile features. |
 | `vouchers` | Voucher CRUD and application. |
+| `files` | Private file asset metadata, purpose policy, and authenticated presigned URL APIs. |
+| `storage` | MinIO-compatible object storage adapter and configuration. |
 
 ## Backend API Surface
 
@@ -112,6 +114,8 @@ Current repository infra files:
 - `docker/docker-compose.yml`: legacy MySQL CMS compose. Do not assume it supports `service/lenshub`.
 - `deploy/redis/docker-compose.yml`: Redis compose with password and Swarm deploy settings, published on host port `16379`.
 - `migration/`: legacy migration assets. Current ownership unclear.
+
+MinIO infrastructure now also lives in `docker/docker-compose.yml`: private `rental-assets` bucket, API port `9000`, Console port `9001`, and idempotent `minio-init` bucket/CORS setup. The backend has MinIO configuration and SDK dependency, but application file flows remain on legacy `/api/uploads` until the storage-core phase is implemented.
 
 No verified PostgreSQL Docker Compose file for the active backend was found.
 

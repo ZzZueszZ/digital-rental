@@ -20,6 +20,7 @@ import org.web.products.dto.response.ProductResponse;
 import org.web.products.service.ProductService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
@@ -131,6 +132,15 @@ public class ProductController {
     ) {
         List<GalleryImageResponse> response = productService.addGallery(id, images);
         return ResponseEntity.ok(ApiResponse.successfulResponse("Thêm ảnh vào bộ sưu tập thành công", response));
+    }
+
+    @PostMapping(value = "/{id}/gallery-assets", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('PRODUCT_WRITE')")
+    public ResponseEntity<ApiResponse<List<GalleryImageResponse>>> addGalleryAssets(
+            @PathVariable Long id,
+            @RequestBody List<UUID> assetIds
+    ) {
+        return ResponseEntity.ok(ApiResponse.successfulResponse("Added gallery images", productService.addGalleryAssets(id, assetIds)));
     }
 
     // ADMIN: Xóa ảnh gallery

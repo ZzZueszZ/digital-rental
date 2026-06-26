@@ -5,11 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.web.common.enums.VerificationArtifactStatus;
 import org.web.common.enums.VerificationArtifactType;
+import org.web.common.utils.FileUploadUtil;
 import org.web.identity.dto.request.SubmitKycRequest;
 import org.web.identity.model.*;
 import org.web.identity.repository.*;
 import org.web.identity.service.provider.*;
 import org.web.users.model.User;
+
+import java.nio.file.Path;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,7 @@ public class KycVerificationProcessor {
     private final VerificationResultRepository verificationResultRepository;
     private final FaceVerificationResultRepository faceVerificationResultRepository;
     private final RiskAssessmentRepository riskAssessmentRepository;
+    private final UploadedFileResolver uploadedFileResolver;
 
     public void process(VerificationSession session, User user, SubmitKycRequest request) {
         log.debug("KYC processor saving artifacts: userId={}, sessionId={}", user.getId(), session.getId());
@@ -29,6 +33,8 @@ public class KycVerificationProcessor {
         saveArtifact(session, VerificationArtifactType.CCCD_BACK, request.getBackImageUrl());
         saveArtifact(session, VerificationArtifactType.SELFIE_IMAGE, request.getSelfieImageUrl());
         saveArtifact(session, VerificationArtifactType.SELFIE_VIDEO, request.getLivenessVideoUrl());
+
+        validateLivenessVideo(request.getLivenessVideoUrl());
 
         KycProvider provider = providerRegistry.activeProvider();
         log.info("KYC provider selected: userId={}, sessionId={}, provider={}",
@@ -61,6 +67,20 @@ public class KycVerificationProcessor {
         saveFaceResult(session, face, liveness);
         saveRisk(session, risk);
         log.debug("KYC processor persisted results: userId={}, sessionId={}", user.getId(), session.getId());
+    }
+
+    private void validateLivenessVideo(String storageKey) {
+        if (storageKey.startsWith("/api/uploads/")) {
+            return;
+        }
+        Path temporaryVideo = uploadedFileResolver.resolve(storageKey);
+        try {
+            String fileName = temporaryVideo.getFileName().toString();
+            int dot = fileName.lastIndexOf('.');
+            FileUploadUtil.validateLivenessVideoPath(temporaryVideo, dot >= 0 ? fileName.substring(dot + 1) : "");
+        } finally {
+            uploadedFileResolver.cleanup(temporaryVideo);
+        }
     }
 
     private boolean hasOcrPreview(VerificationResult preview) {

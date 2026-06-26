@@ -157,6 +157,10 @@ export default function EkycPage() {
   const [backImage, setBackImage] = useState<string | null>(null);
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [livenessVideo, setLivenessVideo] = useState<string | null>(null);
+  const [frontImageAssetId, setFrontImageAssetId] = useState<string | null>(null);
+  const [backImageAssetId, setBackImageAssetId] = useState<string | null>(null);
+  const [selfieImageAssetId, setSelfieImageAssetId] = useState<string | null>(null);
+  const [livenessVideoAssetId, setLivenessVideoAssetId] = useState<string | null>(null);
   const [livenessStepIndex, setLivenessStepIndex] = useState(0);
   const [completedLivenessSteps, setCompletedLivenessSteps] = useState<
     boolean[]
@@ -280,18 +284,21 @@ export default function EkycPage() {
     try {
       setUploadingImage(true);
       const file = base64ToFile(dataUrl, `${target}.jpg`);
-      let uploadedUrl = "";
+      let uploadedAssetId = "";
       if (target === "front") {
-        uploadedUrl = await identityService.uploadFront(file);
-        setFrontImage(uploadedUrl);
+        uploadedAssetId = (await identityService.uploadKycAsset(file, "KYC_ID_FRONT")).id;
+        setFrontImage(dataUrl);
+        setFrontImageAssetId(uploadedAssetId);
         setOcrPreview(null);
       } else if (target === "back") {
-        uploadedUrl = await identityService.uploadBack(file);
-        setBackImage(uploadedUrl);
+        uploadedAssetId = (await identityService.uploadKycAsset(file, "KYC_ID_BACK")).id;
+        setBackImage(dataUrl);
+        setBackImageAssetId(uploadedAssetId);
         setOcrPreview(null);
       } else {
-        uploadedUrl = await identityService.uploadSelfie(file);
-        setSelfieImage(uploadedUrl);
+        uploadedAssetId = (await identityService.uploadKycAsset(file, "KYC_SELFIE")).id;
+        setSelfieImage(dataUrl);
+        setSelfieImageAssetId(uploadedAssetId);
       }
       toast.success("Chụp và tải ảnh lên thành công!");
     } catch (error) {
@@ -311,14 +318,16 @@ export default function EkycPage() {
 
     try {
       setUploadingImage(true);
-      let uploadedUrl = "";
+      let uploadedAssetId = "";
       if (target === "front") {
-        uploadedUrl = await identityService.uploadFront(file);
-        setFrontImage(uploadedUrl);
+        uploadedAssetId = (await identityService.uploadKycAsset(file, "KYC_ID_FRONT")).id;
+        setFrontImage(URL.createObjectURL(file));
+        setFrontImageAssetId(uploadedAssetId);
         setOcrPreview(null);
       } else {
-        uploadedUrl = await identityService.uploadBack(file);
-        setBackImage(uploadedUrl);
+        uploadedAssetId = (await identityService.uploadKycAsset(file, "KYC_ID_BACK")).id;
+        setBackImage(URL.createObjectURL(file));
+        setBackImageAssetId(uploadedAssetId);
         setOcrPreview(null);
       }
       toast.success("Tải ảnh lên thành công!");
@@ -340,6 +349,10 @@ export default function EkycPage() {
       setBackImage(null);
       setSelfieImage(null);
       setLivenessVideo(null);
+      setFrontImageAssetId(null);
+      setBackImageAssetId(null);
+      setSelfieImageAssetId(null);
+      setLivenessVideoAssetId(null);
       setLivenessStepIndex(0);
       setCompletedLivenessSteps(LIVENESS_PROMPTS.map(() => false));
       setLivenessStepStartedAt(null);
@@ -368,8 +381,8 @@ export default function EkycPage() {
     try {
       setPreviewingOcr(true);
       const preview = await identityService.previewOcr({
-        frontImageUrl: frontImage,
-        backImageUrl: backImage,
+        frontImageAssetId: frontImageAssetId || undefined,
+        backImageAssetId: backImageAssetId || undefined,
       });
       setOcrPreview(preview);
       if (preview.warnings?.length) {
@@ -390,6 +403,7 @@ export default function EkycPage() {
   const startLivenessRecording = () => {
     if (!streamRef.current) return;
     setLivenessVideo(null);
+    setLivenessVideoAssetId(null);
     setLivenessStepIndex(0);
     setCompletedLivenessSteps(LIVENESS_PROMPTS.map(() => false));
     setLivenessElapsedMs(0);
@@ -446,8 +460,9 @@ export default function EkycPage() {
           );
           return;
         }
-        const uploadedUrl = await identityService.uploadLivenessVideo(file);
-        setLivenessVideo(uploadedUrl);
+        const asset = await identityService.uploadKycAsset(file, "KYC_LIVENESS_VIDEO");
+        setLivenessVideo(URL.createObjectURL(file));
+        setLivenessVideoAssetId(asset.id);
         toast.success("Video xác thực khuôn mặt đã sẵn sàng");
       } catch (error) {
         toast.error(
@@ -545,10 +560,10 @@ export default function EkycPage() {
         return;
       }
       const data = await identityService.submitKyc({
-        frontImageUrl: frontImage || "",
-        backImageUrl: backImage || "",
-        selfieImageUrl: selfieImage || "",
-        livenessVideoUrl: livenessVideo,
+        frontImageAssetId: frontImageAssetId || undefined,
+        backImageAssetId: backImageAssetId || undefined,
+        selfieImageAssetId: selfieImageAssetId || undefined,
+        livenessVideoAssetId: livenessVideoAssetId || undefined,
       });
 
       if (data.status === "REJECTED") {
@@ -1105,6 +1120,7 @@ export default function EkycPage() {
                   <button
                     onClick={() => {
                       setFrontImage(null);
+                      setFrontImageAssetId(null);
                       setOcrPreview(null);
                     }}
                     className="absolute top-3 right-3 bg-zinc-900/80 text-white rounded-lg px-2.5 py-1 text-[11px] font-semibold hover:bg-red-600 transition-colors shadow"
@@ -1222,6 +1238,7 @@ export default function EkycPage() {
                   <button
                     onClick={() => {
                       setBackImage(null);
+                      setBackImageAssetId(null);
                       setOcrPreview(null);
                     }}
                     className="absolute top-3 right-3 bg-zinc-900/80 text-white rounded-lg px-2.5 py-1 text-[11px] font-semibold hover:bg-red-600 transition-colors shadow"
@@ -1353,7 +1370,10 @@ export default function EkycPage() {
                     className="w-full h-full object-cover rounded-xl"
                   />
                   <button
-                    onClick={() => setSelfieImage(null)}
+                    onClick={() => {
+                      setSelfieImage(null);
+                      setSelfieImageAssetId(null);
+                    }}
                     className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900/80 text-white rounded-xl px-4 py-2 text-xs font-semibold hover:bg-red-600 transition-colors shadow-md"
                   >
                     Chụp lại ảnh khác
@@ -1582,6 +1602,7 @@ export default function EkycPage() {
                     variant="outline"
                     onClick={() => {
                       setLivenessVideo(null);
+                      setLivenessVideoAssetId(null);
                       setLivenessStepIndex(0);
                       setCompletedLivenessSteps(
                         LIVENESS_PROMPTS.map(() => false),
@@ -1790,7 +1811,7 @@ export default function EkycPage() {
 
 function getImageUrl(url: string | null | undefined) {
   if (!url) return "";
-  if (url.startsWith("http")) return url;
+  if (url.startsWith("http") || url.startsWith("blob:") || url.startsWith("data:")) return url;
   const apiBaseUrl =
     process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
   const baseUrl = apiBaseUrl.replace(/\/api$/, "");

@@ -105,10 +105,7 @@ public class FileUploadUtil {
             String ext = extension(video.getOriginalFilename());
             tempPath = Files.createTempFile(Paths.get(UPLOAD_DIR), "liveness_", "." + ext);
             video.transferTo(tempPath);
-            validateVideoSignature(tempPath, ext);
-
-            OptionalDouble duration = durationProbe.durationSeconds(tempPath);
-            duration.ifPresent(FileUploadUtil::validateLivenessVideoDuration);
+            validateLivenessVideoPath(tempPath, ext, durationProbe);
 
             Files.move(tempPath, finalPath, StandardCopyOption.REPLACE_EXISTING);
             tempPath = null;
@@ -243,6 +240,21 @@ public class FileUploadUtil {
                 && header[6] == 'y'
                 && header[7] == 'p';
         if (!validWebm && !validIsoVideo) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Invalid liveness video file");
+        }
+    }
+
+    public static void validateLivenessVideoPath(Path path, String extension) {
+        validateLivenessVideoPath(path, extension, FileUploadUtil::probeVideoDurationSeconds);
+    }
+
+    static void validateLivenessVideoPath(Path path, String extension, VideoDurationProbe durationProbe) {
+        try {
+            validateVideoSignature(path, extension);
+            durationProbe.durationSeconds(path).ifPresent(FileUploadUtil::validateLivenessVideoDuration);
+        } catch (ApplicationException e) {
+            throw e;
+        } catch (IOException e) {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Invalid liveness video file");
         }
     }

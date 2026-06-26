@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { http } from "@/lib/http";
+import { uploadFileAsset } from "@/services/files";
 import type { IBackendRes } from "@/types/global.d";
 import type {
   ProductResponse,
@@ -60,6 +61,7 @@ export const useCreateProduct = () => {
       image?: File | null;
     }) => {
       const formData = new FormData();
+      const mainImageAssetId = image ? (await uploadFileAsset(image, "PRODUCT_IMAGE")).id : undefined;
       
       // Append primitives
       Object.entries(request).forEach(([key, value]) => {
@@ -75,7 +77,7 @@ export const useCreateProduct = () => {
 
       // Append image
       if (image) {
-        formData.append("image", image);
+        formData.append("mainImageAssetId", mainImageAssetId!);
       }
 
       const { data } = await http.post<IBackendRes<ProductResponse>>("/products", formData);
@@ -98,6 +100,7 @@ export const useUpdateProductInfo = (id: number) => {
       image?: File | null;
     }) => {
       const formData = new FormData();
+      const mainImageAssetId = image ? (await uploadFileAsset(image, "PRODUCT_IMAGE")).id : undefined;
       Object.entries(request).forEach(([key, value]) => {
         if (value !== undefined && value !== null && key !== 'specifications') {
           formData.append(key, value.toString());
@@ -107,7 +110,7 @@ export const useUpdateProductInfo = (id: number) => {
         formData.append("specificationsData", JSON.stringify(request.specifications));
       }
       if (image) {
-        formData.append("image", image);
+        formData.append("mainImageAssetId", mainImageAssetId!);
       }
 
       const { data } = await http.put<IBackendRes<ProductResponse>>(
@@ -213,14 +216,13 @@ export const useAddGallery = (productId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (images: File[]) => {
-      const formData = new FormData();
-      images.forEach((file) => {
-        formData.append("images", file);
-      });
+      const assetIds = await Promise.all(images.map(async (file) =>
+        (await uploadFileAsset(file, "PRODUCT_IMAGE")).id,
+      ));
 
       const { data } = await http.post<IBackendRes<GalleryImageResponse[]>>(
-        `/products/${productId}/gallery`,
-        formData
+        `/products/${productId}/gallery-assets`,
+        assetIds,
       );
       return data;
     },

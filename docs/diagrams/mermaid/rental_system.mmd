@@ -1,36 +1,43 @@
 erDiagram
     USERS {
         bigint id PK
-        varchar email UK
+        string email
+        string kyc_status
+        string trust_level
     }
 
     PRODUCTS {
         bigint id PK
-        varchar name
+        string name
         decimal rent_price_per_day
+        int rental_quantity
     }
 
     DEVICES {
         bigint id PK
         bigint product_id FK
-        varchar serial_number UK
-        varchar status
+        string serial_number UK
+        string status
         text condition_details
     }
 
     RENTAL_ORDERS {
         bigint id PK
+        string code UK
         bigint user_id FK
-        varchar code UK
         datetime start_date
         datetime end_date
-        varchar status
+        string status
         decimal rental_fee
         decimal estimated_deposit_amount
         decimal final_deposit_amount
-        varchar deposit_status
-        varchar risk_level
-        varchar payment_status
+        string deposit_status
+        string risk_level
+        string payment_method
+        string payment_status
+        string shipping_name
+        string shipping_phone
+        string shipping_address
     }
 
     RENTAL_ORDER_ITEMS {
@@ -46,34 +53,29 @@ erDiagram
     RENTAL_CONTRACTS {
         bigint id PK
         bigint rental_order_id FK
-        varchar contract_number UK
+        string contract_number UK
         text terms_and_conditions
-        varchar contract_hash
-        varchar status
+        string contract_hash
+        string document_hash
         datetime signed_at
         bigint signer_user_id
-        boolean is_locked
-    }
-
-    RENTAL_PAYMENTS {
-        bigint id PK
-        bigint rental_order_id FK
-        varchar payment_type
-        decimal amount
-        varchar payment_method
-        varchar transaction_code
-        varchar status
-        datetime paid_at
+        string signer_ip
+        string signer_user_agent
+        string status
+        string signing_otp_code
     }
 
     RENTAL_HANDOVER_REPORTS {
         bigint id PK
         bigint rental_order_id FK
         bigint staff_id FK
-        varchar serial_number
-        varchar body_condition
-        varchar accessory_condition
+        string serial_number
+        string body_condition
+        string lens_condition
+        string battery_condition
+        string accessory_condition
         decimal final_deposit_amount
+        text note
     }
 
     RENTAL_RETURN_REPORTS {
@@ -82,40 +84,58 @@ erDiagram
         bigint staff_id FK
         datetime return_date
         int late_days
-        decimal total_penalty
+        int early_return_days
+        decimal early_return_refund_amount
+        decimal late_fee
+        decimal damage_fee
+        decimal missing_accessory_fee
         decimal refund_amount
         decimal extra_payment_amount
+    }
+
+    RENTAL_PAYMENTS {
+        bigint id PK
+        bigint rental_order_id FK
+        string payment_type
+        decimal amount
+        string payment_method
+        string transaction_code
+        string status
     }
 
     RENTAL_REFUNDS {
         bigint id PK
         bigint rental_order_id FK
         decimal amount
-        varchar status
-        varchar refund_method
+        string status
+        string refund_method
     }
 
     DEVICE_CONDITION_REPORTS {
         bigint id PK
         bigint device_id FK
         bigint rental_order_id FK
-        varchar type
+        string type
         text condition_notes
+        string inspector_name
     }
 
-    USERS ||--o{ RENTAL_ORDERS : "đặt thuê"
-    USERS ||--o{ RENTAL_HANDOVER_REPORTS : "lập bàn giao"
-    USERS ||--o{ RENTAL_RETURN_REPORTS : "lập hoàn trả"
+    PRODUCTS ||--o{ DEVICES : "has"
+    USERS ||--o{ RENTAL_ORDERS : "creates"
 
-    PRODUCTS ||--o{ DEVICES : "gồm"
-    RENTAL_ORDERS ||--|{ RENTAL_ORDER_ITEMS : "gồm"
-    PRODUCTS ||--o{ RENTAL_ORDER_ITEMS : "được thuê"
-    DEVICES o|--o{ RENTAL_ORDER_ITEMS : "được gán"
+    RENTAL_ORDERS ||--o{ RENTAL_ORDER_ITEMS : "contains"
+    PRODUCTS ||--o{ RENTAL_ORDER_ITEMS : "rented"
+    DEVICES ||--o{ RENTAL_ORDER_ITEMS : "assigned"
 
-    RENTAL_ORDERS ||--o| RENTAL_CONTRACTS : "có"
-    RENTAL_ORDERS ||--o{ RENTAL_PAYMENTS : "phát sinh"
-    RENTAL_ORDERS ||--o| RENTAL_HANDOVER_REPORTS : "có"
-    RENTAL_ORDERS ||--o| RENTAL_RETURN_REPORTS : "có"
-    RENTAL_ORDERS ||--o{ RENTAL_REFUNDS : "phát sinh"
-    RENTAL_ORDERS ||--o{ DEVICE_CONDITION_REPORTS : "có"
-    DEVICES ||--o{ DEVICE_CONDITION_REPORTS : "được kiểm tra"
+    RENTAL_ORDERS ||--|| RENTAL_CONTRACTS : "has"
+    RENTAL_ORDERS ||--|| RENTAL_HANDOVER_REPORTS : "has"
+    RENTAL_ORDERS ||--|| RENTAL_RETURN_REPORTS : "has"
+
+    USERS ||--o{ RENTAL_HANDOVER_REPORTS : "staff handles"
+    USERS ||--o{ RENTAL_RETURN_REPORTS : "staff checks"
+
+    RENTAL_ORDERS ||--o{ RENTAL_PAYMENTS : "payments"
+    RENTAL_ORDERS ||--o{ RENTAL_REFUNDS : "refunds"
+
+    DEVICES ||--o{ DEVICE_CONDITION_REPORTS : "tracked"
+    RENTAL_ORDERS ||--o{ DEVICE_CONDITION_REPORTS : "records"

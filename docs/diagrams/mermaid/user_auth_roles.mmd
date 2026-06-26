@@ -1,102 +1,93 @@
 erDiagram
     USERS {
         bigint id PK
-        varchar email UK
-        varchar phone UK
-        varchar password_hash
-        varchar account_status
-        varchar kyc_status
-        varchar trust_level
+        string email UK
+        string phone UK
+        string password_hash
+        string provider
+        string google_provider_id UK
+        string account_status
+        string kyc_status
+        string trust_level
         boolean email_verified
-        boolean phone_verified
         boolean enabled
         boolean account_non_locked
-        int failed_login_attempts
-        datetime last_login_at
-        datetime created_at
-        datetime updated_at
     }
 
     USER_PROFILES {
-        bigint user_id PK, FK
-        varchar full_name
-        varchar first_name
-        varchar last_name
-        varchar gender
+        bigint user_id PK,FK
+        string full_name
+        string gender
         date date_of_birth
-        varchar avatar_url
-        varchar occupation
-        varchar company_name
-    }
-
-    SHIPPING_ADDRESSES {
-        bigint id PK
-        bigint user_id FK
-        varchar receiver_name
-        varchar receiver_phone
-        varchar full_address
-        varchar province
-        varchar district
-        varchar ward
-        boolean is_default
+        string avatar_url
+        string occupation
+        string company_name
     }
 
     ROLES {
         bigint id PK
-        varchar code UK
-        varchar description
+        string code UK
+        string description
     }
 
     PERMISSIONS {
         bigint id PK
-        varchar name UK
-        varchar description
+        string name UK
+        string description
     }
 
     USER_ROLES {
-        bigint user_id PK, FK
-        bigint role_id PK, FK
+        bigint user_id FK
+        bigint role_id FK
     }
 
     ROLE_PERMISSIONS {
-        bigint role_id PK, FK
-        bigint permission_id PK, FK
+        bigint role_id FK
+        bigint permission_id FK
     }
 
     REFRESH_TOKENS {
         bigint id PK
         bigint user_id FK
-        varchar token UK
+        string token UK
         datetime expires_at
         boolean revoked
-        datetime created_at
-        datetime revoked_at
     }
 
     ACCOUNT_ACTIVATION_TOKENS {
         bigint id PK
         bigint user_id FK
-        varchar token UK
+        string token UK
         datetime expires_at
         boolean used
-        datetime used_at
     }
 
     PASSWORD_RESET_TOKENS {
         bigint id PK
         bigint user_id FK
-        varchar otp_code
+        string otp_code
         datetime expires_at
         boolean used
-        datetime used_at
     }
 
-    USERS ||--|| USER_PROFILES : "có hồ sơ"
-    USERS ||--o{ SHIPPING_ADDRESSES : "có địa chỉ"
-    USERS ||--o{ USER_ROLES : "được gán"
-    ROLES ||--o{ USER_ROLES : "gán cho người dùng"
-    ROLES ||--o{ ROLE_PERMISSIONS : "được cấp"
-    PERMISSIONS ||--o{ ROLE_PERMISSIONS : "thuộc vai trò"
-    USERS ||--o{ REFRESH_TOKENS : "có"
-    USERS ||--o{ ACCOUNT_ACTIVATION_TOKENS : "kích hoạt"
-    USERS ||--o{ PASSWORD_RESET_TOKENS : "đặt lại mật khẩu"
+    SHIPPING_ADDRESSES {
+        bigint id PK
+        bigint user_id FK
+        string receiver_name
+        string receiver_phone
+        string full_address
+        string province
+        boolean is_default
+    }
+
+    USERS ||--|| USER_PROFILES : "has"
+    USERS ||--o{ SHIPPING_ADDRESSES : "has"
+    USERS ||--o{ REFRESH_TOKENS : "owns"
+    USERS ||--o{ ACCOUNT_ACTIVATION_TOKENS : "activates"
+    USERS ||--o{ PASSWORD_RESET_TOKENS : "resets"
+
+    USERS ||--o{ USER_ROLES : "assigned"
+    ROLES ||--o{ USER_ROLES : "contains"
+
+    ROLES ||--o{ ROLE_PERMISSIONS : "grants"
+    PERMISSIONS ||--o{ ROLE_PERMISSIONS : "included"

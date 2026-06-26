@@ -1,63 +1,65 @@
 erDiagram
     USERS {
         bigint id PK
-        varchar email UK
-        varchar kyc_status
-        varchar trust_level
+        string email
+        string kyc_status
+        string trust_level
     }
 
     USER_IDENTITIES {
         bigint id PK
         bigint user_id FK
-        varchar document_type
-        varchar identity_number UK
-        varchar full_name
+        string document_type
+        string identity_number UK
+        string full_name
         date date_of_birth
-        varchar gender
-        varchar nationality
-        varchar place_of_residence
-        varchar identity_verification_status
+        string gender
+        string nationality
+        string place_of_origin
+        string place_of_residence
+        date issued_date
+        string issued_place
+        date expiry_date
+        string identity_verification_status
         boolean ocr_extracted
         boolean manual_verified
-        datetime verified_at
     }
 
     VERIFICATION_SESSIONS {
         bigint id PK
         bigint user_id FK
-        varchar status
-        varchar verification_type
+        string status
+        string verification_type
         datetime started_at
         datetime submitted_at
         datetime completed_at
-        varchar failure_reason
-        varchar review_note
+        string failure_reason
+        string review_note
     }
 
     VERIFICATION_ARTIFACTS {
         bigint id PK
         bigint verification_session_id FK
-        varchar artifact_type
-        varchar artifact_status
-        varchar storage_key
-        varchar mime_type
+        string artifact_type
+        string artifact_status
+        string storage_key
+        string original_file_name
+        string mime_type
         bigint file_size
-        varchar checksum
-        datetime uploaded_at
+        string checksum
     }
 
     VERIFICATION_RESULTS {
         bigint id PK
         bigint verification_session_id FK
-        varchar ocr_provider
+        string ocr_provider
         double ocr_confidence
-        varchar decision_source
+        string decision_source
         boolean document_valid
         boolean document_tampered
-        varchar extracted_full_name
-        varchar extracted_identity_number
+        string extracted_full_name
+        string extracted_identity_number
         text raw_ocr_json
-        datetime processed_at
     }
 
     FACE_VERIFICATION_RESULTS {
@@ -68,35 +70,35 @@ erDiagram
         double liveness_score
         boolean liveness_passed
         boolean spoof_detected
+        boolean multiple_faces_detected
         double face_quality_score
-        datetime processed_at
     }
 
     RISK_ASSESSMENTS {
         bigint id PK
         bigint verification_session_id FK
         double risk_score
-        varchar risk_level
+        string risk_level
         boolean ip_risk_flag
         boolean blacklist_hit
         boolean manual_review_required
-        varchar reason
+        string reason
     }
 
     VERIFICATION_REVIEWS {
         bigint id PK
         bigint verification_session_id FK
         bigint reviewer_id
-        varchar review_action
-        varchar note
+        string review_action
+        string note
         datetime reviewed_at
     }
 
-    USERS ||--o| USER_IDENTITIES : "có danh tính"
-    USERS ||--o{ VERIFICATION_SESSIONS : "khởi tạo"
+    USERS ||--|| USER_IDENTITIES : "verified identity"
+    USERS ||--o{ VERIFICATION_SESSIONS : "starts"
 
-    VERIFICATION_SESSIONS ||--o{ VERIFICATION_ARTIFACTS : "chứa tệp"
-    VERIFICATION_SESSIONS ||--o| VERIFICATION_RESULTS : "có OCR"
-    VERIFICATION_SESSIONS ||--o| FACE_VERIFICATION_RESULTS : "có Face Match"
-    VERIFICATION_SESSIONS ||--o| RISK_ASSESSMENTS : "được đánh giá"
-    VERIFICATION_SESSIONS ||--o{ VERIFICATION_REVIEWS : "được xét duyệt"
+    VERIFICATION_SESSIONS ||--o{ VERIFICATION_ARTIFACTS : "uploads"
+    VERIFICATION_SESSIONS ||--|| VERIFICATION_RESULTS : "ocr result"
+    VERIFICATION_SESSIONS ||--|| FACE_VERIFICATION_RESULTS : "face result"
+    VERIFICATION_SESSIONS ||--|| RISK_ASSESSMENTS : "risk result"
+    VERIFICATION_SESSIONS ||--o{ VERIFICATION_REVIEWS : "reviews"

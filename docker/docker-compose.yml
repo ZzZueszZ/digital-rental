@@ -1,20 +1,6 @@
 services:
-  mysql-db:
-    image: mysql:8.0
-    container_name: cms_mysql_dev
-    command: --default-authentication-plugin=mysql_native_password
-    environment:
-      MYSQL_DATABASE: cms_dev
-      MYSQL_USER: cms_dev
-      MYSQL_PASSWORD: "cms_dev!@#456"
-      MYSQL_ROOT_PASSWORD: your_root_password
-    ports:
-      - "33003:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-
   lenshub-postgres:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: lenshub_postgres_dev
     environment:
       POSTGRES_USER: postgres
@@ -35,7 +21,45 @@ services:
       - redis_data:/data
     restart: unless-stopped
 
+  minio:
+    image: minio/minio:RELEASE.2024-05-28T17-19-04Z
+    container_name: lenshub_minio_dev
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  minio-init:
+    image: minio/mc:RELEASE.2025-03-12T17-29-24Z
+    container_name: lenshub_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_BUCKET: ${MINIO_BUCKET:-rental-assets}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        mc alias set local http://minio:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}"
+        mc admin config set local api cors_allow_origin="http://localhost:3000"
+        mc mb --ignore-existing "local/$${MINIO_BUCKET}"
+        mc anonymous set none "local/$${MINIO_BUCKET}"
+    restart: "no"
+
 volumes:
-  mysql_data:
   postgres_data:
   redis_data:
+  minio_data:

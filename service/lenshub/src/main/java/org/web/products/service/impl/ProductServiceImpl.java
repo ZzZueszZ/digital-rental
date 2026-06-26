@@ -17,6 +17,10 @@ import org.web.categories.repository.CategoryRepository;
 import org.web.common.exceptions.ApplicationException;
 import org.web.common.service.AuditLogService;
 import org.web.common.utils.FileUploadUtil;
+import org.web.files.model.FileAsset;
+import org.web.files.model.FileAssetPurpose;
+import org.web.files.model.FileAssetStatus;
+import org.web.files.repository.FileAssetRepository;
 import org.web.products.dto.request.ProductCriteria;
 import org.web.products.dto.request.ProductInfoUpdateRequest;
 import org.web.products.dto.request.ProductPriceUpdateRequest;
@@ -32,6 +36,8 @@ import org.web.products.repository.ProductImageRepository;
 import org.web.products.repository.ProductPriceHistoryRepository;
 import org.web.products.repository.ProductRepository;
 import org.web.products.service.ProductService;
+import org.web.storage.MinioStorageProperties;
+import org.web.storage.StorageService;
 import org.web.users.model.User;
 import org.web.users.repository.UserRepository;
 
@@ -42,6 +48,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.Duration;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -54,6 +62,9 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final AuditLogService auditLogService;
+    private final FileAssetRepository fileAssetRepository;
+    private final StorageService storageService;
+    private final MinioStorageProperties minioProperties;
 
     @Override
     @Transactional(readOnly = true)
@@ -116,7 +127,7 @@ public class ProductServiceImpl implements ProductService {
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
-        return productRepository.findAll(spec, pageable).map(ProductMapper::toResponse);
+        return productRepository.findAll(spec, pageable).map(this::toResponse);
     }
 
     @Override
@@ -124,7 +135,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse getById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Product not found"));
-        return ProductMapper.toResponse(product);
+        return toResponse(product);
     }
 
     @Override
@@ -135,6 +146,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         String mainImageUrl = FileUploadUtil.saveImage(image);
+        FileAsset mainImageAsset = request.getMainImageAssetId() == null ? null : resolveProductAsset(request.getMainImageAssetId());
 
         Category category = null;
         if (request.getCategoryId() != null) {
@@ -153,6 +165,7 @@ public class ProductServiceImpl implements ProductService {
                 .quantity(0)
                 .rentalQuantity(0)
                 .mainImageUrl(mainImageUrl)
+                .mainImageAsset(mainImageAsset)
                 .category(category)
                 .isActive(true)
                 .build();
@@ -182,7 +195,7 @@ public class ProductServiceImpl implements ProductService {
         auditLogService.logAction("PRODUCT", saved.getId(), "CREATE_PRODUCT",
                 "Created product: " + saved.getName(), null, "{\"name\":\"" + saved.getName() + "\"}");
 
-        return ProductMapper.toResponse(saved);
+        return toResponse(saved);
     }
 
     @Override
@@ -217,6 +230,9 @@ public class ProductServiceImpl implements ProductService {
 
         if (image != null && !image.isEmpty()) {
             product.setMainImageUrl(FileUploadUtil.replaceImage(product.getMainImageUrl(), image));
+            product.setMainImageAsset(null);
+        } else if (request.getMainImageAssetId() != null) {
+            product.setMainImageAsset(resolveProductAsset(request.getMainImageAssetId()));
         }
 
         Product saved = productRepository.save(product);
@@ -224,7 +240,7 @@ public class ProductServiceImpl implements ProductService {
         auditLogService.logAction("PRODUCT", id, "UPDATE_PRODUCT_INFO",
                 "Updated product info: " + id, oldDetails, "{\"name\":\"" + saved.getName() + "\"}");
 
-        return ProductMapper.toResponse(saved);
+        return toResponse(saved);
     }
 
     @Override
@@ -256,7 +272,7 @@ public class ProductServiceImpl implements ProductService {
         auditLogService.logAction("PRODUCT", id, "UPDATE_PRODUCT_PRICE",
                 "Updated product pricing: " + id, oldDetails, "{\"rent\":" + saved.getRentPricePerDay() + ",\"sale\":" + saved.getSalePrice() + "}");
 
-        return ProductMapper.toResponse(saved);
+        return toResponse(saved);
     }
 
     @Override
@@ -297,7 +313,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public Page<ProductResponse> getTrashedProducts(Pageable pageable) {
         Specification<Product> spec = (root, query, cb) -> cb.isNotNull(root.get("deletedAt"));
-        return productRepository.findAll(spec, pageable).map(ProductMapper::toResponse);
+        return productRepository.findAll(spec, pageable).map(this::toResponse);
     }
 
     @Override
@@ -308,7 +324,11 @@ public class ProductServiceImpl implements ProductService {
 
         // Delete images from disk
         FileUploadUtil.deleteImage(product.getMainImageUrl());
-        product.getGallery().forEach(img -> FileUploadUtil.deleteImage(img.getImageUrl()));
+        deleteAsset(product.getMainImageAsset());
+        product.getGallery().forEach(img -> {
+            FileUploadUtil.deleteImage(img.getImageUrl());
+            deleteAsset(img.getAsset());
+        });
 
         productRepository.delete(product);
         auditLogService.logAction("PRODUCT", id, "HARD_DELETE_PRODUCT", "Permanently deleted product", null, null);
@@ -336,6 +356,23 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    public List<GalleryImageResponse> addGalleryAssets(Long productId, List<UUID> assetIds) {
+        if (assetIds == null || assetIds.isEmpty()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "At least one image asset is required");
+        }
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Product not found"));
+        List<ProductImage> images = assetIds.stream()
+                .map(this::resolveProductAsset)
+                .map(asset -> ProductImage.builder().product(product).asset(asset).imageUrl("").build())
+                .toList();
+        List<ProductImage> saved = productImageRepository.saveAll(images);
+        auditLogService.logAction("PRODUCT", productId, "ADD_GALLERY", "Added " + saved.size() + " gallery assets", null, null);
+        return saved.stream().map(this::toGalleryResponse).toList();
+    }
+
+    @Override
+    @Transactional
     public void deleteGalleryImage(Long productId, Long imageId) {
         ProductImage image = productImageRepository.findById(imageId)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Image not found"));
@@ -345,6 +382,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         FileUploadUtil.deleteImage(image.getImageUrl());
+        deleteAsset(image.getAsset());
         productImageRepository.delete(image);
         
         auditLogService.logAction("PRODUCT", productId, "DELETE_GALLERY_IMAGE", 
@@ -409,5 +447,39 @@ public class ProductServiceImpl implements ProductService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) return null;
         return userRepository.findByEmail(auth.getName()).orElse(null);
+    }
+
+    private FileAsset resolveProductAsset(UUID assetId) {
+        FileAsset asset = fileAssetRepository.findById(assetId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Product image asset not found"));
+        User actor = getCurrentUser();
+        if (asset.getPurpose() != FileAssetPurpose.PRODUCT_IMAGE || asset.getStatus() != FileAssetStatus.READY
+                || actor == null || !asset.getOwner().getId().equals(actor.getId())) {
+            throw new ApplicationException(HttpStatus.FORBIDDEN, "Product image asset is not available");
+        }
+        return asset;
+    }
+
+    private ProductResponse toResponse(Product product) {
+        return ProductMapper.toResponse(product, this::signedUrl);
+    }
+
+    private GalleryImageResponse toGalleryResponse(ProductImage image) {
+        return ProductMapper.toGalleryResponse(image, this::signedUrl);
+    }
+
+    private String signedUrl(FileAsset asset) {
+        if (asset.getStatus() != FileAssetStatus.READY) {
+            return null;
+        }
+        return storageService.presignGet(asset.getObjectKey(), Duration.ofMinutes(minioProperties.getDownloadExpiryMinutes()));
+    }
+
+    private void deleteAsset(FileAsset asset) {
+        if (asset == null || asset.getStatus() == FileAssetStatus.DELETED) return;
+        storageService.delete(asset.getObjectKey());
+        asset.setStatus(FileAssetStatus.DELETED);
+        asset.setDeletedAt(LocalDateTime.now());
+        fileAssetRepository.save(asset);
     }
 }

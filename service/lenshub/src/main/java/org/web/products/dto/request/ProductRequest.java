@@ -3,6 +3,7 @@ package org.web.products.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -27,6 +28,8 @@ public class ProductRequest {
     private java.util.List<ProductSpecificationDto> specifications;
 
     private Long categoryId;
+
+    private UUID mainImageAssetId;
 
     // This method handles the JSON string sent as "specificationsData" from the frontend
     public void setSpecificationsData(String json) {

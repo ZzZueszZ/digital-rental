@@ -3,6 +3,7 @@ package org.web.identity.service.provider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.web.common.exceptions.ApplicationException;
+import org.web.storage.StorageService;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +23,7 @@ class UploadedFileResolverTest {
         String originalUserDir = System.getProperty("user.dir");
         System.setProperty("user.dir", tempDir.toString());
         try {
-            UploadedFileResolver resolver = new UploadedFileResolver();
+            UploadedFileResolver resolver = new UploadedFileResolver(org.mockito.Mockito.mock(StorageService.class));
 
             Path resolved = resolver.resolve("/api/uploads/front.jpg");
 
@@ -39,7 +40,7 @@ class UploadedFileResolverTest {
         String originalUserDir = System.getProperty("user.dir");
         System.setProperty("user.dir", tempDir.toString());
         try {
-            UploadedFileResolver resolver = new UploadedFileResolver();
+            UploadedFileResolver resolver = new UploadedFileResolver(org.mockito.Mockito.mock(StorageService.class));
 
             assertThatThrownBy(() -> resolver.resolve("/api/uploads/../outside.jpg"))
                     .isInstanceOf(ApplicationException.class)

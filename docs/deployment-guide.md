@@ -1,7 +1,7 @@
 # Deployment Guide
 
 ## Documentation Maintenance
-**Last Updated:** 2026-06-09  
+**Last Updated:** 2026-06-26  
 **Document Version:** 1.0  
 **Maintained By:** Development Team
 
@@ -17,6 +17,7 @@ This guide documents what is verified in the repository today. It is not a produ
 | Frontend | `frontend` | Node.js, pnpm, Next.js 16 |
 | Database | external | PostgreSQL expected by `application.yml` |
 | Cache | external | Redis expected by `application.yml` |
+| Object storage | `docker/docker-compose.yml` | MinIO, private `rental-assets` bucket |
 | Payments | external | VNPay sandbox/default URL |
 | Mail | external | SMTP, Gmail-compatible defaults |
 
@@ -46,6 +47,11 @@ Required/important environment variables:
 | `APP_SCHEDULER_VOUCHER_EXPIRING_*` | Voucher expiry scheduler settings. |
 | `APP_INVENTORY_LOW_STOCK_THRESHOLD` | Low-stock alert threshold. |
 | `APP_E2EE_ENABLED` | Enables the E2EE Shield handshake and protected route filter. Must match the frontend flag. |
+| `MINIO_INTERNAL_ENDPOINT` | MinIO S3 endpoint used by backend object operations. Local default: `http://localhost:9000`. |
+| `MINIO_PUBLIC_ENDPOINT` | Browser-reachable S3 endpoint embedded in presigned URLs. Must not be Docker hostname `minio`. |
+| `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY` | MinIO API credentials. Use a scoped service account outside local development. |
+| `MINIO_BUCKET` | Private object bucket. Default: `rental-assets`. |
+| `MINIO_UPLOAD_EXPIRY_MINUTES`, `MINIO_DOWNLOAD_EXPIRY_MINUTES` | Presigned URL lifetimes. Default: 5 minutes. |
 | `SERVER_IDENTITY_PRIV_B64` | PKCS#8 EC P-256 private identity key. Accepted formats: raw PEM, base64-encoded PEM, or base64-encoded DER. Store only in a secret manager. |
 | `SERVER_IDENTITY_PUB_B64` | X.509 EC P-256 public identity key. Accepted formats: raw PEM, base64-encoded PEM, or base64-encoded DER. |
 
@@ -101,6 +107,9 @@ pnpm build
 ## Infrastructure Notes
 
 - `docker/docker-compose.yml` starts a MySQL database named `cms_dev`. It does not match the active PostgreSQL backend configuration.
+- The same compose file now includes MinIO on API port `9000` and Console port `9001`, plus a one-shot `minio-init` service that creates the private `rental-assets` bucket and configures local browser CORS for `http://localhost:3000`.
+- Copy `.env.example` to `.env` for local MinIO. The checked-in `minioadmin` values are local-only fixtures; production must use distinct secrets and HTTPS.
+- Set `MINIO_PUBLIC_ENDPOINT` to the hostname a browser can resolve. When backend runs inside Docker, set only `MINIO_INTERNAL_ENDPOINT=http://minio:9000`; do not use that hostname for browser-facing presigned URLs.
 - `deploy/redis/docker-compose.yml` defines Redis with a password and Swarm-style deploy settings, published on host port `16379`.
 - `migration/` contains legacy migration assets, including an Oracle JDBC driver and SQL file. Ownership and current use are unclear.
 - No verified PostgreSQL Docker Compose file for `service/lenshub` exists in the repository at this time.

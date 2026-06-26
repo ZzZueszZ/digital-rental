@@ -67,15 +67,20 @@ public class FptKycProvider implements KycProvider {
         log.info("FPT KYC OCR started");
         Path front = fileResolver.resolve(frontImageUrl);
         Path back = fileResolver.resolve(backImageUrl);
-        KycOcrResult frontOcr = recognizeId(front);
-        KycOcrResult backOcr = recognizeId(back);
-        log.info("FPT KYC OCR completed: frontSuccess={}, backSuccess={}",
-                frontOcr.isSuccessful(), backOcr.isSuccessful());
-        return KycVerificationResult.builder()
-                .provider(name())
-                .frontOcr(frontOcr)
-                .backOcr(backOcr)
-                .build();
+        try {
+            KycOcrResult frontOcr = recognizeId(front);
+            KycOcrResult backOcr = recognizeId(back);
+            log.info("FPT KYC OCR completed: frontSuccess={}, backSuccess={}",
+                    frontOcr.isSuccessful(), backOcr.isSuccessful());
+            return KycVerificationResult.builder()
+                    .provider(name())
+                    .frontOcr(frontOcr)
+                    .backOcr(backOcr)
+                    .build();
+        } finally {
+            fileResolver.cleanup(front);
+            fileResolver.cleanup(back);
+        }
     }
 
     @Override
@@ -87,9 +92,14 @@ public class FptKycProvider implements KycProvider {
         log.info("FPT KYC facematch started");
         Path front = fileResolver.resolve(frontImageUrl);
         Path selfie = fileResolver.resolve(selfieImageUrl);
-        KycFaceMatchResult faceMatch = checkFace(front, selfie);
-        log.info("FPT KYC facematch completed: faceMatched={}", faceMatch.isMatched());
-        return faceMatch;
+        try {
+            KycFaceMatchResult faceMatch = checkFace(front, selfie);
+            log.info("FPT KYC facematch completed: faceMatched={}", faceMatch.isMatched());
+            return faceMatch;
+        } finally {
+            fileResolver.cleanup(front);
+            fileResolver.cleanup(selfie);
+        }
     }
 
     @Override
@@ -114,6 +124,9 @@ public class FptKycProvider implements KycProvider {
         } catch (Exception e) {
             log.error("Failed to parse FPT liveness response: {}", e.getMessage(), e);
             return livenessUnavailableResult(502, e.getMessage());
+        } finally {
+            fileResolver.cleanup(video);
+            fileResolver.cleanup(faceImage);
         }
     }
 

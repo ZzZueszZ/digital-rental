@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.web.common.dto.ApiResponse;
 import org.web.common.utils.FileUploadUtil;
+import org.web.files.model.FileAssetPurpose;
 import org.web.identity.dto.request.OcrPreviewRequest;
 import org.web.identity.dto.request.SubmitKycRequest;
 import org.web.identity.dto.response.KycOcrPreviewResponse;
 import org.web.identity.dto.response.KycSessionResponse;
 import org.web.identity.service.IdentityService;
 import org.web.identity.service.KycOcrPreviewService;
+import org.web.identity.service.KycFileAssetResolver;
 import org.web.users.model.User;
 import org.web.users.repository.UserRepository;
 
@@ -30,6 +32,7 @@ public class EkycController {
 
     private final IdentityService identityService;
     private final KycOcrPreviewService kycOcrPreviewService;
+    private final KycFileAssetResolver kycFileAssetResolver;
     private final UserRepository userRepository;
 
     private User getCurrentUser(Authentication authentication) {
@@ -61,6 +64,7 @@ public class EkycController {
             @Valid @RequestBody SubmitKycRequest request
     ) {
         User user = getCurrentUser(authentication);
+        resolveKycAssets(user, request);
         log.info("KYC submit request received: userId={}, email={}", user.getId(), user.getEmail());
         log.debug("KYC submit images: userId={}, front={}, back={}, selfie={}",
                 user.getId(), request.getFrontImageUrl(), request.getBackImageUrl(), request.getSelfieImageUrl());
@@ -77,6 +81,10 @@ public class EkycController {
             @Valid @RequestBody OcrPreviewRequest request
     ) {
         User user = getCurrentUser(authentication);
+        if (request.getFrontImageAssetId() != null || request.getBackImageAssetId() != null) {
+            request.setFrontImageUrl(kycFileAssetResolver.resolve(user, request.getFrontImageAssetId(), FileAssetPurpose.KYC_ID_FRONT));
+            request.setBackImageUrl(kycFileAssetResolver.resolve(user, request.getBackImageAssetId(), FileAssetPurpose.KYC_ID_BACK));
+        }
         log.info("KYC OCR preview request received: userId={}, email={}", user.getId(), user.getEmail());
         KycOcrPreviewResponse response = kycOcrPreviewService.preview(user, request);
         return ResponseEntity.ok(ApiResponse.successfulResponse("Trich xuat thong tin CCCD thanh cong", response));
@@ -107,5 +115,22 @@ public class EkycController {
     public ResponseEntity<ApiResponse<Map<String, String>>> uploadLivenessVideo(@RequestParam("file") MultipartFile file) {
         String videoUrl = FileUploadUtil.saveLivenessVideo(file);
         return ResponseEntity.ok(ApiResponse.successfulResponse("Tai len video liveness thanh cong", Map.of("url", videoUrl)));
+    }
+
+    private void resolveKycAssets(User user, SubmitKycRequest request) {
+        boolean usesAssets = request.getFrontImageAssetId() != null || request.getBackImageAssetId() != null
+                || request.getSelfieImageAssetId() != null || request.getLivenessVideoAssetId() != null;
+        if (usesAssets) {
+            request.setFrontImageUrl(kycFileAssetResolver.resolve(user, request.getFrontImageAssetId(), FileAssetPurpose.KYC_ID_FRONT));
+            request.setBackImageUrl(kycFileAssetResolver.resolve(user, request.getBackImageAssetId(), FileAssetPurpose.KYC_ID_BACK));
+            request.setSelfieImageUrl(kycFileAssetResolver.resolve(user, request.getSelfieImageAssetId(), FileAssetPurpose.KYC_SELFIE));
+            request.setLivenessVideoUrl(kycFileAssetResolver.resolve(user, request.getLivenessVideoAssetId(), FileAssetPurpose.KYC_LIVENESS_VIDEO));
+            return;
+        }
+        if (request.getFrontImageUrl() == null || request.getBackImageUrl() == null
+                || request.getSelfieImageUrl() == null || request.getLivenessVideoUrl() == null) {
+            throw new org.web.common.exceptions.ApplicationException(org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "All KYC files are required");
+        }
     }
 }

@@ -1,4 +1,5 @@
 import { http } from "@/lib/http";
+import { FileAssetPurpose, uploadFileAsset } from "@/services/files";
 
 export interface KycSessionResponse {
   id: number;
@@ -37,15 +38,21 @@ export interface KycSessionResponse {
 }
 
 export interface SubmitKycRequest {
-  frontImageUrl: string;
-  backImageUrl: string;
-  selfieImageUrl: string;
-  livenessVideoUrl: string;
+  frontImageAssetId?: string;
+  backImageAssetId?: string;
+  selfieImageAssetId?: string;
+  livenessVideoAssetId?: string;
+  frontImageUrl?: string;
+  backImageUrl?: string;
+  selfieImageUrl?: string;
+  livenessVideoUrl?: string;
 }
 
 export interface OcrPreviewRequest {
-  frontImageUrl: string;
-  backImageUrl: string;
+  frontImageAssetId?: string;
+  backImageAssetId?: string;
+  frontImageUrl?: string;
+  backImageUrl?: string;
 }
 
 export interface KycOcrPreviewResponse {
@@ -145,4 +152,8 @@ export const identityService = {
     });
     return res.data.data.url;
   },
+
+  uploadKycAsset: async (file: File, purpose: Extract<FileAssetPurpose,
+    "KYC_ID_FRONT" | "KYC_ID_BACK" | "KYC_SELFIE" | "KYC_LIVENESS_VIDEO">,
+    onProgress?: (progress: number) => void) => uploadFileAsset(file, purpose, onProgress),
 };

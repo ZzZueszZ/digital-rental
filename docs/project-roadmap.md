@@ -1,7 +1,7 @@
 # Project Roadmap
 
 ## Documentation Maintenance
-**Last Updated:** 2026-06-06  
+**Last Updated:** 2026-06-26  
 **Document Version:** 1.0  
 **Maintained By:** Development Team
 
@@ -11,6 +11,7 @@ The repository has a functional backend and active frontend surfaces, but deploy
 
 ## Phase 1: Documentation and Local Development
 
+- Completed 2026-06-26: private local MinIO infrastructure with bucket bootstrap, restrictive CORS, and backend endpoint configuration. Application upload migration remains pending.
 - Keep `README.md` and `docs/` current as the source of truth.
 - Maintain `docs/deployment-guide.md` with environment variables, Docker usage, and production notes.
 - Document backend API endpoints and permission authorities.
@@ -19,6 +20,8 @@ The repository has a functional backend and active frontend surfaces, but deploy
 - Add verified PostgreSQL local setup instructions.
 
 ## Phase 2: Backend Stabilization
+
+- Completed 2026-06-26: private MinIO storage core with authenticated presigned upload/download APIs and server-side asset metadata validation. eKYC/product migration remains pending.
 
 - Externalize all secrets and local-only credentials from committed configuration.
 - Replace `ddl-auto: update` for production with a controlled migration strategy.

@@ -70,7 +70,7 @@ Security facts verified in `SecurityConfig`:
 - Session policy is `STATELESS`.
 - JWT filter runs before `UsernamePasswordAuthenticationFilter`.
 - Method security is enabled with `@EnableMethodSecurity(prePostEnabled = true)`.
-- CORS allows `http://localhost:3000`.
+- CORS allows `https://www.lenshub.shop`.
 - Public endpoints include auth, uploads, OpenAPI/Swagger, product/category reads, product review reads, VNPay routes, and public support ticket creation.
 
 ## Data Architecture

@@ -107,7 +107,7 @@ pnpm build
 ## Infrastructure Notes
 
 - `docker/docker-compose.yml` starts a MySQL database named `cms_dev`. It does not match the active PostgreSQL backend configuration.
-- The same compose file now includes MinIO on API port `9000` and Console port `9001`, plus a one-shot `minio-init` service that creates the private `rental-assets` bucket and configures local browser CORS for `http://localhost:3000`.
+- The same compose file now includes MinIO on API port `9000` and Console port `9001`, plus a one-shot `minio-init` service that creates the private `rental-assets` bucket and configures browser CORS for `https://www.lenshub.shop`.
 - Copy `.env.example` to `.env` for local MinIO. The checked-in `minioadmin` values are local-only fixtures; production must use distinct secrets and HTTPS.
 - Set `MINIO_PUBLIC_ENDPOINT` to the hostname a browser can resolve. When backend runs inside Docker, set only `MINIO_INTERNAL_ENDPOINT=http://minio:9000`; do not use that hostname for browser-facing presigned URLs.
 - `deploy/redis/docker-compose.yml` defines Redis with a password and Swarm-style deploy settings, published on host port `16379`.
@@ -123,7 +123,7 @@ pnpm build
 - Replace `spring.jpa.hibernate.ddl-auto: update` with controlled migrations for production.
 - Define deployment target and CI/CD flow.
 - Add health checks and smoke tests.
-- Harden CORS beyond `http://localhost:3000`.
+- Harden CORS to the production frontend domain and any explicitly approved staging domains.
 - Document backup/restore for PostgreSQL and uploaded files.
 
 ## Open Questions

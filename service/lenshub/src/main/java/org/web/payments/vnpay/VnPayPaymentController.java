@@ -3,6 +3,7 @@ package org.web.payments.vnpay;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,9 @@ public class VnPayPaymentController {
 
     private final VnPayService vnPayService;
     private final UserRepository userRepository;
+
+    @Value("${app.frontend.base-url:https://www.lenshub.shop}")
+    private String frontendBaseUrl;
 
     private Long getCurrentUserId(Authentication authentication) {
         String email = (String) authentication.getPrincipal();
@@ -57,7 +61,7 @@ public class VnPayPaymentController {
             VnPayReturnResponse data = vnPayService.handleReturn(vnpParams);
             
             // Redirect về Frontend
-            String frontendUrl = "http://localhost:3000/checkout/vnpay-return";
+            String frontendUrl = frontendUrl("/checkout/vnpay-return");
             String redirectUrl = frontendUrl + 
                 "?status=" + (data.getMessage().contains("thành công") ? "success" : "error") +
                 "&message=" + URLEncoder.encode(data.getMessage(), StandardCharsets.UTF_8) +
@@ -66,7 +70,7 @@ public class VnPayPaymentController {
             response.sendRedirect(redirectUrl);
 
         } catch (Exception e) {
-            String feUrl = "http://localhost:3000/checkout/vnpay-return";
+            String feUrl = frontendUrl("/checkout/vnpay-return");
             String redirectUrl = feUrl + "?status=error&message=" + URLEncoder.encode(e.getMessage() != null ? e.getMessage() : "Unknown error", StandardCharsets.UTF_8);
             response.sendRedirect(redirectUrl);
         }
@@ -107,7 +111,7 @@ public class VnPayPaymentController {
             VnPayReturnResponse data = vnPayService.handleRentalReturn(vnpParams);
             
             // Redirect về Frontend page cho Rental Payment Return
-            String frontendUrl = "http://localhost:3000/rentals/payment-return";
+            String frontendUrl = frontendUrl("/rentals/payment-return");
             String redirectUrl = frontendUrl + 
                 "?status=" + (data.getMessage().contains("thành công") ? "success" : "error") +
                 "&message=" + URLEncoder.encode(data.getMessage(), StandardCharsets.UTF_8) +
@@ -116,7 +120,7 @@ public class VnPayPaymentController {
             response.sendRedirect(redirectUrl);
 
         } catch (Exception e) {
-            String feUrl = "http://localhost:3000/rentals/payment-return";
+            String feUrl = frontendUrl("/rentals/payment-return");
             String redirectUrl = feUrl + "?status=error&message=" + URLEncoder.encode(e.getMessage() != null ? e.getMessage() : "Unknown error", StandardCharsets.UTF_8);
             response.sendRedirect(redirectUrl);
         }
@@ -153,5 +157,15 @@ public class VnPayPaymentController {
                     exception.getMessage() != null ? exception.getMessage() : "Unknown error"
             ));
         }
+    }
+
+    private String frontendUrl(String path) {
+        String baseUrl = frontendBaseUrl == null || frontendBaseUrl.isBlank()
+                ? "https://www.lenshub.shop"
+                : frontendBaseUrl.trim();
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+        return path.startsWith("/") ? baseUrl + path : baseUrl + "/" + path;
     }
 }

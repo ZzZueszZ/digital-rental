@@ -26,7 +26,7 @@ Date: 2026-06-08
 
 ## Runtime
 
-- Frontend: `http://localhost:3000`
+- Frontend: `https://www.lenshub.shop`
 - Backend API: `http://localhost:8080/api`
 - Verification command: `npm run verify:e2ee` from `frontend`
 

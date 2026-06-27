@@ -71,8 +71,10 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: ${LOG_LEVEL_HIBERNATE_BINDER:warn}
 
 app:
+  frontend:
+    base-url: ${APP_FRONTEND_BASE_URL:https://www.lenshub.shop}
   cors:
-    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:3000,https://digital-rental-lenshub.vercel.app,https://lenshub.shop,https://www.lenshub.shop}
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:https://www.lenshub.shop,https://lenshub.shop,https://digital-rental-lenshub.vercel.app}
   bootstrap:
     admin:
       enabled: ${APP_BOOTSTRAP_ADMIN_ENABLED:false}
@@ -99,7 +101,7 @@ app:
     google:
       client-id: ${GOOGLE_CLIENT_ID:}
       client-secret: ${GOOGLE_CLIENT_SECRET:}
-      redirect-uri: ${GOOGLE_REDIRECT_URI:http://localhost:3000/auth/google/callback}
+      redirect-uri: ${GOOGLE_REDIRECT_URI:https://www.lenshub.shop/auth/google/callback}
   jwt:
     secret: ${APP_JWT_SECRET}
     expiration-ms: ${APP_JWT_EXPIRATION_MS:86400000}

@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
     private final RestClient restClient = RestClient.create();
 
-    @Value("${app.activation.base-url:http://localhost:3000/activate}")
+    @Value("${app.activation.base-url:https://www.lenshub.shop/activate}")
     private String activationBaseUrl;
 
     @Value("${app.oauth.google.client-id:}")

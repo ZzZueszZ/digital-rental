@@ -38,7 +38,7 @@ public class CartController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('CART_WRITE')")
+    @PreAuthorize("hasAuthority('CART_READ')")
     public ResponseEntity<ApiResponse<List<CartItemResponse>>> getMyCart() {
         User user = getCurrentUser();
         List<CartItemResponse> items = cartService.getMyCart(user);

@@ -43,8 +43,9 @@ export function Navbar() {
   const { user, isAuthenticated, isLoading, logout } = useAuthSession({
     redirectToLogin: false,
   });
+  const isCustomer = user?.roles?.includes(Role.CUSTOMER) ?? false;
   const { data: cartResponse } = useMyCart({
-    enabled: !isLoading && isAuthenticated,
+    enabled: !isLoading && isAuthenticated && isCustomer,
   });
 
   const cartItemsCount =

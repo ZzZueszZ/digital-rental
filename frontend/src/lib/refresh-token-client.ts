@@ -13,6 +13,24 @@ export const persistRefreshTokenCookie = async (refreshToken: string) => {
   }
 }
 
+export const getRefreshTokenCookie = async () => {
+  if (typeof window === 'undefined') return null
+
+  const response = await fetch('/api/auth/refresh-token', {
+    method: 'GET',
+    credentials: 'same-origin',
+  })
+
+  if (!response.ok) return null
+
+  const data = (await response.json()) as {
+    success?: boolean
+    refreshToken?: string | null
+  }
+
+  return data.success ? data.refreshToken ?? null : null
+}
+
 export const removeRefreshTokenCookie = async () => {
   if (typeof window === 'undefined') return
 

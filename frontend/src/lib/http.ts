@@ -12,6 +12,7 @@ import { clearSession, getSession } from "@/lib/e2ee-shield-sdk/keyManager";
 import {
   removeRefreshTokenCookie,
   persistRefreshTokenCookie,
+  getRefreshTokenCookie,
 } from "@/lib/refresh-token-client";
 import { getAccessToken, setAccessToken, useAuthStore } from "@/store/auth";
 import { useLoadingStore } from "@/store/loading";
@@ -64,9 +65,15 @@ export const refreshAccessToken = async () => {
 
   isRefreshing = true;
   try {
+    const refreshToken = await getRefreshTokenCookie();
+    if (!refreshToken) {
+      setAccessToken(undefined);
+      return null;
+    }
+
     const res = await refreshClient.post<{
       data?: { accessToken?: string; refreshToken?: string };
-    }>("/auth/refresh");
+    }>("/auth/refresh", { refreshToken });
 
     const newToken = res.data?.data?.accessToken ?? null;
     const newRefreshToken = res.data?.data?.refreshToken ?? null;

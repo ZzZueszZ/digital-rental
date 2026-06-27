@@ -381,6 +381,7 @@ export default function ProductDetailPage({
     ...(product.gallery?.map((g) => g.url) || []),
   ];
   const currentImage = activeImage || product.mainImageUrl;
+  const currentImageSrc = getImageUrl(currentImage) || "/product-placeholder.svg";
   const isDeleted = !!product.deletedAt;
 
   return (
@@ -458,7 +459,7 @@ export default function ProductDetailPage({
         <div className="xl:col-span-7 space-y-6">
           <div className="relative flex min-h-[520px] items-center justify-center overflow-hidden rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
             <Image
-              src={getImageUrl(currentImage)}
+              src={currentImageSrc}
               alt={product.name}
               fill
               className="object-contain p-8"
@@ -488,7 +489,7 @@ export default function ProductDetailPage({
                 )}
               >
                 <Image
-                  src={getImageUrl(img)}
+                  src={getImageUrl(img) || "/product-placeholder.svg"}
                   alt={`Gallery ${idx}`}
                   fill
                   className="object-contain p-2"

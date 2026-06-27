@@ -1,0 +1,9 @@
+<svg width="640" height="480" viewBox="0 0 640 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="480" rx="28" fill="#FAFAFA"/>
+  <rect x="185" y="150" width="270" height="180" rx="28" fill="white" stroke="#E4E4E7" stroke-width="4"/>
+  <path d="M228 205C228 194.507 236.507 186 247 186H285L302 211H393C403.493 211 412 219.507 412 230V276C412 286.493 403.493 295 393 295H247C236.507 295 228 286.493 228 276V205Z" fill="#F4F4F5" stroke="#D4D4D8" stroke-width="4"/>
+  <circle cx="320" cy="252" r="34" fill="white" stroke="#A1A1AA" stroke-width="4"/>
+  <circle cx="320" cy="252" r="16" fill="#E4E4E7"/>
+  <circle cx="378" cy="234" r="8" fill="#A1A1AA"/>
+  <text x="320" y="370" text-anchor="middle" fill="#71717A" font-family="Arial, sans-serif" font-size="22" font-weight="600">Chưa có ảnh sản phẩm</text>
+</svg>

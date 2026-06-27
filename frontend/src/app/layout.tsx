@@ -11,8 +11,13 @@ const fontInter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Ecommerce App',
-  description: 'Welcome to the Ecommerce App built with Next.js',
+  title: 'Lenshub Studio',
+  description: 'Lenshub Studio - nền tảng mua và thuê thiết bị nhiếp ảnh chuyên nghiệp',
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/apple-icon.svg',
+  },
 }
 
 export default function RootLayout({

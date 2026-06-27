@@ -84,6 +84,30 @@ public class FileAssetServiceImpl implements FileAssetService {
     }
 
     @Override
+    @Transactional
+    public FileAssetResponse uploadContent(User user, UUID assetId, String contentType, byte[] content, boolean canManageAll) {
+        FileAsset asset = findForActor(user, assetId, canManageAll);
+        if (asset.getStatus() == FileAssetStatus.READY) {
+            return response(asset);
+        }
+        if (asset.getStatus() != FileAssetStatus.PENDING || asset.getUploadExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new ApplicationException(HttpStatus.CONFLICT, "Upload is no longer pending");
+        }
+        String normalizedContentType = policy.normalizeContentType(contentType);
+        if (!asset.getContentType().equals(normalizedContentType)) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Uploaded file content type does not match the requested file");
+        }
+        if (content == null || content.length != asset.getSizeBytes()) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Uploaded file size does not match the requested file");
+        }
+
+        storageService.putBytes(asset.getObjectKey(), content, normalizedContentType);
+        asset.setEtag("backend-upload-" + assetId);
+        asset.setStatus(FileAssetStatus.READY);
+        return response(repository.save(asset));
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public PresignedDownloadResponse createDownload(User user, UUID assetId, boolean canManageAll) {
         FileAsset asset = findForActor(user, assetId, canManageAll);

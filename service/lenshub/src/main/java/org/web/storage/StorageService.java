@@ -8,6 +8,8 @@ public interface StorageService {
 
     String presignGet(String objectKey, Duration expiry);
 
+    void putBytes(String objectKey, byte[] content, String contentType);
+
     StorageObjectMetadata stat(String objectKey);
 
     Path downloadToTempFile(String objectKey, String fileSuffix);

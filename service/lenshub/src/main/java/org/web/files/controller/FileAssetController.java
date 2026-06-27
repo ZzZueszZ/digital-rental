@@ -2,6 +2,7 @@ package org.web.files.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +51,24 @@ public class FileAssetController {
     ) {
         FileAssetResponse response = fileAssetService.complete(currentUser(authentication), assetId, canManageAll(authentication));
         return ResponseEntity.ok(ApiResponse.successfulResponse("File upload completed", response));
+    }
+
+    @PutMapping("/{assetId}/content")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<FileAssetResponse>> uploadContent(
+            Authentication authentication,
+            @PathVariable UUID assetId,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
+            @RequestBody byte[] content
+    ) {
+        FileAssetResponse response = fileAssetService.uploadContent(
+                currentUser(authentication),
+                assetId,
+                contentType,
+                content,
+                canManageAll(authentication)
+        );
+        return ResponseEntity.ok(ApiResponse.successfulResponse("File uploaded", response));
     }
 
     @GetMapping("/{assetId}/download-url")

@@ -13,6 +13,8 @@ public interface FileAssetService {
 
     FileAssetResponse complete(User user, UUID assetId, boolean canManageAll);
 
+    FileAssetResponse uploadContent(User user, UUID assetId, String contentType, byte[] content, boolean canManageAll);
+
     PresignedDownloadResponse createDownload(User user, UUID assetId, boolean canManageAll);
 
     void delete(User user, UUID assetId, boolean canManageAll);

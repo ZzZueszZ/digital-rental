@@ -74,8 +74,19 @@ const putToStorage = (
   headers: Record<string, string>,
   file: File,
   onProgress?: (progress: number) => void,
-): Promise<void> =>
-  new Promise((resolve, reject) => {
+): Promise<void> => {
+  if (uploadUrl.startsWith("/files/")) {
+    return http
+      .put(uploadUrl, file, {
+        headers,
+        onUploadProgress: (event) => {
+          if (event.total) onProgress?.(Math.round((event.loaded / event.total) * 100));
+        },
+      })
+      .then(() => undefined);
+  }
+
+  return new Promise((resolve, reject) => {
     const request = new XMLHttpRequest();
     request.open("PUT", uploadUrl);
     Object.entries(headers).forEach(([name, value]) => request.setRequestHeader(name, value));
@@ -92,3 +103,4 @@ const putToStorage = (
     request.onerror = () => reject(new Error("Storage upload failed"));
     request.send(file);
   });
+};

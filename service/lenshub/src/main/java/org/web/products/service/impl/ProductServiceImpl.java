@@ -472,7 +472,12 @@ public class ProductServiceImpl implements ProductService {
         if (asset.getStatus() != FileAssetStatus.READY) {
             return null;
         }
-        return storageService.presignGet(asset.getObjectKey(), Duration.ofMinutes(minioProperties.getDownloadExpiryMinutes()));
+        try {
+            return storageService.presignGet(asset.getObjectKey(), Duration.ofMinutes(minioProperties.getDownloadExpiryMinutes()));
+        } catch (ApplicationException ex) {
+            log.warn("Cannot create signed product image URL for asset {}: {}", asset.getId(), ex.getMessage());
+            return null;
+        }
     }
 
     private void deleteAsset(FileAsset asset) {

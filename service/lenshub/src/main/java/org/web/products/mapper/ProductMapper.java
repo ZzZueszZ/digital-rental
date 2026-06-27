@@ -20,6 +20,10 @@ public class ProductMapper {
 
     public static ProductResponse toResponse(Product product, Function<FileAsset, String> assetUrl) {
         if (product == null) return null;
+        String mainImageUrl = null;
+        if (product.getMainImageAsset() != null) {
+            mainImageUrl = assetUrl.apply(product.getMainImageAsset());
+        }
 
         return ProductResponse.builder()
                 .id(product.getId())
@@ -29,7 +33,7 @@ public class ProductMapper {
                 .salePrice(product.getSalePrice())
                 .isForRent(product.isForRent())
                 .isForSale(product.isForSale())
-                .mainImageUrl(product.getMainImageAsset() != null ? assetUrl.apply(product.getMainImageAsset()) : product.getMainImageUrl())
+                .mainImageUrl(mainImageUrl != null ? mainImageUrl : product.getMainImageUrl())
                 .brand(product.getBrand())
                 .quantity(product.getQuantity())
                 .rentalQuantity(product.getRentalQuantity())
@@ -69,9 +73,13 @@ public class ProductMapper {
     public static GalleryImageResponse toGalleryResponse(ProductImage image, Function<FileAsset, String> assetUrl) {
 
         if (image == null) return null;
+        String imageUrl = null;
+        if (image.getAsset() != null) {
+            imageUrl = assetUrl.apply(image.getAsset());
+        }
         return GalleryImageResponse.builder()
                 .id(image.getId())
-                .url(image.getAsset() != null ? assetUrl.apply(image.getAsset()) : image.getImageUrl())
+                .url(imageUrl != null ? imageUrl : image.getImageUrl())
                 .build();
     }
 

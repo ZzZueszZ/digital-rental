@@ -31,6 +31,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    static final List<String> PUBLIC_HEALTH_ENDPOINTS = List.of(
+            "/actuator/health",
+            "/actuator/health/liveness",
+            "/actuator/health/readiness"
+    );
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
@@ -58,6 +64,9 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                PUBLIC_HEALTH_ENDPOINTS.toArray(String[]::new)
                         ).permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/products", "/products/**").permitAll()

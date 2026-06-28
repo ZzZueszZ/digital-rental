@@ -1,8 +1,8 @@
 # System Architecture
 
 ## Documentation Maintenance
-**Last Updated:** 2026-06-26  
-**Document Version:** 1.0  
+**Last Updated:** 2026-06-28
+**Document Version:** 1.1
 **Maintained By:** Development Team
 
 ## Overview
@@ -11,13 +11,13 @@ The system is a monorepo with a primary Spring Boot backend and a Next.js fronte
 
 ```mermaid
 flowchart LR
-  Customer["Customer/Admin Browser"] --> Next["frontend: Next.js app"]
+  Customer["Customer/Admin Browser"] --> Next["frontend: Next.js on Vercel"]
   Next --> API["service/lenshub: Spring Boot API"]
   API --> PG["PostgreSQL"]
   API --> Redis["Redis"]
   API --> Mail["SMTP Mail"]
   API --> VNPay["VNPay"]
-  API --> AIKYC["service/ai-kyc-service: FastAPI KYC AI"]
+  API --> FPT["FPT.AI eKYC"]
   API --> MinIO["MinIO: private object storage"]
 ```
 
@@ -32,6 +32,8 @@ flowchart LR
 - Database: PostgreSQL
 - Cache/token blacklist support: Redis
 - API docs: springdoc OpenAPI under Swagger paths allowed by security config
+- Production migrations: Flyway V1+, then Hibernate schema validation
+- Health: `/api/actuator/health`, `/liveness`, `/readiness`
 
 ## Backend Layers
 
@@ -72,6 +74,9 @@ Security facts verified in `SecurityConfig`:
 - Method security is enabled with `@EnableMethodSecurity(prePostEnabled = true)`.
 - CORS allows `https://www.lenshub.shop`.
 - Public endpoints include auth, uploads, OpenAPI/Swagger, product/category reads, product review reads, VNPay routes, and public support ticket creation.
+- Health status and probe endpoints are public without details; component health paths remain authenticated.
+- Production disables Swagger/OpenAPI.
+- Access JWT and activation JWT use separate signing secrets.
 
 ## Data Architecture
 
@@ -82,7 +87,9 @@ Development defaults in `application.yml` expect:
 - PostgreSQL host port `5433`
 - Redis host port `6379`
 
-`application.yml` imports optional `.env` properties. No verified PostgreSQL compose file exists for the active backend. `docker/docker-compose.yml` is a legacy MySQL CMS compose, and `deploy/redis/docker-compose.yml` publishes Redis on `16379` with password settings that do not currently match backend defaults.
+`application.yml` imports optional `.env` properties. Local `docker/docker-compose.yml` provides PostgreSQL, Redis, and MinIO. A dedicated production Compose stack is planned but not implemented.
+
+Production activates `application-prod.yml`, enables Flyway, applies migrations before JPA initialization, and uses Hibernate `ddl-auto=validate`. Existing non-empty databases require an explicit reviewed Flyway baseline; automatic baseline remains disabled by default.
 
 MinIO local infrastructure is configured in `docker/docker-compose.yml`. It exposes the S3 API on `9000` and Console on `9001`; `minio-init` creates the private `rental-assets` bucket and applies browser CORS for the local frontend. Backend configuration distinguishes `MINIO_INTERNAL_ENDPOINT` for backend object operations from `MINIO_PUBLIC_ENDPOINT` embedded in browser-facing presigned URLs. KYC and product-media clients upload directly to MinIO using short-lived PUT URLs; the backend persists asset metadata and generates short-lived GET URLs.
 
@@ -130,7 +137,7 @@ Key patterns:
 
 ## eKYC Provider Configuration
 
-`service/lenshub` selects provider by `APP_KYC_PROVIDER` with `mock` as default. FPT sandbox integration uses:
+Local/default configuration selects provider through `APP_KYC_PROVIDER` with `mock` as default. The production profile fixes the provider to FPT and requires:
 
 - `FPT_KYC_API_KEY`
 - `FPT_KYC_IDR_URL`
@@ -139,7 +146,7 @@ Key patterns:
 
 OCR preview is persisted in existing verification result data. Final submit reuses OCR preview, runs facematch, requires `livenessVideoUrl`, runs liveness validation on the saved continuous video, then keeps manual review as final authority.
 
-For self-hosted local AI execution, `service/ai-kyc-service` can replace FPT network calls while keeping the same Spring provider contract. Point the three FPT URL variables to the FastAPI service:
+Self-hosted `service/ai-kyc-service` remains a development alternative and is not part of the current production topology.
 
 - `FPT_KYC_IDR_URL=http://kyc-ai-service:8000/vision/idr/vnm/`
 - `FPT_KYC_FACEMATCH_URL=http://kyc-ai-service:8000/dmp/checkface/v1`
@@ -149,6 +156,7 @@ The service is CPU-only in MVP. OCR, facematch, and liveness model integrations 
 
 ## Architecture Risks
 
-- Development secrets and credentials are present in configuration files and should be externalized before production use.
+- Previously committed credentials may remain in Git history and must be rotated before production.
+- Production configuration is fail-fast, but VPS secret storage is implemented in a later phase.
 - Legacy migration assets may confuse setup unless ownership is clarified.
 - Redis deployment config and backend Redis defaults do not currently line up.

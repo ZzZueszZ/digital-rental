@@ -14,8 +14,8 @@ import java.util.Date;
 @Component
 public class ActivationTokenProvider {
 
-    @Value("${app.jwt.secret}")
-    private String activationSecret; // reusing standard jwt secret for simplicity
+    @Value("${app.activation.jwt-secret}")
+    private String activationSecret;
 
     @Value("${app.activation.ttl-hours:24}")
     private long ttlHours;

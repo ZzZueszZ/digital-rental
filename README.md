@@ -1,8 +1,8 @@
 # LensHub CMS
 
 ## Documentation Maintenance
-**Last Updated:** 2026-06-06  
-**Document Version:** 1.0  
+**Last Updated:** 2026-06-28
+**Document Version:** 1.2
 **Maintained By:** Development Team
 
 LensHub is a camera equipment ecommerce and rental platform. This repository contains the main Spring Boot API, Next.js frontend, and supporting infrastructure/docs.
@@ -61,6 +61,7 @@ Read these first:
 
 ## Known Setup Gaps
 
-- PostgreSQL compose for `service/lenshub` is not currently present in `docker/`.
-- `docker/docker-compose.yml` is a legacy MySQL CMS compose, not the active LensHub backend database setup.
-- Production deployment target and secrets policy still need final owner decisions.
+- `docker/docker-compose.yml` provides the local PostgreSQL, Redis, and MinIO stack; it is not production-ready.
+- Production Phase 01 is complete: Flyway, health probes, production secret validation, and FPT provider configuration.
+- Production Phase 02 is complete with deferred validation: the backend has a pinned, non-root, health-checked `linux/amd64` image.
+- Production Compose, edge/TLS, CI/CD, backup, monitoring, and deferred container release checks remain under `plans/2026-06-28-production-deployment/`.

@@ -1,8 +1,8 @@
 # Codebase Summary
 
 ## Documentation Maintenance
-**Last Updated:** 2026-06-26  
-**Document Version:** 1.0  
+**Last Updated:** 2026-06-28
+**Document Version:** 1.2
 **Maintained By:** Development Team
 
 ## High-Level Shape
@@ -16,7 +16,7 @@ This is a multi-project repository:
 
 ## Backend: `service/lenshub`
 
-`service/lenshub` is a Gradle project named `lenshub`, using Java 17 and Spring Boot 4.0.3. Important dependencies include Spring Web, Data JPA, Security, Validation, Redis, Mail, PostgreSQL runtime driver, Lombok, ModelMapper, JJWT, and springdoc OpenAPI.
+`service/lenshub` is a Gradle project named `lenshub`, using Java 17 and Spring Boot 4.0.3. Important dependencies include Spring Web, Data JPA, Security, Validation, Redis, Mail, Actuator, Flyway, PostgreSQL runtime driver, MinIO, JJWT, and springdoc OpenAPI.
 
 Main application entrypoint:
 
@@ -32,6 +32,11 @@ Key configuration:
 - `configs/OpenApiConfig.java`: Swagger/OpenAPI setup.
 - `configs/SchedulerConfig.java`: scheduled task configuration.
 - `configs/StartupInitializer.java`: startup initialization.
+- `configs/ProductionEnvironmentValidator.java`: fail-fast production secret and endpoint validation.
+- `application-prod.yml`: FPT production provider, Flyway, Hibernate validate, health-only Actuator, disabled Swagger.
+- `db/migration/V1__baseline.sql`: reviewed initial PostgreSQL schema.
+- `Dockerfile`: digest-pinned multi-stage Java 17 production image with non-root runtime, bounded heap, and readiness healthcheck.
+- `.dockerignore`: excludes secrets, local state, tests, and build output from the image context.
 
 Module directories:
 
@@ -83,7 +88,7 @@ The backend is mounted at `/api`. Controllers expose these base routes:
 - `/admin/support/tickets`
 - `/audit-logs`
 
-Public routes are configured in `SecurityConfig`: auth, uploads, Swagger/OpenAPI, product/category reads, product review reads, VNPay payment routes, and public support ticket creation. Other routes require authentication and many use `@PreAuthorize`.
+Public routes are configured in `SecurityConfig`: auth, uploads, Swagger/OpenAPI outside PROD, product/category reads, product review reads, VNPay routes, public support ticket creation, and status-only health probes. Other routes require authentication and many use `@PreAuthorize`.
 
 ## Main Frontend: `frontend`
 
@@ -111,13 +116,13 @@ Route groups:
 
 Current repository infra files:
 
-- `docker/docker-compose.yml`: legacy MySQL CMS compose. Do not assume it supports `service/lenshub`.
+- `docker/docker-compose.yml`: local PostgreSQL, Redis, and MinIO stack.
 - `deploy/redis/docker-compose.yml`: Redis compose with password and Swarm deploy settings, published on host port `16379`.
 - `migration/`: legacy migration assets. Current ownership unclear.
 
-MinIO infrastructure now also lives in `docker/docker-compose.yml`: private `rental-assets` bucket, API port `9000`, Console port `9001`, and idempotent `minio-init` bucket/CORS setup. The backend has MinIO configuration and SDK dependency, but application file flows remain on legacy `/api/uploads` until the storage-core phase is implemented.
+MinIO infrastructure uses private `rental-assets`, API port `9000`, Console port `9001`, and idempotent initialization. Authenticated file APIs issue short-lived presigned PUT/GET URLs and persist `FileAsset` metadata.
 
-No verified PostgreSQL Docker Compose file for the active backend was found.
+The backend production image exists. No production Compose file exists yet.
 
 ## AI KYC Service: `service/ai-kyc-service`
 
@@ -140,6 +145,6 @@ The MVP is CPU-only, uses lazy optional imports for heavier model packages, and 
 ## Documentation Gaps
 
 - No formal API endpoint reference yet.
-- Deployment guide exists but still needs production target and secrets policy decisions.
+- Production deployment Phases 01 and 02 are implemented; container runtime validation plus VPS Compose, edge, and CI/CD phases remain.
 - No test strategy document yet.
 - Legacy migration and MySQL compose ownership is unclear.

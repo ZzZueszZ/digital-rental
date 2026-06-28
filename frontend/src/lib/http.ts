@@ -262,6 +262,8 @@ http.interceptors.response.use(
 const shouldApplyE2ee = (config: InternalAxiosRequestConfig) => {
   if (!isE2eeEnabled || typeof window === "undefined") return false;
   if (config.data instanceof FormData) return false;
+  if (config.data instanceof Blob) return false;
+  if (config.data instanceof ArrayBuffer) return false;
   const method = (config.method || "GET").toUpperCase();
   return shouldEncryptRequest(method, resolveRequestPath(config));
 };

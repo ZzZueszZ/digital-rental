@@ -575,19 +575,22 @@ export function RentalDetailDialog({
       return;
     }
 
-    const itemsHtml = rental.items
-      .map(
-        (item) => `
- <tr>
- <td style="border: 1px solid #000; padding: 8px;">${item.productName}</td>
- <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.deviceSerialNumber || "N/A"}</td>
- <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatVND(item.pricePerDay)}/ngày</td>
- <td style="border: 1px solid #000; padding: 8px;">${item.conditionBeforeHandover || "Bình thường"}</td>
- </tr>
- `,
-      )
-      .join("");
-
+    const handoverItem = rental.items[0];
+    const receiverName =
+      rental.shippingName || rental.userFullName || rental.userEmail;
+    const receiverPhone =
+      rental.shippingPhone || rental.userPhone || "Chưa cập nhật";
+    const receiverAddress =
+      rental.shippingAddress || rental.currentAddress || "Nhận tại cửa hàng";
+    const productName = handoverItem?.productName || "Thiết bị thuê";
+    const serialNumber =
+      handoverItem?.deviceSerialNumber ||
+      rental.handoverReport.serialNumber ||
+      "Chưa ghi nhận";
+    const deviceCondition =
+      handoverItem?.conditionBeforeHandover ||
+      handoverItem?.deviceConditionDetails ||
+      "Chưa ghi nhận";
     const signedAtStr = rental.handoverReport.createdAt
       ? formatDate(rental.handoverReport.createdAt)
       : "";
@@ -613,8 +616,8 @@ export function RentalDetailDialog({
  text-align: center;
  font-size: 20px;
  font-weight: bold;
- margin-bottom: 20px;
- text-transform: ;
+ margin-bottom: 10px;
+ text-transform: uppercase;
  }
  .report-info {
  margin-bottom: 20px;
@@ -625,26 +628,16 @@ export function RentalDetailDialog({
  font-weight: bold;
  margin-top: 20px;
  margin-bottom: 10px;
- text-transform: ;
+ text-transform: uppercase;
  }
- .info-table {
- width: 100%;
- border-collapse: collapse;
- margin-bottom: 20px;
+ p {
+ margin: 4px 0;
  }
- .info-table td {
- padding: 8px;
- vertical-align: top;
- }
- .items-table {
- width: 100%;
- border-collapse: collapse;
- margin-bottom: 20px;
- }
- .items-table th {
- background-color: #f3f4f6;
- font-weight: bold;
- border: 1px solid #000;
+ .notice {
+ border: 1px solid #222;
+ padding: 10px 12px;
+ margin-top: 10px;
+ page-break-inside: avoid;
  }
  .signatures-container {
  margin-top: 50px;
@@ -673,70 +666,56 @@ export function RentalDetailDialog({
  --------------------------
  </div>
 
- <div class="header-title">BIÊN BẢN BÀN GIAO THIẾT BỊ VẬT LÝ</div>
- <div class="report-info">Mã biên bản: ${rental.handoverReport.serialNumber} • Ngày lập: ${signedAtStr}</div>
+ <div class="header-title">BIÊN BẢN BÀN GIAO THIẾT BỊ</div>
+ <div class="report-info">Số: BBG-${escapeHtml(rental.code)} • Ngày lập: ${escapeHtml(signedAtStr)}</div>
 
- <div class="section-title">1. Thông tin đơn thuê</div>
- <table class="info-table">
- <tr>
- <td style="width: 25%;">Mã đơn thuê:</td>
- <td style="font-weight: bold;">#${rental.code}</td>
- <td style="width: 25%;">Thời hạn thuê:</td>
- <td>Từ ${rental.startDate.split("T")[0]} đến ${rental.endDate.split("T")[0]}</td>
- </tr>
- <tr>
- <td>Khách hàng:</td>
- <td style="font-weight: bold;">${rental.shippingName}</td>
- <td>Số điện thoại:</td>
- <td>${rental.shippingPhone}</td>
- </tr>
- <tr>
- <td>Email:</td>
- <td>${rental.userEmail}</td>
- <td>Địa chỉ nhận máy:</td>
- <td>${rental.shippingAddress}</td>
- </tr>
- </table>
+ <div class="section-title">I. Thông tin các bên</div>
+ <p><strong>Bên giao thiết bị:</strong> Cửa hàng Digital Rental</p>
+ <p><strong>Nhân viên bàn giao:</strong> ${escapeHtml(rental.handoverReport.staffName || "Chưa cập nhật")}</p>
+ <p><strong>Bên nhận thiết bị:</strong> ${escapeHtml(receiverName)}</p>
+ <p><strong>Email:</strong> ${escapeHtml(rental.userEmail)}</p>
+ <p><strong>Số điện thoại:</strong> ${escapeHtml(receiverPhone)}</p>
+ <p><strong>CCCD:</strong> ${escapeHtml(rental.identityNumber || "Chưa cập nhật")}</p>
+ <p><strong>Ngày cấp:</strong> ${escapeHtml(rental.identityIssuedDate ? formatDate(rental.identityIssuedDate) : "Chưa cập nhật")}</p>
+ <p><strong>Nơi cấp:</strong> ${escapeHtml(rental.identityIssuedPlace || "Chưa cập nhật")}</p>
+ <p><strong>Địa chỉ thường trú:</strong> ${escapeHtml(rental.permanentAddress || "Chưa cập nhật")}</p>
+ <p><strong>Địa chỉ nhận thiết bị:</strong> ${escapeHtml(receiverAddress)}</p>
+ <p><strong>Mức xác thực:</strong> ${escapeHtml(rental.verificationLevel || "Chưa cập nhật")}</p>
 
- <div class="section-title">2. Thông tin bàn giao thiết bị</div>
- <table class="info-table">
- <tr>
- <td style="width: 25%;">Nhân viên bàn giao:</td>
- <td style="font-weight: bold;">${rental.handoverReport.staffName || "N/A"}</td>
- <td style="width: 25%;">Đánh giá rủi ro (CIC):</td>
- <td style="font-weight: bold;">${rental.handoverReport.riskLevel}</td>
- </tr>
- <tr>
- <td>Tiền cọc thiết bị:</td>
- <td style="font-weight: bold; color: #b45309;">${formatVND(rental.handoverReport.finalDepositAmount)}</td>
- <td>Ghi chú:</td>
- <td>${rental.handoverReport.note || "Không có ghi chú"}</td>
- </tr>
- </table>
+ <div class="section-title">II. Thông tin đơn thuê</div>
+ <p><strong>Mã đơn thuê:</strong> #${escapeHtml(rental.code)}</p>
+ <p><strong>Thời gian thuê:</strong> ${escapeHtml(rental.startDate.split("T")[0])} đến ${escapeHtml(rental.endDate.split("T")[0])}</p>
+ <p><strong>Mức rủi ro hồ sơ:</strong> ${escapeHtml(rental.handoverReport.riskLevel)}</p>
+ <p><strong>Tiền cọc chốt:</strong> ${formatVND(rental.handoverReport.finalDepositAmount)}</p>
 
- <div class="section-title">3. Danh sách thiết bị bàn giao</div>
- <table class="items-table">
- <thead>
- <tr>
- <th style="border: 1px solid #000; padding: 8px;">Tên sản phẩm</th>
- <th style="border: 1px solid #000; padding: 8px; width: 20%;">Số Serial</th>
- <th style="border: 1px solid #000; padding: 8px; width: 20%;">Đơn giá thuê</th>
- <th style="border: 1px solid #000; padding: 8px; width: 30%;">Tình trạng bàn giao</th>
- </tr>
- </thead>
- <tbody>
- ${itemsHtml}
- </tbody>
- </table>
+ <div class="section-title">III. Thiết bị bàn giao</div>
+ <p><strong>Tên thiết bị:</strong> ${escapeHtml(productName)}</p>
+ <p><strong>Serial:</strong> ${escapeHtml(serialNumber)}</p>
+ <p><strong>Giá trị tài sản:</strong> ${formatVND(handoverItem?.assetValue || 0)}</p>
+ <p><strong>Đơn giá thuê/ngày:</strong> ${formatVND(handoverItem?.pricePerDay || 0)}</p>
+
+ <div class="section-title">IV. Tình trạng thiết bị trước lúc bàn giao</div>
+ <p><strong>Tình trạng tổng thể:</strong> ${escapeHtml(deviceCondition)}</p>
+ <p><strong>Thân máy:</strong> ${escapeHtml(rental.handoverReport.bodyCondition)}</p>
+ <p><strong>Ống kính:</strong> ${escapeHtml(rental.handoverReport.lensCondition)}</p>
+ <p><strong>Pin:</strong> ${escapeHtml(rental.handoverReport.batteryCondition)}</p>
+ <p><strong>Phụ kiện đi kèm:</strong> ${escapeHtml(rental.handoverReport.accessoryCondition)}</p>
+ <p><strong>Ghi chú bàn giao:</strong> ${escapeHtml(rental.handoverReport.note || "Không có")}</p>
+
+ <div class="section-title">V. Xác nhận bàn giao</div>
+ <div class="notice">
+ Bên nhận đã kiểm tra thiết bị, serial, phụ kiện và tình trạng thực tế trước khi nhận.
+ Hai bên thống nhất sử dụng thông tin trong biên bản này làm căn cứ đối chiếu khi hoàn trả thiết bị.
+ </div>
 
  <div class="signatures-container">
  <div class="signature-col">
- <div class="signature-title">Đại diện Khách hàng<br>(Ký & ghi rõ họ tên)</div>
- <div style="font-style: italic; color: #555;">(Đã ký trực tuyến qua Hợp đồng số ${rental.contract?.contractNumber || "N/A"})</div>
+ <div class="signature-title">Người nhận thiết bị</div>
+ <div style="font-weight: bold; margin-top: 20px;">${escapeHtml(receiverName)}</div>
  </div>
  <div class="signature-col">
- <div class="signature-title">Đại diện Nhân viên bàn giao<br>(Ký & ghi rõ họ tên)</div>
- <div style="font-weight: bold; margin-top: 20px;">${rental.handoverReport.staffName || ""}</div>
+ <div class="signature-title">Nhân viên bàn giao</div>
+ <div style="font-weight: bold; margin-top: 20px;">${escapeHtml(rental.handoverReport.staffName || "")}</div>
  </div>
  </div>
 

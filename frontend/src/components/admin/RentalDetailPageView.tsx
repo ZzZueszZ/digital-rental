@@ -44,12 +44,16 @@ const statusLabel: Record<RentalOrderStatus, string> = {
 };
 
 const statusClass: Record<RentalOrderStatus, string> = {
-  [RentalOrderStatus.PENDING_PAYMENT]: "border-amber-200 bg-amber-50 text-amber-700",
-  [RentalOrderStatus.PAID_RENTAL_FEE]: "border-blue-200 bg-blue-50 text-blue-700",
-  [RentalOrderStatus.WAITING_PICKUP]: "border-indigo-200 bg-indigo-50 text-indigo-700",
+  [RentalOrderStatus.PENDING_PAYMENT]:
+    "border-amber-200 bg-amber-50 text-amber-700",
+  [RentalOrderStatus.PAID_RENTAL_FEE]:
+    "border-blue-200 bg-blue-50 text-blue-700",
+  [RentalOrderStatus.WAITING_PICKUP]:
+    "border-indigo-200 bg-indigo-50 text-indigo-700",
   [RentalOrderStatus.RENTING]: "border-violet-200 bg-violet-50 text-violet-700",
   [RentalOrderStatus.RETURNED]: "border-sky-200 bg-sky-50 text-sky-700",
-  [RentalOrderStatus.COMPLETED]: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  [RentalOrderStatus.COMPLETED]:
+    "border-emerald-200 bg-emerald-50 text-emerald-700",
   [RentalOrderStatus.CANCELLED]: "border-red-200 bg-red-50 text-red-700",
 };
 
@@ -78,7 +82,10 @@ const parseDateOnly = (value?: string | null) => {
   return new Date(year, month - 1, day);
 };
 
-const calculateRentalDays = (startDate?: string | null, endDate?: string | null) => {
+const calculateRentalDays = (
+  startDate?: string | null,
+  endDate?: string | null,
+) => {
   const start = parseDateOnly(startDate);
   const end = parseDateOnly(endDate);
   if (!start || !end) return 1;
@@ -100,9 +107,12 @@ export function RentalDetailPageView({
   const rentalId = Number(params.id);
   const staffDetail = useStaffRentalDetail(rentalId, detailScope === "staff");
   const customerDetail = useRentalDetail(rentalId, detailScope === "customer");
-  const data = detailScope === "customer" ? customerDetail.data : staffDetail.data;
+  const data =
+    detailScope === "customer" ? customerDetail.data : staffDetail.data;
   const isLoading =
-    detailScope === "customer" ? customerDetail.isLoading : staffDetail.isLoading;
+    detailScope === "customer"
+      ? customerDetail.isLoading
+      : staffDetail.isLoading;
   const { mutateAsync: sendSigningOtp, isPending: isSendingOtp } =
     useSendSigningOtp();
   const { mutateAsync: signContract, isPending: isSigning } = useSignContract();
@@ -148,7 +158,8 @@ export function RentalDetailPageView({
     (total, item) => total + (item.pricePerDay || 0) * rentalDays,
     0,
   );
-  const totalPayment = itemRentalTotal + depositAmount + (rental.additionalFee || 0);
+  const totalPayment =
+    itemRentalTotal + depositAmount + (rental.additionalFee || 0);
   const signed = !!(rental.contract?.isLocked || rental.contract?.locked);
   const hasAssignedDevices = rental.items.every((item) => !!item.deviceId);
   const canSignOnline =
@@ -157,16 +168,16 @@ export function RentalDetailPageView({
     !signed &&
     rental.status === RentalOrderStatus.WAITING_PICKUP &&
     hasAssignedDevices;
-  const signUnavailableReason =
-    !rental.contract
-      ? "Hợp đồng chưa được khởi tạo."
-      : signed
-        ? "Hợp đồng đã được ký điện tử."
-        : rental.status === RentalOrderStatus.PENDING_PAYMENT
-          ? "Bạn cần thanh toán phí thuê trước khi ký hợp đồng."
-          : rental.status === RentalOrderStatus.PAID_RENTAL_FEE || !hasAssignedDevices
-            ? "Đơn thuê cần được nhân viên chuẩn bị và gán thiết bị trước khi ký hợp đồng."
-            : "Hợp đồng chỉ được ký ở giai đoạn chờ nhận thiết bị.";
+  const signUnavailableReason = !rental.contract
+    ? "Hợp đồng chưa được khởi tạo."
+    : signed
+      ? "Hợp đồng đã được ký điện tử."
+      : rental.status === RentalOrderStatus.PENDING_PAYMENT
+        ? "Bạn cần thanh toán phí thuê trước khi ký hợp đồng."
+        : rental.status === RentalOrderStatus.PAID_RENTAL_FEE ||
+            !hasAssignedDevices
+          ? "Đơn thuê cần được nhân viên chuẩn bị và gán thiết bị trước khi ký hợp đồng."
+          : "Hợp đồng chỉ được ký ở giai đoạn chờ nhận thiết bị.";
   const escapeHtml = (value?: string | number | null) =>
     String(value ?? "")
       .replace(/&/g, "&amp;")
@@ -303,30 +314,67 @@ export function RentalDetailPageView({
 
   const handleDownloadHandover = () => {
     if (!rental.handoverReport) return;
+    const handoverItem = rental.items[0];
+    const receiverName = rental.shippingName || rental.userFullName || rental.userEmail;
+    const receiverPhone =
+      rental.shippingPhone || rental.userPhone || "Chưa cập nhật";
+    const receiverAddress =
+      rental.shippingAddress || rental.currentAddress || "Nhận tại cửa hàng";
+    const productName = handoverItem?.productName || "Thiết bị thuê";
+    const serialNumber =
+      handoverItem?.deviceSerialNumber ||
+      rental.handoverReport.serialNumber ||
+      "Chưa ghi nhận";
+    const deviceCondition =
+      handoverItem?.conditionBeforeHandover ||
+      handoverItem?.deviceConditionDetails ||
+      "Chưa ghi nhận";
+
     openPrintDocument(
       `Bien_Ban_Ban_Giao_${rental.code}`,
       `
         <h1>Biên bản bàn giao thiết bị</h1>
-        <table class="meta">
-          <tr><td class="label">Mã đơn thuê:</td><td>#${escapeHtml(rental.code)}</td></tr>
-          <tr><td class="label">Người nhận:</td><td>${escapeHtml(rental.shippingName || rental.userEmail)} - ${escapeHtml(rental.shippingPhone || rental.userPhone || "Chưa cập nhật")}</td></tr>
-          <tr><td class="label">Nhân viên bàn giao:</td><td>${escapeHtml(rental.handoverReport.staffName || "Chưa cập nhật")}</td></tr>
-          <tr><td class="label">Ngày lập:</td><td>${formatDate(rental.handoverReport.createdAt)}</td></tr>
-          <tr><td class="label">Mức rủi ro:</td><td>${escapeHtml(rental.handoverReport.riskLevel)}</td></tr>
-          <tr><td class="label">Tiền cọc chốt:</td><td>${formatVND(rental.handoverReport.finalDepositAmount)}</td></tr>
-        </table>
-        <h2>Tình trạng bàn giao</h2>
-        <table>
-          <tr><th>Hạng mục</th><th>Tình trạng</th></tr>
-          <tr><td>Thân máy</td><td>${escapeHtml(rental.handoverReport.bodyCondition)}</td></tr>
-          <tr><td>Ống kính</td><td>${escapeHtml(rental.handoverReport.lensCondition)}</td></tr>
-          <tr><td>Pin</td><td>${escapeHtml(rental.handoverReport.batteryCondition)}</td></tr>
-          <tr><td>Phụ kiện</td><td>${escapeHtml(rental.handoverReport.accessoryCondition)}</td></tr>
-          <tr><td>Ghi chú</td><td>${escapeHtml(rental.handoverReport.note || "Không có")}</td></tr>
-        </table>
+        <p class="center"><em>Số: BBG-${escapeHtml(rental.code)}</em></p>
+
+        <h2>I. Thông tin các bên</h2>
+        <p><strong>Bên giao thiết bị:</strong> Cửa hàng Digital Rental</p>
+        <p><strong>Nhân viên bàn giao:</strong> ${escapeHtml(rental.handoverReport.staffName || "Chưa cập nhật")}</p>
+        <p><strong>Bên nhận thiết bị:</strong> ${escapeHtml(receiverName)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(rental.userEmail)}</p>
+        <p><strong>Số điện thoại:</strong> ${escapeHtml(receiverPhone)}</p>
+        <p><strong>CCCD:</strong> ${escapeHtml(rental.identityNumber || "Chưa cập nhật")}</p>
+        <p><strong>Ngày cấp:</strong> ${rental.identityIssuedDate ? printDate(rental.identityIssuedDate) : "Chưa cập nhật"}</p>
+        <p><strong>Nơi cấp:</strong> ${escapeHtml(rental.identityIssuedPlace || "Chưa cập nhật")}</p>
+        <p><strong>Địa chỉ thường trú:</strong> ${escapeHtml(rental.permanentAddress || "Chưa cập nhật")}</p>
+        <p><strong>Địa chỉ nhận thiết bị:</strong> ${escapeHtml(receiverAddress)}</p>
+        <p><strong>Mức xác thực:</strong> ${escapeHtml(rental.verificationLevel || "Chưa cập nhật")}</p>
+
+        <h2>II. Thông tin đơn thuê</h2>
+        <p><strong>Mã đơn thuê:</strong> #${escapeHtml(rental.code)}</p>
+        <p><strong>Thời gian thuê:</strong> ${printDate(rental.startDate)} đến ${printDate(rental.endDate)} (${rentalDays} ngày)</p>
+        <p><strong>Ngày lập biên bản:</strong> ${formatDate(rental.handoverReport.createdAt)}</p>
+        <p><strong>Mức rủi ro hồ sơ:</strong> ${escapeHtml(rental.handoverReport.riskLevel)}</p>
+        <p><strong>Tiền cọc chốt:</strong> ${formatVND(rental.handoverReport.finalDepositAmount)}</p>
+
+        <h2>III. Thiết bị bàn giao</h2>
+        <p><strong>Tên thiết bị:</strong> ${escapeHtml(productName)}</p>
+        <p><strong>Serial:</strong> ${escapeHtml(serialNumber)}</p>
+        <p><strong>Giá trị tài sản:</strong> ${formatVND(handoverItem?.assetValue || 0)}</p>
+        <p><strong>Đơn giá thuê/ngày:</strong> ${formatVND(handoverItem?.pricePerDay || 0)}</p>
+
+        <h2>IV. Tình trạng thiết bị trước lúc bàn giao</h2>
+        <p><strong>Tình trạng tổng thể:</strong> ${escapeHtml(deviceCondition)}</p>
+        <p><strong>Thân máy:</strong> ${escapeHtml(rental.handoverReport.bodyCondition)}</p>
+        <p><strong>Ống kính:</strong> ${escapeHtml(rental.handoverReport.lensCondition)}</p>
+        <p><strong>Pin:</strong> ${escapeHtml(rental.handoverReport.batteryCondition)}</p>
+        <p><strong>Phụ kiện đi kèm:</strong> ${escapeHtml(rental.handoverReport.accessoryCondition)}</p>
+        <p><strong>Ghi chú bàn giao:</strong> ${escapeHtml(rental.handoverReport.note || "Không có")}</p>
+
+        <h2>V. Xác nhận bàn giao</h2>
+        <p>Bên nhận đã kiểm tra thiết bị, serial, phụ kiện và tình trạng thực tế trước khi nhận. Hai bên thống nhất sử dụng thông tin trong biên bản này làm căn cứ đối chiếu khi hoàn trả thiết bị.</p>
         <div class="signature">
           <div><strong>Nhân viên bàn giao</strong><div class="signature-box">${escapeHtml(rental.handoverReport.staffName || "")}</div></div>
-          <div><strong>Người nhận thiết bị</strong><div class="signature-box">${escapeHtml(rental.shippingName || rental.userEmail)}</div></div>
+          <div><strong>Người nhận thiết bị</strong><div class="signature-box">${escapeHtml(receiverName)}</div></div>
         </div>
       `,
     );
@@ -477,7 +525,11 @@ export function RentalDetailPageView({
           icon={CreditCard}
           label="Phí thuê"
           value={formatVND(itemRentalTotal)}
-          hint={rental.paymentMethod === "ONLINE" ? "VNPay Online" : rental.paymentMethod}
+          hint={
+            rental.paymentMethod === "ONLINE"
+              ? "VNPay Online"
+              : rental.paymentMethod
+          }
         />
         <InfoCard
           icon={ShieldCheck}
@@ -496,12 +548,31 @@ export function RentalDetailPageView({
       <div className="grid items-stretch gap-6 xl:grid-cols-2">
         <Card title="Thông tin khách thuê" icon={User} className="h-full">
           <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Người nhận" value={rental.shippingName || rental.userFullName || rental.userEmail} />
+            <Field
+              label="Người nhận"
+              value={
+                rental.shippingName || rental.userFullName || rental.userEmail
+              }
+            />
             <Field label="Email" value={rental.userEmail} />
-            <Field label="Số điện thoại" value={rental.shippingPhone || rental.userPhone || "Chưa cập nhật"} />
-            <Field label="Địa điểm nhận" value={rental.shippingAddress || "Nhận tại cửa hàng"} />
-            <Field label="CCCD" value={rental.identityNumber || "Chưa cập nhật"} />
-            <Field label="Mức xác thực" value={rental.verificationLevel || "Chưa cập nhật"} />
+            <Field
+              label="Số điện thoại"
+              value={
+                rental.shippingPhone || rental.userPhone || "Chưa cập nhật"
+              }
+            />
+            <Field
+              label="Địa điểm nhận"
+              value={rental.shippingAddress || "Nhận tại cửa hàng"}
+            />
+            <Field
+              label="CCCD"
+              value={rental.identityNumber || "Chưa cập nhật"}
+            />
+            <Field
+              label="Mức xác thực"
+              value={rental.verificationLevel || "Chưa cập nhật"}
+            />
           </div>
         </Card>
 
@@ -540,13 +611,19 @@ export function RentalDetailPageView({
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-3 rounded-2xl bg-zinc-50 p-3">
-                <MobileSpec label="Serial" value={item.deviceSerialNumber || "Chưa gán"} />
+                <MobileSpec
+                  label="Serial"
+                  value={item.deviceSerialNumber || "Chưa gán"}
+                />
                 <MobileSpec
                   label="Giá trị tài sản"
                   value={formatVND(item.assetValue || 0)}
                   alignRight
                 />
-                <MobileSpec label="Đơn giá/ngày" value={formatVND(item.pricePerDay)} />
+                <MobileSpec
+                  label="Đơn giá/ngày"
+                  value={formatVND(item.pricePerDay)}
+                />
                 <MobileSpec
                   label="Thành tiền"
                   value={formatVND(item.pricePerDay * rentalDays)}
@@ -583,7 +660,8 @@ export function RentalDetailPageView({
                           {item.productName}
                         </p>
                         <p className="mt-1 text-xs text-zinc-500">
-                          {item.deviceConditionDetails || "Chưa ghi nhận tình trạng"}
+                          {item.deviceConditionDetails ||
+                            "Chưa ghi nhận tình trạng"}
                         </p>
                       </div>
                     </div>
@@ -701,8 +779,10 @@ export function RentalDetailPageView({
                         <input
                           type="text"
                           value={signatureText}
-                          onChange={(event) => setSignatureText(event.target.value)}
-                          placeholder="Ví dụ: Trương Ái Nga"
+                          onChange={(event) =>
+                            setSignatureText(event.target.value)
+                          }
+                          placeholder="Nhập họ tên"
                           className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-red-300 focus:ring-2 focus:ring-red-100"
                         />
                       </label>
@@ -726,7 +806,9 @@ export function RentalDetailPageView({
                           inputMode="numeric"
                           value={otpCode}
                           onChange={(event) =>
-                            setOtpCode(event.target.value.replace(/\D/g, "").slice(0, 6))
+                            setOtpCode(
+                              event.target.value.replace(/\D/g, "").slice(0, 6),
+                            )
                           }
                           placeholder="Nhập 6 số"
                           className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-center text-sm font-medium tracking-[0.35em] text-zinc-900 outline-none transition focus:border-red-300 focus:ring-2 focus:ring-red-100"
@@ -769,10 +851,26 @@ export function RentalDetailPageView({
                   Thông tin xác thực chữ ký
                 </p>
                 <div className="grid gap-4 md:grid-cols-2">
-                  <Field label="Hash SHA-256" value={rental.contract.documentHash || "Chưa ghi nhận"} />
-                  <Field label="IP ký" value={rental.contract.signerIp || "Chưa ghi nhận"} />
-                  <Field label="Thiết bị ký" value={rental.contract.signerUserAgent || "Chưa ghi nhận"} />
-                  <Field label="Thời gian ký" value={rental.contract.signedAt ? formatDate(rental.contract.signedAt) : "Chưa ghi nhận"} />
+                  <Field
+                    label="Hash SHA-256"
+                    value={rental.contract.documentHash || "Chưa ghi nhận"}
+                  />
+                  <Field
+                    label="IP ký"
+                    value={rental.contract.signerIp || "Chưa ghi nhận"}
+                  />
+                  <Field
+                    label="Thiết bị ký"
+                    value={rental.contract.signerUserAgent || "Chưa ghi nhận"}
+                  />
+                  <Field
+                    label="Thời gian ký"
+                    value={
+                      rental.contract.signedAt
+                        ? formatDate(rental.contract.signedAt)
+                        : "Chưa ghi nhận"
+                    }
+                  />
                 </div>
               </div>
             )}
@@ -801,10 +899,22 @@ export function RentalDetailPageView({
               }
             >
               <div className="grid gap-4 md:grid-cols-2">
-                <Field label="Nhân viên" value={rental.handoverReport.staffName || "Chưa cập nhật"} />
-                <Field label="Ngày lập" value={formatDate(rental.handoverReport.createdAt)} />
-                <Field label="Tình trạng thân máy" value={rental.handoverReport.bodyCondition} />
-                <Field label="Tình trạng phụ kiện" value={rental.handoverReport.accessoryCondition} />
+                <Field
+                  label="Nhân viên"
+                  value={rental.handoverReport.staffName || "Chưa cập nhật"}
+                />
+                <Field
+                  label="Ngày lập"
+                  value={formatDate(rental.handoverReport.createdAt)}
+                />
+                <Field
+                  label="Tình trạng thân máy"
+                  value={rental.handoverReport.bodyCondition}
+                />
+                <Field
+                  label="Tình trạng phụ kiện"
+                  value={rental.handoverReport.accessoryCondition}
+                />
               </div>
             </Card>
           )}
@@ -826,10 +936,22 @@ export function RentalDetailPageView({
               }
             >
               <div className="grid gap-4 md:grid-cols-2">
-                <Field label="Ngày trả" value={formatDate(rental.returnReport.returnDate)} />
-                <Field label="Tổng phạt" value={formatVND(rental.returnReport.totalPenalty)} />
-                <Field label="Hoàn khách" value={formatVND(rental.returnReport.refundAmount)} />
-                <Field label="Thu thêm" value={formatVND(rental.returnReport.extraPaymentAmount)} />
+                <Field
+                  label="Ngày trả"
+                  value={formatDate(rental.returnReport.returnDate)}
+                />
+                <Field
+                  label="Tổng phạt"
+                  value={formatVND(rental.returnReport.totalPenalty)}
+                />
+                <Field
+                  label="Hoàn khách"
+                  value={formatVND(rental.returnReport.refundAmount)}
+                />
+                <Field
+                  label="Thu thêm"
+                  value={formatVND(rental.returnReport.extraPaymentAmount)}
+                />
               </div>
             </Card>
           )}
@@ -977,10 +1099,17 @@ function MoneyRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <span className={cn("text-zinc-500", strong && "font-semibold text-zinc-950")}>
+      <span
+        className={cn("text-zinc-500", strong && "font-semibold text-zinc-950")}
+      >
         {label}
       </span>
-      <span className={cn("font-medium text-zinc-950", strong && "text-lg text-red-600")}>
+      <span
+        className={cn(
+          "font-medium text-zinc-950",
+          strong && "text-lg text-red-600",
+        )}
+      >
         {formatVND(value)}
       </span>
     </div>

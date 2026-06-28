@@ -31,7 +31,7 @@ jobs:
           java-version: "17"
 
       - name: Test backend
-        run: ./gradlew clean test
+        run: .service/lenshub/gradlew clean test
 
       - name: Login GHCR
         if: github.event_name == 'push'
@@ -46,7 +46,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile
+          file: .service/lenshub/Dockerfile
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:${{ github.sha }}

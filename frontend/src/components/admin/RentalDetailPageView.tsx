@@ -11,6 +11,8 @@ import {
   CreditCard,
   Download,
   FileText,
+  FilePenLine,
+  Loader2,
   Package,
   ShieldCheck,
   User,
@@ -23,6 +25,8 @@ import {
   DepositStatus,
   RentalOrderStatus,
   useRentalDetail,
+  useSendSigningOtp,
+  useSignContract,
   useStaffRentalDetail,
 } from "@/services/rental";
 
@@ -99,6 +103,12 @@ export function RentalDetailPageView({
   const data = detailScope === "customer" ? customerDetail.data : staffDetail.data;
   const isLoading =
     detailScope === "customer" ? customerDetail.isLoading : staffDetail.isLoading;
+  const { mutateAsync: sendSigningOtp, isPending: isSendingOtp } =
+    useSendSigningOtp();
+  const { mutateAsync: signContract, isPending: isSigning } = useSignContract();
+  const [showSignForm, setShowSignForm] = useState(false);
+  const [signatureText, setSignatureText] = useState("");
+  const [otpCode, setOtpCode] = useState("");
   const rental = data?.data;
   const backHref =
     portalType === "profile" ? "/profile/orders" : `/${portalType}/rentals`;
@@ -140,6 +150,23 @@ export function RentalDetailPageView({
   );
   const totalPayment = itemRentalTotal + depositAmount + (rental.additionalFee || 0);
   const signed = !!(rental.contract?.isLocked || rental.contract?.locked);
+  const hasAssignedDevices = rental.items.every((item) => !!item.deviceId);
+  const canSignOnline =
+    detailScope === "customer" &&
+    !!rental.contract &&
+    !signed &&
+    rental.status === RentalOrderStatus.WAITING_PICKUP &&
+    hasAssignedDevices;
+  const signUnavailableReason =
+    !rental.contract
+      ? "Hợp đồng chưa được khởi tạo."
+      : signed
+        ? "Hợp đồng đã được ký điện tử."
+        : rental.status === RentalOrderStatus.PENDING_PAYMENT
+          ? "Bạn cần thanh toán phí thuê trước khi ký hợp đồng."
+          : rental.status === RentalOrderStatus.PAID_RENTAL_FEE || !hasAssignedDevices
+            ? "Đơn thuê cần được nhân viên chuẩn bị và gán thiết bị trước khi ký hợp đồng."
+            : "Hợp đồng chỉ được ký ở giai đoạn chờ nhận thiết bị.";
   const escapeHtml = (value?: string | number | null) =>
     String(value ?? "")
       .replace(/&/g, "&amp;")
@@ -345,6 +372,64 @@ export function RentalDetailPageView({
         </div>
       `,
     );
+  };
+
+  const handleOpenSignForm = async () => {
+    if (!canSignOnline) {
+      toast.error(signUnavailableReason);
+      return;
+    }
+
+    try {
+      await sendSigningOtp(rental.id);
+      setShowSignForm(true);
+      toast.success("Mã OTP ký hợp đồng đã được gửi đến email của bạn.");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(
+        error.response?.data?.message ||
+          "Không thể gửi mã OTP ký hợp đồng. Vui lòng thử lại.",
+      );
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      await sendSigningOtp(rental.id);
+      toast.success("Đã gửi lại mã OTP ký hợp đồng.");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Không thể gửi lại mã OTP.");
+    }
+  };
+
+  const handleSignContract = async () => {
+    const normalizedOtp = otpCode.trim();
+
+    if (!signatureText.trim()) {
+      toast.error("Vui lòng nhập họ tên để ký hợp đồng.");
+      return;
+    }
+
+    if (!/^\d{6}$/.test(normalizedOtp)) {
+      toast.error("Vui lòng nhập mã OTP gồm 6 số.");
+      return;
+    }
+
+    try {
+      await signContract({
+        id: rental.id,
+        signature: signatureText.trim(),
+        otpCode: normalizedOtp,
+      });
+      setShowSignForm(false);
+      setSignatureText("");
+      setOtpCode("");
+      toast.success("Đã ký hợp đồng điện tử thành công.");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Không thể ký hợp đồng.");
+    }
   };
 
   return (
@@ -567,6 +652,116 @@ export function RentalDetailPageView({
                 {rental.contract.termsAndConditions}
               </pre>
             </div>
+
+            {detailScope === "customer" && !signed && (
+              <div className="rounded-2xl border border-red-100 bg-red-50/60 p-4">
+                {!showSignForm ? (
+                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-zinc-950">
+                        Ký hợp đồng điện tử
+                      </p>
+                      <p className="mt-1 text-xs leading-5 text-zinc-600">
+                        {canSignOnline
+                          ? "Xác nhận hợp đồng bằng OTP gửi về email trước khi nhận thiết bị."
+                          : signUnavailableReason}
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      disabled={!canSignOnline || isSendingOtp}
+                      onClick={handleOpenSignForm}
+                      className="h-10 rounded-xl bg-red-600 px-5 text-xs font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-zinc-100 disabled:text-zinc-400"
+                    >
+                      {isSendingOtp ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <FilePenLine className="mr-2 h-4 w-4" />
+                      )}
+                      Ký hợp đồng
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm font-medium text-zinc-950">
+                        Xác nhận ký hợp đồng
+                      </p>
+                      <p className="mt-1 text-xs leading-5 text-zinc-600">
+                        Mã OTP đã được gửi đến email đăng ký. Nhập họ tên và OTP
+                        để hoàn tất ký điện tử.
+                      </p>
+                    </div>
+
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <label className="block">
+                        <span className="mb-1.5 block text-xs font-medium text-zinc-600">
+                          Họ tên ký xác nhận
+                        </span>
+                        <input
+                          type="text"
+                          value={signatureText}
+                          onChange={(event) => setSignatureText(event.target.value)}
+                          placeholder="Ví dụ: Trương Ái Nga"
+                          className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-red-300 focus:ring-2 focus:ring-red-100"
+                        />
+                      </label>
+
+                      <label className="block">
+                        <div className="mb-1.5 flex items-center justify-between gap-3">
+                          <span className="text-xs font-medium text-zinc-600">
+                            Mã OTP email
+                          </span>
+                          <button
+                            type="button"
+                            onClick={handleResendOtp}
+                            disabled={isSendingOtp}
+                            className="text-xs font-medium text-red-600 hover:text-red-700 disabled:text-zinc-400"
+                          >
+                            {isSendingOtp ? "Đang gửi..." : "Gửi lại OTP"}
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={otpCode}
+                          onChange={(event) =>
+                            setOtpCode(event.target.value.replace(/\D/g, "").slice(0, 6))
+                          }
+                          placeholder="Nhập 6 số"
+                          className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-center text-sm font-medium tracking-[0.35em] text-zinc-900 outline-none transition focus:border-red-300 focus:ring-2 focus:ring-red-100"
+                        />
+                      </label>
+                    </div>
+
+                    <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowSignForm(false);
+                          setOtpCode("");
+                        }}
+                        className={downloadButtonClass}
+                      >
+                        Hủy
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={handleSignContract}
+                        disabled={isSigning}
+                        className="h-10 rounded-xl bg-red-600 px-5 text-xs font-medium text-white hover:bg-red-700 disabled:bg-zinc-100 disabled:text-zinc-400"
+                      >
+                        {isSigning ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : null}
+                        Xác nhận ký
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {signed && (
               <div className="rounded-2xl border border-zinc-100 bg-white p-5 text-xs text-zinc-600">

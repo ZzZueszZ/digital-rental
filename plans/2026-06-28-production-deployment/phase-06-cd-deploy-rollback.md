@@ -16,6 +16,10 @@
 **Review Status:** Pending
 Make VPS pull tested image digest, deploy safely, and rollback failed releases.
 
+**Interim Safety State:** CD uses manual `workflow_dispatch` with an explicitly
+validated SHA tag or digest. Automatic deployment remains disabled until the
+production environment, smoke tests, and rollback scripts are ready.
+
 ## Key Insights
 
 - One VPS cannot provide true HA; target controlled short restart.

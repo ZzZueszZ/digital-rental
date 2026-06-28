@@ -28,8 +28,9 @@ Actionlint, frontend lint/build, and local `linux/amd64` image build pass.
 
 ## Requirements
 
-- PR CI: backend tests; frontend lint/build.
-- Push to `master`: repeat gates, build/push backend image.
+- Every branch push: backend tests; frontend lint/build.
+- Push to `master`, including pull-request merges: run gates, then build/push
+  backend image.
 - Image tags: `sha-<full-sha>` and `prod`; capture digest.
 - GHCR uses `GITHUB_TOKEN`, `packages: write`, `contents: read`.
 - Third-party actions pinned to commit SHA.
@@ -38,8 +39,8 @@ Actionlint, frontend lint/build, and local `linux/amd64` image build pass.
 ## Architecture
 
 ```text
-PR -> CI only
-master push -> tests -> Docker buildx -> GHCR image tags + immutable digest
+branch push -> tests only
+master push/merge -> tests -> Docker buildx -> GHCR image tags + immutable digest
 ```
 
 ## Related code files
@@ -62,7 +63,7 @@ master push -> tests -> Docker buildx -> GHCR image tags + immutable digest
 
 ## Todo list
 
-- [x] Add PR CI.
+- [x] Add branch-push CI.
 - [x] Add master build/publish.
 - [x] Pin Actions SHAs.
 - [x] Configure GHCR workflow permissions.
@@ -71,7 +72,7 @@ master push -> tests -> Docker buildx -> GHCR image tags + immutable digest
 
 ## Success Criteria
 
-- PR cannot report green when backend tests or frontend build fail.
+- A pushed branch cannot report green when backend tests or frontend build fail.
 - Master pipeline publishes one image associated with commit SHA.
 - Pulling by digest returns exact tested image.
 - Workflow logs contain no credentials.

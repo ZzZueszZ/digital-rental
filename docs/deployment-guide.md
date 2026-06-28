@@ -7,7 +7,10 @@
 
 ## Scope
 
-This guide documents verified deployment behavior. The backend image is implemented. Production Compose, VPS edge, CI/CD, and backup assets remain in implementation under `plans/2026-06-28-production-deployment/`.
+This guide documents verified deployment behavior. The backend image and CI/CD
+workflow structure are implemented. Production Compose, VPS edge, authenticated
+GHCR publication, and backup assets remain in implementation under
+`plans/2026-06-28-production-deployment/`.
 
 ## Runtime Components
 
@@ -177,7 +180,16 @@ pnpm build
 - Add `.env.example` files for backend and frontend.
 - Completed: Redis host, port, and password are environment-driven.
 - Completed: Flyway plus production Hibernate `validate`.
-- Deployment target and CI/CD flow are defined in the production plan; workflow implementation remains.
+- Every branch push runs backend tests plus frontend lint/build. A successful
+  push to `master`—including a merged pull request—also publishes
+  `sha-<commit>` and `prod` backend tags to GHCR and exposes the image digest as
+  a job output.
+- CD is temporarily manual through `workflow_dispatch`. It accepts only the
+  LensHub backend image with a full `sha-<commit>` tag or `sha256` digest.
+  Automatic deployment remains disabled until production rollback is verified.
+- Backend tests and frontend lint/build are verified on GitHub. GHCR
+  publication and digest verification remain pending until the first successful
+  push to `master`.
 - Completed: application health contract and backend image. Container integration and external smoke checks remain release gates.
 - Harden CORS to the production frontend domain and any explicitly approved staging domains.
 - Document backup/restore for PostgreSQL and uploaded files.

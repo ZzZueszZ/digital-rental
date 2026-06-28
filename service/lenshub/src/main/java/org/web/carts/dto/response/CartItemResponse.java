@@ -17,6 +17,7 @@ public class CartItemResponse {
     private Long productId;
     private String productName;
     private String productImage;
+    private String mainImageUrl;
     private BigDecimal rentPricePerDay;
     private BigDecimal salePrice;
     private int quantity;

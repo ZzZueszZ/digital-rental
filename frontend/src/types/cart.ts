@@ -17,7 +17,8 @@ export interface CartItemResponse {
   id: number;
   productId: number;
   productName: string;
-  productImage: string;
+  productImage: string | null;
+  mainImageUrl?: string | null;
   rentPricePerDay: number;
   salePrice: number;
   quantity: number;

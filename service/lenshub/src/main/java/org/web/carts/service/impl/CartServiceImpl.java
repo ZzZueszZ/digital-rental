@@ -14,8 +14,11 @@ import org.web.carts.service.CartService;
 import org.web.common.exceptions.ApplicationException;
 import org.web.products.model.Product;
 import org.web.products.repository.ProductRepository;
+import org.web.storage.MinioStorageProperties;
+import org.web.storage.StorageService;
 import org.web.users.model.User;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +28,8 @@ public class CartServiceImpl implements CartService {
 
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
+    private final StorageService storageService;
+    private final MinioStorageProperties minioProperties;
 
     @Override
     @Transactional(readOnly = true)
@@ -128,15 +133,26 @@ public class CartServiceImpl implements CartService {
 
     private CartItemResponse mapToResponse(CartItem item) {
         Product product = item.getProduct();
+        String imageUrl = resolveProductImage(product);
         return CartItemResponse.builder()
                 .id(item.getId())
                 .productId(product.getId())
                 .productName(product.getName())
-                .productImage(product.getMainImageUrl())
+                .productImage(imageUrl)
+                .mainImageUrl(imageUrl)
                 .rentPricePerDay(product.getRentPricePerDay())
                 .salePrice(product.getSalePrice())
                 .quantity(item.getQuantity())
                 .availableStock(product.getQuantity())
                 .build();
+    }
+
+    private String resolveProductImage(Product product) {
+        if (product.getMainImageAsset() != null) {
+            return storageService.presignGet(
+                    product.getMainImageAsset().getObjectKey(),
+                    Duration.ofMinutes(minioProperties.getDownloadExpiryMinutes()));
+        }
+        return product.getMainImageUrl();
     }
 }

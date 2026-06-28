@@ -767,10 +767,10 @@ export default function OrdersPage() {
                     if (nextValue !== "OTHER") setCancelReasonOther("");
                   }}
                 >
-                  <SelectTrigger className="h-12 w-full rounded-xl border-zinc-200 bg-white px-4 text-sm text-zinc-900 shadow-none hover:border-red-200 hover:bg-white focus:bg-white data-[placeholder]:text-zinc-400">
+                  <SelectTrigger className="h-12 w-full rounded-xl border-zinc-200 !bg-white px-4 text-sm !text-zinc-900 shadow-none hover:border-red-200 hover:!bg-white focus:!bg-white data-[placeholder]:text-zinc-400 [&_svg]:text-zinc-400">
                     <SelectValue placeholder="Chọn lý do hủy đơn" />
                   </SelectTrigger>
-                  <SelectContent className="border-zinc-200 bg-white text-zinc-900">
+                  <SelectContent className="border-zinc-200 bg-white text-zinc-900 shadow-xl">
                     {cancelReasonOptions.map((reason) => (
                       <SelectItem key={reason.value} value={reason.value}>
                         {reason.label}
@@ -791,7 +791,7 @@ export default function OrdersPage() {
                       setCancelReasonOther(event.target.value)
                     }
                     placeholder="Nhập lý do hủy đơn cụ thể..."
-                    className="min-h-24 resize-none bg-white"
+                    className="min-h-24 resize-none !bg-white !text-zinc-900 placeholder:text-zinc-400 focus:border-red-200"
                     maxLength={1000}
                   />
                 </div>

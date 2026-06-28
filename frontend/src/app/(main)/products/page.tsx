@@ -418,7 +418,7 @@ function ProductsContent() {
                   size="icon"
                   disabled={page === 0 || isLoading}
                   onClick={() => goToPage(Math.max(0, page - 1))}
-                  className="h-9 w-9 rounded-xl border-zinc-200 bg-white text-zinc-600 shadow-none hover:border-red-200 hover:bg-white hover:text-red-600 disabled:opacity-30 disabled:hover:border-zinc-200 disabled:hover:text-zinc-600"
+                  className="h-9 w-9 rounded-xl border-zinc-200 bg-white text-zinc-600 shadow-none hover:border-red-200 hover:!bg-white hover:!text-red-600 disabled:opacity-30 disabled:hover:border-zinc-200 disabled:hover:!text-zinc-600"
                   aria-label="Trang trước"
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -436,13 +436,13 @@ function ProductsContent() {
                         <Button
                           key={index}
                           type="button"
-                          variant={page === index ? "default" : "outline"}
+                          variant="outline"
                           onClick={() => goToPage(index)}
                           disabled={isLoading}
                           className={`h-9 w-9 rounded-xl border-zinc-200 text-sm font-medium shadow-none ${
                             page === index
-                              ? "border-zinc-950 bg-zinc-950 text-white hover:bg-zinc-900"
-                              : "bg-white text-zinc-600 hover:border-red-200 hover:bg-white hover:text-red-600"
+                              ? "border-zinc-950 !bg-zinc-950 !text-white hover:!bg-zinc-900 hover:!text-white"
+                              : "bg-white text-zinc-600 hover:border-red-200 hover:!bg-white hover:!text-red-600"
                           }`}
                         >
                           {index + 1}
@@ -475,7 +475,7 @@ function ProductsContent() {
                   onClick={() =>
                     goToPage(Math.min(pagination.totalPages - 1, page + 1))
                   }
-                  className="h-9 w-9 rounded-xl border-zinc-200 bg-white text-zinc-600 shadow-none hover:border-red-200 hover:bg-white hover:text-red-600 disabled:opacity-30 disabled:hover:border-zinc-200 disabled:hover:text-zinc-600"
+                  className="h-9 w-9 rounded-xl border-zinc-200 bg-white text-zinc-600 shadow-none hover:border-red-200 hover:!bg-white hover:!text-red-600 disabled:opacity-30 disabled:hover:border-zinc-200 disabled:hover:!text-zinc-600"
                   aria-label="Trang sau"
                 >
                   <ChevronRight className="h-4 w-4" />

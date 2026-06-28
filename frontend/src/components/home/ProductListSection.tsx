@@ -228,7 +228,7 @@ export function ProductListSection() {
               size="icon"
               disabled={!hasPrevPage || isLoading}
               onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
-              className="h-9 w-9 rounded-xl border-zinc-200 bg-white text-zinc-600 shadow-none hover:bg-zinc-100 hover:text-zinc-900 disabled:opacity-30 disabled:hover:bg-white"
+              className="h-9 w-9 rounded-xl border-zinc-200 bg-white text-zinc-600 shadow-none hover:border-red-200 hover:!bg-white hover:!text-red-600 disabled:opacity-30 disabled:hover:border-zinc-200 disabled:hover:!text-zinc-600"
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
@@ -243,7 +243,7 @@ export function ProductListSection() {
                 return (
                   <Button
                     key={i}
-                    variant={currentPage === i ? "default" : "outline"}
+                    variant="outline"
                     onClick={() => {
                       setCurrentPage(i);
                       window.scrollTo({
@@ -254,8 +254,8 @@ export function ProductListSection() {
                     }}
                     className={`h-9 w-9 rounded-xl border-zinc-200 text-sm font-medium shadow-none transition-colors ${
                       currentPage === i
-                        ? "border-zinc-950 bg-zinc-950 text-white"
-                        : "bg-white text-zinc-600 hover:bg-zinc-100"
+                        ? "border-zinc-950 !bg-zinc-950 !text-white hover:!bg-zinc-900 hover:!text-white"
+                        : "bg-white text-zinc-600 hover:border-red-200 hover:!bg-white hover:!text-red-600"
                     }`}
                   >
                     {i + 1}
@@ -279,7 +279,7 @@ export function ProductListSection() {
               size="icon"
               disabled={!hasNextPage || isLoading}
               onClick={() => setCurrentPage((p) => p + 1)}
-              className="h-9 w-9 rounded-xl border-zinc-200 bg-white text-zinc-600 shadow-none hover:bg-zinc-100 hover:text-zinc-900 disabled:opacity-30 disabled:hover:bg-white"
+              className="h-9 w-9 rounded-xl border-zinc-200 bg-white text-zinc-600 shadow-none hover:border-red-200 hover:!bg-white hover:!text-red-600 disabled:opacity-30 disabled:hover:border-zinc-200 disabled:hover:!text-zinc-600"
             >
               <ChevronRight className="h-5 w-5" />
             </Button>

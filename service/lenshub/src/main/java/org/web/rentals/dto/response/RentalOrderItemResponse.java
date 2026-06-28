@@ -13,6 +13,8 @@ public class RentalOrderItemResponse {
     private Long id;
     private Long productId;
     private String productName;
+    private String productMainImage;
+    private String mainImageUrl;
     private String productMainImageUrl;
     private Long deviceId;
     private String deviceSerialNumber;

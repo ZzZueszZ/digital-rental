@@ -1,24 +1,36 @@
 package org.web.orders.mapper;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.web.orders.dto.response.OrderItemResponse;
 import org.web.orders.dto.response.OrderResponse;
 import org.web.orders.model.Order;
 import org.web.orders.model.OrderItem;
+import org.web.products.model.Product;
+import org.web.storage.MinioStorageProperties;
+import org.web.storage.StorageService;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class OrderMapper {
+    private final StorageService storageService;
+    private final MinioStorageProperties minioProperties;
 
     public OrderItemResponse toOrderItemResponse(OrderItem item) {
         if (item == null) return null;
+        Product product = item.getProduct();
+        String imageUrl = resolveProductImage(product);
         return OrderItemResponse.builder()
                 .id(item.getId())
-                .productId(item.getProduct() != null ? item.getProduct().getId() : null)
-                .productName(item.getProduct() != null ? item.getProduct().getName() : null)
-                .productMainImage(item.getProduct() != null ? item.getProduct().getMainImageUrl() : null)
+                .productId(product != null ? product.getId() : null)
+                .productName(product != null ? product.getName() : null)
+                .productMainImage(imageUrl)
+                .mainImageUrl(imageUrl)
+                .productMainImageUrl(imageUrl)
                 .quantity(item.getQuantity())
                 .unitPrice(item.getUnitPrice())
                 .subtotal(item.getSubtotal())
@@ -63,5 +75,15 @@ public class OrderMapper {
                 .refundNote(order.getRefundNote())
                 .items(itemResponses)
                 .build();
+    }
+
+    private String resolveProductImage(Product product) {
+        if (product == null) return null;
+        if (product.getMainImageAsset() != null) {
+            return storageService.presignGet(
+                    product.getMainImageAsset().getObjectKey(),
+                    Duration.ofMinutes(minioProperties.getDownloadExpiryMinutes()));
+        }
+        return product.getMainImageUrl();
     }
 }

@@ -14,6 +14,8 @@ public class OrderItemResponse {
     private Long productId;
     private String productName;
     private String productMainImage;
+    private String mainImageUrl;
+    private String productMainImageUrl;
     private Integer quantity;
     private BigDecimal unitPrice;
     private BigDecimal subtotal;

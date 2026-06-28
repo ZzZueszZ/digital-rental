@@ -27,6 +27,8 @@ import org.web.rentals.dto.response.*;
 import org.web.rentals.model.*;
 import org.web.rentals.repository.*;
 import org.web.rentals.service.RentalService;
+import org.web.storage.MinioStorageProperties;
+import org.web.storage.StorageService;
 import org.web.users.model.User;
 import org.web.users.model.UserProfile;
 import org.web.users.repository.UserRepository;
@@ -37,6 +39,7 @@ import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -68,6 +71,8 @@ public class RentalServiceImpl implements RentalService {
     private final RentalRefundRepository rentalRefundRepository;
     private final MailService mailService;
     private final org.web.common.service.AuditLogService auditLogService;
+    private final StorageService storageService;
+    private final MinioStorageProperties minioProperties;
 
     @Override
     @Transactional(readOnly = true)
@@ -1268,19 +1273,33 @@ public class RentalServiceImpl implements RentalService {
 
     private RentalOrderItemResponse mapToItemResponse(RentalOrderItem item) {
         if (item == null) return null;
+        Product product = item.getProduct();
+        String imageUrl = resolveProductImage(product);
         return RentalOrderItemResponse.builder()
                 .id(item.getId())
-                .productId(item.getProduct() != null ? item.getProduct().getId() : null)
-                .productName(item.getProduct() != null ? item.getProduct().getName() : null)
-                .productMainImageUrl(item.getProduct() != null ? item.getProduct().getMainImageUrl() : null)
+                .productId(product != null ? product.getId() : null)
+                .productName(product != null ? product.getName() : null)
+                .productMainImage(imageUrl)
+                .mainImageUrl(imageUrl)
+                .productMainImageUrl(imageUrl)
                 .deviceId(item.getDevice() != null ? item.getDevice().getId() : null)
                 .deviceSerialNumber(item.getDevice() != null ? item.getDevice().getSerialNumber() : null)
                 .deviceConditionDetails(item.getDevice() != null ? item.getDevice().getConditionDetails() : null)
-                .assetValue(item.getProduct() != null ? item.getProduct().getSalePrice() : BigDecimal.ZERO)
+                .assetValue(product != null ? product.getSalePrice() : BigDecimal.ZERO)
                 .pricePerDay(item.getPricePerDay())
                 .conditionBeforeHandover(item.getConditionBeforeHandover())
                 .conditionAfterReturn(item.getConditionAfterReturn())
                 .build();
+    }
+
+    private String resolveProductImage(Product product) {
+        if (product == null) return null;
+        if (product.getMainImageAsset() != null) {
+            return storageService.presignGet(
+                    product.getMainImageAsset().getObjectKey(),
+                    Duration.ofMinutes(minioProperties.getDownloadExpiryMinutes()));
+        }
+        return product.getMainImageUrl();
     }
 
     private RentalContractResponse mapToContractResponse(RentalContract contract) {

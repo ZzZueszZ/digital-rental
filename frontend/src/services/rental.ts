@@ -50,7 +50,9 @@ export interface RentalOrderItemResponse {
   id: number;
   productId: number;
   productName: string;
-  productMainImageUrl?: string;
+  productMainImage?: string | null;
+  mainImageUrl?: string | null;
+  productMainImageUrl?: string | null;
   deviceId?: number;
   deviceSerialNumber?: string;
   deviceConditionDetails?: string;

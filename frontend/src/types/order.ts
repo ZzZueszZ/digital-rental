@@ -49,7 +49,9 @@ export interface OrderItemResponse {
   id: number;
   productId: number;
   productName: string;
-  productMainImage: string;
+  productMainImage: string | null;
+  mainImageUrl?: string | null;
+  productMainImageUrl?: string | null;
   quantity: number;
   unitPrice: number;
   subtotal: number;

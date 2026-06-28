@@ -3,21 +3,28 @@ package org.web.common.mails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.web.files.model.FileAsset;
 import org.web.orders.model.Order;
 import org.web.orders.model.OrderItem;
 import org.web.products.model.Product;
 import org.web.rentals.model.RentalOrder;
 import org.web.rentals.model.RentalOrderItem;
+import org.web.storage.StorageService;
 import org.web.support.model.SupportTicket;
 import org.web.users.model.User;
 
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -30,6 +37,9 @@ public class MailService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    private StorageService storageService;
+
     @Value("${app.mail.from:no-reply@zyna.dev}")
     private String fromEmail;
 
@@ -38,6 +48,8 @@ public class MailService {
 
     @Value("${app.mail.admin:adminlenshub@gmail.com}")
     private String adminEmail;
+
+    private final ThreadLocal<List<InlineImage>> inlineImagesContext = ThreadLocal.withInitial(ArrayList::new);
 
     public void sendActivationEmail(User user, String activationLink) {
         if (user == null || user.getEmail() == null) {
@@ -173,10 +185,13 @@ public class MailService {
             return;
         }
 
+        List<InlineImage> inlineImages = inlineImagesContext.get();
+        inlineImages.clear();
         sendHtmlEmail(
                 order.getUser().getEmail(),
                 "Digital Rental - Thanh toán đơn mua thành công #" + order.getCode(),
-                buildOrderPaymentSuccessHtml(order)
+                buildOrderPaymentSuccessHtml(order, inlineImages),
+                inlineImages
         );
     }
 
@@ -185,10 +200,13 @@ public class MailService {
             return;
         }
 
+        List<InlineImage> inlineImages = inlineImagesContext.get();
+        inlineImages.clear();
         sendHtmlEmail(
                 order.getUser().getEmail(),
                 "Digital Rental - Đã tiếp nhận đơn hàng #" + order.getCode(),
-                buildOrderPlacedHtml(order)
+                buildOrderPlacedHtml(order, inlineImages),
+                inlineImages
         );
     }
 
@@ -198,10 +216,13 @@ public class MailService {
         }
 
         if (useHtmlMailTemplates()) {
+            List<InlineImage> inlineImages = inlineImagesContext.get();
+            inlineImages.clear();
             sendHtmlEmail(
                     order.getUser().getEmail(),
                     "Digital Rental - Thanh toán đơn thuê thành công #" + order.getCode(),
-                    buildRentalPaymentSuccessHtml(order)
+                    buildRentalPaymentSuccessHtml(order, inlineImages),
+                    inlineImages
             );
             return;
         }
@@ -224,10 +245,13 @@ public class MailService {
             return;
         }
 
+        List<InlineImage> inlineImages = inlineImagesContext.get();
+        inlineImages.clear();
         sendHtmlEmail(
                 adminEmail,
                 "Digital Rental - Cảnh báo tồn kho bán thấp: " + product.getName(),
-                buildLowSaleStockAlertHtml(product, previousStock, currentStock)
+                buildLowSaleStockAlertHtml(product, previousStock, currentStock, inlineImages),
+                inlineImages
         );
     }
 
@@ -290,12 +314,12 @@ public class MailService {
         return buildStandardHtml("Phản hồi hỗ trợ", "Digital Rental đã gửi phản hồi cho yêu cầu hỗ trợ của bạn.", body);
     }
 
-    private String buildRentalPaymentSuccessHtml(RentalOrder order) {
+    private String buildRentalPaymentSuccessHtml(RentalOrder order, List<InlineImage> inlineImages) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         StringBuilder rows = new StringBuilder();
         for (RentalOrderItem item : order.getItems()) {
             String productName = item.getProduct() != null ? item.getProduct().getName() : "Thiết bị";
-            String imageUrl = item.getProduct() != null ? resolveImageUrl(item.getProduct().getMainImageUrl()) : "";
+            String imageUrl = productImageSrc(item.getProduct(), inlineImages);
             rows.append("<tr>")
                     .append("<td style=\"padding:14px 0;border-bottom:1px solid #f1f1f1;width:74px;\">")
                     .append(imageUrl.isBlank()
@@ -333,8 +357,8 @@ public class MailService {
         );
     }
 
-    private String buildLowSaleStockAlertHtml(Product product, int previousStock, int currentStock) {
-        String imageUrl = resolveImageUrl(product.getMainImageUrl());
+    private String buildLowSaleStockAlertHtml(Product product, int previousStock, int currentStock, List<InlineImage> inlineImages) {
+        String imageUrl = productImageSrc(product, inlineImages);
         String body = "<div style=\"padding:18px 20px;border-radius:18px;background:#fef2f2;border:1px solid #fecaca;margin-bottom:22px;\">"
                 + "<div style=\"font-size:13px;color:#991b1b;font-weight:800;text-transform:uppercase;letter-spacing:.08em;\">Cảnh báo tồn kho</div>"
                 + "<div style=\"margin-top:8px;color:#7f1d1d;font-size:14px;line-height:1.7;\">"
@@ -388,7 +412,7 @@ public class MailService {
         return content.toString();
     }
 
-    private String buildOrderPaymentSuccessHtml(Order order) {
+    private String buildOrderPaymentSuccessHtml(Order order, List<InlineImage> inlineImages) {
         return buildOrderHtml(
                 order,
                 "Thanh toán đơn hàng thành công",
@@ -410,7 +434,7 @@ public class MailService {
         return content.toString();
     }
 
-    private String buildOrderPlacedHtml(Order order) {
+    private String buildOrderPlacedHtml(Order order, List<InlineImage> inlineImages) {
         return buildOrderHtml(
                 order,
                 "Tiếp nhận đơn hàng thành công",
@@ -420,11 +444,11 @@ public class MailService {
         );
     }
 
-    private String buildOrderHtml(Order order, String title, String intro, String paymentStatus, String nextStep) {
+    private String buildOrderHtml(Order order, String title, String intro, String paymentStatus, String nextStep, List<InlineImage> inlineImages) {
         StringBuilder rows = new StringBuilder();
         for (OrderItem item : order.getItems()) {
             String productName = item.getProduct() != null ? item.getProduct().getName() : "Sản phẩm";
-            String imageUrl = item.getProduct() != null ? resolveImageUrl(item.getProduct().getMainImageUrl()) : "";
+            String imageUrl = productImageSrc(item.getProduct(), inlineImages);
             rows.append("<tr>")
                     .append("<td style=\"padding:14px 0;border-bottom:1px solid #f1f1f1;width:74px;\">")
                     .append(imageUrl.isBlank()
@@ -491,6 +515,10 @@ public class MailService {
                 + "</div>"
                 + "</div>"
                 + "</body></html>";
+    }
+
+    private String buildOrderHtml(Order order, String title, String intro, String paymentStatus, String nextStep) {
+        return buildOrderHtml(order, title, intro, paymentStatus, nextStep, inlineImagesContext.get());
     }
 
     private void appendOrderSummary(StringBuilder content, Order order) {
@@ -631,6 +659,11 @@ public class MailService {
     }
 
     private void sendHtmlEmail(String to, String subject, String html) {
+        sendHtmlEmail(to, subject, html, List.of());
+    }
+
+    private void sendHtmlEmail(String to, String subject, String html, List<InlineImage> inlineImages) {
+        List<Path> tempFiles = new ArrayList<>();
         try {
             var message = mailSender.createMimeMessage();
             var helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -638,10 +671,56 @@ public class MailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(html, true);
+            for (InlineImage image : inlineImages) {
+                try {
+                    Path tempFile = storageService.downloadToTempFile(image.objectKey(), fileSuffix(image.contentType()));
+                    tempFiles.add(tempFile);
+                    helper.addInline(image.cid(), new FileSystemResource(tempFile.toFile()), image.contentType());
+                } catch (Exception imageException) {
+                    log.warn("Failed to attach inline email image {}", image.objectKey(), imageException);
+                }
+            }
             mailSender.send(message);
         } catch (Exception e) {
             log.warn("Failed to send HTML email to {}", to, e);
+        } finally {
+            for (Path tempFile : tempFiles) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (Exception cleanupException) {
+                    log.debug("Cannot delete temporary email image {}", tempFile, cleanupException);
+                }
+            }
+            inlineImagesContext.get().clear();
         }
+    }
+
+    private String productImageSrc(Product product, List<InlineImage> inlineImages) {
+        if (product == null) {
+            return "";
+        }
+        FileAsset asset = product.getMainImageAsset();
+        if (asset != null && asset.getObjectKey() != null && !asset.getObjectKey().isBlank()) {
+            String cid = "product-" + product.getId() + "-" + inlineImages.size();
+            inlineImages.add(new InlineImage(cid, asset.getObjectKey(), defaultText(asset.getContentType(), "image/jpeg")));
+            return "cid:" + cid;
+        }
+        return resolveImageUrl(product.getMainImageUrl());
+    }
+
+    private String fileSuffix(String contentType) {
+        if (contentType == null) {
+            return ".img";
+        }
+        return switch (contentType) {
+            case "image/png" -> ".png";
+            case "image/webp" -> ".webp";
+            case "image/gif" -> ".gif";
+            default -> ".jpg";
+        };
+    }
+
+    private record InlineImage(String cid, String objectKey, String contentType) {
     }
 
     private String resolveImageUrl(String imageUrl) {

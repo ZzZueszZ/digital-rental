@@ -2,9 +2,12 @@ name: CD
 
 on:
   workflow_run:
-    workflows: ["CI"]
-    types: [completed]
-    branches: ["master", "prod"]
+    workflows:
+      - CI
+    types:
+      - completed
+    branches:
+      - master
 
 permissions:
   contents: read
@@ -23,12 +26,13 @@ jobs:
     steps:
       - name: Resolve image
         id: image
+        shell: bash
         run: |
-          IMAGE="ghcr.io/${{ github.repository_owner }}/digital-rental-backend:${{ github.event.workflow_run.head_sha }}"
-          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
+          image_name="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/digital-rental-backend"
+          echo "image=${image_name}:sha-${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
 
       - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
         with:
           host: 165.232.168.251
           username: lenshub

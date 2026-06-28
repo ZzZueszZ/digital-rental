@@ -5,37 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1ff62f6-8049-4df7-8361-6ddac974626d" name="Changes" comment="finish">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/codebase-summary.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/codebase-summary.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/deployment-guide.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/deployment-guide.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/project-roadmap.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/project-roadmap.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/system-architecture.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/system-architecture.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/(main)/profile/ekyc/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/(main)/profile/ekyc/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/services/identity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/identity.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/services/product.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/product.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/common/utils/FileUploadUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/common/utils/FileUploadUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/controller/EkycController.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/controller/EkycController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/dto/request/OcrPreviewRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/dto/request/OcrPreviewRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/dto/request/SubmitKycRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/dto/request/SubmitKycRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/service/KycVerificationProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/service/KycVerificationProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/service/impl/IdentityServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/service/impl/IdentityServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/service/provider/FptKycProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/service/provider/FptKycProvider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/service/provider/UploadedFileResolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/identity/service/provider/UploadedFileResolver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/controller/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/dto/request/ProductInfoUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/dto/request/ProductInfoUpdateRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/dto/request/ProductRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/dto/request/ProductRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/mapper/ProductMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/mapper/ProductMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/model/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/model/Product.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/model/ProductImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/model/ProductImage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/service/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/java/org/web/products/service/impl/ProductServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/test/java/org/web/e2ee/shield/sdk/security/SessionKeyStoreTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/test/java/org/web/e2ee/shield/sdk/security/SessionKeyStoreTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/lenshub/src/test/java/org/web/identity/service/provider/UploadedFileResolverTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/src/test/java/org/web/identity/service/provider/UploadedFileResolverTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migration/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migration/docker-compose.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migration/drivers/ojdbc8-19.3.0.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migration/sql/V20231017_1__ddl_initial.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/generate_chapter2_docx.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,7 +71,7 @@
     </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="develop" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -128,31 +103,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.Build lenshub.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;Spring Boot.Main.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;codex/fix-live-ness&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/PERSONAL/hoc-ki-2-nam-4/KLTN/test-project/frontend&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\PERSONAL\\hoc-ki-2-nam-4\\KLTN\\test-project\\frontend\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build lenshub.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "Spring Boot.Main.executor": "Debug",
+    "git-widget-placeholder": "feat/update-cicd",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/PERSONAL/hoc-ki-2-nam-4/KLTN/project/digital-rental",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "pnpm",
+    "ts.external.directory.path": "D:\\PERSONAL\\hoc-ki-2-nam-4\\KLTN\\test-project\\frontend\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -197,6 +172,7 @@
       <workItem from="1781019940465" duration="5470000" />
       <workItem from="1782408156479" duration="6580000" />
       <workItem from="1782487201433" duration="1676000" />
+      <workItem from="1782646992455" duration="354000" />
     </task>
     <task id="LOCAL-00001" summary="finish">
       <option name="closed" value="true" />

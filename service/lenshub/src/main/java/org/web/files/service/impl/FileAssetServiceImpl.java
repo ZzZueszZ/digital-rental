@@ -57,7 +57,8 @@ public class FileAssetServiceImpl implements FileAssetService {
                 .build();
         repository.save(asset);
 
-        String uploadUrl = "/files/" + assetId + "/content";
+        String uploadUrl = storageService.presignPut(objectKey, contentType,
+                Duration.ofMinutes(properties.getUploadExpiryMinutes()));
         return new PresignedUploadResponse(assetId, uploadUrl, Map.of("Content-Type", contentType), expiresAt);
     }
 

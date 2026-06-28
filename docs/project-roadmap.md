@@ -1,13 +1,13 @@
 # Project Roadmap
 
 ## Documentation Maintenance
-**Last Updated:** 2026-06-26  
-**Document Version:** 1.0  
+**Last Updated:** 2026-06-28
+**Document Version:** 1.2
 **Maintained By:** Development Team
 
 ## Current State
 
-The repository has a functional backend and active frontend surfaces, but deployment ownership and infrastructure setup are still being established. The first priority is to stabilize local development, keep documentation current, and reduce production-readiness risks.
+The repository has a functional backend and Next.js frontend on Vercel. Production deployment work follows `plans/2026-06-28-production-deployment/`; Phases 01 and 02 of 7 are implemented.
 
 ## Phase 1: Documentation and Local Development
 
@@ -22,9 +22,9 @@ The repository has a functional backend and active frontend surfaces, but deploy
 ## Phase 2: Backend Stabilization
 
 - Completed 2026-06-26: private MinIO storage core with authenticated presigned upload/download APIs and server-side asset metadata validation. eKYC/product migration remains pending.
-
-- Externalize all secrets and local-only credentials from committed configuration.
-- Replace `ddl-auto: update` for production with a controlled migration strategy.
+- Completed 2026-06-28: removed committed MinIO credential defaults; production validator now rejects missing/unsafe secrets and endpoints.
+- Completed 2026-06-28: added Flyway V1 baseline and production Hibernate `ddl-auto: validate`.
+- Completed 2026-06-28: separated access-token and activation-token signing secrets.
 - Add integration tests for auth, product, order, payment, voucher, and inventory flows.
 - Standardize validation and error messages across DTOs and `GlobalExceptionHandler`.
 - Review Redis usage and token blacklist lifecycle.
@@ -45,8 +45,12 @@ The repository has a functional backend and active frontend surfaces, but deploy
 
 ## Phase 5: Production Readiness
 
-- Define deployment topology and CI/CD.
-- Add smoke tests and health checks.
+- Target topology and CI/CD plan defined: Vercel frontend, single VPS Compose stack, NGINX, GHCR digest deployment, Cloudflare R2 backup.
+- Completed 2026-06-28: Actuator health/liveness/readiness contract; detailed component health remains authenticated.
+- Completed with deferred validation 2026-06-28: pinned multi-stage `linux/amd64` backend image, non-root runtime, bounded JVM heap, and readiness healthcheck.
+- Release gate: run dependency startup, healthy-transition, memory/read-only-filesystem, cache, final contract-test, and CVE checks in Phase 03 or CI.
+- Next: production Compose with PostgreSQL, Redis, MinIO, backend resource limits, volumes, and private networking.
+- Later: DNS/TLS, GHCR CI/CD, backup/restore, monitoring.
 - Add observability: structured logs, metrics, tracing, and alerting.
 - Harden CORS, token lifetimes, rate limits, and file upload policies.
 - Add backup/restore guidance for PostgreSQL and object/file uploads.
@@ -59,6 +63,7 @@ The repository has a functional backend and active frontend surfaces, but deploy
 
 ## Open Questions
 
-- Which environment is the target for production deployment?
-- Which PostgreSQL provisioning path should be supported locally and in production?
+- Whether the first production PostgreSQL database is empty or requires explicit Flyway baseline.
+- VPS OS version and SSH deploy user.
+- Final container runtime and vulnerability checks deferred from Phase 02.
 - Are legacy MySQL and migration assets still active?

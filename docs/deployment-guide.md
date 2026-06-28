@@ -1,13 +1,13 @@
 # Deployment Guide
 
 ## Documentation Maintenance
-**Last Updated:** 2026-06-26  
-**Document Version:** 1.0  
+**Last Updated:** 2026-06-28
+**Document Version:** 1.2
 **Maintained By:** Development Team
 
 ## Scope
 
-This guide documents what is verified in the repository today. It is not a production runbook yet because deployment target, secret storage, and database migration policy are unresolved.
+This guide documents verified deployment behavior. The backend image is implemented. Production Compose, VPS edge, CI/CD, and backup assets remain in implementation under `plans/2026-06-28-production-deployment/`.
 
 ## Runtime Components
 
@@ -24,6 +24,8 @@ This guide documents what is verified in the repository today. It is not a produ
 ## Backend Configuration
 
 Backend config is loaded from `service/lenshub/src/main/resources/application.yml`, with optional `.env` import.
+Production activates `application-prod.yml` with `SPRING_PROFILES_ACTIVE=prod`.
+The production profile fails startup when required configuration is missing or unsafe.
 
 Required/important environment variables:
 
@@ -32,12 +34,12 @@ Required/important environment variables:
 | `DB_URL` | JDBC PostgreSQL URL. Default: `jdbc:postgresql://localhost:5433/postgres`. |
 | `DB_USERNAME` | Database username. Default: `postgres`. |
 | `DB_PASSWORD` | Database password. No safe default. |
-| `APP_JWT_SECRET` | Access-token JWT signing secret. Replace default before production. |
+| `APP_JWT_SECRET` | Access-token JWT signing secret; minimum 32 characters in production. |
 | `APP_JWT_EXPIRATION_MS` | Access-token lifetime. |
 | `APP_JWT_ISSUER` | JWT issuer. Default currently `zyna-app`. |
 | `APP_ACTIVATION_BASE_URL` | Account activation callback URL. |
 | `APP_ACTIVATION_TTL_HOURS` | Activation token TTL. |
-| `APP_ACTIVATION_JWT_SECRET` | Activation token signing secret. Replace default before production. |
+| `APP_ACTIVATION_JWT_SECRET` | Separate activation-token signing secret; minimum 32 characters. |
 | `APP_PASSWORD_RESET_TTL_MINUTES` | Password reset token TTL. |
 | `APP_MAIL_FROM` | Sender email address. |
 | `MAIL_HOST`, `MAIL_PORT` | SMTP host/port. |
@@ -52,10 +54,64 @@ Required/important environment variables:
 | `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY` | MinIO API credentials. Use a scoped service account outside local development. |
 | `MINIO_BUCKET` | Private object bucket. Default: `rental-assets`. |
 | `MINIO_UPLOAD_EXPIRY_MINUTES`, `MINIO_DOWNLOAD_EXPIRY_MINUTES` | Presigned URL lifetimes. Default: 5 minutes. |
+| `APP_KYC_PROVIDER` | Production profile fixes provider to `fpt`. |
+| `FPT_KYC_API_KEY` | Required FPT.AI credential in production. |
 | `SERVER_IDENTITY_PRIV_B64` | PKCS#8 EC P-256 private identity key. Accepted formats: raw PEM, base64-encoded PEM, or base64-encoded DER. Store only in a secret manager. |
 | `SERVER_IDENTITY_PUB_B64` | X.509 EC P-256 public identity key. Accepted formats: raw PEM, base64-encoded PEM, or base64-encoded DER. |
 
-Current Redis host and port are hardcoded to `localhost:6379` in `application.yml`; make these configurable before production deployment.
+Redis host, port, and password are environment-driven. Production requires a non-empty Redis password.
+
+Production validation also requires PostgreSQL JDBC URL, HTTPS activation/VNPay/MinIO public URLs, HTTPS FPT endpoints, and HTTPS non-wildcard CORS origins.
+
+## Database Migrations
+
+- Flyway migration location: `service/lenshub/src/main/resources/db/migration`.
+- V1 baseline: `V1__baseline.sql`.
+- Production Hibernate mode: `validate`.
+- Empty database: start with PROD profile; Flyway creates schema before Hibernate validation.
+- Existing non-empty database: backup and compare schema, then set `FLYWAY_BASELINE_ON_MIGRATE=true` for one rehearsed baseline run only. Return it to `false` immediately.
+- Never edit an applied migration. Use expand/contract migrations for rollback compatibility.
+
+Detailed procedure: `service/lenshub/src/main/resources/db/migration/README.md`.
+
+## Health Endpoints
+
+Public status-only endpoints:
+
+```text
+GET /api/actuator/health
+GET /api/actuator/health/liveness
+GET /api/actuator/health/readiness
+```
+
+Only Actuator `health` is exposed. Details are disabled. Component paths such as `/api/actuator/health/db` require authentication. Swagger/OpenAPI is disabled by the PROD profile.
+
+## Backend Container
+
+Build the production image from the backend directory:
+
+```powershell
+cd service/lenshub
+docker build --platform linux/amd64 -t lenshub-backend:local .
+```
+
+The production `Dockerfile`:
+
+- uses digest-pinned Java 17 Alpine builder and JRE images;
+- builds with the Gradle wrapper in a separate stage;
+- runs as non-root `10001:10001`;
+- limits JVM heap to `-Xms256m -Xmx768m` and exits on OOM;
+- checks `/api/actuator/health/readiness`;
+- copies only the executable JAR into the runtime image.
+
+Verified image evidence on 2026-06-28: Linux amd64, Java 17.0.19,
+181,517,454 bytes, non-root runtime, readable JAR, healthcheck and OCI labels
+present, and no secret patterns in image history.
+
+Before production release, Phase 03 or CI must still verify dependency startup,
+the Docker healthy transition, peak memory, read-only root filesystem with
+tmpfs, repeat-build cache behavior, the final container contract test, and a
+current CVE scan.
 
 ## Frontend Configuration
 
@@ -106,28 +162,28 @@ pnpm build
 
 ## Infrastructure Notes
 
-- `docker/docker-compose.yml` starts a MySQL database named `cms_dev`. It does not match the active PostgreSQL backend configuration.
-- The same compose file now includes MinIO on API port `9000` and Console port `9001`, plus a one-shot `minio-init` service that creates the private `rental-assets` bucket and configures browser CORS for `https://www.lenshub.shop`.
+- `docker/docker-compose.yml` is the local PostgreSQL, Redis, and MinIO stack. It is not the production Compose file.
+- MinIO uses API port `9000`, Console port `9001`, and one-shot `minio-init` for the private `rental-assets` bucket.
 - Copy `.env.example` to `.env` for local MinIO. The checked-in `minioadmin` values are local-only fixtures; production must use distinct secrets and HTTPS.
 - Set `MINIO_PUBLIC_ENDPOINT` to the hostname a browser can resolve. When backend runs inside Docker, set only `MINIO_INTERNAL_ENDPOINT=http://minio:9000`; do not use that hostname for browser-facing presigned URLs.
 - `deploy/redis/docker-compose.yml` defines Redis with a password and Swarm-style deploy settings, published on host port `16379`.
 - `migration/` contains legacy migration assets, including an Oracle JDBC driver and SQL file. Ownership and current use are unclear.
-- No verified PostgreSQL Docker Compose file for `service/lenshub` exists in the repository at this time.
+- Backend production image is implemented. Production Compose and NGINX assets are not implemented yet.
 
 ## Production Readiness Checklist
 
-- Externalize all secrets from committed config.
+- Completed: remove real MinIO secret defaults; require and validate production secrets.
 - Remove tracked `.env` files from Git and rotate credentials already present in repository history.
 - Add `.env.example` files for backend and frontend.
-- Make Redis host, port, and password environment-driven.
-- Replace `spring.jpa.hibernate.ddl-auto: update` with controlled migrations for production.
-- Define deployment target and CI/CD flow.
-- Add health checks and smoke tests.
+- Completed: Redis host, port, and password are environment-driven.
+- Completed: Flyway plus production Hibernate `validate`.
+- Deployment target and CI/CD flow are defined in the production plan; workflow implementation remains.
+- Completed: application health contract and backend image. Container integration and external smoke checks remain release gates.
 - Harden CORS to the production frontend domain and any explicitly approved staging domains.
 - Document backup/restore for PostgreSQL and uploaded files.
 
 ## Open Questions
 
-- Production hosting target not documented.
-- PostgreSQL provisioning method not documented.
+- Existing production database empty/baseline state not confirmed.
+- VPS OS and SSH user not confirmed.
 - Legacy MySQL and migration assets ownership unclear.

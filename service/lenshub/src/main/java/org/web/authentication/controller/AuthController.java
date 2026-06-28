@@ -3,7 +3,10 @@ package org.web.authentication.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.web.authentication.dto.request.*;
@@ -14,12 +17,17 @@ import org.web.authentication.service.AuthService;
 import org.web.common.dto.ApiResponse;
 import org.web.users.dto.UserResponse;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
     
     private final AuthService authService;
+
+    @Value("${app.frontend.base-url:https://www.lenshub.shop}")
+    private String frontendBaseUrl;
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
@@ -102,14 +110,22 @@ public class AuthController {
     }
 
     @GetMapping("/activate")
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<UserResponse> activate(@RequestParam String token) {
-        UserResponse response = authService.activateAccount(token);
-        return ApiResponse.successfulResponse(
-                HttpStatus.OK.value(),
-                "Account activated successfully!",
-                response
-        );
+    public ResponseEntity<Void> activate(@RequestParam String token) {
+        String status = "success";
+        try {
+            authService.activateAccount(token);
+        } catch (RuntimeException exception) {
+            status = "failed";
+        }
+
+        String base = frontendBaseUrl.endsWith("/")
+                ? frontendBaseUrl.substring(0, frontendBaseUrl.length() - 1)
+                : frontendBaseUrl;
+        URI redirectUri = URI.create(base + "/auth/login?activation=" + status);
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header(HttpHeaders.LOCATION, redirectUri.toString())
+                .build();
     }
 
     @PostMapping("/activate/resend")

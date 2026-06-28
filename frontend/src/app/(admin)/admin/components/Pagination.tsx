@@ -62,7 +62,7 @@ export function Pagination({
             size="icon"
             disabled={page === 0}
             onClick={() => onPageChange(page - 1)}
-            className="w-8 h-8 rounded-xl border-zinc-200 bg-white shadow-sm disabled:opacity-30 transition-all active:scale-95"
+            className="w-8 h-8 rounded-xl border-zinc-200 bg-white text-zinc-600 shadow-sm transition-all hover:border-red-200 hover:bg-white hover:text-red-600 disabled:opacity-30 disabled:hover:border-zinc-200 disabled:hover:text-zinc-600 active:scale-95"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
           </Button>
@@ -81,10 +81,10 @@ export function Pagination({
                   key={p}
                   onClick={() => onPageChange(p)}
                   className={cn(
-                    "w-8 h-8 rounded-xl text-xs font-semibold transition-all active:scale-95",
+                    "w-8 h-8 rounded-xl border text-xs font-semibold transition-all active:scale-95",
                     page === p
-                      ? "bg-zinc-950 text-white shadow-md shadow-zinc-200"
-                      : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950",
+                      ? "border-zinc-950 bg-zinc-950 text-white shadow-md shadow-zinc-200"
+                      : "border-transparent bg-white text-zinc-500 hover:border-red-200 hover:bg-white hover:text-red-600",
                   )}
                 >
                   {p + 1}
@@ -98,7 +98,7 @@ export function Pagination({
             size="icon"
             disabled={page >= totalPages - 1}
             onClick={() => onPageChange(page + 1)}
-            className="w-8 h-8 rounded-xl border-zinc-200 bg-white shadow-sm disabled:opacity-30 transition-all active:scale-95"
+            className="w-8 h-8 rounded-xl border-zinc-200 bg-white text-zinc-600 shadow-sm transition-all hover:border-red-200 hover:bg-white hover:text-red-600 disabled:opacity-30 disabled:hover:border-zinc-200 disabled:hover:text-zinc-600 active:scale-95"
           >
             <ChevronRight className="w-3.5 h-3.5" />
           </Button>

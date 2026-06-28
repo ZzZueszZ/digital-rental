@@ -86,11 +86,14 @@ export default function OrdersPage() {
   const cancelOrderMutation = useCancelMyOrder();
 
   const cancelReasonOptions = [
-    "Đặt nhầm",
-    "Muốn đổi sản phẩm",
-    "Thay đổi địa chỉ/thông tin nhận hàng",
-    "Không còn nhu cầu",
-    "Khác",
+    { value: "ORDERED_BY_MISTAKE", label: "Đặt nhầm" },
+    { value: "CHANGE_PRODUCT", label: "Muốn đổi sản phẩm" },
+    {
+      value: "CHANGE_SHIPPING_INFO",
+      label: "Thay đổi địa chỉ/thông tin nhận hàng",
+    },
+    { value: "NO_LONGER_NEEDED", label: "Không còn nhu cầu" },
+    { value: "OTHER", label: "Khác" },
   ];
 
   const handleShowDetail = (id: number) => {
@@ -120,9 +123,11 @@ export default function OrdersPage() {
     if (!selectedOrderForCancel) return;
 
     const reason =
-      cancelReasonPreset === "Khác"
+      cancelReasonPreset === "OTHER"
         ? cancelReasonOther.trim()
-        : cancelReasonPreset.trim();
+        : cancelReasonOptions.find(
+            (option) => option.value === cancelReasonPreset,
+          )?.label ?? "";
 
     if (!reason) {
       toast.error("Vui lòng chọn hoặc nhập lý do hủy đơn hàng");
@@ -759,23 +764,23 @@ export default function OrdersPage() {
                   onValueChange={(value) => {
                     const nextValue = value ?? "";
                     setCancelReasonPreset(nextValue);
-                    if (nextValue !== "Khác") setCancelReasonOther("");
+                    if (nextValue !== "OTHER") setCancelReasonOther("");
                   }}
                 >
-                  <SelectTrigger className="h-12 w-full rounded-xl border-zinc-200 !bg-white px-4 text-sm text-zinc-900 shadow-none hover:!bg-white focus:!bg-white data-[placeholder]:text-zinc-400">
+                  <SelectTrigger className="h-12 w-full rounded-xl border-zinc-200 bg-white px-4 text-sm text-zinc-900 shadow-none hover:border-red-200 hover:bg-white focus:bg-white data-[placeholder]:text-zinc-400">
                     <SelectValue placeholder="Chọn lý do hủy đơn" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white">
+                  <SelectContent className="border-zinc-200 bg-white text-zinc-900">
                     {cancelReasonOptions.map((reason) => (
-                      <SelectItem key={reason} value={reason}>
-                        {reason}
+                      <SelectItem key={reason.value} value={reason.value}>
+                        {reason.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              {cancelReasonPreset === "Khác" && (
+              {cancelReasonPreset === "OTHER" && (
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-zinc-700">
                     Mô tả lý do

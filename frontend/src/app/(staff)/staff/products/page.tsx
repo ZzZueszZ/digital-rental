@@ -322,7 +322,7 @@ export default function ProductsAdminPage() {
                   {categories.map((c) => (
                     <SelectItem
                       key={c.id}
-                      value={c.name}
+                      value={String(c.id)}
                       className="rounded-xl px-3 py-2 cursor-pointer text-zinc-700 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 hover:bg-zinc-100 data-[highlighted]:bg-zinc-100 data-[highlighted]:text-zinc-950 data-[state=selected]:bg-zinc-50 data-[state=selected]:text-zinc-950 text-[14px] transition-colors"
                     >
                       {c.name}

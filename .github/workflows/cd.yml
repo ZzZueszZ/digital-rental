@@ -1,13 +1,12 @@
 name: CD
 
 on:
-  workflow_run:
-    workflows:
-      - CI
-    types:
-      - completed
-    branches:
-      - master
+  workflow_dispatch:
+    inputs:
+      image:
+        description: Exact GHCR image using sha-<commit> tag or sha256 digest
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -19,7 +18,6 @@ concurrency:
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment: production
 
@@ -27,9 +25,21 @@ jobs:
       - name: Resolve image
         id: image
         shell: bash
+        env:
+          REQUESTED_IMAGE: ${{ inputs.image }}
         run: |
           image_name="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/digital-rental-backend"
-          echo "image=${image_name}:sha-${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          digest="${REQUESTED_IMAGE#"$image_name@sha256:"}"
+          sha_tag="${REQUESTED_IMAGE#"$image_name:sha-"}"
+
+          if [[ "$REQUESTED_IMAGE" == "$image_name@sha256:$digest" && "$digest" =~ ^[0-9a-f]{64}$ ]]; then
+            echo "image=$REQUESTED_IMAGE" >> "$GITHUB_OUTPUT"
+          elif [[ "$REQUESTED_IMAGE" == "$image_name:sha-$sha_tag" && "$sha_tag" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "image=$REQUESTED_IMAGE" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Image must be $image_name@sha256:<64 hex> or $image_name:sha-<40 hex>"
+            exit 1
+          fi
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5

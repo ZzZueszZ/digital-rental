@@ -1,10 +1,7 @@
 name: CI
 
 on:
-  pull_request:
-    branches:
-      - master
-      - prod
+  push:
 
 permissions:
   contents: read
@@ -69,7 +66,7 @@ jobs:
 
   publish-backend:
     name: Publish backend image
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
     needs:
       - backend
       - frontend

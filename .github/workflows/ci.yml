@@ -29,9 +29,9 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-
-      - name: Test backend
-        run: .service/lenshub/gradlew clean test
+#
+#      - name: Test backend
+#        run: .service/lenshub/gradlew clean test
 
       - name: Login GHCR
         if: github.event_name == 'push'

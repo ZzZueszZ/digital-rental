@@ -696,10 +696,10 @@ export function RentalDetailDialog({
 
  <div class="section-title">IV. Tình trạng thiết bị trước lúc bàn giao</div>
  <p><strong>Tình trạng tổng thể:</strong> ${escapeHtml(deviceCondition)}</p>
- <p><strong>Thân máy:</strong> ${escapeHtml(rental.handoverReport.bodyCondition)}</p>
- <p><strong>Ống kính:</strong> ${escapeHtml(rental.handoverReport.lensCondition)}</p>
- <p><strong>Pin:</strong> ${escapeHtml(rental.handoverReport.batteryCondition)}</p>
- <p><strong>Phụ kiện đi kèm:</strong> ${escapeHtml(rental.handoverReport.accessoryCondition)}</p>
+ <p><strong>Thân máy:</strong> ${escapeHtml(rental.handoverReport.bodyCondition || "Chưa ghi nhận")}</p>
+ <p><strong>Ống kính:</strong> ${escapeHtml(rental.handoverReport.lensCondition || "Chưa ghi nhận")}</p>
+ <p><strong>Pin:</strong> ${escapeHtml(rental.handoverReport.batteryCondition || "Chưa ghi nhận")}</p>
+ <p><strong>Phụ kiện đi kèm:</strong> ${escapeHtml(rental.handoverReport.accessoryCondition || "Chưa ghi nhận")}</p>
  <p><strong>Ghi chú bàn giao:</strong> ${escapeHtml(rental.handoverReport.note || "Không có")}</p>
 
  <div class="section-title">V. Xác nhận bàn giao</div>
@@ -743,10 +743,10 @@ export function RentalDetailDialog({
       .map(
         (item) => `
  <tr>
- <td style="border: 1px solid #000; padding: 8px;">${item.productName}</td>
- <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.deviceSerialNumber || "N/A"}</td>
- <td style="border: 1px solid #000; padding: 8px;">${item.conditionBeforeHandover || "Bình thường"}</td>
- <td style="border: 1px solid #000; padding: 8px;">${item.conditionAfterReturn || "Bình thường"}</td>
+ <td style="border: 1px solid #000; padding: 8px;">${escapeHtml(item.productName)}</td>
+ <td style="border: 1px solid #000; padding: 8px; text-align: center;">${escapeHtml(item.deviceSerialNumber || "N/A")}</td>
+ <td style="border: 1px solid #000; padding: 8px;">${escapeHtml(item.conditionBeforeHandover || "Chưa ghi nhận")}</td>
+ <td style="border: 1px solid #000; padding: 8px;">${escapeHtml(item.conditionAfterReturn || "Chưa ghi nhận")}</td>
  </tr>
  `,
       )
@@ -847,21 +847,21 @@ export function RentalDetailDialog({
  <table class="info-table">
  <tr>
  <td style="width: 25%;">Mã đơn thuê:</td>
- <td style="font-weight: bold;">#${rental.code}</td>
+ <td style="font-weight: bold;">#${escapeHtml(rental.code)}</td>
  <td style="width: 25%;">Thời hạn thuê:</td>
- <td>Từ ${rental.startDate.split("T")[0]} đến ${rental.endDate.split("T")[0]}</td>
+ <td>Từ ${escapeHtml(rental.startDate.split("T")[0])} đến ${escapeHtml(rental.endDate.split("T")[0])}</td>
  </tr>
  <tr>
  <td>Khách hàng:</td>
- <td style="font-weight: bold;">${rental.shippingName}</td>
+ <td style="font-weight: bold;">${escapeHtml(rental.shippingName || rental.userEmail)}</td>
  <td>Số điện thoại:</td>
- <td>${rental.shippingPhone}</td>
+ <td>${escapeHtml(rental.shippingPhone || "Chưa cập nhật")}</td>
  </tr>
  <tr>
  <td>Email:</td>
- <td>${rental.userEmail}</td>
+ <td>${escapeHtml(rental.userEmail)}</td>
  <td>Địa chỉ nhận máy:</td>
- <td>${rental.shippingAddress}</td>
+ <td>${escapeHtml(rental.shippingAddress || "Nhận tại cửa hàng")}</td>
  </tr>
  </table>
 
@@ -869,7 +869,7 @@ export function RentalDetailDialog({
  <table class="info-table">
  <tr>
  <td style="width: 25%;">Nhân viên nhận trả:</td>
- <td style="font-weight: bold;">${rental.returnReport.staffName || "N/A"}</td>
+ <td style="font-weight: bold;">${escapeHtml(rental.returnReport.staffName || "N/A")}</td>
  <td style="width: 25%;">Ngày trả thực tế:</td>
  <td>${returnDateStr}</td>
  </tr>
@@ -899,7 +899,7 @@ export function RentalDetailDialog({
  </tr>
  <tr>
  <td>Ghi chú:</td>
- <td colspan="3">${rental.returnReport.note || "Không có ghi chú"}</td>
+ <td colspan="3">${escapeHtml(rental.returnReport.note || "Không có ghi chú")}</td>
  </tr>
  </table>
 
@@ -918,13 +918,33 @@ export function RentalDetailDialog({
  </tbody>
  </table>
 
+ <div class="section-title">4. Tình trạng chi tiết khi nhận trả</div>
+ <table class="info-table">
+ <tr>
+ <td style="width: 25%;">Thân máy:</td>
+ <td>${escapeHtml(rental.returnReport.bodyConditionAfter || "Chưa ghi nhận")}</td>
+ </tr>
+ <tr>
+ <td>Ống kính:</td>
+ <td>${escapeHtml(rental.returnReport.lensConditionAfter || "Chưa ghi nhận")}</td>
+ </tr>
+ <tr>
+ <td>Pin:</td>
+ <td>${escapeHtml(rental.returnReport.batteryConditionAfter || "Chưa ghi nhận")}</td>
+ </tr>
+ <tr>
+ <td>Phụ kiện đi kèm:</td>
+ <td>${escapeHtml(rental.returnReport.accessoryConditionAfter || "Chưa ghi nhận")}</td>
+ </tr>
+ </table>
+
  <div class="signatures-container">
  <div class="signature-col">
  <div class="signature-title">Đại diện Khách hàng<br>(Ký & ghi rõ họ tên)</div>
  </div>
  <div class="signature-col">
  <div class="signature-title">Đại diện Nhân viên nhận trả<br>(Ký & ghi rõ họ tên)</div>
- <div style="font-weight: bold; margin-top: 20px;">${rental.returnReport.staffName || ""}</div>
+ <div style="font-weight: bold; margin-top: 20px;">${escapeHtml(rental.returnReport.staffName || "")}</div>
  </div>
  </div>
 

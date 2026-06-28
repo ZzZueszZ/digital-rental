@@ -86,6 +86,34 @@ const getTodayDateInputValue = () => {
 
 type ReturnAdjustmentMode = "EARLY" | "LATE" | null;
 
+type HandoverConditionForm = {
+  bodyCondition: string;
+  lensCondition: string;
+  batteryCondition: string;
+  accessoryCondition: string;
+};
+
+type ReturnConditionForm = {
+  bodyConditionAfter: string;
+  lensConditionAfter: string;
+  batteryConditionAfter: string;
+  accessoryConditionAfter: string;
+};
+
+const emptyHandoverConditions: HandoverConditionForm = {
+  bodyCondition: "",
+  lensCondition: "",
+  batteryCondition: "",
+  accessoryCondition: "",
+};
+
+const emptyReturnConditions: ReturnConditionForm = {
+  bodyConditionAfter: "",
+  lensConditionAfter: "",
+  batteryConditionAfter: "",
+  accessoryConditionAfter: "",
+};
+
 export function RentalManageView({
   portalType,
 }: {
@@ -158,6 +186,10 @@ export function RentalManageView({
   const [itemConditions, setItemConditions] = useState<Record<number, string>>(
     {},
   );
+  const [handoverConditions, setHandoverConditions] =
+    useState<HandoverConditionForm>(emptyHandoverConditions);
+  const [returnConditions, setReturnConditions] =
+    useState<ReturnConditionForm>(emptyReturnConditions);
   const [returnDate, setReturnDate] = useState(getTodayDateInputValue);
   const [returnAdjustmentMode, setReturnAdjustmentMode] =
     useState<ReturnAdjustmentMode>(null);
@@ -375,9 +407,11 @@ export function RentalManageView({
   const handleOpenHandover = (rental: RentalOrderResponse) => {
     setSelectedRental(rental);
     setInspectorName("");
+    setHandoverConditions(emptyHandoverConditions);
     const initConditions: Record<number, string> = {};
     rental.items.forEach((item) => {
-      initConditions[item.id] = "Bình thường";
+      initConditions[item.id] =
+        item.conditionBeforeHandover || item.deviceConditionDetails || "";
     });
     setItemConditions(initConditions);
     setIsHandoverOpen(true);
@@ -389,19 +423,40 @@ export function RentalManageView({
       toast.error("Vui lòng nhập tên nhân viên bàn giao");
       return;
     }
+    const hasMissingDetailCondition = Object.values(handoverConditions).some(
+      (value) => !value.trim(),
+    );
+    if (hasMissingDetailCondition) {
+      toast.error(
+        "Vui lòng nhập đầy đủ tình trạng thân máy, ống kính, pin và phụ kiện.",
+      );
+      return;
+    }
+    const hasMissingItemCondition = selectedRental.items.some(
+      (item) => !itemConditions[item.id]?.trim(),
+    );
+    if (hasMissingItemCondition) {
+      toast.error("Vui lòng nhập tình trạng tổng thể của thiết bị bàn giao.");
+      return;
+    }
     try {
       await handoverReportMutation.mutateAsync({
         id: selectedRental.id,
         req: {
           serialNumber: "HR-" + Date.now(),
-          bodyCondition: "Bình thường",
-          lensCondition: "Bình thường",
-          batteryCondition: "Bình thường",
-          accessoryCondition: "Bình thường",
+          bodyCondition: handoverConditions.bodyCondition.trim(),
+          lensCondition: handoverConditions.lensCondition.trim(),
+          batteryCondition: handoverConditions.batteryCondition.trim(),
+          accessoryCondition: handoverConditions.accessoryCondition.trim(),
           riskLevel: selectedRental.riskLevel || RiskLevel.LOW_RISK,
           finalDepositAmount: selectedRental.finalDepositAmount || 0,
-          note: `Nhân viên kiểm tra: ${inspectorName}`,
-          itemConditions: itemConditions,
+          note: `Nhân viên kiểm tra: ${inspectorName.trim()}`,
+          itemConditions: Object.fromEntries(
+            Object.entries(itemConditions).map(([itemId, condition]) => [
+              Number(itemId),
+              condition.trim(),
+            ]),
+          ),
         },
       });
       toast.success("Đã tạo biên bản bàn giao thành công!");
@@ -420,9 +475,11 @@ export function RentalManageView({
     setEarlyReturnDays(0);
     setLateReturnDays(0);
     setDamageFee(0);
+    setReturnConditions(emptyReturnConditions);
     const initConditions: Record<number, string> = {};
     rental.items.forEach((item) => {
-      initConditions[item.id] = item.conditionBeforeHandover || "Bình thường";
+      initConditions[item.id] =
+        item.conditionAfterReturn || item.conditionBeforeHandover || "";
     });
     setItemConditions(initConditions);
     setIsReturnOpen(true);
@@ -443,6 +500,22 @@ export function RentalManageView({
     }
     if (returnSettlement.isReturnDateBeforeStart) {
       toast.error("Ngày trả thực tế không được trước ngày bắt đầu thuê.");
+      return;
+    }
+    const hasMissingDetailCondition = Object.values(returnConditions).some(
+      (value) => !value.trim(),
+    );
+    if (hasMissingDetailCondition) {
+      toast.error(
+        "Vui lòng nhập đầy đủ tình trạng thân máy, ống kính, pin và phụ kiện khi nhận trả.",
+      );
+      return;
+    }
+    const hasMissingItemCondition = selectedRental.items.some(
+      (item) => !itemConditions[item.id]?.trim(),
+    );
+    if (hasMissingItemCondition) {
+      toast.error("Vui lòng nhập tình trạng tổng thể của thiết bị khi nhận trả.");
       return;
     }
     if (
@@ -468,17 +541,23 @@ export function RentalManageView({
         id: selectedRental.id,
         req: {
           returnDate: `${returnDate}T00:00:00`,
-          bodyConditionAfter: "Bình thường",
-          lensConditionAfter: "Bình thường",
-          batteryConditionAfter: "Bình thường",
-          accessoryConditionAfter: "Bình thường",
+          bodyConditionAfter: returnConditions.bodyConditionAfter.trim(),
+          lensConditionAfter: returnConditions.lensConditionAfter.trim(),
+          batteryConditionAfter: returnConditions.batteryConditionAfter.trim(),
+          accessoryConditionAfter:
+            returnConditions.accessoryConditionAfter.trim(),
           earlyReturnDays: returnSettlement.effectiveEarlyReturnDays,
           lateDays: returnSettlement.effectiveLateReturnDays,
           lateFee: returnSettlement.lateFee,
           damageFee: returnSettlement.damage,
           missingAccessoryFee: 0,
-          note: `Nhân viên kiểm tra: ${inspectorName}`,
-          itemConditions: itemConditions,
+          note: `Nhân viên kiểm tra: ${inspectorName.trim()}`,
+          itemConditions: Object.fromEntries(
+            Object.entries(itemConditions).map(([itemId, condition]) => [
+              Number(itemId),
+              condition.trim(),
+            ]),
+          ),
         },
       });
       toast.success("Nhận trả thiết bị thành công!");
@@ -1359,9 +1438,90 @@ export function RentalManageView({
               />
             </div>
 
+            <div className="space-y-3 rounded-2xl border border-zinc-100 bg-zinc-50/70 p-4">
+              <div>
+                <p className="text-xs font-semibold text-zinc-950">
+                  Tình trạng chi tiết trước bàn giao
+                </p>
+                <p className="text-[11px] text-zinc-500">
+                  Các thông tin này được lưu vào biên bản bàn giao.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-zinc-500 block">
+                    Thân máy
+                  </label>
+                  <input
+                    type="text"
+                    value={handoverConditions.bodyCondition}
+                    onChange={(e) =>
+                      setHandoverConditions((prev) => ({
+                        ...prev,
+                        bodyCondition: e.target.value,
+                      }))
+                    }
+                    placeholder="Ví dụ: Mới 99%, không trầy xước"
+                    className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 text-xs font-semibold"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-zinc-500 block">
+                    Ống kính
+                  </label>
+                  <input
+                    type="text"
+                    value={handoverConditions.lensCondition}
+                    onChange={(e) =>
+                      setHandoverConditions((prev) => ({
+                        ...prev,
+                        lensCondition: e.target.value,
+                      }))
+                    }
+                    placeholder="Ví dụ: Không mốc, không bụi"
+                    className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 text-xs font-semibold"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-zinc-500 block">
+                    Pin
+                  </label>
+                  <input
+                    type="text"
+                    value={handoverConditions.batteryCondition}
+                    onChange={(e) =>
+                      setHandoverConditions((prev) => ({
+                        ...prev,
+                        batteryCondition: e.target.value,
+                      }))
+                    }
+                    placeholder="Ví dụ: 2 pin hoạt động tốt"
+                    className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 text-xs font-semibold"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-zinc-500 block">
+                    Phụ kiện đi kèm
+                  </label>
+                  <input
+                    type="text"
+                    value={handoverConditions.accessoryCondition}
+                    onChange={(e) =>
+                      setHandoverConditions((prev) => ({
+                        ...prev,
+                        accessoryCondition: e.target.value,
+                      }))
+                    }
+                    placeholder="Ví dụ: Sạc, dây đeo, túi đầy đủ"
+                    className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 text-xs font-semibold"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-3">
               <label className="text-[11px] font-semibold text-zinc-500 tracking-wide block">
-                Mô tả tình trạng
+                Tình trạng tổng thể theo thiết bị
               </label>
               {selectedRental.items.map((item) => (
                 <div
@@ -1373,6 +1533,7 @@ export function RentalManageView({
                   </div>
                   <textarea
                     value={itemConditions[item.id] || ""}
+                    placeholder="Ví dụ: Hoạt động bình thường, trầy nhẹ đáy máy..."
                     onChange={(e) =>
                       setItemConditions({
                         ...itemConditions,
@@ -1518,6 +1679,87 @@ export function RentalManageView({
               </p>
             </div>
 
+            <div className="space-y-3 rounded-2xl border border-zinc-100 bg-zinc-50/70 p-4">
+              <div>
+                <p className="text-xs font-semibold text-zinc-950">
+                  Tình trạng chi tiết khi nhận trả
+                </p>
+                <p className="text-[11px] text-zinc-500">
+                  Các thông tin này được lưu vào biên bản nhận trả thiết bị.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-zinc-500 block">
+                    Thân máy
+                  </label>
+                  <input
+                    type="text"
+                    value={returnConditions.bodyConditionAfter}
+                    onChange={(e) =>
+                      setReturnConditions((prev) => ({
+                        ...prev,
+                        bodyConditionAfter: e.target.value,
+                      }))
+                    }
+                    placeholder="Ví dụ: Bình thường, không phát sinh trầy xước"
+                    className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 text-xs font-semibold"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-zinc-500 block">
+                    Ống kính
+                  </label>
+                  <input
+                    type="text"
+                    value={returnConditions.lensConditionAfter}
+                    onChange={(e) =>
+                      setReturnConditions((prev) => ({
+                        ...prev,
+                        lensConditionAfter: e.target.value,
+                      }))
+                    }
+                    placeholder="Ví dụ: Kính sạch, focus ổn định"
+                    className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 text-xs font-semibold"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-zinc-500 block">
+                    Pin
+                  </label>
+                  <input
+                    type="text"
+                    value={returnConditions.batteryConditionAfter}
+                    onChange={(e) =>
+                      setReturnConditions((prev) => ({
+                        ...prev,
+                        batteryConditionAfter: e.target.value,
+                      }))
+                    }
+                    placeholder="Ví dụ: Đủ pin, sạc bình thường"
+                    className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 text-xs font-semibold"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-zinc-500 block">
+                    Phụ kiện đi kèm
+                  </label>
+                  <input
+                    type="text"
+                    value={returnConditions.accessoryConditionAfter}
+                    onChange={(e) =>
+                      setReturnConditions((prev) => ({
+                        ...prev,
+                        accessoryConditionAfter: e.target.value,
+                      }))
+                    }
+                    placeholder="Ví dụ: Đủ sạc, dây đeo, túi"
+                    className="w-full h-10 px-3 rounded-xl border border-zinc-200 bg-white outline-none focus:border-zinc-950 text-xs font-semibold"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-4 space-y-2 text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-zinc-500">Đơn giá thuê/ngày</span>
@@ -1574,7 +1816,7 @@ export function RentalManageView({
 
             <div className="space-y-3">
               <label className="text-[11px] font-semibold text-zinc-500 tracking-wide block">
-                Mô tả tình trạng
+                Tình trạng tổng thể theo thiết bị
               </label>
               {selectedRental.items.map((item) => (
                 <div
@@ -1586,6 +1828,7 @@ export function RentalManageView({
                   </div>
                   <textarea
                     value={itemConditions[item.id] || ""}
+                    placeholder="Ví dụ: Tình trạng sau nhận trả, hư hại nếu có..."
                     onChange={(e) =>
                       setItemConditions({
                         ...itemConditions,

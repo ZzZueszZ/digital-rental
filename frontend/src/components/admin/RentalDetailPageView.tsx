@@ -364,10 +364,10 @@ export function RentalDetailPageView({
 
         <h2>IV. Tình trạng thiết bị trước lúc bàn giao</h2>
         <p><strong>Tình trạng tổng thể:</strong> ${escapeHtml(deviceCondition)}</p>
-        <p><strong>Thân máy:</strong> ${escapeHtml(rental.handoverReport.bodyCondition)}</p>
-        <p><strong>Ống kính:</strong> ${escapeHtml(rental.handoverReport.lensCondition)}</p>
-        <p><strong>Pin:</strong> ${escapeHtml(rental.handoverReport.batteryCondition)}</p>
-        <p><strong>Phụ kiện đi kèm:</strong> ${escapeHtml(rental.handoverReport.accessoryCondition)}</p>
+        <p><strong>Thân máy:</strong> ${escapeHtml(rental.handoverReport.bodyCondition || "Chưa ghi nhận")}</p>
+        <p><strong>Ống kính:</strong> ${escapeHtml(rental.handoverReport.lensCondition || "Chưa ghi nhận")}</p>
+        <p><strong>Pin:</strong> ${escapeHtml(rental.handoverReport.batteryCondition || "Chưa ghi nhận")}</p>
+        <p><strong>Phụ kiện đi kèm:</strong> ${escapeHtml(rental.handoverReport.accessoryCondition || "Chưa ghi nhận")}</p>
         <p><strong>Ghi chú bàn giao:</strong> ${escapeHtml(rental.handoverReport.note || "Không có")}</p>
 
         <h2>V. Xác nhận bàn giao</h2>
@@ -382,26 +382,57 @@ export function RentalDetailPageView({
 
   const handleDownloadReturn = () => {
     if (!rental.returnReport) return;
+    const returnItem = rental.items[0];
+    const renterName = rental.shippingName || rental.userFullName || rental.userEmail;
+    const renterPhone = rental.shippingPhone || rental.userPhone || "Chưa cập nhật";
+    const returnAddress =
+      rental.shippingAddress || rental.currentAddress || "Nhận tại cửa hàng";
+    const productName = returnItem?.productName || "Thiết bị thuê";
+    const serialNumber = returnItem?.deviceSerialNumber || "Chưa ghi nhận";
+    const beforeCondition =
+      returnItem?.conditionBeforeHandover ||
+      returnItem?.deviceConditionDetails ||
+      "Chưa ghi nhận";
+    const afterCondition =
+      returnItem?.conditionAfterReturn || "Chưa ghi nhận";
+
     openPrintDocument(
       `Bien_Ban_Nhan_Tra_${rental.code}`,
       `
         <h1>Biên bản nhận trả thiết bị</h1>
-        <table class="meta">
-          <tr><td class="label">Mã đơn thuê:</td><td>#${escapeHtml(rental.code)}</td></tr>
-          <tr><td class="label">Người thuê:</td><td>${escapeHtml(rental.shippingName || rental.userEmail)}</td></tr>
-          <tr><td class="label">Nhân viên kiểm tra:</td><td>${escapeHtml(rental.returnReport.staffName || "Chưa cập nhật")}</td></tr>
-          <tr><td class="label">Ngày trả:</td><td>${formatDate(rental.returnReport.returnDate)}</td></tr>
-          <tr><td class="label">Ngày lập:</td><td>${formatDate(rental.returnReport.createdAt)}</td></tr>
-        </table>
-        <h2>Tình trạng sau khi trả</h2>
-        <table>
-          <tr><th>Hạng mục</th><th>Tình trạng</th></tr>
-          <tr><td>Thân máy</td><td>${escapeHtml(rental.returnReport.bodyConditionAfter)}</td></tr>
-          <tr><td>Ống kính</td><td>${escapeHtml(rental.returnReport.lensConditionAfter)}</td></tr>
-          <tr><td>Pin</td><td>${escapeHtml(rental.returnReport.batteryConditionAfter)}</td></tr>
-          <tr><td>Phụ kiện</td><td>${escapeHtml(rental.returnReport.accessoryConditionAfter)}</td></tr>
-        </table>
-        <h2>Đối soát phí</h2>
+        <p class="center"><em>Số: BBT-${escapeHtml(rental.code)}</em></p>
+
+        <h2>I. Thông tin các bên</h2>
+        <p><strong>Bên nhận lại thiết bị:</strong> Cửa hàng Digital Rental</p>
+        <p><strong>Nhân viên nhận trả:</strong> ${escapeHtml(rental.returnReport.staffName || "Chưa cập nhật")}</p>
+        <p><strong>Bên trả thiết bị:</strong> ${escapeHtml(renterName)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(rental.userEmail)}</p>
+        <p><strong>Số điện thoại:</strong> ${escapeHtml(renterPhone)}</p>
+        <p><strong>CCCD:</strong> ${escapeHtml(rental.identityNumber || "Chưa cập nhật")}</p>
+        <p><strong>Địa điểm nhận/trả:</strong> ${escapeHtml(returnAddress)}</p>
+
+        <h2>II. Thông tin đơn thuê</h2>
+        <p><strong>Mã đơn thuê:</strong> #${escapeHtml(rental.code)}</p>
+        <p><strong>Thời gian thuê:</strong> ${printDate(rental.startDate)} đến ${printDate(rental.endDate)} (${rentalDays} ngày)</p>
+        <p><strong>Ngày trả thực tế:</strong> ${formatDate(rental.returnReport.returnDate)}</p>
+        <p><strong>Ngày lập biên bản:</strong> ${formatDate(rental.returnReport.createdAt)}</p>
+
+        <h2>III. Thiết bị nhận trả</h2>
+        <p><strong>Tên thiết bị:</strong> ${escapeHtml(productName)}</p>
+        <p><strong>Serial:</strong> ${escapeHtml(serialNumber)}</p>
+        <p><strong>Giá trị tài sản:</strong> ${formatVND(returnItem?.assetValue || 0)}</p>
+        <p><strong>Đơn giá thuê/ngày:</strong> ${formatVND(returnItem?.pricePerDay || 0)}</p>
+
+        <h2>IV. Tình trạng thiết bị khi nhận trả</h2>
+        <p><strong>Tình trạng lúc bàn giao:</strong> ${escapeHtml(beforeCondition)}</p>
+        <p><strong>Tình trạng lúc nhận trả:</strong> ${escapeHtml(afterCondition)}</p>
+        <p><strong>Thân máy:</strong> ${escapeHtml(rental.returnReport.bodyConditionAfter || "Chưa ghi nhận")}</p>
+        <p><strong>Ống kính:</strong> ${escapeHtml(rental.returnReport.lensConditionAfter || "Chưa ghi nhận")}</p>
+        <p><strong>Pin:</strong> ${escapeHtml(rental.returnReport.batteryConditionAfter || "Chưa ghi nhận")}</p>
+        <p><strong>Phụ kiện đi kèm:</strong> ${escapeHtml(rental.returnReport.accessoryConditionAfter || "Chưa ghi nhận")}</p>
+        <p><strong>Ghi chú nhận trả:</strong> ${escapeHtml(rental.returnReport.note || "Không có")}</p>
+
+        <h2>V. Đối soát phí</h2>
         <table>
           <tr><td>Số ngày trả sớm</td><td class="right">${rental.returnReport.earlyReturnDays} ngày</td></tr>
           <tr><td>Hoàn phí trả sớm</td><td class="right">${formatVND(rental.returnReport.earlyReturnRefundAmount)}</td></tr>
@@ -413,10 +444,11 @@ export function RentalDetailPageView({
           <tr><td><strong>Hoàn khách</strong></td><td class="right"><strong>${formatVND(rental.returnReport.refundAmount)}</strong></td></tr>
           <tr><td><strong>Thu thêm</strong></td><td class="right"><strong>${formatVND(rental.returnReport.extraPaymentAmount)}</strong></td></tr>
         </table>
-        <p><strong>Ghi chú:</strong> ${escapeHtml(rental.returnReport.note || "Không có")}</p>
+        <h2>VI. Xác nhận nhận trả</h2>
+        <p>Hai bên đã kiểm tra thiết bị, serial, phụ kiện, tình trạng thực tế và thống nhất các khoản phí phát sinh nếu có trong biên bản này.</p>
         <div class="signature">
           <div><strong>Nhân viên kiểm tra</strong><div class="signature-box">${escapeHtml(rental.returnReport.staffName || "")}</div></div>
-          <div><strong>Người trả thiết bị</strong><div class="signature-box">${escapeHtml(rental.shippingName || rental.userEmail)}</div></div>
+          <div><strong>Người trả thiết bị</strong><div class="signature-box">${escapeHtml(renterName)}</div></div>
         </div>
       `,
     );

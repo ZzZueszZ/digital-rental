@@ -20,7 +20,7 @@ Unify frontend API/auth behavior and remove hardcoded localhost asset URLs.
 
 - `http` uses Zustand access token and refresh queue.
 - `api` uses `localStorage auth-token`, which is inconsistent.
-- Image helpers hardcode `http://localhost:8080`.
+- Image helpers hardcode `https://api.lenshub.shop`.
 - Refresh-token route has GET that returns the raw token.
 
 ## Requirements
@@ -58,7 +58,7 @@ Use `src/lib/http.ts` for API calls and add `src/lib/url.ts` for API origin/asse
 ## Success Criteria
 
 - `rg "@/services/api|localStorage.getItem(\"auth-token\")" frontend/src` has no active hits.
-- `rg "http://localhost:8080" frontend/src` has no active hardcoded URL hits.
+- `rg "https://api.lenshub.shop" frontend/src` has no active hardcoded URL hits.
 
 ## Risk Assessment
 

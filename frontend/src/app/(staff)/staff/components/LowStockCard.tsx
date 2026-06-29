@@ -22,7 +22,7 @@ export function LowStockCard({ products }: LowStockCardProps) {
   const getImageUrl = (url: string | null) => {
     if (!url) return "";
     if (url.startsWith("http")) return url;
-    const baseUrl = "http://localhost:8080";
+    const baseUrl = "https://api.lenshub.shop";
     const normalizedUrl = url.startsWith("/") ? url : `/${url}`;
     return `${baseUrl}${normalizedUrl}`;
   };
@@ -52,7 +52,9 @@ export function LowStockCard({ products }: LowStockCardProps) {
               <button
                 type="button"
                 key={product.productId}
-                onClick={() => router.push(`/staff/products/${product.productId}`)}
+                onClick={() =>
+                  router.push(`/staff/products/${product.productId}`)
+                }
                 className="group flex w-full items-center justify-between rounded-xl border border-transparent p-2 text-left transition-all hover:border-red-100 hover:bg-red-50/30"
               >
                 <div className="flex min-w-0 items-center gap-3">

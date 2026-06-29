@@ -1,7 +1,8 @@
 import { b64u } from "./base64url";
 import { deriveSessionKey, genClientEphemeral, Session } from "./crypto";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "https://api.lenshub.shop/api";
 
 let currentSession: Session | null = null;
 let expiresAt = 0;
@@ -42,7 +43,7 @@ async function doHandshake(): Promise<Session> {
     SERVER_IDENTITY_JWK,
     { name: "ECDSA", namedCurve: "P-256" },
     false,
-    ["verify"]
+    ["verify"],
   );
 
   const signatureBytes = b64u.dec(body.signatureB64u);
@@ -52,7 +53,7 @@ async function doHandshake(): Promise<Session> {
     { name: "ECDSA", hash: "SHA-256" },
     verifyKey,
     signatureBytes as BufferSource,
-    payloadBytes as BufferSource
+    payloadBytes as BufferSource,
   );
 
   if (!valid) throw new Error("Invalid E2EE server signature");
@@ -67,7 +68,7 @@ async function doHandshake(): Promise<Session> {
     kp.privateKey,
     body.serverPubJwk,
     salt,
-    "E2EE-SHIELD/v1"
+    "E2EE-SHIELD/v1",
   );
 
   const sessionId = body.sessionId;

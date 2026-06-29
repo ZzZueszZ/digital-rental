@@ -1,15 +1,15 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function getValidRedirectUrl(searchParams: URLSearchParams) {
-  const redirect = searchParams.get('redirect');
+  const redirect = searchParams.get("redirect");
   if (!redirect) return null;
   // Ensure it's a relative path to prevent open redirect attacks
-  if (redirect.startsWith('/') && !redirect.startsWith('//')) {
+  if (redirect.startsWith("/") && !redirect.startsWith("//")) {
     return redirect;
   }
   return null;
@@ -28,7 +28,7 @@ export function getImageUrl(url: string | null | undefined): string {
   }
 
   const apiBaseUrl =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://api.lenshub.shop/api";
   const origin = apiBaseUrl.replace(/\/api\/?$/, "").replace(/\/$/, "");
   const path = rawUrl.startsWith("/") ? rawUrl : `/${rawUrl}`;
 
@@ -59,6 +59,6 @@ export function formatDate(date: string | Date): string {
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
   });
 }

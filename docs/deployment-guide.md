@@ -1,6 +1,7 @@
 # Deployment Guide
 
 ## Documentation Maintenance
+
 **Last Updated:** 2026-06-28
 **Document Version:** 1.2
 **Maintained By:** Development Team
@@ -14,15 +15,15 @@ GHCR publication, and backup assets remain in implementation under
 
 ## Runtime Components
 
-| Component | Path | Runtime |
-| --- | --- | --- |
-| Backend API | `service/lenshub` | Java 17, Spring Boot 4, Gradle |
-| Frontend | `frontend` | Node.js, pnpm, Next.js 16 |
-| Database | external | PostgreSQL expected by `application.yml` |
-| Cache | external | Redis expected by `application.yml` |
-| Object storage | `docker/docker-compose.yml` | MinIO, private `rental-assets` bucket |
-| Payments | external | VNPay sandbox/default URL |
-| Mail | external | SMTP, Gmail-compatible defaults |
+| Component      | Path                        | Runtime                                  |
+| -------------- | --------------------------- | ---------------------------------------- |
+| Backend API    | `service/lenshub`           | Java 17, Spring Boot 4, Gradle           |
+| Frontend       | `frontend`                  | Node.js, pnpm, Next.js 16                |
+| Database       | external                    | PostgreSQL expected by `application.yml` |
+| Cache          | external                    | Redis expected by `application.yml`      |
+| Object storage | `docker/docker-compose.yml` | MinIO, private `rental-assets` bucket    |
+| Payments       | external                    | VNPay sandbox/default URL                |
+| Mail           | external                    | SMTP, Gmail-compatible defaults          |
 
 ## Backend Configuration
 
@@ -32,35 +33,35 @@ The production profile fails startup when required configuration is missing or u
 
 Required/important environment variables:
 
-| Variable | Purpose |
-| --- | --- |
-| `DB_URL` | JDBC PostgreSQL URL. Default: `jdbc:postgresql://localhost:5433/postgres`. |
-| `DB_USERNAME` | Database username. Default: `postgres`. |
-| `DB_PASSWORD` | Database password. No safe default. |
-| `APP_JWT_SECRET` | Access-token JWT signing secret; minimum 32 characters in production. |
-| `APP_JWT_EXPIRATION_MS` | Access-token lifetime. |
-| `APP_JWT_ISSUER` | JWT issuer. Default currently `zyna-app`. |
-| `APP_ACTIVATION_BASE_URL` | Account activation callback URL. |
-| `APP_ACTIVATION_TTL_HOURS` | Activation token TTL. |
-| `APP_ACTIVATION_JWT_SECRET` | Separate activation-token signing secret; minimum 32 characters. |
-| `APP_PASSWORD_RESET_TTL_MINUTES` | Password reset token TTL. |
-| `APP_MAIL_FROM` | Resend sender using a verified domain, e.g. `LensHub <no-reply@mail.lenshub.shop>`. |
-| `MAIL_HOST`, `MAIL_PORT` | SMTP host/port. |
-| `MAIL_USERNAME`, `MAIL_PASSWORD` | SMTP credentials. |
-| `PAY_URL`, `TMN_CODE`, `SECRET_KEY`, `RETURN_URL` | VNPay integration settings. |
-| `APP_SCHEDULER_BIRTHDAY_*` | Birthday scheduler settings. |
-| `APP_SCHEDULER_VOUCHER_EXPIRING_*` | Voucher expiry scheduler settings. |
-| `APP_INVENTORY_LOW_STOCK_THRESHOLD` | Low-stock alert threshold. |
-| `APP_E2EE_ENABLED` | Enables the E2EE Shield handshake and protected route filter. Must match the frontend flag. |
-| `MINIO_INTERNAL_ENDPOINT` | MinIO S3 endpoint used by backend object operations. Local default: `http://localhost:9000`. |
-| `MINIO_PUBLIC_ENDPOINT` | Browser-reachable S3 endpoint embedded in presigned URLs. Must not be Docker hostname `minio`. |
-| `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY` | MinIO API credentials. Use a scoped service account outside local development. |
-| `MINIO_BUCKET` | Private object bucket. Default: `rental-assets`. |
-| `MINIO_UPLOAD_EXPIRY_MINUTES`, `MINIO_DOWNLOAD_EXPIRY_MINUTES` | Presigned URL lifetimes. Default: 5 minutes. |
-| `APP_KYC_PROVIDER` | Production profile fixes provider to `fpt`. |
-| `FPT_KYC_API_KEY` | Required FPT.AI credential in production. |
-| `SERVER_IDENTITY_PRIV_B64` | PKCS#8 EC P-256 private identity key. Accepted formats: raw PEM, base64-encoded PEM, or base64-encoded DER. Store only in a secret manager. |
-| `SERVER_IDENTITY_PUB_B64` | X.509 EC P-256 public identity key. Accepted formats: raw PEM, base64-encoded PEM, or base64-encoded DER. |
+| Variable                                                       | Purpose                                                                                                                                     |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DB_URL`                                                       | JDBC PostgreSQL URL. Default: `jdbc:postgresql://localhost:5433/postgres`.                                                                  |
+| `DB_USERNAME`                                                  | Database username. Default: `postgres`.                                                                                                     |
+| `DB_PASSWORD`                                                  | Database password. No safe default.                                                                                                         |
+| `APP_JWT_SECRET`                                               | Access-token JWT signing secret; minimum 32 characters in production.                                                                       |
+| `APP_JWT_EXPIRATION_MS`                                        | Access-token lifetime.                                                                                                                      |
+| `APP_JWT_ISSUER`                                               | JWT issuer. Default currently `zyna-app`.                                                                                                   |
+| `APP_ACTIVATION_BASE_URL`                                      | Account activation callback URL.                                                                                                            |
+| `APP_ACTIVATION_TTL_HOURS`                                     | Activation token TTL.                                                                                                                       |
+| `APP_ACTIVATION_JWT_SECRET`                                    | Separate activation-token signing secret; minimum 32 characters.                                                                            |
+| `APP_PASSWORD_RESET_TTL_MINUTES`                               | Password reset token TTL.                                                                                                                   |
+| `APP_MAIL_FROM`                                                | Sender email address.                                                                                                                       |
+| `MAIL_HOST`, `MAIL_PORT`                                       | SMTP host/port.                                                                                                                             |
+| `MAIL_USERNAME`, `MAIL_PASSWORD`                               | SMTP credentials.                                                                                                                           |
+| `PAY_URL`, `TMN_CODE`, `SECRET_KEY`, `RETURN_URL`              | VNPay integration settings.                                                                                                                 |
+| `APP_SCHEDULER_BIRTHDAY_*`                                     | Birthday scheduler settings.                                                                                                                |
+| `APP_SCHEDULER_VOUCHER_EXPIRING_*`                             | Voucher expiry scheduler settings.                                                                                                          |
+| `APP_INVENTORY_LOW_STOCK_THRESHOLD`                            | Low-stock alert threshold.                                                                                                                  |
+| `APP_E2EE_ENABLED`                                             | Enables the E2EE Shield handshake and protected route filter. Must match the frontend flag.                                                 |
+| `MINIO_INTERNAL_ENDPOINT`                                      | MinIO S3 endpoint used by backend object operations. Local default: `http://localhost:9000`.                                                |
+| `MINIO_PUBLIC_ENDPOINT`                                        | Browser-reachable S3 endpoint embedded in presigned URLs. Must not be Docker hostname `minio`.                                              |
+| `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`                         | MinIO API credentials. Use a scoped service account outside local development.                                                              |
+| `MINIO_BUCKET`                                                 | Private object bucket. Default: `rental-assets`.                                                                                            |
+| `MINIO_UPLOAD_EXPIRY_MINUTES`, `MINIO_DOWNLOAD_EXPIRY_MINUTES` | Presigned URL lifetimes. Default: 5 minutes.                                                                                                |
+| `APP_KYC_PROVIDER`                                             | Production profile fixes provider to `fpt`.                                                                                                 |
+| `FPT_KYC_API_KEY`                                              | Required FPT.AI credential in production.                                                                                                   |
+| `SERVER_IDENTITY_PRIV_B64`                                     | PKCS#8 EC P-256 private identity key. Accepted formats: raw PEM, base64-encoded PEM, or base64-encoded DER. Store only in a secret manager. |
+| `SERVER_IDENTITY_PUB_B64`                                      | X.509 EC P-256 public identity key. Accepted formats: raw PEM, base64-encoded PEM, or base64-encoded DER.                                   |
 
 Redis host, port, and password are environment-driven. Production requires a non-empty Redis password.
 
@@ -121,13 +122,13 @@ current CVE scan.
 Frontend API base URL is controlled by:
 
 ```text
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
+NEXT_PUBLIC_API_URL=https://api.lenshub.shop/api
 NEXT_PUBLIC_E2EE_ENABLED=true
 NEXT_PUBLIC_SERVER_JWK_X=<server-public-jwk-x>
 NEXT_PUBLIC_SERVER_JWK_Y=<server-public-jwk-y>
 ```
 
-If unset, `frontend/src/lib/http.ts` uses `http://localhost:8080/api`.
+If unset, `frontend/src/lib/http.ts` uses `https://api.lenshub.shop/api`.
 
 The frontend JWK coordinates must come from the backend identity public key.
 Enable or disable E2EE on both applications together, then restart both

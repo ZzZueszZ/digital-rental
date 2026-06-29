@@ -181,7 +181,7 @@ Frontend:
 NEXT_PUBLIC_E2EE_ENABLED=true
 NEXT_PUBLIC_SERVER_JWK_X=<rotated-public-jwk-x>
 NEXT_PUBLIC_SERVER_JWK_Y=<rotated-public-jwk-y>
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
+NEXT_PUBLIC_API_URL=https://api.lenshub.shop/api
 ```
 
 Restart frontend.
@@ -220,26 +220,26 @@ Rollback:
 
 Critical:
 
-| Nhóm | Endpoint |
-| --- | --- |
-| Auth | `POST /auth/login`, `/auth/register`, `/auth/forgot-password`, `/auth/reset-password`, `/auth/change-password`, `/auth/change-email` |
-| eKYC | `POST /ekyc/submit`, `/ekyc/ocr-preview`; `PUT /admin/ekyc/{id}/approve`, `/reject` |
-| Rental contract | `POST /rentals/{id}/contract/send-otp`, `/sign` |
-| Staff rental | `POST /rentals/staff/{id}/prepare`, `/handover-report`, `/collect-deposit`, `/handover`, `/return-report`, `/complete` |
-| Admin security | role/permission/user create/update/delete/reset/lock/unlock |
-| Order status | `PATCH /orders/{id}/status` |
+| Nhóm            | Endpoint                                                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Auth            | `POST /auth/login`, `/auth/register`, `/auth/forgot-password`, `/auth/reset-password`, `/auth/change-password`, `/auth/change-email` |
+| eKYC            | `POST /ekyc/submit`, `/ekyc/ocr-preview`; `PUT /admin/ekyc/{id}/approve`, `/reject`                                                  |
+| Rental contract | `POST /rentals/{id}/contract/send-otp`, `/sign`                                                                                      |
+| Staff rental    | `POST /rentals/staff/{id}/prepare`, `/handover-report`, `/collect-deposit`, `/handover`, `/return-report`, `/complete`               |
+| Admin security  | role/permission/user create/update/delete/reset/lock/unlock                                                                          |
+| Order status    | `PATCH /orders/{id}/status`                                                                                                          |
 
 Sensitive:
 
-| Nhóm | Endpoint |
-| --- | --- |
-| Profile | `PUT /profile` |
-| Address | user/customer address create/update/delete/default |
-| Checkout | `POST /orders/checkout`, `/orders/checkout/carts`, `/rentals/checkout` |
-| Payment | `POST /payments/vnpay/create`, `/payments/vnpay/rental-fee/create` |
-| Support | `POST /support/tickets`, `PUT /admin/support/tickets/{id}/status`, `/reply` |
-| Inventory | stock update sale/rental |
-| Rental devices | admin device create/update/status/delete |
+| Nhóm           | Endpoint                                                                    |
+| -------------- | --------------------------------------------------------------------------- |
+| Profile        | `PUT /profile`                                                              |
+| Address        | user/customer address create/update/delete/default                          |
+| Checkout       | `POST /orders/checkout`, `/orders/checkout/carts`, `/rentals/checkout`      |
+| Payment        | `POST /payments/vnpay/create`, `/payments/vnpay/rental-fee/create`          |
+| Support        | `POST /support/tickets`, `PUT /admin/support/tickets/{id}/status`, `/reply` |
+| Inventory      | stock update sale/rental                                                    |
+| Rental devices | admin device create/update/status/delete                                    |
 
 Public/không mã hóa:
 

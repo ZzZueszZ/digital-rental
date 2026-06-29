@@ -20,7 +20,7 @@ export function TopProductsCard({ products }: TopProductsCardProps) {
   const getImageUrl = (url: string | null) => {
     if (!url) return "";
     if (url.startsWith("http")) return url;
-    const baseUrl = "http://localhost:8080";
+    const baseUrl = "https://api.lenshub.shop";
     const normalizedUrl = url.startsWith("/") ? url : `/${url}`;
     return `${baseUrl}${normalizedUrl}`;
   };

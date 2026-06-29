@@ -102,6 +102,7 @@ function ProductsContent() {
   useEffect(() => {
     const categoryParam = searchParams.get("category");
     const purposeParam = searchParams.get("purpose");
+    const searchParam = searchParams.get("search") || "";
 
     setCategory(categoryParam || "all");
     setPurpose(
@@ -109,6 +110,8 @@ function ProductsContent() {
         ? purposeParam
         : "all",
     );
+    setSearchInput(searchParam);
+    setSearch(searchParam.trim());
     setPage(0);
   }, [searchParams]);
 

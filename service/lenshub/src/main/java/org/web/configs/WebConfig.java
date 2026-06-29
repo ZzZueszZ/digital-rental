@@ -29,7 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * ✅ Public thư mục upload ảnh qua đường dẫn /uploads/**
-     * Ví dụ: http://localhost:8080/uploads/abc.jpg
+     * Ví dụ: https://api.lenshub.shop/uploads/abc.jpg
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

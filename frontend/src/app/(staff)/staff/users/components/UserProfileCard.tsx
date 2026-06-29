@@ -61,7 +61,7 @@ const GENDERS = [
   { value: "OTHER", label: "Khác" },
 ];
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://api.lenshub.shop";
 
 function getAvatarUrl(url: string | null): string {
   if (!url) return "";
@@ -204,7 +204,6 @@ export function UserProfileCard({
               </span>
             </div>
           )}
-
         </div>
 
         {/* Name */}
@@ -314,7 +313,6 @@ export function UserProfileCard({
           <p className="text-[18px] font-semibold text-zinc-950 tracking-tight">
             Hồ sơ cá nhân
           </p>
-
         </div>
 
         {isLoading ? (
@@ -384,9 +382,7 @@ export function UserProfileCard({
             <ProfileField label="Ngày sinh">
               <DateInput
                 value={form.dateOfBirth || ""}
-                onChange={(v) =>
-                  setForm((p) => ({ ...p, dateOfBirth: v }))
-                }
+                onChange={(v) => setForm((p) => ({ ...p, dateOfBirth: v }))}
                 className="h-10 text-sm px-4 focus:border-zinc-300 focus:ring-0 focus-visible:ring-0 focus-visible:border-zinc-300"
               />
             </ProfileField>
@@ -486,7 +482,9 @@ function ProfileRow({
 }) {
   return (
     <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-zinc-50/80 border border-zinc-100/50 hover:bg-white hover:border-zinc-200 hover:shadow-sm transition-all group/row">
-      <span className="text-zinc-400 shrink-0 group-hover/row:text-red-500 transition-colors">{icon}</span>
+      <span className="text-zinc-400 shrink-0 group-hover/row:text-red-500 transition-colors">
+        {icon}
+      </span>
       <div className="min-w-0 flex-1 flex items-center justify-between gap-2">
         <span className="text-[14px] font-medium text-zinc-400 shrink-0">
           {label}

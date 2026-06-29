@@ -32,7 +32,7 @@ const frontendEnv = parseEnv(
 const apiBase =
   process.env.E2EE_VERIFY_API_URL ||
   frontendEnv.NEXT_PUBLIC_API_URL ||
-  "http://localhost:8080/api";
+  "https://api.lenshub.shop/api";
 const identityJwk = {
   kty: "EC",
   crv: "P-256",

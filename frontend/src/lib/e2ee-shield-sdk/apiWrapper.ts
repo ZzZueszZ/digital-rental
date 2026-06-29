@@ -125,7 +125,7 @@ const resolveRequestPath = (config: InternalAxiosRequestConfig) => {
     return new URL(requestUrl).pathname;
   }
 
-  const baseUrl = new URL(config.baseURL || "http://localhost:8080/api");
+  const baseUrl = new URL(config.baseURL || "https://api.lenshub.shop/api");
   const normalizedBase = baseUrl.pathname.endsWith("/")
     ? baseUrl.pathname
     : `${baseUrl.pathname}/`;

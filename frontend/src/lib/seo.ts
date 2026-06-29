@@ -55,12 +55,14 @@ export const createPageMetadata = ({
   description,
   path = "/",
   image = "/modern_photography_hero.png",
+  keywords = [],
   noIndex = false,
 }: {
   title: string;
   description: string;
   path?: string;
   image?: string;
+  keywords?: string[];
   noIndex?: boolean;
 }): Metadata => {
   const url = buildUrl(path);
@@ -69,6 +71,22 @@ export const createPageMetadata = ({
   return {
     title,
     description,
+    keywords: [
+      "thuê máy ảnh",
+      "thuê lens",
+      "thuê thiết bị quay phim",
+      "mua máy ảnh",
+      "Lenshub Studio",
+      ...keywords,
+    ],
+    creator: SITE_NAME,
+    publisher: SITE_NAME,
+    referrer: "origin-when-cross-origin",
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
     alternates: {
       canonical: url,
     },
@@ -128,6 +146,9 @@ export type ProductSeo = {
   rentPricePerDay?: number | null;
   quantity?: number | null;
   rentalQuantity?: number | null;
+  gallery?: Array<{
+    url?: string | null;
+  }> | null;
   forSale?: boolean;
   forRent?: boolean;
   isForSale?: boolean;
@@ -148,9 +169,34 @@ export const getProductCanonicalPath = (id: number | string) =>
 
 export const normalizeImageUrl = (url?: string | null) => {
   if (!url) return buildUrl("/product-placeholder.svg");
-  if (url.startsWith("http")) return url;
+  if (url.startsWith("http")) {
+    try {
+      const parsed = new URL(url);
+      if (["localhost", "127.0.0.1", "::1"].includes(parsed.hostname)) {
+        return buildUrl("/product-placeholder.svg");
+      }
+    } catch {
+      return buildUrl("/product-placeholder.svg");
+    }
+    return url;
+  }
   return buildUrl(url);
 };
+
+export const getProductSeoImage = (product: ProductSeo) => {
+  const image =
+    product.mainImageUrl?.trim() ||
+    product.gallery?.find((item) => item.url?.trim())?.url ||
+    null;
+
+  return normalizeImageUrl(image);
+};
+
+export const stripToPlainText = (value?: string | null) =>
+  (value || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
 export async function fetchProductForSeo(
   id: string,
@@ -193,7 +239,7 @@ export const productToDescription = (product: ProductSeo) => {
       ? ` Giá bán ${Number(product.salePrice).toLocaleString("vi-VN")}đ.`
       : "";
   const base =
-    product.description?.trim() ||
+    stripToPlainText(product.description) ||
     `${product.name} tại Lenshub Studio, phù hợp cho nhu cầu chụp ảnh, quay phim và sản xuất nội dung chuyên nghiệp.`;
 
   return `${base}${rentText}${saleText}`.slice(0, 280);

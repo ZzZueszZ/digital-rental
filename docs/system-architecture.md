@@ -15,7 +15,7 @@ flowchart LR
   Next --> API["service/lenshub: Spring Boot API"]
   API --> PG["PostgreSQL"]
   API --> Redis["Redis"]
-  API --> Mail["SMTP Mail"]
+  API --> Mail["MailGateway: SMTP local / Resend planned"]
   API --> VNPay["VNPay"]
   API --> FPT["FPT.AI eKYC"]
   API --> MinIO["MinIO: private object storage"]
@@ -131,7 +131,9 @@ Key patterns:
 - VNPay: `/payments/vnpay/create` and `/payments/vnpay/return`.
 - Rental VNPay: `/payments/vnpay/rental-fee/create` and `/payments/vnpay/rental-fee/return`.
 - eKYC: `/ekyc/ocr-preview` and `/ekyc/submit` receive private `FileAsset` IDs for new flows. The provider resolves object keys into temporary local files, validates liveness signature/duration, and removes temporary files after use. Legacy multipart endpoints remain only for rollout compatibility.
-- Mail: activation and password reset flows use SMTP configuration.
+- Mail: `MailService` builds existing HTML templates and delegates delivery to
+  `MailGateway`; SMTP is the current local adapter and Resend HTTPS is the next
+  production phase.
 - Redis: token blacklist/cache support.
 - OpenAPI: Swagger UI and API docs paths are public.
 

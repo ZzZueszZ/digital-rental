@@ -25,8 +25,8 @@ spring:
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
     properties:
       mail:
         smtp:
@@ -114,8 +114,18 @@ app:
     ttl-hours: ${APP_ACTIVATION_TTL_HOURS:24}
     jwt-secret: ${APP_ACTIVATION_JWT_SECRET}
   mail:
-    from: ${APP_MAIL_FROM:no-reply@zyna.dev}
+    provider: ${APP_MAIL_PROVIDER:smtp}
+    from: ${APP_MAIL_FROM:no-reply@localhost}
     admin: ${APP_MAIL_ADMIN:adminlenshub@gmail.com}
+    resend:
+      base-url: ${RESEND_API_BASE_URL:https://api.resend.com}
+      api-key: ${RESEND_API_KEY:}
+      connect-timeout: ${RESEND_CONNECT_TIMEOUT:3s}
+      read-timeout: ${RESEND_READ_TIMEOUT:10s}
+      retry-delay: ${RESEND_RETRY_DELAY:200ms}
+      max-retry-delay: ${RESEND_MAX_RETRY_DELAY:2s}
+      max-attempts: ${RESEND_MAX_ATTEMPTS:2}
+      max-attachment-bytes: ${RESEND_MAX_ATTACHMENT_BYTES:26214400}
   password-reset:
     ttl-minutes: ${APP_PASSWORD_RESET_TTL_MINUTES:10}
   scheduler:

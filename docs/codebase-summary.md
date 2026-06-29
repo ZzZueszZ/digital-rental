@@ -18,6 +18,11 @@ This is a multi-project repository:
 
 `service/lenshub` is a Gradle project named `lenshub`, using Java 17 and Spring Boot 4.0.3. Important dependencies include Spring Web, Data JPA, Security, Validation, Redis, Mail, Actuator, Flyway, PostgreSQL runtime driver, MinIO, JJWT, and springdoc OpenAPI.
 
+Mail composition is isolated from transport through `MailGateway`.
+`MailService` retains the existing subjects and HTML templates, while the
+conditional SMTP adapter remains the local/default transport until the Resend
+HTTPS adapter is implemented.
+
 Main application entrypoint:
 
 - `service/lenshub/src/main/java/org/web/Main.java`

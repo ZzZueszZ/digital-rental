@@ -44,7 +44,7 @@ Required/important environment variables:
 | `APP_ACTIVATION_TTL_HOURS` | Activation token TTL. |
 | `APP_ACTIVATION_JWT_SECRET` | Separate activation-token signing secret; minimum 32 characters. |
 | `APP_PASSWORD_RESET_TTL_MINUTES` | Password reset token TTL. |
-| `APP_MAIL_FROM` | Sender email address. |
+| `APP_MAIL_FROM` | Resend sender using a verified domain, e.g. `LensHub <no-reply@mail.lenshub.shop>`. |
 | `MAIL_HOST`, `MAIL_PORT` | SMTP host/port. |
 | `MAIL_USERNAME`, `MAIL_PASSWORD` | SMTP credentials. |
 | `PAY_URL`, `TMN_CODE`, `SECRET_KEY`, `RETURN_URL` | VNPay integration settings. |

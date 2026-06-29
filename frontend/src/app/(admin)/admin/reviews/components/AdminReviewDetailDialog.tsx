@@ -2,7 +2,6 @@
 
 import {
   Star,
-  User,
   Package,
   Calendar,
   Flag,
@@ -17,6 +16,7 @@ import {
 import { AdminFormDialog } from "@/components/common/AdminFormDialog";
 import { Button } from "@/components/ui/button";
 import { ReviewResponse } from "@/types/review";
+import { ReviewUserAvatar } from "@/components/common/ReviewUserAvatar";
 import { cn, getImageUrl } from "@/lib/utils";
 
 interface AdminReviewDetailDialogProps {
@@ -53,16 +53,11 @@ export function AdminReviewDetailDialog({
         {/* User & Product Context */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center gap-4 p-4 rounded-xl bg-zinc-50 border border-zinc-100 group">
-            <div className="w-12 h-12 rounded-xl bg-white border border-zinc-200 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
-              {review.userAvatar ? (
-                <img
-                  src={getImageUrl(review.userAvatar)}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <User className="w-6 h-6 text-zinc-400" />
-              )}
-            </div>
+            <ReviewUserAvatar
+              name={review.userName}
+              src={review.userAvatar}
+              className="h-12 w-12 rounded-xl bg-white shadow-sm"
+            />
             <div className="flex flex-col min-w-0">
               <span className="text-xs font-medium text-zinc-500 mb-0.5">
                 Khách hàng

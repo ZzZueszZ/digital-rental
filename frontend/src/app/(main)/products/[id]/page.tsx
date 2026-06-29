@@ -21,6 +21,7 @@ import {
   Edit,
   Trash2,
   MoreHorizontal,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DateInput } from "@/components/ui/date-input";
@@ -39,6 +40,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { ReviewFormDialog } from "@/components/common/ReviewFormDialog";
+import { ReviewUserAvatar } from "@/components/common/ReviewUserAvatar";
 import {
   useProductReviews,
   useReportReview,
@@ -526,6 +528,22 @@ export default function ProductDetailPage() {
                 ))}
               </div>
 
+              {product.description?.trim() && (
+                <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-6">
+                  <div className="mb-5 flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-500">
+                      <Info className="h-4 w-4" />
+                    </div>
+                    <h2 className="text-base font-semibold text-zinc-950">
+                      Mô tả sản phẩm
+                    </h2>
+                  </div>
+                  <p className="whitespace-pre-line text-sm font-normal leading-7 text-zinc-600">
+                    {product.description}
+                  </p>
+                </div>
+              )}
+
               <div className="grid gap-3 sm:grid-cols-3">
                 <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4">
                   <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-600" />
@@ -569,9 +587,6 @@ export default function ProductDetailPage() {
                 <h1 className="mb-3 text-3xl font-semibold leading-tight tracking-tight text-zinc-950 md:text-4xl">
                   {product.name}
                 </h1>
-                <p className="mb-5 whitespace-pre-line text-sm font-normal leading-6 text-zinc-500">
-                  {product.description}
-                </p>
 
                 {/* Status Pills */}
                 <div className="flex flex-wrap gap-2">
@@ -914,19 +929,11 @@ export default function ProductDetailPage() {
                   >
                     <div className="mb-4 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        {r.userAvatar ? (
-                          <div className="h-9 w-9 shrink-0 overflow-hidden rounded-xl border border-zinc-100">
-                            <img
-                              src={getImageUrlLocal(r.userAvatar)}
-                              className="w-full h-full object-cover"
-                              alt={r.userName}
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-50 text-sm font-medium text-zinc-800">
-                            {r.userName.charAt(0).toUpperCase()}
-                          </div>
-                        )}
+                        <ReviewUserAvatar
+                          name={r.userName}
+                          src={r.userAvatar}
+                          className="h-9 w-9 rounded-xl"
+                        />
                         <div>
                           <p className="line-clamp-1 text-sm font-medium text-zinc-900">
                             {r.userName}

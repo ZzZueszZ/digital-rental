@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   Camera,
   ChevronRight,
+  Headphones,
   Home,
   Info,
   LayoutDashboard,
@@ -35,6 +36,7 @@ const navigationItems = [
   { label: "Thiết bị", href: "/products", icon: Camera },
   { label: "Sản phẩm mới", href: "/#product-section", icon: Package },
   { label: "An toàn", href: "/trust", icon: ShieldCheck },
+  { label: "Hỗ trợ", href: "/about#support-form", icon: Headphones },
   { label: "Về chúng tôi", href: "/about", icon: Info },
 ];
 

@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   Trash2,
   Star,
-  User,
   MessageSquare,
   Package,
   Clock,
@@ -21,7 +20,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ReviewResponse } from "@/types/review";
-import { cn, getImageUrl } from "@/lib/utils";
+import { ReviewUserAvatar } from "@/components/common/ReviewUserAvatar";
+import { cn } from "@/lib/utils";
 
 interface ReviewItemsProps {
   review: ReviewResponse;
@@ -45,17 +45,11 @@ export function ReviewTableRow({
     >
       <td className="px-6 py-4">
         <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200/50 group-hover:scale-105 transition-transform duration-150">
-            {review.userAvatar ? (
-              <img
-                src={getImageUrl(review.userAvatar)}
-                alt={review.userName}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <User className="w-5 h-5 text-zinc-400" />
-            )}
-          </div>
+          <ReviewUserAvatar
+            name={review.userName}
+            src={review.userAvatar}
+            className="h-11 w-11 rounded-xl group-hover:scale-105 transition-transform duration-150"
+          />
           <div>
             <p className="text-sm font-semibold text-zinc-950 tracking-tight mb-0.5 group-hover:text-red-600 transition-colors duration-300">
               {review.userName}
@@ -193,17 +187,11 @@ export function ReviewMobileCard({
     <div className="bg-white border border-zinc-100 rounded-xl p-5 shadow-sm space-y-4">
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-zinc-50 border border-zinc-100 flex items-center justify-center overflow-hidden">
-            {review.userAvatar ? (
-              <img
-                src={getImageUrl(review.userAvatar)}
-                alt={review.userName}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <User className="w-6 h-6 text-zinc-400" />
-            )}
-          </div>
+          <ReviewUserAvatar
+            name={review.userName}
+            src={review.userAvatar}
+            className="h-12 w-12 rounded-full"
+          />
           <div>
             <h4 className="font-semibold text-zinc-950">{review.userName}</h4>
             <div className="flex items-center gap-1 mt-0.5">

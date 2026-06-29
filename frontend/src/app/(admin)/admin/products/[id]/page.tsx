@@ -351,8 +351,10 @@ export default function ProductDetailPage({
   const images = [
     product.mainImageUrl,
     ...(product.gallery?.map((g) => g.url) || []),
-  ];
-  const currentImage = activeImage || product.mainImageUrl;
+  ]
+    .map((url) => url?.trim() || "")
+    .filter(Boolean);
+  const currentImage = activeImage || images[0] || null;
   const currentImageSrc = getImageUrl(currentImage) || "/product-placeholder.svg";
   const isDeleted = !!product.deletedAt;
 

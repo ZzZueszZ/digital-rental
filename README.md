@@ -1,32 +1,79 @@
-# LensHub CMS
+# LensHub Digital Rental
 
 ## Documentation Maintenance
 
-**Last Updated:** 2026-06-28
-**Document Version:** 1.2
+**Last Updated:** 2026-06-29
+**Document Version:** 2.0
 **Maintained By:** Development Team
 
-LensHub is a camera equipment ecommerce and rental platform. This repository contains the main Spring Boot API, Next.js frontend, and supporting infrastructure/docs.
+LensHub is a camera equipment ecommerce and rental platform. This monorepo contains the Spring Boot API, Next.js web app, optional self-hosted AI KYC service, deployment assets, and source-of-truth project documentation.
 
-## Project Structure
+## Projects
 
-```text
-.
-+-- service/lenshub/      # Spring Boot backend API
-+-- frontend/             # Next.js frontend
-+-- docs/                 # Project source-of-truth documentation
-+-- deploy/               # Deployment support assets
-+-- docker/               # Legacy/local compose assets
-+-- migration/            # Legacy migration assets
-+-- plans/                # Planning and agent reports
+| Path | Purpose | README |
+| --- | --- | --- |
+| `service/lenshub` | Primary Spring Boot API for catalog, auth, orders, rentals, payments, eKYC, admin workflows, files, mail, and storage. | [service/lenshub/README.md](service/lenshub/README.md) |
+| `frontend` | Next.js customer/admin/staff web app. | [frontend/README.md](frontend/README.md) |
+| `service/ai-kyc-service` | Optional FastAPI service with FPT-compatible OCR, face match, and liveness endpoints for local/self-hosted KYC work. | [service/ai-kyc-service/README.md](service/ai-kyc-service/README.md) |
+| `docker` | Local and production Compose assets. | See [docs/deployment-guide.md](docs/deployment-guide.md) |
+| `docs` | Product, architecture, deployment, standards, roadmap, and design source of truth. | See [Documentation](#documentation) |
+| `plans` | Implementation plans and agent reports. | Internal workflow artifacts |
+
+## Stack
+
+- Backend: Java 17, Spring Boot 4, Gradle, PostgreSQL, Redis, Flyway, JWT, VNPay, MinIO, FPT KYC, Resend/SMTP mail.
+- Frontend: Next.js 16, React 19, TypeScript, Tailwind CSS 4, TanStack Query, Zustand, axios, shadcn-style UI.
+- AI KYC: Python, FastAPI, PaddleOCR, InsightFace, ONNX Runtime, MediaPipe.
+- Infrastructure: Docker Compose for local PostgreSQL, Redis, and MinIO; production backend Docker image and Compose assets.
+
+## Quick Start
+
+From the repository root:
+
+```powershell
+docker compose -f docker/docker-compose.dev.yml up -d
 ```
 
-## Main Apps
+Run the backend:
 
-- Backend: Java 17, Spring Boot 4, Gradle, PostgreSQL, Redis, JWT auth, VNPay, SMTP mail.
-- Frontend: Next.js 16, React 19, TypeScript, Tailwind CSS 4, shadcn-style UI, TanStack Query, Zustand, axios.
+```powershell
+cd service/lenshub
+Copy-Item .env.example .env
+.\gradlew bootRun
+```
 
-## Local Commands
+Run the frontend in another terminal:
+
+```powershell
+cd frontend
+pnpm install
+Copy-Item .env.example .env
+pnpm dev
+```
+
+Optional local AI KYC provider:
+
+```powershell
+cd service/ai-kyc-service
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+## Local URLs
+
+| Service | URL |
+| --- | --- |
+| Backend API | `http://localhost:8080/api` |
+| Backend health | `http://localhost:8080/api/actuator/health` |
+| Frontend dev server | `http://localhost:3000` |
+| MinIO API | `http://localhost:9000` |
+| MinIO Console | `http://localhost:9001` |
+| AI KYC health | `http://localhost:8000/health` |
+
+## Common Commands
 
 Backend:
 
@@ -34,35 +81,55 @@ Backend:
 cd service/lenshub
 .\gradlew bootRun
 .\gradlew test
+docker build -t lenshub-backend:local .
 ```
 
 Frontend:
 
 ```powershell
 cd frontend
-pnpm install
 pnpm dev
 pnpm lint
 pnpm build
 ```
 
-Default backend URL is `https://api.lenshub.shop/api`. Frontend API URL is controlled by `NEXT_PUBLIC_API_URL`.
+AI KYC:
+
+```powershell
+cd service/ai-kyc-service
+python -m pytest
+docker compose up --build
+```
+
+## Environment Files
+
+Use example files as templates. Do not commit real secrets.
+
+- Backend: `service/lenshub/.env.example`
+- Frontend: `frontend/.env.example`
+- AI KYC: uses `KYC_AI_*` environment variables; see [service/ai-kyc-service/README.md](service/ai-kyc-service/README.md)
+- Production compose expects `docker/backend.prod.env`, which is intentionally not committed.
 
 ## Documentation
 
-Read these first:
+Read these when changing behavior or deployment:
 
-- `docs/project-overview-pdr.md`
-- `docs/codebase-summary.md`
-- `docs/code-standards.md`
-- `docs/system-architecture.md`
-- `docs/deployment-guide.md`
-- `docs/project-roadmap.md`
-- `docs/design-guidelines.md`
+- [Project overview and PDR](docs/project-overview-pdr.md)
+- [Codebase summary](docs/codebase-summary.md)
+- [Code standards](docs/code-standards.md)
+- [System architecture](docs/system-architecture.md)
+- [Deployment guide](docs/deployment-guide.md)
+- [Project roadmap](docs/project-roadmap.md)
+- [Design guidelines](docs/design-guidelines.md)
 
-## Known Setup Gaps
+## Production Notes
 
-- `docker/docker-compose.yml` provides the local PostgreSQL, Redis, and MinIO stack; it is not production-ready.
-- Production Phase 01 is complete: Flyway, health probes, production secret validation, and FPT provider configuration.
-- Production Phase 02 is complete with deferred validation: the backend has a pinned, non-root, health-checked `linux/amd64` image.
-- Production Compose, edge/TLS, CI/CD, backup, monitoring, and deferred container release checks remain under `plans/2026-06-28-production-deployment/`.
+- Production backend image is built from `service/lenshub/Dockerfile`.
+- Production profile is fail-fast for unsafe secrets and endpoints.
+- Production Compose lives at `docker/docker-compose.prod.yml`.
+- Do not store real keys, passwords, or provider credentials in this repository.
+
+## Known Gaps
+
+- Full production edge/TLS, backup, monitoring, and CI/CD rollout remain tracked under `plans/2026-06-28-production-deployment/`.
+- `migration/` contains legacy migration assets; current backend ownership is under Flyway migrations in `service/lenshub/src/main/resources/db/migration`.

@@ -45,3 +45,21 @@
 - Existing admin reset flow emails a plaintext generated password; security remediation must be decided before implementation.
 - Resend SDK transitive Jackson dependencies need compatibility verification against Spring Boot 4; direct Spring `RestClient` remains the fallback.
 - Production secrets previously appeared in operational chat; Resend API key must be newly generated, scoped, and stored only in VPS env.
+
+## 7 README Documentation Refresh Research Findings
+
+- README should act as repo landing page: what project does, why useful, how to start, where to get help, and who maintains it.
+- Root README should be a monorepo map; project READMEs should be runnable setup guides.
+- Current state: root README too brief; frontend README is create-next-app boilerplate; backend README missing; AI KYC README has encoding/path issues.
+
+## 8 README Documentation Refresh Key Decisions
+
+- Use root overview + focused project READMEs.
+- Modify only `README.md`, `frontend/README.md`, `service/lenshub/README.md`, and `service/ai-kyc-service/README.md` during implementation.
+- Keep architecture detail in `docs/`; READMEs link to source-of-truth docs.
+
+## 9 README Documentation Refresh Constraints & Risks
+
+- Do not copy secrets from local `.env` files.
+- Use repo-relative paths, not machine-specific absolute paths.
+- Preserve useful AI KYC model/troubleshooting detail while cleaning corrupted text.

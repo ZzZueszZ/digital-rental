@@ -1,100 +1,57 @@
-# LensHub AI KYC Service - Hướng Dẫn Chạy Local
+# LensHub AI KYC Service
 
-Service FastAPI tự host để thay FPT KYC trong lúc dev/test. Ưu tiên chạy bằng Python venv khi test model AI vì nhanh hơn Docker.
+## Documentation Maintenance
 
-## 1. Endpoint
+**Last Updated:** 2026-06-29
+**Document Version:** 2.0
+**Maintained By:** Development Team
 
-- `POST /vision/idr/vnm/`: OCR CCCD, header `api-key`, form-data `image`.
-- `POST /dmp/checkface/v1`: face match, header `api_key`, form-data `file[]` 2 ảnh.
-- `POST /dmp/liveness/v3`: liveness, header `api-key`, form-data `video`, optional `cmnd`.
-- `GET /health`: kiểm tra service sống.
+`service/ai-kyc-service` is an optional self-hosted FastAPI provider for local and experimental KYC work. It exposes FPT-compatible OCR, face match, and liveness endpoints so the Java backend can switch providers by changing environment variables.
 
-## 2. Tạo venv
+## Stack
+
+- Python
+- FastAPI and Uvicorn
+- PaddleOCR for CCCD OCR
+- InsightFace and ONNX Runtime for face match
+- OpenCV, MediaPipe, and optional ONNX anti-spoof for liveness
+
+## Endpoints
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/vision/idr/vnm/` | CCCD OCR. Header `api-key`; form-data field `image`. |
+| `POST` | `/dmp/checkface/v1` | Face match. Header `api_key`; form-data field `file[]` with two images. |
+| `POST` | `/dmp/liveness/v3` | Liveness video. Header `api-key`; form-data field `video`; optional `cmnd`. |
+| `GET` | `/health` | Health check. |
+
+## Prerequisites
+
+- Python compatible with dependencies in `requirements.txt`
+- `pip`
+- Docker Desktop if using Compose
+- Network access for first-time PaddleOCR model download, or pre-populated model cache
+
+## Local Setup with venv
+
+From this directory:
 
 ```powershell
-cd D:\PERSONAL\hoc-ki-2-nam-4\KLTN\test-project\service\ai-kyc-service
-
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-
 python -m pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
 ```
 
-Nếu PowerShell chặn activate:
+If PowerShell blocks activation:
 
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 .\.venv\Scripts\Activate.ps1
 ```
 
-## 3. Cài model face match
-
-Face match dùng InsightFace + ONNX Runtime CPU. Hai package này đã nằm trong `requirements.txt`. Nếu cần cài riêng:
-
-```powershell
-pip install -r requirements.txt
-```
-
-Trên Windows Python 3.13, `requirements.txt` dùng prebuilt wheel để tránh lỗi:
-
-```text
-Microsoft Visual C++ 14.0 or greater is required
-```
-
-Nếu wheel không tải được hoặc bạn muốn build từ source, cài Visual Studio Build Tools:
-
-- MSVC C++ build tools
-- Windows SDK
-- CMake
-
-Sau đó chạy lại:
-
-```powershell
-pip install --no-cache-dir insightface==0.7.3
-```
-
-Nếu chưa cài `insightface`, endpoint face match vẫn chạy nhưng fail closed:
-
-```json
-{
-  "data": {
-    "similarity": 0.0,
-    "isMatch": false
-  },
-  "diagnostics": {
-    "reason": "face_embedding_unavailable"
-  }
-}
-```
-
-## 4. Chuẩn bị PaddleOCR
-
-OCR cần PaddleOCR model files. Lần đầu phải có mạng để PaddleOCR tải model, hoặc phải có cache model sẵn.
-
-Chạy warmup một lần khi có mạng:
-
-```powershell
-$env:DISABLE_MODEL_SOURCE_CHECK="True"
-python -c "from paddleocr import PaddleOCR; PaddleOCR(lang='vi', use_doc_orientation_classify=False, use_doc_unwarping=False, use_textline_orientation=True)"
-```
-
-Nếu gặp lỗi:
-
-```text
-No available model hosting platforms detected. Please check your network connection.
-```
-
-Nguyên nhân: máy không truy cập được model host và model chưa cache. Cách xử lý:
-
-1. Bật mạng/proxy/VPN rồi chạy warmup lại.
-2. Chạy service trên máy đã cache model.
-3. Copy thư mục cache PaddleOCR/PaddleX từ máy đã tải model sang máy offline.
-
-Lưu ý: `DISABLE_MODEL_SOURCE_CHECK=True` chỉ bỏ bước check host. Nó không tự tạo model nếu máy chưa từng tải model.
-
-## 5. Run service bằng venv
+## Run
 
 ```powershell
 $env:KYC_AI_API_KEY="local-dev-key"
@@ -112,121 +69,117 @@ Health check:
 curl.exe http://localhost:8000/health
 ```
 
-## 6. Test OCR bằng curl
+## Run with Docker
 
 ```powershell
-curl.exe -X POST http://localhost:8000/vision/idr/vnm/ `
-  -H "api-key: local-dev-key" `
-  -F "image=@D:\PERSONAL\hoc-ki-2-nam-4\KLTN\Báo cáo\z7919010704080_e6a0229cdb09a93f6bebbfbb118e0a3f.jpg"
+docker compose up --build
 ```
 
-Nếu response có:
+Docker is useful for packaging checks. For model tuning, local venv usually gives faster feedback.
 
-```json
-"ocr_available": false
+## Configuration
+
+The service reads `KYC_AI_*` variables. Important settings:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `KYC_AI_API_KEY` | `local-dev-key` | Expected request API key. |
+| `KYC_AI_FACE_MATCH_THRESHOLD` | `80.0` | Face match pass threshold. |
+| `KYC_AI_LIVENESS_THRESHOLD` | `0.80` | Liveness pass threshold. |
+| `KYC_AI_MAX_UPLOAD_MB` | `10` | Upload size limit. |
+| `KYC_AI_ENABLE_PADDLE_OCR` | `true` | Enables OCR engine. |
+| `KYC_AI_ENABLE_MEDIAPIPE` | `true` | Enables active-pose liveness. |
+| `KYC_AI_ENABLE_ONNX_ANTISPOOF` | `true` | Enables passive anti-spoof. |
+| `KYC_AI_LIVENESS_MEDIAPIPE_MODEL_PATH` | empty | Path to Face Landmarker `.task` model. |
+| `KYC_AI_LIVENESS_ANTISPOOF_MODEL_PATH` | empty | Path to anti-spoof ONNX model. |
+
+See `app/config.py` for the full list.
+
+## PaddleOCR Warmup
+
+First OCR run may need to download models. Warm up once with network access:
+
+```powershell
+$env:DISABLE_MODEL_SOURCE_CHECK="True"
+python -c "from paddleocr import PaddleOCR; PaddleOCR(lang='vi', use_doc_orientation_classify=False, use_doc_unwarping=False, use_textline_orientation=True)"
 ```
 
-thì đọc `quality.ocr_message`. Thường là model chưa cache hoặc PaddleOCR chưa cài đúng venv.
+If the machine is offline, copy a known-good PaddleOCR/PaddleX cache from another machine.
 
-## 7. Test face match bằng Postman
+## Face Match Notes
 
-Request:
+Face match uses InsightFace and ONNX Runtime CPU. If InsightFace is unavailable, the endpoint fails closed with diagnostics instead of returning a fake match.
 
-- Method: `POST`
-- URL: `http://localhost:8000/dmp/checkface/v1`
-- Header: `api_key: local-dev-key`
-- Body: `form-data`
-  - key `file[]`, type File, chọn ảnh 1
-  - key `file[]`, type File, chọn ảnh 2
-
-Response:
-
-```json
-{
-  "data": {
-    "similarity": 86.4,
-    "isMatch": true
-  }
-}
-```
-
-Nếu `similarity = 0`, xem `diagnostics`:
-
-- `insightface_unavailable`: chưa cài `insightface`.
-- `exactly_one_face_required`: ảnh không có mặt hoặc có nhiều mặt.
-- `invalid_image_quality`: ảnh lỗi/nhỏ quá.
-
-## 8. Test face match bằng curl
+Example request:
 
 ```powershell
 curl.exe -X POST http://localhost:8000/dmp/checkface/v1 `
   -H "api_key: local-dev-key" `
-  -F "file[]=@D:\path\id_image.jpg" `
-  -F "file[]=@D:\path\selfie_image.jpg"
+  -F "file[]=@.\samples\id-image.jpg" `
+  -F "file[]=@.\samples\selfie.jpg"
 ```
 
-## 9. Test liveness
+Common diagnostics:
 
-Postman:
+| Reason | Meaning |
+| --- | --- |
+| `insightface_unavailable` | InsightFace package/model unavailable. |
+| `exactly_one_face_required` | Image has zero or multiple faces. |
+| `invalid_image_quality` | Image unreadable or too low quality. |
 
-- Method: `POST`
-- URL: `http://localhost:8000/dmp/liveness/v3`
-- Header: `api-key: local-dev-key`
-- Body: `form-data`
-  - key `video`, type File, chọn file video thật `.webm`, `.mp4`, `.mov`, `.avi`
-  - key `cmnd`, type File, optional
+## OCR Test
 
-Không dùng fake bytes đổi đuôi `.webm`; service sẽ trả fail closed:
-
-```json
-{
-  "data": {
-    "score": 0.0,
-    "passed": false,
-    "spoof_detected": true,
-    "multiple_faces_detected": false
-  }
-}
+```powershell
+curl.exe -X POST http://localhost:8000/vision/idr/vnm/ `
+  -H "api-key: local-dev-key" `
+  -F "image=@.\samples\cccd-front.jpg"
 ```
 
-Active pose liveness needs MediaPipe and a local Face Landmarker `.task` model:
+If response diagnostics say OCR is unavailable, check PaddleOCR install and model cache.
+
+## Liveness Test
+
+Use a real video file. Renamed text bytes or corrupted videos should fail closed.
+
+```powershell
+curl.exe -X POST http://localhost:8000/dmp/liveness/v3 `
+  -H "api-key: local-dev-key" `
+  -F "video=@.\samples\liveness.webm"
+```
+
+Active-pose liveness needs a local MediaPipe Face Landmarker model:
 
 ```env
-KYC_AI_LIVENESS_MEDIAPIPE_MODEL_PATH=D:\models\face_landmarker.task
+KYC_AI_LIVENESS_MEDIAPIPE_MODEL_PATH=.\models\face_landmarker.task
 ```
 
-If the model path is missing, the endpoint still validates video metadata and sampled frames, then fails closed with diagnostics reason `mediapipe_model_not_configured`.
-
-Passive anti-spoof uses ONNX Runtime CPU when enabled. Put the selected model outside git and point env to it:
+Passive anti-spoof uses ONNX Runtime CPU when enabled:
 
 ```env
-KYC_AI_LIVENESS_ANTISPOOF_MODEL_PATH=D:\models\antispoof.onnx
+KYC_AI_LIVENESS_ANTISPOOF_MODEL_PATH=.\models\antispoof.onnx
 KYC_AI_LIVENESS_ANTISPOOF_THRESHOLD=0.75
 ```
 
-If active pose passes but the ONNX model is missing, the request fails closed with `antispoof_model_not_configured` or `antispoof_model_not_found`.
+Diagnostics are returned outside `data` so the Java parser can keep the same contract. Useful fields include `reason`, `failure_stage`, `thresholds`, and `score_components`.
 
-Diagnostics are returned outside `data` so the Java parser can keep reading the same contract. Useful fields:
+## Test Data
 
-- `reason`: normalized fail/pass reason.
-- `failure_stage`: `input_validation`, `video_sampling`, `active_pose`, `passive_antispoof`, or `passed`.
-- `thresholds`: active config values used for the decision.
-- `score_components`: pose, anti-spoof, and final score when model scoring runs.
+Use `testdata/liveness/` for local-only videos. Real videos and images are ignored by git.
 
-### Liveness test data and tuning
+Recommended tuning set:
 
-Use `testdata/liveness/` for local-only FE videos. The folder has a `.gitignore` that blocks real videos/images from git. Collect at least:
+- 10 pass videos
+- 3 wrong-order videos
+- 3 no-face videos
+- 3 multi-face videos
+- 5 screen or paper spoof attempts
+- 3 short videos
 
-- 10 pass videos.
-- 3 wrong-order videos.
-- 3 no-face videos.
-- 3 multi-face videos.
-- 5 screen/paper spoof attempts.
-- 3 short videos.
+Record tuning notes under `plans/2026-06-10-ai-kyc-liveness-phase-3/reports/`.
 
-Record tuning notes in `plans/2026-06-10-ai-kyc-liveness-phase-3/reports/threshold-tuning-*.md`.
+## Backend Integration
 
-## 10. Env cho LensHub backend
+In `service/lenshub/.env`, point the backend to this service:
 
 ```env
 APP_KYC_PROVIDER=fpt
@@ -236,46 +189,20 @@ FPT_KYC_FACEMATCH_URL=http://localhost:8000/dmp/checkface/v1
 FPT_KYC_LIVENESS_URL=http://localhost:8000/dmp/liveness/v3
 ```
 
-## 11. Docker chỉ dùng khi đóng gói
-
-Build Docker:
+## Tests
 
 ```powershell
-docker compose build
-docker compose up -d --force-recreate
-```
-
-Nếu Docker build model quá lâu, quay lại dùng venv để dev/test. Venv cho feedback nhanh hơn.
-
-## 12. Troubleshooting nhanh
-
-### PaddleOCR báo no model hosting
-
-```text
-No available model hosting platforms detected
-```
-
-Fix: chạy warmup có mạng hoặc copy cache model sang máy local.
-
-### PaddleOCR báo `Unknown argument: show_log`
-
-Code hiện tại đã bỏ `show_log`. Restart lại uvicorn để load code mới.
-
-### Face match báo `No module named 'insightface'`
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-```
-
-### Liveness báo không đọc được `.webm`
-
-Dùng video thật. Fake bytes hoặc file hỏng sẽ bị reject trước khi phân tích.
-
-## 13. Test suite
-
-```powershell
-cd D:\PERSONAL\hoc-ki-2-nam-4\KLTN\test-project\service\ai-kyc-service
 .\.venv\Scripts\Activate.ps1
 python -m pytest
 ```
+
+## Troubleshooting
+
+| Symptom | Fix |
+| --- | --- |
+| `No available model hosting platforms detected` | Run PaddleOCR warmup with network access or copy model cache. |
+| `Unknown argument: show_log` | Restart Uvicorn to load current code; current service no longer passes `show_log`. |
+| `No module named 'insightface'` | Activate venv and run `pip install -r requirements.txt`. |
+| Liveness cannot read `.webm` | Use a real browser/video file, not fake bytes with a video extension. |
+| Active pose always unavailable | Set `KYC_AI_LIVENESS_MEDIAPIPE_MODEL_PATH` to a local `.task` model. |
+| Anti-spoof unavailable | Set `KYC_AI_LIVENESS_ANTISPOOF_MODEL_PATH` or disable ONNX anti-spoof for local metadata-only checks. |

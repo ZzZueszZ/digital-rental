@@ -46,8 +46,10 @@ public class VnPayConfig {
         params.put("vnp_Locale", "vn");
         params.put("vnp_ReturnUrl", returnUrl);
 
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+        TimeZone vietnamTimeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
+        Calendar cal = Calendar.getInstance(vietnamTimeZone);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        sdf.setTimeZone(vietnamTimeZone);
 
         params.put("vnp_CreateDate", sdf.format(cal.getTime()));
 

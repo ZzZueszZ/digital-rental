@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ProductionProfileConfigTest {
 
@@ -41,13 +42,24 @@ class ProductionProfileConfigTest {
         assertProperty("app.kyc.fpt.api-key", "${FPT_KYC_API_KEY}");
     }
 
+    @Test
+    void usesResendWithoutRequiringSmtpCredentials() {
+        assertProperty("app.mail.provider", "resend");
+        assertProperty("app.mail.resend.api-key", "${RESEND_API_KEY}");
+        assertNull(property("spring.mail.username"));
+        assertNull(property("spring.mail.password"));
+    }
+
     private void assertProperty(String name, String expected) {
-        Object actual = propertySources.stream()
+        assertEquals(expected, String.valueOf(property(name)));
+    }
+
+    private Object property(String name) {
+        return propertySources.stream()
                 .map(source -> source.getProperty(name))
                 .filter(value -> value != null)
                 .findFirst()
                 .orElse(null);
-        assertEquals(expected, String.valueOf(actual));
     }
 
     private static List<PropertySource<?>> loadProductionProperties() {

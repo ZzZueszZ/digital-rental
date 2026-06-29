@@ -1,13 +1,14 @@
 package org.web.common.mails;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.web.common.mails.config.MailProperties;
+import org.web.common.mails.gateway.MailAttachment;
+import org.web.common.mails.gateway.MailCategory;
+import org.web.common.mails.gateway.MailDeliveryException;
+import org.web.common.mails.gateway.MailGateway;
+import org.web.common.mails.gateway.MailMessage;
 import org.web.files.model.FileAsset;
 import org.web.orders.model.Order;
 import org.web.orders.model.OrderItem;
@@ -34,22 +35,24 @@ public class MailService {
     private static final String SUPPORT_PHONE = "037 6600 545";
     private static final String SUPPORT_EMAIL = "adminlenshub@gmail.com";
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final MailGateway mailGateway;
+    private final StorageService storageService;
+    private final String fromEmail;
+    private final String publicBaseUrl;
+    private final String adminEmail;
 
-    @Autowired
-    private StorageService storageService;
-
-    @Value("${app.mail.from:no-reply@zyna.dev}")
-    private String fromEmail;
-
-    @Value("${app.public-base-url:https://api.lenshub.shop}")
-    private String publicBaseUrl;
-
-    @Value("${app.mail.admin:adminlenshub@gmail.com}")
-    private String adminEmail;
-
-    private final ThreadLocal<List<InlineImage>> inlineImagesContext = ThreadLocal.withInitial(ArrayList::new);
+    public MailService(
+            MailGateway mailGateway,
+            StorageService storageService,
+            MailProperties mailProperties,
+            @Value("${app.public-base-url:http://localhost:8080}") String publicBaseUrl
+    ) {
+        this.mailGateway = mailGateway;
+        this.storageService = storageService;
+        this.fromEmail = mailProperties.getFrom();
+        this.adminEmail = mailProperties.getAdmin();
+        this.publicBaseUrl = publicBaseUrl;
+    }
 
     public void sendActivationEmail(User user, String activationLink) {
         if (user == null || user.getEmail() == null) {
@@ -64,7 +67,8 @@ public class MailService {
                         "Kích hoạt tài khoản",
                         activationLink,
                         "Nếu nút không hoạt động, bạn có thể mở liên kết sau: " + activationLink
-                )
+                ),
+                MailCategory.ACTIVATION
         );
     }
 
@@ -80,7 +84,8 @@ public class MailService {
                         "Bạn đang yêu cầu đặt lại mật khẩu tài khoản Digital Rental. Vui lòng dùng mã OTP bên dưới để tiếp tục.",
                         otpCode,
                         "Mã OTP có hiệu lực trong thời gian ngắn. Không chia sẻ mã này cho bất kỳ ai."
-                )
+                ),
+                MailCategory.PASSWORD_RESET
         );
     }
 
@@ -88,96 +93,46 @@ public class MailService {
         if (user == null || user.getEmail() == null) {
             return;
         }
-        if (useHtmlMailTemplates()) {
-            sendHtmlEmail(
-                    user.getEmail(),
-                    "Digital Rental - Mật khẩu tài khoản đã được đặt lại",
-                    buildCredentialHtml(
-                            "Mật khẩu tài khoản đã được đặt lại",
-                            "Quản trị viên đã đặt lại mật khẩu cho tài khoản của bạn. Vui lòng đăng nhập và đổi mật khẩu ngay sau khi nhận được email này.",
-                            "Mật khẩu mới",
-                            newPassword
-                    )
-            );
-            return;
-        }
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromEmail);
-        message.setTo(user.getEmail());
-        message.setSubject("Mật khẩu tài khoản Lenshub đã được đặt lại");
-        message.setText("Xin chào,\n\n"
-                + "Quản trị viên đã đặt lại mật khẩu cho tài khoản của bạn.\n"
-                + "Mật khẩu mới của bạn là: " + newPassword + "\n\n"
-                + "Vui lòng đăng nhập và đổi mật khẩu ngay sau khi nhận được email này.\n\n"
-                + "Trân trọng,\nLenshub Team");
-
-        try {
-            mailSender.send(message);
-        } catch (Exception e) {
-            log.warn("Failed to send reset password email to {}", user.getEmail(), e);
-        }
+        sendHtmlEmail(
+                user.getEmail(),
+                "Digital Rental - Mật khẩu tài khoản đã được đặt lại",
+                buildCredentialHtml(
+                        "Mật khẩu tài khoản đã được đặt lại",
+                        "Quản trị viên đã đặt lại mật khẩu cho tài khoản của bạn. Vui lòng đăng nhập và đổi mật khẩu ngay sau khi nhận được email này.",
+                        "Mật khẩu mới",
+                        newPassword
+                ),
+                MailCategory.PASSWORD_RESET
+        );
     }
 
     public void sendSupportReplyEmail(SupportTicket ticket, String replyMessage) {
         if (ticket == null || ticket.getEmail() == null) {
             return;
         }
-        if (useHtmlMailTemplates()) {
-            sendHtmlEmail(
-                    ticket.getEmail(),
-                    "Digital Rental - Phản hồi hỗ trợ: " + supportSubjectText(ticket),
-                    buildSupportReplyHtml(ticket, replyMessage)
-            );
-            return;
-        }
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromEmail);
-        message.setTo(ticket.getEmail());
-        message.setSubject("Re: [Lenshub Support] " + ticket.getSubject());
-        message.setText("Xin chào " + ticket.getName() + ",\n\n"
-                + "Chúng tôi đã nhận được yêu cầu hỗ trợ của bạn và đây là phản hồi:\n\n"
-                + replyMessage + "\n\n"
-                + "Trân trọng,\nLenshub Support Team");
-
-        try {
-            mailSender.send(message);
-        } catch (Exception e) {
-            log.warn("Failed to send support reply email to {}", ticket.getEmail(), e);
-        }
+        sendHtmlEmail(
+                ticket.getEmail(),
+                "Digital Rental - Phản hồi hỗ trợ: " + supportSubjectText(ticket),
+                buildSupportReplyHtml(ticket, replyMessage),
+                MailCategory.SUPPORT
+        );
     }
 
     public void sendContractSigningOtp(User user, String otpCode, String orderCode) {
         if (user == null || user.getEmail() == null) {
             return;
         }
-        if (useHtmlMailTemplates()) {
-            sendHtmlEmail(
-                    user.getEmail(),
-                    "Digital Rental - Mã OTP ký hợp đồng điện tử #" + orderCode,
-                    buildOtpHtml(
-                            "Mã OTP ký hợp đồng điện tử",
-                            "Bạn đang thực hiện ký hợp đồng điện tử cho đơn thuê thiết bị #" + orderCode + ".",
-                            otpCode,
-                            "Mã OTP có hiệu lực trong 5 phút. Không chia sẻ mã này cho bất kỳ ai."
-                    )
-            );
-            return;
-        }
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromEmail);
-        message.setTo(user.getEmail());
-        message.setSubject("Mã OTP ký hợp đồng điện tử Lenshub - Đơn hàng #" + orderCode);
-        message.setText("Xin chào,\n\n"
-                + "Bạn đang thực hiện ký hợp đồng điện tử cho đơn thuê thiết bị #" + orderCode + ".\n"
-                + "Mã OTP của bạn là: " + otpCode + "\n"
-                + "Mã này có hiệu lực trong 5 phút. Vui lòng không chia sẻ mã này với bất kỳ ai.\n\n"
-                + "Trân trọng,\nLenshub Team");
-
-        try {
-            mailSender.send(message);
-        } catch (Exception e) {
-            log.warn("Failed to send signing OTP email to {}", user.getEmail(), e);
-        }
+        sendHtmlEmail(
+                user.getEmail(),
+                "Digital Rental - Mã OTP ký hợp đồng điện tử #" + orderCode,
+                buildOtpHtml(
+                        "Mã OTP ký hợp đồng điện tử",
+                        "Bạn đang thực hiện ký hợp đồng điện tử cho đơn thuê thiết bị #" + orderCode + ".",
+                        otpCode,
+                        "Mã OTP có hiệu lực trong 5 phút. Không chia sẻ mã này cho bất kỳ ai."
+                ),
+                MailCategory.CONTRACT
+        );
     }
 
     public void sendOrderPaymentSuccessEmail(Order order) {
@@ -185,13 +140,13 @@ public class MailService {
             return;
         }
 
-        List<InlineImage> inlineImages = inlineImagesContext.get();
-        inlineImages.clear();
+        List<InlineImage> inlineImages = new ArrayList<>();
         sendHtmlEmail(
                 order.getUser().getEmail(),
                 "Digital Rental - Thanh toán đơn mua thành công #" + order.getCode(),
                 buildOrderPaymentSuccessHtml(order, inlineImages),
-                inlineImages
+                inlineImages,
+                MailCategory.PAYMENT
         );
     }
 
@@ -200,13 +155,13 @@ public class MailService {
             return;
         }
 
-        List<InlineImage> inlineImages = inlineImagesContext.get();
-        inlineImages.clear();
+        List<InlineImage> inlineImages = new ArrayList<>();
         sendHtmlEmail(
                 order.getUser().getEmail(),
                 "Digital Rental - Đã tiếp nhận đơn hàng #" + order.getCode(),
                 buildOrderPlacedHtml(order, inlineImages),
-                inlineImages
+                inlineImages,
+                MailCategory.ORDER
         );
     }
 
@@ -215,29 +170,14 @@ public class MailService {
             return;
         }
 
-        if (useHtmlMailTemplates()) {
-            List<InlineImage> inlineImages = inlineImagesContext.get();
-            inlineImages.clear();
-            sendHtmlEmail(
-                    order.getUser().getEmail(),
-                    "Digital Rental - Thanh toán đơn thuê thành công #" + order.getCode(),
-                    buildRentalPaymentSuccessHtml(order, inlineImages),
-                    inlineImages
-            );
-            return;
-        }
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromEmail);
-        message.setTo(order.getUser().getEmail());
-        message.setSubject("Digital Rental - Thanh toán đơn thuê thành công #" + order.getCode());
-        message.setText(buildRentalPaymentSuccessText(order));
-
-        try {
-            mailSender.send(message);
-        } catch (Exception e) {
-            log.warn("Failed to send rental success email to {}", order.getUser().getEmail(), e);
-        }
+        List<InlineImage> inlineImages = new ArrayList<>();
+        sendHtmlEmail(
+                order.getUser().getEmail(),
+                "Digital Rental - Thanh toán đơn thuê thành công #" + order.getCode(),
+                buildRentalPaymentSuccessHtml(order, inlineImages),
+                inlineImages,
+                MailCategory.PAYMENT
+        );
     }
 
     public void sendLowSaleStockAlertEmail(Product product, int previousStock, int currentStock) {
@@ -245,13 +185,13 @@ public class MailService {
             return;
         }
 
-        List<InlineImage> inlineImages = inlineImagesContext.get();
-        inlineImages.clear();
+        List<InlineImage> inlineImages = new ArrayList<>();
         sendHtmlEmail(
                 adminEmail,
                 "Digital Rental - Cảnh báo tồn kho bán thấp: " + product.getName(),
                 buildLowSaleStockAlertHtml(product, previousStock, currentStock, inlineImages),
-                inlineImages
+                inlineImages,
+                MailCategory.INVENTORY
         );
     }
 
@@ -400,38 +340,15 @@ public class MailService {
         );
     }
 
-    private String buildOrderPaymentSuccessText(Order order) {
-        StringBuilder content = new StringBuilder();
-        appendMailHeader(content, "THANH TOÁN ĐƠN HÀNG THÀNH CÔNG");
-        content.append("Xin chào ").append(defaultText(order.getShippingName(), "bạn")).append(",\n\n");
-        content.append("Digital Rental đã ghi nhận thanh toán thành công cho đơn hàng của bạn. Đơn hàng sẽ được kiểm tra, đóng gói và chuyển sang bước xử lý tiếp theo.\n\n");
-        appendOrderSummary(content, order);
-        content.append("Trạng thái thanh toán: Đã thanh toán\n");
-        content.append("Ghi chú: Nếu có thay đổi về giao nhận, Digital Rental sẽ liên hệ qua số điện thoại nhận hàng.\n\n");
-        appendMailFooter(content);
-        return content.toString();
-    }
-
     private String buildOrderPaymentSuccessHtml(Order order, List<InlineImage> inlineImages) {
         return buildOrderHtml(
                 order,
                 "Thanh toán đơn hàng thành công",
                 "Digital Rental đã ghi nhận thanh toán thành công cho đơn hàng của bạn. Đơn hàng sẽ được kiểm tra, đóng gói và chuyển sang bước xử lý tiếp theo.",
                 "Đã thanh toán",
-                "Nếu có thay đổi về giao nhận, Digital Rental sẽ liên hệ qua số điện thoại nhận hàng."
+                "Nếu có thay đổi về giao nhận, Digital Rental sẽ liên hệ qua số điện thoại nhận hàng.",
+                inlineImages
         );
-    }
-
-    private String buildOrderPlacedText(Order order) {
-        StringBuilder content = new StringBuilder();
-        appendMailHeader(content, "TIẾP NHẬN ĐƠN HÀNG THÀNH CÔNG");
-        content.append("Xin chào ").append(defaultText(order.getShippingName(), "bạn")).append(",\n\n");
-        content.append("Digital Rental đã tiếp nhận đơn hàng của bạn. Vui lòng kiểm tra lại thông tin bên dưới để bảo đảm đơn hàng được xử lý chính xác.\n\n");
-        appendOrderSummary(content, order);
-        content.append("Trạng thái thanh toán: ").append(paymentStatusText(order)).append("\n");
-        content.append("Bước tiếp theo: Digital Rental sẽ kiểm tra tồn kho và xác nhận đơn hàng trước khi giao.\n\n");
-        appendMailFooter(content);
-        return content.toString();
     }
 
     private String buildOrderPlacedHtml(Order order, List<InlineImage> inlineImages) {
@@ -440,7 +357,8 @@ public class MailService {
                 "Tiếp nhận đơn hàng thành công",
                 "Digital Rental đã tiếp nhận đơn hàng của bạn. Vui lòng kiểm tra lại thông tin bên dưới để bảo đảm đơn hàng được xử lý chính xác.",
                 paymentStatusText(order),
-                "Digital Rental sẽ kiểm tra đơn hàng và xác nhận đơn hàng trước khi giao."
+                "Digital Rental sẽ kiểm tra đơn hàng và xác nhận đơn hàng trước khi giao.",
+                inlineImages
         );
     }
 
@@ -517,75 +435,6 @@ public class MailService {
                 + "</body></html>";
     }
 
-    private String buildOrderHtml(Order order, String title, String intro, String paymentStatus, String nextStep) {
-        return buildOrderHtml(order, title, intro, paymentStatus, nextStep, inlineImagesContext.get());
-    }
-
-    private void appendOrderSummary(StringBuilder content, Order order) {
-        content.append("THÔNG TIN ĐƠN HÀNG\n");
-        content.append("- Mã đơn hàng: #").append(order.getCode()).append("\n");
-        content.append("- Phương thức thanh toán: ").append(paymentMethodText(order)).append("\n");
-        content.append("- Tổng thanh toán: ").append(formatMoney(order.getTotalPrice())).append("\n");
-        content.append("- Giảm giá: ").append(formatMoney(order.getDiscountAmount())).append("\n");
-        content.append("- Phí giao hàng: ").append(formatMoney(order.getShippingFee())).append("\n\n");
-
-        content.append("THÔNG TIN NHẬN HÀNG\n");
-        content.append("- Người nhận: ").append(defaultText(order.getShippingName(), "Chưa cập nhật")).append("\n");
-        content.append("- Số điện thoại: ").append(defaultText(order.getShippingPhone(), "Chưa cập nhật")).append("\n");
-        content.append("- Địa chỉ: ").append(defaultText(order.getShippingAddress(), "Chưa cập nhật")).append("\n\n");
-
-        content.append("CHI TIẾT SẢN PHẨM\n");
-        for (OrderItem item : order.getItems()) {
-            content.append("- ")
-                    .append(item.getProduct() != null ? item.getProduct().getName() : "Sản phẩm")
-                    .append(" x").append(item.getQuantity())
-                    .append(" | Đơn giá: ").append(formatMoney(item.getUnitPrice()))
-                    .append(" | Thành tiền: ").append(formatMoney(item.getSubtotal()))
-                    .append("\n");
-        }
-        content.append("\n");
-    }
-
-    private String buildRentalPaymentSuccessText(RentalOrder order) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        StringBuilder content = new StringBuilder();
-        content.append("Xin chào ").append(defaultText(order.getShippingName(), "bạn")).append(",\n\n");
-        content.append("Digital Rental đã ghi nhận thanh toán phí thuê thành công cho đơn thuê của bạn.\n\n");
-        content.append("Mã đơn thuê: #").append(order.getCode()).append("\n");
-        content.append("Phí thuê đã thanh toán: ").append(formatMoney(order.getRentalFee())).append("\n");
-        content.append("Thời gian thuê: ")
-                .append(order.getStartDate() != null ? order.getStartDate().format(formatter) : "Chưa cập nhật")
-                .append(" - ")
-                .append(order.getEndDate() != null ? order.getEndDate().format(formatter) : "Chưa cập nhật")
-                .append("\n");
-        content.append("Địa điểm nhận thiết bị: ").append(defaultText(order.getShippingAddress(), "Chưa cập nhật")).append("\n\n");
-        content.append("Thiết bị thuê:\n");
-        for (RentalOrderItem item : order.getItems()) {
-            content.append("- ")
-                    .append(item.getProduct() != null ? item.getProduct().getName() : "Thiết bị")
-                    .append(" - ")
-                    .append(formatMoney(item.getPricePerDay()))
-                    .append("/ngày\n");
-        }
-        content.append("\nBước tiếp theo: vui lòng kiểm tra hợp đồng điện tử, hoàn tất ký hợp đồng và tiền cọc theo hướng dẫn trước khi nhận thiết bị.\n\n");
-        content.append("Trân trọng,\nDigital Rental");
-        return content.toString();
-    }
-
-    private void appendMailHeader(StringBuilder content, String title) {
-        content.append("========================================\n");
-        content.append("DIGITAL RENTAL\n");
-        content.append(title).append("\n");
-        content.append("========================================\n\n");
-    }
-
-    private void appendMailFooter(StringBuilder content) {
-        content.append("Cảm ơn bạn đã tin tưởng Digital Rental.\n");
-        content.append("Hotline hỗ trợ: ").append(SUPPORT_PHONE).append("\n");
-        content.append("Email hỗ trợ: ").append(SUPPORT_EMAIL).append("\n\n");
-        content.append("Trân trọng,\nDigital Rental");
-    }
-
     private String paymentMethodText(Order order) {
         if (order.getPaymentMethod() == null) {
             return "Chưa cập nhật";
@@ -627,10 +476,6 @@ public class MailService {
                 : "Yêu cầu hỗ trợ";
     }
 
-    private boolean useHtmlMailTemplates() {
-        return true;
-    }
-
     private String buildStandardHtml(String title, String intro, String body) {
         return "<!doctype html>"
                 + "<html><body style=\"margin:0;padding:0;background:#f6f6f7;font-family:Arial,Helvetica,sans-serif;color:#18181b;\">"
@@ -658,31 +503,57 @@ public class MailService {
                 + "</body></html>";
     }
 
-    private void sendHtmlEmail(String to, String subject, String html) {
-        sendHtmlEmail(to, subject, html, List.of());
+    private void sendHtmlEmail(
+            String to,
+            String subject,
+            String html,
+            MailCategory category
+    ) {
+        sendHtmlEmail(to, subject, html, List.of(), category);
     }
 
-    private void sendHtmlEmail(String to, String subject, String html, List<InlineImage> inlineImages) {
+    private void sendHtmlEmail(
+            String to,
+            String subject,
+            String html,
+            List<InlineImage> inlineImages,
+            MailCategory category
+    ) {
         List<Path> tempFiles = new ArrayList<>();
+        List<MailAttachment> attachments = new ArrayList<>();
         try {
-            var message = mailSender.createMimeMessage();
-            var helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(html, true);
             for (InlineImage image : inlineImages) {
                 try {
-                    Path tempFile = storageService.downloadToTempFile(image.objectKey(), fileSuffix(image.contentType()));
+                    String suffix = fileSuffix(image.contentType());
+                    Path tempFile = storageService.downloadToTempFile(image.objectKey(), suffix);
                     tempFiles.add(tempFile);
-                    helper.addInline(image.cid(), new FileSystemResource(tempFile.toFile()), image.contentType());
+                    attachments.add(new MailAttachment(
+                            image.cid() + suffix,
+                            image.contentType(),
+                            image.cid(),
+                            tempFile
+                    ));
                 } catch (Exception imageException) {
-                    log.warn("Failed to attach inline email image {}", image.objectKey(), imageException);
+                    log.warn(
+                            "Failed to prepare inline image for {} email ({})",
+                            category,
+                            imageException.getClass().getSimpleName()
+                    );
                 }
             }
-            mailSender.send(message);
-        } catch (Exception e) {
-            log.warn("Failed to send HTML email to {}", to, e);
+
+            mailGateway.send(new MailMessage(
+                    fromEmail,
+                    to,
+                    subject,
+                    html,
+                    null,
+                    attachments,
+                    category,
+                    null
+            ));
+        } catch (Exception exception) {
+            logDeliveryFailure(category, exception);
         } finally {
             for (Path tempFile : tempFiles) {
                 try {
@@ -691,8 +562,24 @@ public class MailService {
                     log.debug("Cannot delete temporary email image {}", tempFile, cleanupException);
                 }
             }
-            inlineImagesContext.get().clear();
         }
+    }
+
+    private void logDeliveryFailure(MailCategory category, Exception exception) {
+        if (exception instanceof MailDeliveryException deliveryException) {
+            log.warn(
+                    "Failed to send {} email via {} (transient={})",
+                    category,
+                    deliveryException.getProvider(),
+                    deliveryException.isTransientFailure()
+            );
+            return;
+        }
+        log.warn(
+                "Failed to send {} email ({})",
+                category,
+                exception.getClass().getSimpleName()
+        );
     }
 
     private String productImageSrc(Product product, List<InlineImage> inlineImages) {

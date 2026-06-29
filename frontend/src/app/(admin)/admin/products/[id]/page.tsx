@@ -494,7 +494,7 @@ export default function ProductDetailPage({
                 Mô tả sản phẩm
               </h3>
             </div>
-            <p className="mt-4 text-sm text-zinc-600 leading-6">
+            <p className="mt-4 whitespace-pre-line text-sm text-zinc-600 leading-6">
               {product.description ||
                 "Chưa có mô tả chi tiết cho sản phẩm này."}
             </p>

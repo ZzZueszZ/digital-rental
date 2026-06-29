@@ -569,7 +569,7 @@ export default function ProductDetailPage() {
                 <h1 className="mb-3 text-3xl font-semibold leading-tight tracking-tight text-zinc-950 md:text-4xl">
                   {product.name}
                 </h1>
-                <p className="mb-5 text-sm font-normal leading-6 text-zinc-500">
+                <p className="mb-5 whitespace-pre-line text-sm font-normal leading-6 text-zinc-500">
                   {product.description}
                 </p>
 

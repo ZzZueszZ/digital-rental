@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   useMyAddresses,
   useCreateAddress,
@@ -226,14 +226,6 @@ function AddressDialog({
     formData.district,
     formData.province,
   ]);
-
-  useEffect(() => {
-    setFormData((prev) =>
-      prev.fullAddress === computedFullAddress
-        ? prev
-        : { ...prev, fullAddress: computedFullAddress },
-    );
-  }, [computedFullAddress]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -343,8 +343,14 @@ export default function ProductDetailPage() {
         );
 
         if (productRes.data?.success) {
-          setProduct(productRes.data.data);
-          setMainImageUrl(productRes.data.data.mainImageUrl);
+          const productData = productRes.data.data;
+          const initialImage =
+            productData.mainImageUrl ||
+            productData.gallery?.find((img) => img.url?.trim())?.url ||
+            null;
+
+          setProduct(productData);
+          setMainImageUrl(initialImage);
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -356,6 +362,18 @@ export default function ProductDetailPage() {
     fetchData();
   }, [id]);
   const getImageUrlLocal = (url: string | null) => getImageUrl(url);
+
+  const productImages = product
+    ? [product.mainImageUrl, ...(product.gallery?.map((img) => img.url) ?? [])]
+        .map((url) => ({
+          raw: url?.trim() || "",
+          src: getImageUrlLocal(url),
+        }))
+        .filter((img) => img.raw && img.src)
+    : [];
+  const activeProductImage =
+    getImageUrlLocal(mainImageUrl) || productImages[0]?.src || "";
+  const activeProductImageRaw = mainImageUrl || productImages[0]?.raw || "";
 
   const handleReportReview = async (reviewId: number) => {
     if (!accessToken) {
@@ -472,9 +490,9 @@ export default function ProductDetailPage() {
             <div className="space-y-5 lg:col-span-7">
               <div className="group relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-zinc-200 bg-white">
                 {/* Main Image */}
-                {mainImageUrl ? (
+                {activeProductImage ? (
                   <Image
-                    src={getImageUrlLocal(mainImageUrl)}
+                    src={activeProductImage}
                     alt={product.name}
                     fill
                     unoptimized
@@ -488,39 +506,21 @@ export default function ProductDetailPage() {
 
               {/* Sub-gallery Cards */}
               <div className="grid grid-cols-5 gap-3 sm:grid-cols-6 md:grid-cols-7">
-                {/* Main Image as first thumbnail */}
-                <button
-                  onClick={() => setMainImageUrl(product.mainImageUrl)}
-                  className={cn(
-                    "aspect-square overflow-hidden rounded-xl border bg-white p-2 transition-colors",
-                    mainImageUrl === product.mainImageUrl
-                      ? "border-zinc-400 bg-zinc-50"
-                      : "border-zinc-200 hover:border-zinc-300",
-                  )}
-                >
-                  <img
-                    src={getImageUrlLocal(product.mainImageUrl)}
-                    className="w-full h-full object-contain"
-                    alt="thumb-main"
-                  />
-                </button>
-
-                {/* Gallery Images */}
-                {product.gallery?.map((img) => (
+                {productImages.map((img, idx) => (
                   <button
-                    key={img.id}
-                    onClick={() => setMainImageUrl(img.url)}
+                    key={`${img.raw}-${idx}`}
+                    onClick={() => setMainImageUrl(img.raw)}
                     className={cn(
                       "aspect-square overflow-hidden rounded-xl border bg-white p-2 transition-colors",
-                      mainImageUrl === img.url
+                      activeProductImageRaw === img.raw
                         ? "border-zinc-400 bg-zinc-50"
                         : "border-zinc-200 hover:border-zinc-300",
                     )}
                   >
                     <img
-                      src={getImageUrlLocal(img.url)}
+                      src={img.src}
                       className="w-full h-full object-contain"
-                      alt={`thumb-${img.id}`}
+                      alt={`${product.name} ${idx + 1}`}
                     />
                   </button>
                 ))}
@@ -569,7 +569,7 @@ export default function ProductDetailPage() {
                 <h1 className="mb-3 text-3xl font-semibold leading-tight tracking-tight text-zinc-950 md:text-4xl">
                   {product.name}
                 </h1>
-                <p className="mb-5 text-sm font-normal leading-6 text-zinc-500">
+                <p className="mb-5 whitespace-pre-line text-sm font-normal leading-6 text-zinc-500">
                   {product.description}
                 </p>
 

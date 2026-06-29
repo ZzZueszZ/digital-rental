@@ -379,8 +379,10 @@ export default function ProductDetailPage({
   const images = [
     product.mainImageUrl,
     ...(product.gallery?.map((g) => g.url) || []),
-  ];
-  const currentImage = activeImage || product.mainImageUrl;
+  ]
+    .map((url) => url?.trim() || "")
+    .filter(Boolean);
+  const currentImage = activeImage || images[0] || null;
   const currentImageSrc = getImageUrl(currentImage) || "/product-placeholder.svg";
   const isDeleted = !!product.deletedAt;
 
@@ -509,7 +511,7 @@ export default function ProductDetailPage({
                 Mô tả sản phẩm
               </h3>
             </div>
-            <p className="mt-4 text-sm text-zinc-600 leading-6">
+            <p className="mt-4 whitespace-pre-line text-sm text-zinc-600 leading-6">
               {product.description ||
                 "Chưa có mô tả chi tiết cho sản phẩm này."}
             </p>

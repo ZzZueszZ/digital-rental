@@ -20,9 +20,15 @@ public class ProductMapper {
 
     public static ProductResponse toResponse(Product product, Function<FileAsset, String> assetUrl) {
         if (product == null) return null;
-        String mainImageUrl = null;
-        if (product.getMainImageAsset() != null) {
-            mainImageUrl = assetUrl.apply(product.getMainImageAsset());
+        String mainImageUrl = resolveMainImageUrl(product, assetUrl);
+
+        List<GalleryImageResponse> gallery = toGalleryResponses(product.getGallery(), assetUrl);
+        if (mainImageUrl == null && !gallery.isEmpty()) {
+            mainImageUrl = gallery.stream()
+                    .map(GalleryImageResponse::getUrl)
+                    .filter(url -> normalizeUrl(url) != null)
+                    .findFirst()
+                    .orElse(null);
         }
 
         return ProductResponse.builder()
@@ -33,7 +39,7 @@ public class ProductMapper {
                 .salePrice(product.getSalePrice())
                 .isForRent(product.isForRent())
                 .isForSale(product.isForSale())
-                .mainImageUrl(mainImageUrl != null ? mainImageUrl : product.getMainImageUrl())
+                .mainImageUrl(mainImageUrl)
                 .brand(product.getBrand())
                 .quantity(product.getQuantity())
                 .rentalQuantity(product.getRentalQuantity())
@@ -41,10 +47,32 @@ public class ProductMapper {
                 .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
                 .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)
                 .specifications(toSpecResponses(product.getSpecifications()))
-                .gallery(toGalleryResponses(product.getGallery(), assetUrl))
+                .gallery(gallery)
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();
+    }
+
+    private static String resolveMainImageUrl(Product product, Function<FileAsset, String> assetUrl) {
+        String mainImageUrl = null;
+        if (product.getMainImageAsset() != null) {
+            mainImageUrl = normalizeUrl(assetUrl.apply(product.getMainImageAsset()));
+        }
+
+        return mainImageUrl != null ? mainImageUrl : normalizeUrl(product.getMainImageUrl());
+    }
+
+    private static String resolveGalleryImageUrl(ProductImage image, Function<FileAsset, String> assetUrl) {
+        String imageUrl = null;
+        if (image.getAsset() != null) {
+            imageUrl = normalizeUrl(assetUrl.apply(image.getAsset()));
+        }
+
+        return imageUrl != null ? imageUrl : normalizeUrl(image.getImageUrl());
+    }
+
+    private static String normalizeUrl(String url) {
+        return url == null || url.isBlank() ? null : url;
     }
 
     public static List<ProductResponse> toResponses(List<Product> products) {
@@ -73,13 +101,9 @@ public class ProductMapper {
     public static GalleryImageResponse toGalleryResponse(ProductImage image, Function<FileAsset, String> assetUrl) {
 
         if (image == null) return null;
-        String imageUrl = null;
-        if (image.getAsset() != null) {
-            imageUrl = assetUrl.apply(image.getAsset());
-        }
         return GalleryImageResponse.builder()
                 .id(image.getId())
-                .url(imageUrl != null ? imageUrl : image.getImageUrl())
+                .url(resolveGalleryImageUrl(image, assetUrl))
                 .build();
     }
 

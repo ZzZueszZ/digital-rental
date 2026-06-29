@@ -73,11 +73,11 @@ const MAX_LIVENESS_DURATION_SECONDS = 7;
 
 function getSupportedLivenessMimeType() {
   if (typeof MediaRecorder === "undefined") return "";
-  return [
-    "video/webm;codecs=vp8,opus",
-    "video/webm",
-    "video/mp4",
-  ].find((type) => MediaRecorder.isTypeSupported(type)) || "";
+  return (
+    ["video/webm;codecs=vp8,opus", "video/webm", "video/mp4"].find((type) =>
+      MediaRecorder.isTypeSupported(type),
+    ) || ""
+  );
 }
 
 function fileExtensionFromMimeType(mimeType: string) {
@@ -157,10 +157,16 @@ export default function EkycPage() {
   const [backImage, setBackImage] = useState<string | null>(null);
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [livenessVideo, setLivenessVideo] = useState<string | null>(null);
-  const [frontImageAssetId, setFrontImageAssetId] = useState<string | null>(null);
+  const [frontImageAssetId, setFrontImageAssetId] = useState<string | null>(
+    null,
+  );
   const [backImageAssetId, setBackImageAssetId] = useState<string | null>(null);
-  const [selfieImageAssetId, setSelfieImageAssetId] = useState<string | null>(null);
-  const [livenessVideoAssetId, setLivenessVideoAssetId] = useState<string | null>(null);
+  const [selfieImageAssetId, setSelfieImageAssetId] = useState<string | null>(
+    null,
+  );
+  const [livenessVideoAssetId, setLivenessVideoAssetId] = useState<
+    string | null
+  >(null);
   const [livenessStepIndex, setLivenessStepIndex] = useState(0);
   const [completedLivenessSteps, setCompletedLivenessSteps] = useState<
     boolean[]
@@ -286,17 +292,23 @@ export default function EkycPage() {
       const file = base64ToFile(dataUrl, `${target}.jpg`);
       let uploadedAssetId = "";
       if (target === "front") {
-        uploadedAssetId = (await identityService.uploadKycAsset(file, "KYC_ID_FRONT")).id;
+        uploadedAssetId = (
+          await identityService.uploadKycAsset(file, "KYC_ID_FRONT")
+        ).id;
         setFrontImage(dataUrl);
         setFrontImageAssetId(uploadedAssetId);
         setOcrPreview(null);
       } else if (target === "back") {
-        uploadedAssetId = (await identityService.uploadKycAsset(file, "KYC_ID_BACK")).id;
+        uploadedAssetId = (
+          await identityService.uploadKycAsset(file, "KYC_ID_BACK")
+        ).id;
         setBackImage(dataUrl);
         setBackImageAssetId(uploadedAssetId);
         setOcrPreview(null);
       } else {
-        uploadedAssetId = (await identityService.uploadKycAsset(file, "KYC_SELFIE")).id;
+        uploadedAssetId = (
+          await identityService.uploadKycAsset(file, "KYC_SELFIE")
+        ).id;
         setSelfieImage(dataUrl);
         setSelfieImageAssetId(uploadedAssetId);
       }
@@ -320,12 +332,16 @@ export default function EkycPage() {
       setUploadingImage(true);
       let uploadedAssetId = "";
       if (target === "front") {
-        uploadedAssetId = (await identityService.uploadKycAsset(file, "KYC_ID_FRONT")).id;
+        uploadedAssetId = (
+          await identityService.uploadKycAsset(file, "KYC_ID_FRONT")
+        ).id;
         setFrontImage(URL.createObjectURL(file));
         setFrontImageAssetId(uploadedAssetId);
         setOcrPreview(null);
       } else {
-        uploadedAssetId = (await identityService.uploadKycAsset(file, "KYC_ID_BACK")).id;
+        uploadedAssetId = (
+          await identityService.uploadKycAsset(file, "KYC_ID_BACK")
+        ).id;
         setBackImage(URL.createObjectURL(file));
         setBackImageAssetId(uploadedAssetId);
         setOcrPreview(null);
@@ -460,7 +476,10 @@ export default function EkycPage() {
           );
           return;
         }
-        const asset = await identityService.uploadKycAsset(file, "KYC_LIVENESS_VIDEO");
+        const asset = await identityService.uploadKycAsset(
+          file,
+          "KYC_LIVENESS_VIDEO",
+        );
         setLivenessVideo(URL.createObjectURL(file));
         setLivenessVideoAssetId(asset.id);
         toast.success("Video xác thực khuôn mặt đã sẵn sàng");
@@ -1469,9 +1488,7 @@ export default function EkycPage() {
                     const CurrentIcon = currentPrompt.icon;
                     const progress = Math.min(
                       100,
-                      Math.round(
-                        (livenessElapsedMs / LIVENESS_TOTAL_MS) * 100,
-                      ),
+                      Math.round((livenessElapsedMs / LIVENESS_TOTAL_MS) * 100),
                     );
                     return (
                       <div className="space-y-3">
@@ -1509,7 +1526,8 @@ export default function EkycPage() {
                       disabled
                       className="h-10 px-5 rounded-xl bg-red-600 text-white font-semibold text-[14px] shadow-lg shadow-red-100 hover:bg-zinc-950 transition-all active:scale-95"
                     >
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang ghi tự động
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang ghi
+                      tự động
                     </Button>
                   ) : (
                     <Button
@@ -1811,9 +1829,14 @@ export default function EkycPage() {
 
 function getImageUrl(url: string | null | undefined) {
   if (!url) return "";
-  if (url.startsWith("http") || url.startsWith("blob:") || url.startsWith("data:")) return url;
+  if (
+    url.startsWith("http") ||
+    url.startsWith("blob:") ||
+    url.startsWith("data:")
+  )
+    return url;
   const apiBaseUrl =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://api.lenshub.shop/api";
   const baseUrl = apiBaseUrl.replace(/\/api$/, "");
   const cleanUrl = url.startsWith("/") ? url : `/${url}`;
   return `${baseUrl}${cleanUrl}`;

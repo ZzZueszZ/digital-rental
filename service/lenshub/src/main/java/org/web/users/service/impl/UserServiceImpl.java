@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     private final org.web.users.repository.UserProfileRepository userProfileRepository;
     private final org.web.common.service.AuditLogService auditLogService;
 
-    @Value("${app.activation.base-url:http://localhost:8080/api/auth/activate}")
+    @Value("${app.activation.base-url:https://api.lenshub.shop/api/auth/activate}")
     private String activationBaseUrl;
 
     @Override

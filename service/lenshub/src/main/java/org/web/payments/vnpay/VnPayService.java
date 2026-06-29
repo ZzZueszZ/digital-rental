@@ -215,7 +215,7 @@ public class VnPayService {
         params.put("vnp_OrderInfo", "Thanh toan don thue " + order.getCode());
         params.put("vnp_IpAddr", request.getRemoteAddr());
         // Use a different return URL for rentals to differentiate
-        params.put("vnp_ReturnUrl", "http://localhost:8080/api/payments/vnpay/rental-fee/return");
+        params.put("vnp_ReturnUrl", "https://api.lenshub.shop/api/payments/vnpay/rental-fee/return");
 
         String hashData = VnPayUtil.generateQuery(params, false);
         String secureHash = VnPayUtil.hmacSHA512(config.getHashSecret(), hashData);

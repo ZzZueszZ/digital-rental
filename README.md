@@ -1,6 +1,7 @@
 # LensHub CMS
 
 ## Documentation Maintenance
+
 **Last Updated:** 2026-06-28
 **Document Version:** 1.2
 **Maintained By:** Development Team
@@ -45,7 +46,7 @@ pnpm lint
 pnpm build
 ```
 
-Default backend URL is `http://localhost:8080/api`. Frontend API URL is controlled by `NEXT_PUBLIC_API_URL`.
+Default backend URL is `https://api.lenshub.shop/api`. Frontend API URL is controlled by `NEXT_PUBLIC_API_URL`.
 
 ## Documentation
 

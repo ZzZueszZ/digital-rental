@@ -45,7 +45,7 @@ export const STATUS_CONFIG: Record<
   },
 };
 
-export const BASE_AVATAR_URL = "http://localhost:8080";
+export const BASE_AVATAR_URL = "https://api.lenshub.shop";
 
 export function getFullAvatarUrl(url: string | null): string {
   if (!url) return "";

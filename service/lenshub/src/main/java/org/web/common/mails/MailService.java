@@ -43,7 +43,7 @@ public class MailService {
     @Value("${app.mail.from:no-reply@zyna.dev}")
     private String fromEmail;
 
-    @Value("${app.public-base-url:http://localhost:8080}")
+    @Value("${app.public-base-url:https://api.lenshub.shop}")
     private String publicBaseUrl;
 
     @Value("${app.mail.admin:adminlenshub@gmail.com}")

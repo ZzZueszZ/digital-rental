@@ -93,11 +93,9 @@ export default function KycManagement() {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return sessions;
     return sessions.filter((session) =>
-      [
-        session.fullName,
-        session.identityNumber,
-        session.userEmail,
-      ].some((value) => value?.toLowerCase().includes(q)),
+      [session.fullName, session.identityNumber, session.userEmail].some(
+        (value) => value?.toLowerCase().includes(q),
+      ),
     );
   }, [searchQuery, sessions]);
 
@@ -356,8 +354,12 @@ export default function KycManagement() {
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <MiniTag>CCCD: {session.identityNumber || "---"}</MiniTag>
-                    <MiniTag>AI: {formatRatioPercent(session.faceMatchScore)}</MiniTag>
-                    <MiniTag>OCR: {formatRatioPercent(session.ocrConfidence)}</MiniTag>
+                    <MiniTag>
+                      AI: {formatRatioPercent(session.faceMatchScore)}
+                    </MiniTag>
+                    <MiniTag>
+                      OCR: {formatRatioPercent(session.ocrConfidence)}
+                    </MiniTag>
                   </div>
                   <p className="mt-3 text-xs font-medium text-zinc-400">
                     Gửi lúc: {formatDateTime(session.submittedAt)}
@@ -427,7 +429,7 @@ export default function KycManagement() {
                     label="Face match"
                     value={formatRatioPercent(selectedSession.faceMatchScore)}
                     status={
-                      selectedSession.faceMatchPassed ?? false
+                      (selectedSession.faceMatchPassed ?? false)
                         ? "Đạt"
                         : "Cần kiểm tra"
                     }
@@ -436,7 +438,7 @@ export default function KycManagement() {
                     label="Liveness"
                     value={formatRatioPercent(selectedSession.livenessScore)}
                     status={
-                      selectedSession.livenessPassed ?? false
+                      (selectedSession.livenessPassed ?? false)
                         ? "Đạt"
                         : "Cần kiểm tra"
                     }
@@ -746,7 +748,10 @@ function RiskBadge({
   return (
     <Badge
       variant="outline"
-      className={cn("rounded-full px-2.5 py-1 text-xs font-medium", meta.className)}
+      className={cn(
+        "rounded-full px-2.5 py-1 text-xs font-medium",
+        meta.className,
+      )}
     >
       {meta.label} · {formatRiskScore(session.riskScore)}
     </Badge>
@@ -765,7 +770,7 @@ function getImageUrl(url: string | null | undefined) {
   if (!url) return "";
   if (url.startsWith("http")) return url;
   const apiBaseUrl =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://api.lenshub.shop/api";
   const baseUrl = apiBaseUrl.replace(/\/api$/, "");
   const cleanUrl = url.startsWith("/") ? url : `/${url}`;
   return `${baseUrl}${cleanUrl}`;

@@ -90,15 +90,12 @@ export function ProductListSection() {
     // Assuming relative path from backend (e.g., /api/uploads/...)
     const baseUrl =
       process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") ||
-      "http://localhost:8080";
+      "https://api.lenshub.shop";
     return `${baseUrl}${url}`;
   };
 
   return (
-    <section
-      id="product-section"
-      className="relative bg-white py-16 md:py-20"
-    >
+    <section id="product-section" className="relative bg-white py-16 md:py-20">
       <div className="container mx-auto max-w-[1320px] px-4 md:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
@@ -263,10 +260,7 @@ export function ProductListSection() {
                 );
               } else if (i === currentPage - 2 || i === currentPage + 2) {
                 return (
-                  <span
-                    key={i}
-                    className="select-none px-1 text-zinc-300"
-                  >
+                  <span key={i} className="select-none px-1 text-zinc-300">
                     ...
                   </span>
                 );

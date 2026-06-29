@@ -18,7 +18,7 @@ import { getAccessToken, setAccessToken, useAuthStore } from "@/store/auth";
 import { useLoadingStore } from "@/store/loading";
 
 export const apiBaseUrl =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+  process.env.NEXT_PUBLIC_API_URL || "https://api.lenshub.shop/api";
 
 export const http = axios.create({
   baseURL: apiBaseUrl,

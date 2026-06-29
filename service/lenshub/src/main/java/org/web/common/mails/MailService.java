@@ -45,7 +45,7 @@ public class MailService {
             MailGateway mailGateway,
             StorageService storageService,
             MailProperties mailProperties,
-            @Value("${app.public-base-url:http://localhost:8080}") String publicBaseUrl
+            @Value("${app.public-base-url:https://api.lenshub.shop}") String publicBaseUrl
     ) {
         this.mailGateway = mailGateway;
         this.storageService = storageService;

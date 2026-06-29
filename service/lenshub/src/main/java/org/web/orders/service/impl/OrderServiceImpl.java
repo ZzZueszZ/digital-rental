@@ -460,6 +460,12 @@ public class OrderServiceImpl implements OrderService {
             order = orderRepository.save(order);
         }
         auditLogService.logAction("ORDER", order.getId(), "UPDATE_STATUS", "Order status changed to " + newStatus, null, null);
+
+        if (newStatus == OrderStatus.CONFIRMED) {
+            mailService.sendOrderConfirmedEmail(order);
+        } else if (newStatus == OrderStatus.CANCELED) {
+            mailService.sendOrderCanceledEmail(order);
+        }
         
         return orderMapper.toOrderResponse(order);
     }

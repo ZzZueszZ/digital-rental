@@ -165,6 +165,36 @@ public class MailService {
         );
     }
 
+    public void sendOrderConfirmedEmail(Order order) {
+        if (order == null || order.getUser() == null || order.getUser().getEmail() == null) {
+            return;
+        }
+
+        List<InlineImage> inlineImages = new ArrayList<>();
+        sendHtmlEmail(
+                order.getUser().getEmail(),
+                "Digital Rental - Đơn hàng đã được xác nhận #" + order.getCode(),
+                buildOrderConfirmedHtml(order, inlineImages),
+                inlineImages,
+                MailCategory.ORDER
+        );
+    }
+
+    public void sendOrderCanceledEmail(Order order) {
+        if (order == null || order.getUser() == null || order.getUser().getEmail() == null) {
+            return;
+        }
+
+        List<InlineImage> inlineImages = new ArrayList<>();
+        sendHtmlEmail(
+                order.getUser().getEmail(),
+                "Digital Rental - Đơn hàng đã bị hủy #" + order.getCode(),
+                buildOrderCanceledHtml(order, inlineImages),
+                inlineImages,
+                MailCategory.ORDER
+        );
+    }
+
     public void sendRentalPaymentSuccessEmail(RentalOrder order) {
         if (order == null || order.getUser() == null || order.getUser().getEmail() == null) {
             return;
@@ -358,6 +388,32 @@ public class MailService {
                 "Digital Rental đã tiếp nhận đơn hàng của bạn. Vui lòng kiểm tra lại thông tin bên dưới để bảo đảm đơn hàng được xử lý chính xác.",
                 paymentStatusText(order),
                 "Digital Rental sẽ kiểm tra đơn hàng và xác nhận đơn hàng trước khi giao.",
+                inlineImages
+        );
+    }
+
+    private String buildOrderConfirmedHtml(Order order, List<InlineImage> inlineImages) {
+        return buildOrderHtml(
+                order,
+                "Đơn hàng đã được xác nhận",
+                "Digital Rental đã xác nhận đơn hàng của bạn. Đơn hàng sẽ được kiểm tra, đóng gói và chuyển sang bước giao hàng trong thời gian sớm nhất.",
+                paymentStatusText(order),
+                "Bạn có thể theo dõi trạng thái đơn hàng trong mục Đơn hàng. Nếu thông tin giao nhận cần thay đổi, vui lòng liên hệ Digital Rental sớm nhất.",
+                inlineImages
+        );
+    }
+
+    private String buildOrderCanceledHtml(Order order, List<InlineImage> inlineImages) {
+        String cancelReason = defaultText(order.getCancelReason(), "Không có lý do cụ thể");
+        String refundNote = Boolean.TRUE.equals(order.getRefundRequired())
+                ? " Đơn hàng đã thanh toán online sẽ được chuyển sang chờ xử lý hoàn tiền thủ công."
+                : "";
+        return buildOrderHtml(
+                order,
+                "Đơn hàng đã bị hủy",
+                "Digital Rental đã ghi nhận hủy đơn hàng của bạn. Lý do: " + cancelReason + "." + refundNote,
+                paymentStatusText(order),
+                "Nếu cần hỗ trợ thêm về đơn hàng hoặc hoàn tiền, vui lòng liên hệ Digital Rental qua hotline hỗ trợ.",
                 inlineImages
         );
     }

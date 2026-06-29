@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   useMyAddresses,
   useCreateAddress,
@@ -206,14 +206,45 @@ function AddressDialog({
     };
   });
 
+  const computedFullAddress = useMemo(() => {
+    const provinceLabel = formData.province
+      ? CITY_LABELS[formData.province as City] || String(formData.province)
+      : "";
+
+    return [
+      formData.detailAddress,
+      formData.ward,
+      formData.district,
+      provinceLabel,
+    ]
+      .map((part) => String(part || "").trim())
+      .filter(Boolean)
+      .join(", ");
+  }, [
+    formData.detailAddress,
+    formData.ward,
+    formData.district,
+    formData.province,
+  ]);
+
+  useEffect(() => {
+    setFormData((prev) =>
+      prev.fullAddress === computedFullAddress
+        ? prev
+        : { ...prev, fullAddress: computedFullAddress },
+    );
+  }, [computedFullAddress]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = { ...formData, fullAddress: computedFullAddress };
+
     try {
       if (address) {
-        await updateAddress({ id: address.id, data: formData });
+        await updateAddress({ id: address.id, data: payload });
         toast.success("Cập nhật địa chỉ thành công");
       } else {
-        await createAddress(formData);
+        await createAddress(payload);
         toast.success("Thêm địa chỉ mới thành công");
       }
       onClose();
@@ -352,11 +383,9 @@ function AddressDialog({
             Địa chỉ đầy đủ (Tự động cập nhật)
           </label>
           <Input
-            value={formData.fullAddress}
-            onChange={(e) =>
-              setFormData({ ...formData, fullAddress: e.target.value })
-            }
-            className="h-10 bg-white border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:border-red-600/30 transition-all duration-200 shadow-dash-card outline-none"
+            value={computedFullAddress}
+            readOnly
+            className="h-10 bg-zinc-50 border border-black/5 rounded-xl px-4 font-semibold text-[14px] text-zinc-900 placeholder:text-zinc-400 transition-all duration-200 shadow-dash-card outline-none"
             placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
           />
         </div>

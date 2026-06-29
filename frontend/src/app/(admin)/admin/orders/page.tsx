@@ -63,12 +63,12 @@ export default function OrdersAdminPage() {
     try {
       await updateStatusMutation.mutateAsync({ id, status });
       setPendingStatusChange(null);
-      toast.success("C?p nh?t tr?ng th?i ??n h?ng th?nh c?ng");
+      toast.success("Cập nhật trạng thái đơn hàng thành công");
     } catch (error: unknown) {
       const message =
         error instanceof Error
           ? error.message
-          : "Kh?ng th? c?p nh?t tr?ng th?i";
+          : "Không thể cập nhật trạng thái";
       toast.error(message);
     }
   };
@@ -84,15 +84,15 @@ export default function OrdersAdminPage() {
   const getStatusLabel = (status: OrderStatus) => {
     switch (status) {
       case OrderStatus.CONFIRMED:
-        return "?? x?c nh?n";
+        return "Đã xác nhận";
       case OrderStatus.SHIPPING:
-        return "?ang giao";
+        return "Đang giao";
       case OrderStatus.DELIVERED:
-        return "?? giao";
+        return "Đã giao";
       case OrderStatus.COMPLETED:
-        return "Ho?n th?nh";
+        return "Hoàn thành";
       case OrderStatus.CANCELED:
-        return "?? h?y";
+        return "Đã hủy";
       default:
         return status;
     }

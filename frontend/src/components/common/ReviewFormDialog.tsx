@@ -279,7 +279,7 @@ export function ReviewFormDialog({
             type="button"
             variant="ghost"
             onClick={handleClose}
-            className="flex-1 h-12 rounded-xl text-zinc-500 font-semibold hover:bg-zinc-50"
+            className="flex-1 h-12 rounded-xl border border-zinc-200 bg-white text-zinc-700 font-semibold shadow-sm hover:bg-zinc-100 hover:text-zinc-950"
           >
             Hủy bỏ
           </Button>

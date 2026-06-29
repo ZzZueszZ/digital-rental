@@ -212,12 +212,7 @@ export function Navbar() {
                   <User className="h-4 w-4" />
                 </Link>
               ) : !isLoading ? (
-                <Link
-                  href={Routers.LOGIN}
-                  className="flex h-9 items-center rounded-xl bg-zinc-950 px-3 text-xs font-medium text-white"
-                >
-                  Đăng nhập
-                </Link>
+                null
               ) : null}
             </div>
 

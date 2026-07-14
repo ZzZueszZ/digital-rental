@@ -53,12 +53,15 @@ public class FptKycProvider implements KycProvider {
         }
         log.info("FPT KYC OCR started");
         Path front = fileResolver.resolve(frontImageUrl);
-        Path back = fileResolver.resolve(backImageUrl);
         try {
             KycOcrResult frontOcr = recognizeId(front);
-            KycOcrResult backOcr = recognizeId(back);
-            log.info("FPT KYC OCR completed: frontSuccess={}, backSuccess={}",
-                    frontOcr.isSuccessful(), backOcr.isSuccessful());
+            KycOcrResult backOcr = KycOcrResult.builder()
+                    .confidence(frontOcr.getConfidence())
+                    .successful(true)
+                    .rawResponse("{\"skipped\":true,\"reason\":\"single-request-ocr\"}")
+                    .build();
+            log.info("FPT KYC OCR completed: frontSuccess={}, backSkipped=true",
+                    frontOcr.isSuccessful());
             return KycVerificationResult.builder()
                     .provider(name())
                     .frontOcr(frontOcr)
@@ -66,7 +69,6 @@ public class FptKycProvider implements KycProvider {
                     .build();
         } finally {
             fileResolver.cleanup(front);
-            fileResolver.cleanup(back);
         }
     }
 

@@ -20,11 +20,13 @@ import org.web.identity.service.provider.KycOcrResult;
 import org.web.identity.service.provider.KycProvider;
 import org.web.identity.service.provider.KycVerificationResult;
 import org.web.users.model.User;
+import org.web.users.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -38,10 +40,19 @@ public class KycOcrPreviewService {
     private final VerificationSessionRepository verificationSessionRepository;
     private final VerificationArtifactRepository artifactRepository;
     private final VerificationResultRepository verificationResultRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public KycOcrPreviewResponse preview(User user, OcrPreviewRequest request) {
-        VerificationSession session = findOrCreateDraftSession(user);
+        User lockedUser = userRepository.findByIdForUpdate(user.getId())
+                .orElseThrow(() -> new IllegalStateException("KYC user no longer exists"));
+        VerificationSession session = findOrCreateDraftSession(lockedUser);
+
+        KycOcrPreviewResponse cached = findCachedPreview(session, request);
+        if (cached != null) {
+            return cached;
+        }
+
         saveArtifact(session, VerificationArtifactType.CCCD_FRONT, request.getFrontImageUrl());
         saveArtifact(session, VerificationArtifactType.CCCD_BACK, request.getBackImageUrl());
 
@@ -75,6 +86,54 @@ public class KycOcrPreviewService {
         log.info("KYC OCR preview completed: userId={}, sessionId={}, confidence={}, warnings={}",
                 user.getId(), session.getId(), ocr.getConfidence(), warnings.size());
         return toResponse(session, request, ocr, warnings);
+    }
+
+    private KycOcrPreviewResponse findCachedPreview(
+            VerificationSession session,
+            OcrPreviewRequest request
+    ) {
+        boolean frontMatches = artifactRepository
+                .findByVerificationSessionIdAndArtifactType(session.getId(), VerificationArtifactType.CCCD_FRONT)
+                .map(artifact -> Objects.equals(artifact.getStorageKey(), request.getFrontImageUrl()))
+                .orElse(false);
+        boolean backMatches = artifactRepository
+                .findByVerificationSessionIdAndArtifactType(session.getId(), VerificationArtifactType.CCCD_BACK)
+                .map(artifact -> Objects.equals(artifact.getStorageKey(), request.getBackImageUrl()))
+                .orElse(false);
+        if (!frontMatches || !backMatches) {
+            return null;
+        }
+
+        VerificationResult result = verificationResultRepository
+                .findByVerificationSessionId(session.getId())
+                .filter(saved -> saved.getOcrConfidence() != null && saved.getRawOcrJson() != null)
+                .orElse(null);
+        if (result == null) {
+            return null;
+        }
+
+        KycOcrResult ocr = fromVerificationResult(result);
+        List<String> warnings = validate(ocr);
+        log.info("KYC OCR preview reused: sessionId={}, confidence={}, warnings={}",
+                session.getId(), ocr.getConfidence(), warnings.size());
+        return toResponse(session, request, ocr, warnings);
+    }
+
+    private KycOcrResult fromVerificationResult(VerificationResult result) {
+        return KycOcrResult.builder()
+                .identityNumber(result.getExtractedIdentityNumber())
+                .fullName(result.getExtractedFullName())
+                .dateOfBirth(result.getExtractedDateOfBirth())
+                .gender(result.getExtractedGender())
+                .nationality(result.getExtractedNationality())
+                .placeOfOrigin(result.getExtractedPlaceOfOrigin())
+                .placeOfResidence(result.getExtractedPlaceOfResidence())
+                .issuedDate(result.getExtractedIssuedDate())
+                .expiryDate(result.getExtractedExpiryDate())
+                .confidence(result.getOcrConfidence())
+                .successful(true)
+                .rawResponse(result.getRawOcrJson())
+                .build();
     }
 
     private VerificationSession findOrCreateDraftSession(User user) {

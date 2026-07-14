@@ -50,17 +50,17 @@ export function LivenessStep({
       </header>
 
       {asset && !cameraOpen ? (
-        <div className="mx-auto max-w-lg rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
+        <div className="mx-auto max-w-lg rounded-xl border border-emerald-200 bg-emerald-50 p-8 text-center">
           <Check className="mx-auto size-10 text-emerald-600" />
           <h3 className="mt-3 font-semibold text-zinc-950">Video đã sẵn sàng</h3>
           <p className="mt-1 text-sm text-zinc-600">Video sẽ được AI kiểm tra sau khi gửi hồ sơ.</p>
-          <Button variant="outline" onClick={onRetake} className="mt-5 bg-white">
+          <Button variant="outline" onClick={onRetake} className="mt-5 h-10 rounded-xl border-zinc-200 bg-white px-5 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950">
             Quay lại video
           </Button>
         </div>
       ) : cameraOpen ? (
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_310px]">
-          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50">
+          <div className="overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
             <div className="relative aspect-[4/3] overflow-hidden bg-zinc-900">
               <video ref={videoRef} autoPlay playsInline muted className="size-full -scale-x-100 object-cover" />
               <div className="pointer-events-none absolute inset-[12%] rounded-[46%] border-2 border-white/90" />
@@ -117,7 +117,7 @@ export function LivenessStep({
               variant="outline"
               onClick={recording ? onCancel : onStart}
               disabled={uploading}
-              className="mt-3 w-full"
+              className="mt-3 h-10 w-full rounded-xl border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950"
             >
               {uploading ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Video className="mr-2 size-4" />}
               {recording ? "Hủy quay" : uploading ? "Đang tải video" : "Bắt đầu ghi"}
@@ -125,17 +125,17 @@ export function LivenessStep({
           </aside>
         </div>
       ) : (
-        <div className="mx-auto max-w-lg rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-10 text-center">
+        <div className="mx-auto max-w-lg rounded-xl border border-dashed border-zinc-300 bg-zinc-50 p-10 text-center">
           <Video className="mx-auto size-12 text-zinc-300" />
           <p className="mt-4 text-sm font-medium text-zinc-900">Sẵn sàng xác thực khuôn mặt</p>
           <p className="mt-1 text-xs leading-5 text-zinc-500">Đảm bảo đủ sáng và không che khuôn mặt.</p>
-          <Button onClick={onOpenCamera} className="mt-5 bg-red-600 hover:bg-red-700">Mở camera</Button>
+          <Button onClick={onOpenCamera} className="mt-5 h-10 rounded-xl bg-zinc-950 px-5 text-white hover:bg-zinc-800 focus-visible:ring-zinc-400">Mở camera</Button>
         </div>
       )}
 
-      <div className="flex items-center justify-between border-t border-zinc-100 pt-5">
-        <Button variant="outline" onClick={onBack}>Quay lại</Button>
-        <Button onClick={onNext} disabled={!asset || uploading} className="bg-red-600 hover:bg-red-700">
+      <div className="flex flex-col gap-3 border-t border-zinc-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <Button variant="outline" onClick={onBack} className="h-10 w-full rounded-xl border-zinc-200 bg-white px-5 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 sm:w-auto">Quay lại</Button>
+        <Button onClick={onNext} disabled={!asset || uploading} className="h-10 w-full rounded-xl bg-zinc-950 px-5 text-white hover:bg-zinc-800 focus-visible:ring-zinc-400 sm:w-auto">
           Kiểm tra & gửi
         </Button>
       </div>

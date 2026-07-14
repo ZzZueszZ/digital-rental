@@ -40,7 +40,7 @@ export function SelfieStep({
       </header>
 
       <div className="mx-auto max-w-xl">
-        <div className="relative mx-auto flex aspect-square max-w-md items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50">
+        <div className="relative mx-auto flex aspect-square max-w-md items-center justify-center overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
           {cameraOpen ? (
             <>
               <video ref={videoRef} autoPlay playsInline className="size-full -scale-x-100 object-cover" />
@@ -68,14 +68,14 @@ export function SelfieStep({
           )}
         </div>
 
-        <div className="mt-4 flex justify-center gap-3">
+        <div className="mt-4 flex flex-col justify-center gap-3 sm:flex-row">
           {cameraOpen ? (
             <>
-              <Button onClick={onCapture} disabled={busy} className="bg-red-600 hover:bg-red-700">
+              <Button onClick={onCapture} disabled={busy} className="h-10 w-full rounded-xl bg-zinc-950 px-5 text-white hover:bg-zinc-800 focus-visible:ring-zinc-400 sm:w-auto">
                 {busy ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Camera className="mr-2 size-4" />}
                 Chụp ngay
               </Button>
-              <Button variant="outline" onClick={onCloseCamera}>Đóng camera</Button>
+              <Button variant="outline" onClick={onCloseCamera} className="h-10 w-full rounded-xl border-zinc-200 bg-white px-5 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 sm:w-auto">Đóng camera</Button>
             </>
           ) : (
             <Button
@@ -85,7 +85,11 @@ export function SelfieStep({
                 onOpenCamera();
               }}
               disabled={busy}
-              className={asset ? "" : "bg-red-600 hover:bg-red-700"}
+              className={
+                asset
+                  ? "h-10 w-full rounded-xl border-zinc-200 bg-white px-5 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 sm:w-auto"
+                  : "h-10 w-full rounded-xl bg-zinc-950 px-5 text-white hover:bg-zinc-800 focus-visible:ring-zinc-400 sm:w-auto"
+              }
             >
               {asset ? <RefreshCw className="mr-2 size-4" /> : <Camera className="mr-2 size-4" />}
               {asset ? "Chụp lại" : "Mở camera"}
@@ -94,9 +98,9 @@ export function SelfieStep({
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-t border-zinc-100 pt-5">
-        <Button variant="outline" onClick={onBack}>Quay lại</Button>
-        <Button onClick={onNext} disabled={!asset || busy} className="bg-red-600 hover:bg-red-700">
+      <div className="flex flex-col gap-3 border-t border-zinc-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <Button variant="outline" onClick={onBack} className="h-10 w-full rounded-xl border-zinc-200 bg-white px-5 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 sm:w-auto">Quay lại</Button>
+        <Button onClick={onNext} disabled={!asset || busy} className="h-10 w-full rounded-xl bg-zinc-950 px-5 text-white hover:bg-zinc-800 focus-visible:ring-zinc-400 sm:w-auto">
           Tiếp tục
         </Button>
       </div>

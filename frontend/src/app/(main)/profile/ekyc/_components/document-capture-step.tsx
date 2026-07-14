@@ -49,7 +49,7 @@ export function DocumentCaptureStep({
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_330px]">
         <div className="space-y-4">
-          <div className="relative flex aspect-[1.6/1] items-center justify-center overflow-hidden rounded-2xl border border-dashed border-zinc-300 bg-zinc-50">
+          <div className="relative flex aspect-[1.6/1] items-center justify-center overflow-hidden rounded-xl border border-dashed border-zinc-300 bg-zinc-50">
             {cameraOpen ? (
               <>
                 <video ref={videoRef} autoPlay playsInline className="size-full object-cover" />
@@ -86,13 +86,13 @@ export function DocumentCaptureStep({
           </div>
 
           {cameraOpen ? (
-            <div className="flex justify-center gap-3">
-              <Button onClick={onCapture} disabled={busy}>Chụp ảnh</Button>
-              <Button variant="outline" onClick={onCloseCamera}>Đóng camera</Button>
+            <div className="flex flex-col justify-center gap-3 sm:flex-row">
+              <Button onClick={onCapture} disabled={busy} className="h-10 w-full rounded-xl bg-zinc-950 px-5 text-white hover:bg-zinc-800 focus-visible:ring-zinc-400 sm:w-auto">Chụp ảnh</Button>
+              <Button variant="outline" onClick={onCloseCamera} className="h-10 w-full rounded-xl border-zinc-200 bg-white px-5 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 sm:w-auto">Đóng camera</Button>
             </div>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="inline-flex h-11 cursor-pointer items-center justify-center rounded-xl border border-zinc-300 bg-white px-4 text-sm font-medium hover:bg-zinc-50">
+              <label className="inline-flex h-11 cursor-pointer items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-950 focus-within:ring-3 focus-within:ring-zinc-300/50">
                 {busy ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Upload className="mr-2 size-4" />}
                 Chọn ảnh từ máy
                 <input
@@ -107,7 +107,7 @@ export function DocumentCaptureStep({
                   }}
                 />
               </label>
-              <Button variant="outline" onClick={onOpenCamera} disabled={busy} className="h-11 rounded-xl">
+              <Button variant="outline" onClick={onOpenCamera} disabled={busy} className="h-11 rounded-xl border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950">
                 <Camera className="mr-2 size-4" /> Mở camera
               </Button>
             </div>
@@ -116,9 +116,9 @@ export function DocumentCaptureStep({
         <PhotoGuidance />
       </div>
 
-      <div className="flex items-center justify-between border-t border-zinc-100 pt-5">
-        {onBack ? <Button variant="outline" onClick={onBack}>Quay lại</Button> : <span />}
-        <Button onClick={onNext} disabled={!asset || busy} className="bg-red-600 hover:bg-red-700">
+      <div className="flex flex-col gap-3 border-t border-zinc-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+        {onBack ? <Button variant="outline" onClick={onBack} className="h-10 w-full rounded-xl border-zinc-200 bg-white px-5 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 sm:w-auto">Quay lại</Button> : <span />}
+        <Button onClick={onNext} disabled={!asset || busy} className="h-10 w-full rounded-xl bg-zinc-950 px-5 text-white hover:bg-zinc-800 focus-visible:ring-zinc-400 sm:w-auto">
           {isFront ? "Tiếp tục" : "Trích xuất thông tin & tiếp tục"}
         </Button>
       </div>

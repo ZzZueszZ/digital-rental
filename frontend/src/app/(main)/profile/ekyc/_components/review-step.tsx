@@ -63,7 +63,7 @@ export function ReviewStep({ media, preview, submitting, onBack, onSubmit }: Pro
         </div>
       </div>
 
-      <div className="grid gap-3 rounded-2xl border border-zinc-200 p-4 sm:grid-cols-2">
+      <div className="grid gap-3 rounded-xl border border-zinc-100 bg-zinc-50/70 p-4 sm:grid-cols-2">
         <div className="flex gap-3">
           <LockKeyhole className="mt-0.5 size-5 shrink-0 text-red-600" />
           <div><p className="text-sm font-medium">Lưu trữ riêng tư</p><p className="text-xs leading-5 text-zinc-500">Tệp được lưu trong kho riêng và truy cập có thời hạn.</p></div>
@@ -74,9 +74,9 @@ export function ReviewStep({ media, preview, submitting, onBack, onSubmit }: Pro
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-t border-zinc-100 pt-5">
-        <Button variant="outline" onClick={onBack}>Quay lại</Button>
-        <Button onClick={onSubmit} disabled={submitting} className="bg-red-600 hover:bg-red-700">
+      <div className="flex flex-col gap-3 border-t border-zinc-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <Button variant="outline" onClick={onBack} className="h-10 w-full rounded-xl border-zinc-200 bg-white px-5 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 sm:w-auto">Quay lại</Button>
+        <Button onClick={onSubmit} disabled={submitting} className="h-10 w-full rounded-xl bg-zinc-950 px-5 text-white hover:bg-zinc-800 focus-visible:ring-zinc-400 sm:w-auto">
           {submitting ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
           {submitting ? "Đang chấm điểm AI" : "Xác thực & gửi hồ sơ"}
         </Button>

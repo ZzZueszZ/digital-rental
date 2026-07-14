@@ -15,7 +15,7 @@ const FIELDS: Array<[string, keyof KycOcrPreviewResponse]> = [
 
 export function OcrSummary({ preview }: { preview: KycOcrPreviewResponse }) {
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+    <div className="rounded-xl border border-zinc-100 bg-zinc-50/70 p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h3 className="font-semibold text-zinc-950">Thông tin trích xuất</h3>

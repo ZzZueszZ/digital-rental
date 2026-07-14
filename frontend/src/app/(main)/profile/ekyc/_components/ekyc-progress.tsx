@@ -5,7 +5,14 @@ import type { WizardStep } from "../ekyc-types";
 
 export function EkycProgress({ step }: { step: WizardStep }) {
   return (
-    <ol className="grid min-w-[680px] grid-cols-5" aria-label="Tiến trình eKYC">
+    <div>
+      <div className="mb-4 flex items-center justify-between gap-3 sm:hidden">
+        <span className="text-xs font-medium text-zinc-500">Bước {step}/5</span>
+        <span className="truncate text-sm font-semibold text-zinc-950">
+          {WIZARD_STEPS[step - 1]}
+        </span>
+      </div>
+      <ol className="grid min-w-[620px] grid-cols-5" aria-label="Tiến trình eKYC">
       {WIZARD_STEPS.map((label, index) => {
         const number = index + 1;
         const completed = number < step;
@@ -42,6 +49,7 @@ export function EkycProgress({ step }: { step: WizardStep }) {
           </li>
         );
       })}
-    </ol>
+      </ol>
+    </div>
   );
 }

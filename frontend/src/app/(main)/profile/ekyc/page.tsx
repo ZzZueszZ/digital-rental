@@ -23,7 +23,7 @@ export default function EkycPage() {
 
   if (flow.loading) {
     return (
-      <div className="flex min-h-[420px] items-center justify-center rounded-[24px] border border-zinc-200 bg-white">
+      <div className="flex min-h-[420px] items-center justify-center rounded-xl border border-zinc-100 bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
         <div className="text-center">
           <Loader2 className="mx-auto size-8 animate-spin text-red-600" />
           <p className="mt-3 text-sm text-zinc-500">Đang kiểm tra hồ sơ định danh...</p>
@@ -47,8 +47,8 @@ export default function EkycPage() {
     flow.step === 1 ? flow.camera.target === "front" : flow.camera.target === "back";
 
   return (
-    <main className="rounded-[24px] border border-zinc-200 bg-white shadow-[0_20px_70px_rgba(15,23,42,0.06)]">
-      <header className="border-b border-zinc-100 px-5 py-6 sm:px-8">
+    <main className="animate-in rounded-xl border border-zinc-100 bg-white shadow-[0_2px_6px_rgba(0,0,0,0.04)] duration-500 fade-in slide-in-from-right-4">
+      <header className="border-b border-zinc-100 p-5 sm:p-8 md:p-10">
         <h1 className="text-2xl font-semibold tracking-tight text-zinc-950">
           Xác thực danh tính
         </h1>
@@ -60,7 +60,7 @@ export default function EkycPage() {
         </div>
       </header>
 
-      <div className="px-5 py-7 sm:px-8 sm:py-8">
+      <div className="p-5 sm:p-8 md:p-10">
         {flow.step === 1 || flow.step === 2 ? (
           <DocumentCaptureStep
             target={flow.step === 1 ? "front" : "back"}

@@ -2,9 +2,11 @@ package org.web.identity.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.web.common.enums.VerificationArtifactStatus;
 import org.web.common.enums.VerificationArtifactType;
+import org.web.common.exceptions.ApplicationException;
 import org.web.common.utils.FileUploadUtil;
 import org.web.identity.dto.request.SubmitKycRequest;
 import org.web.identity.model.*;
@@ -13,6 +15,7 @@ import org.web.identity.service.provider.*;
 import org.web.users.model.User;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,13 @@ public class KycVerificationProcessor {
     private final UploadedFileResolver uploadedFileResolver;
 
     public void process(VerificationSession session, User user, SubmitKycRequest request) {
+        VerificationResult preview = verificationResultRepository.findByVerificationSessionId(session.getId())
+                .orElseThrow(() -> new ApplicationException(
+                        HttpStatus.CONFLICT,
+                        "OCR preview is required before KYC submission"
+                ));
+        requireMatchingPreviewArtifacts(session, request);
+
         log.debug("KYC processor saving artifacts: userId={}, sessionId={}", user.getId(), session.getId());
         saveArtifact(session, VerificationArtifactType.CCCD_FRONT, request.getFrontImageUrl());
         saveArtifact(session, VerificationArtifactType.CCCD_BACK, request.getBackImageUrl());
@@ -39,26 +49,12 @@ public class KycVerificationProcessor {
         KycProvider provider = providerRegistry.activeProvider();
         log.info("KYC provider selected: userId={}, sessionId={}, provider={}",
                 user.getId(), session.getId(), provider.name());
-        VerificationResult preview = verificationResultRepository.findByVerificationSessionId(session.getId()).orElse(null);
-        KycOcrResult extracted;
-        KycFaceMatchResult face;
-        KycLivenessResult liveness;
-        String providerName;
-        if (hasOcrPreview(preview)) {
-            providerName = preview.getOcrProvider() != null ? preview.getOcrProvider() : provider.name();
-            extracted = fromVerificationResult(preview);
-            face = provider.verifyFace(request.getFrontImageUrl(), request.getSelfieImageUrl());
-            log.debug("KYC submit reused OCR preview: userId={}, sessionId={}, provider={}",
-                    user.getId(), session.getId(), providerName);
-        } else {
-            KycVerificationResult result = provider.verify(request);
-            providerName = result.getProvider();
-            extracted = mergeOcr(result.getFrontOcr(), result.getBackOcr());
-            face = result.getFaceMatch();
-            log.debug("KYC provider verification completed: userId={}, sessionId={}, provider={}",
-                    user.getId(), session.getId(), providerName);
-        }
-        liveness = provider.verifyLiveness(request.getLivenessVideoUrl(), request.getFrontImageUrl());
+        String providerName = preview.getOcrProvider() != null ? preview.getOcrProvider() : provider.name();
+        KycOcrResult extracted = fromVerificationResult(preview);
+        KycFaceMatchResult face = provider.verifyFace(request.getFrontImageUrl(), request.getSelfieImageUrl());
+        KycLivenessResult liveness = provider.verifyLiveness(request.getLivenessVideoUrl(), request.getFrontImageUrl());
+        log.debug("KYC submit reused OCR preview: userId={}, sessionId={}, provider={}",
+                user.getId(), session.getId(), providerName);
         KycRiskAssessmentResult risk = riskScoringService.assess(user, extracted, face, liveness);
         log.info("KYC risk assessed: userId={}, sessionId={}, riskLevel={}, riskScore={}, reason={}",
                 user.getId(), session.getId(), risk.getRiskLevel(), risk.getRiskScore(), risk.getReason());
@@ -83,12 +79,6 @@ public class KycVerificationProcessor {
         }
     }
 
-    private boolean hasOcrPreview(VerificationResult preview) {
-        return preview != null
-                && preview.getOcrConfidence() != null
-                && (preview.getExtractedIdentityNumber() != null || preview.getExtractedFullName() != null);
-    }
-
     private KycOcrResult fromVerificationResult(VerificationResult result) {
         return KycOcrResult.builder()
                 .identityNumber(result.getExtractedIdentityNumber())
@@ -107,22 +97,21 @@ public class KycVerificationProcessor {
                 .build();
     }
 
-    private KycOcrResult mergeOcr(KycOcrResult front, KycOcrResult back) {
-        return KycOcrResult.builder()
-                .identityNumber(first(front.getIdentityNumber(), back.getIdentityNumber()))
-                .fullName(first(front.getFullName(), back.getFullName()))
-                .dateOfBirth(first(front.getDateOfBirth(), back.getDateOfBirth()))
-                .gender(first(front.getGender(), back.getGender()))
-                .nationality(first(front.getNationality(), back.getNationality()))
-                .placeOfOrigin(first(front.getPlaceOfOrigin(), back.getPlaceOfOrigin()))
-                .placeOfResidence(first(front.getPlaceOfResidence(), back.getPlaceOfResidence()))
-                .issuedDate(first(front.getIssuedDate(), back.getIssuedDate()))
-                .expiryDate(first(front.getExpiryDate(), back.getExpiryDate()))
-                .confidence((front.getConfidence() + back.getConfidence()) / 2)
-                .documentType(first(front.getDocumentType(), back.getDocumentType()))
-                .successful(front.isSuccessful() && back.isSuccessful())
-                .rawResponse("{\"front\":" + nullSafe(front.getRawResponse()) + ",\"back\":" + nullSafe(back.getRawResponse()) + "}")
-                .build();
+    private void requireMatchingPreviewArtifacts(VerificationSession session, SubmitKycRequest request) {
+        boolean frontMatches = artifactRepository
+                .findByVerificationSessionIdAndArtifactType(session.getId(), VerificationArtifactType.CCCD_FRONT)
+                .map(artifact -> Objects.equals(artifact.getStorageKey(), request.getFrontImageUrl()))
+                .orElse(false);
+        boolean backMatches = artifactRepository
+                .findByVerificationSessionIdAndArtifactType(session.getId(), VerificationArtifactType.CCCD_BACK)
+                .map(artifact -> Objects.equals(artifact.getStorageKey(), request.getBackImageUrl()))
+                .orElse(false);
+        if (!frontMatches || !backMatches) {
+            throw new ApplicationException(
+                    HttpStatus.CONFLICT,
+                    "OCR preview does not match submitted identity images"
+            );
+        }
     }
 
     private void saveOcrResult(VerificationSession session, String provider, KycOcrResult ocr, KycRiskAssessmentResult risk) {
@@ -192,14 +181,6 @@ public class KycVerificationProcessor {
         artifact.setMimeType(type == VerificationArtifactType.SELFIE_VIDEO ? "video/webm" : "image/jpeg");
         artifact.setFileSize(1024L);
         artifactRepository.save(artifact);
-    }
-
-    private <T> T first(T first, T second) {
-        return first != null ? first : second;
-    }
-
-    private String nullSafe(String raw) {
-        return raw == null ? "{}" : raw;
     }
 
 }

@@ -90,10 +90,12 @@ function ProductsContent() {
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [brands, setBrands] = useState<string[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
+  const [brand, setBrand] = useState("all");
   const [purpose, setPurpose] = useState("all");
   const [sort, setSort] = useState<keyof typeof sortOptions>("newest");
   const [page, setPage] = useState(0);
@@ -101,10 +103,12 @@ function ProductsContent() {
 
   useEffect(() => {
     const categoryParam = searchParams.get("category");
+    const brandParam = searchParams.get("brand");
     const purposeParam = searchParams.get("purpose");
     const searchParam = searchParams.get("search") || "";
 
     setCategory(categoryParam || "all");
+    setBrand(brandParam?.trim() || "all");
     setPurpose(
       purposeParam === "rent" || purposeParam === "sale"
         ? purposeParam
@@ -136,7 +140,35 @@ function ProductsContent() {
       }
     };
 
+    const fetchBrands = async () => {
+      try {
+        const response = await api.get<ApiResponse<Product[]>>("/products", {
+          params: {
+            page: 0,
+            size: 500,
+            sortBy: "brand",
+            direction: "asc",
+          },
+        });
+        const uniqueBrands = new Map<string, string>();
+        for (const product of response.data.data ?? []) {
+          const normalizedBrand = product.brand?.trim();
+          if (normalizedBrand) {
+            uniqueBrands.set(normalizedBrand.toLocaleLowerCase(), normalizedBrand);
+          }
+        }
+        setBrands(
+          Array.from(uniqueBrands.values()).sort((left, right) =>
+            left.localeCompare(right, "vi"),
+          ),
+        );
+      } catch {
+        setBrands([]);
+      }
+    };
+
     void fetchCategories();
+    void fetchBrands();
   }, []);
 
   useEffect(() => {
@@ -150,6 +182,7 @@ function ProductsContent() {
             size: PAGE_SIZE,
             name: search || undefined,
             categories: category === "all" ? undefined : category,
+            brand: brand === "all" ? undefined : brand,
             isForRent: purpose === "rent" ? true : undefined,
             isForSale: purpose === "sale" ? true : undefined,
             sortBy: selectedSort.sortBy,
@@ -168,7 +201,7 @@ function ProductsContent() {
     };
 
     void fetchProducts();
-  }, [category, page, purpose, search, sort]);
+  }, [brand, category, page, purpose, search, sort]);
 
   const resultLabel = useMemo(() => {
     if (!pagination) return `${products.length} thiết bị`;
@@ -180,6 +213,13 @@ function ProductsContent() {
       ? "Tất cả danh mục"
       : categories.find((item) => item.code === category)?.name ??
         "Danh mục";
+
+  const brandOptions = useMemo(() => {
+    if (brand === "all" || brands.includes(brand)) return brands;
+    return [brand, ...brands];
+  }, [brand, brands]);
+
+  const brandLabel = brand === "all" ? "Tất cả thương hiệu" : brand;
 
   const changeFilter = (setter: (value: string) => void, value: string) => {
     setter(value);
@@ -236,7 +276,7 @@ function ProductsContent() {
         <section className="py-10 md:py-14">
           <div className="container mx-auto max-w-[1320px] px-4 md:px-6 lg:px-8">
             <div className="rounded-xl border border-zinc-200 bg-white p-3 md:p-4">
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(280px,1fr)_220px_180px_200px]">
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(240px,1fr)_190px_180px_180px_180px]">
                 <label className="flex h-11 min-w-0 items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 focus-within:border-zinc-300">
                   <Search className="h-4 w-4 shrink-0 text-zinc-400" />
                   <input
@@ -261,6 +301,25 @@ function ProductsContent() {
                     {categories.map((item) => (
                       <SelectItem key={item.id} value={item.code}>
                         {item.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={brand}
+                  onValueChange={(value) => {
+                    if (value) changeFilter(setBrand, value);
+                  }}
+                >
+                  <SelectTrigger className="w-full border-zinc-200 !bg-white px-3 text-zinc-900 hover:!bg-white focus-visible:border-zinc-300 focus-visible:!bg-white focus-visible:ring-0 data-[size=default]:h-11 dark:!bg-white dark:hover:!bg-white">
+                    <SelectValue>{brandLabel}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent className="border border-zinc-200 bg-white p-1 text-zinc-900 shadow-xl">
+                    <SelectItem value="all">Tất cả thương hiệu</SelectItem>
+                    {brandOptions.map((item) => (
+                      <SelectItem key={item.toLocaleLowerCase()} value={item}>
+                        {item}
                       </SelectItem>
                     ))}
                   </SelectContent>

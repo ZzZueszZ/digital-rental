@@ -14,7 +14,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 import org.web.common.exceptions.ApplicationException;
-import org.web.identity.dto.request.SubmitKycRequest;
 
 import java.nio.file.Path;
 import java.time.Duration;
@@ -44,18 +43,6 @@ public class FptKycProvider implements KycProvider {
     @Override
     public boolean supports(String providerName) {
         return name().equalsIgnoreCase(providerName);
-    }
-
-    @Override
-    public KycVerificationResult verify(SubmitKycRequest request) {
-        KycVerificationResult ocr = verifyOcr(request.getFrontImageUrl(), request.getBackImageUrl());
-        KycFaceMatchResult faceMatch = verifyFace(request.getFrontImageUrl(), request.getSelfieImageUrl());
-        return KycVerificationResult.builder()
-                .provider(name())
-                .frontOcr(ocr.getFrontOcr())
-                .backOcr(ocr.getBackOcr())
-                .faceMatch(faceMatch)
-                .build();
     }
 
     @Override

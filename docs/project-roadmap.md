@@ -1,8 +1,8 @@
 # Project Roadmap
 
 ## Documentation Maintenance
-**Last Updated:** 2026-06-28
-**Document Version:** 1.2
+**Last Updated:** 2026-07-02
+**Document Version:** 1.3
 **Maintained By:** Development Team
 
 ## Current State
@@ -31,6 +31,7 @@ The repository has a functional backend and Next.js frontend on Vercel. Producti
 
 ## Phase 3: Frontend Stabilization
 
+- Completed 2026-07-02: regenerated customer eKYC as a responsive five-step wizard with private asset uploads, OCR review, camera-only selfie, guided liveness, explicit terminal states, and focused route-local components.
 - Keep API client and auth refresh behavior consistent across frontend services.
 - Add route-level access control documentation and tests.
 - Expand admin flows for products, orders, users, vouchers, inventory, support, and audit logs as needed.
@@ -39,7 +40,7 @@ The repository has a functional backend and Next.js frontend on Vercel. Producti
 ## Phase 4: Product Capability
 
 - Complete or verify rental-specific behavior: rental periods, availability, deposits, late fees, return handling, damage assessment, and device lifecycle.
-- Complete or verify identity/KYC workflows: OCR preview, facematch, liveness video validation, risk assessment, admin approval/rejection, and customer status handling.
+- Customer eKYC capture/status UX completed 2026-07-02. Backend facematch, liveness validation, risk assessment, and admin approval/rejection contracts remain unchanged.
 - Improve dashboard analytics for revenue, product utilization, inventory health, and order lifecycle.
 - Add notification flows for activation, reset, order status, voucher expiry, and low stock.
 

@@ -41,7 +41,10 @@ import org.web.vouchers.service.VoucherService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -72,6 +75,13 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderItem> orderItems = new ArrayList<>();
         BigDecimal itemsTotal = BigDecimal.ZERO;
+
+        Map<Long, Integer> requestedQuantities = new LinkedHashMap<>();
+        for (CheckoutItemRequest itemReq : request.getItems()) {
+            requestedQuantities.merge(itemReq.getProductId(), itemReq.getQuantity(), Integer::sum);
+        }
+        Map<Long, Product> lockedProducts = lockProducts(requestedQuantities.keySet());
+        validateSaleStock(requestedQuantities, lockedProducts);
 
         for (CheckoutItemRequest itemReq : request.getItems()) {
             Product product = productRepository.findById(itemReq.getProductId())
@@ -167,12 +177,11 @@ public class OrderServiceImpl implements OrderService {
         order.setItems(orderItems);
 
         // Deduct stock
-        for (CheckoutItemRequest itemReq : request.getItems()) {
-             Product p = productRepository.getReferenceById(itemReq.getProductId());
-             int previousStock = p.getQuantity();
-             p.setQuantity(previousStock - itemReq.getQuantity());
-             productRepository.save(p);
-             notifyLowSaleStockIfNeeded(p, previousStock);
+        for (Map.Entry<Long, Integer> entry : requestedQuantities.entrySet()) {
+             Product product = lockedProducts.get(entry.getKey());
+             int previousStock = product.getQuantity();
+             product.setQuantity(previousStock - entry.getValue());
+             notifyLowSaleStockIfNeeded(product, previousStock);
         }
 
         order = orderRepository.save(order);
@@ -206,8 +215,17 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItem> orderItems = new ArrayList<>();
         BigDecimal itemsTotal = BigDecimal.ZERO;
 
+        Map<Long, Integer> requestedQuantities = new LinkedHashMap<>();
         for (CartItem cartItem : selectedItems) {
-            Product product = cartItem.getProduct();
+            if (cartItem.getQuantity() > 0) {
+                requestedQuantities.merge(cartItem.getProduct().getId(), cartItem.getQuantity(), Integer::sum);
+            }
+        }
+        Map<Long, Product> lockedProducts = lockProducts(requestedQuantities.keySet());
+        validateSaleStock(requestedQuantities, lockedProducts);
+
+        for (CartItem cartItem : selectedItems) {
+            Product product = lockedProducts.get(cartItem.getProduct().getId());
             int requestedQty = cartItem.getQuantity();
 
             if (requestedQty <= 0) continue;
@@ -302,12 +320,11 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setItems(orderItems);
 
-        for (CartItem cartItem : selectedItems) {
-             Product p = cartItem.getProduct();
-             int previousStock = p.getQuantity();
-             p.setQuantity(previousStock - cartItem.getQuantity());
-             productRepository.save(p);
-             notifyLowSaleStockIfNeeded(p, previousStock);
+        for (Map.Entry<Long, Integer> entry : requestedQuantities.entrySet()) {
+             Product product = lockedProducts.get(entry.getKey());
+             int previousStock = product.getQuantity();
+             product.setQuantity(previousStock - entry.getValue());
+             notifyLowSaleStockIfNeeded(product, previousStock);
         }
 
         order = orderRepository.save(order);
@@ -468,6 +485,31 @@ public class OrderServiceImpl implements OrderService {
         }
         
         return orderMapper.toOrderResponse(order);
+    }
+
+    private Map<Long, Product> lockProducts(Collection<Long> productIds) {
+        Map<Long, Product> products = new LinkedHashMap<>();
+        if (productIds.isEmpty()) {
+            return products;
+        }
+        for (Product product : productRepository.findAllByIdForUpdate(productIds)) {
+            products.put(product.getId(), product);
+        }
+        for (Long productId : productIds) {
+            if (!products.containsKey(productId)) {
+                throw new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy sản phẩm: " + productId);
+            }
+        }
+        return products;
+    }
+
+    private void validateSaleStock(Map<Long, Integer> requestedQuantities, Map<Long, Product> products) {
+        for (Map.Entry<Long, Integer> entry : requestedQuantities.entrySet()) {
+            Product product = products.get(entry.getKey());
+            if (product.getQuantity() < entry.getValue()) {
+                throw new ApplicationException(HttpStatus.BAD_REQUEST, "Không đủ tồn kho cho sản phẩm: " + product.getName());
+            }
+        }
     }
 
     private User getUser(Long userId) {

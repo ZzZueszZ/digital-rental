@@ -44,6 +44,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import org.web.common.mails.MailService;
 import java.security.SecureRandom;
 import java.util.List;
@@ -52,6 +53,9 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class RentalServiceImpl implements RentalService {
+
+    private static final List<RentalOrderStatus> NON_BLOCKING_RENTAL_STATUSES =
+            List.of(RentalOrderStatus.COMPLETED, RentalOrderStatus.CANCELLED);
 
     private final RentalOrderRepository rentalOrderRepository;
     private final RentalOrderItemRepository rentalOrderItemRepository;
@@ -80,7 +84,8 @@ public class RentalServiceImpl implements RentalService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy sản phẩm"));
 
-        long rentedCount = rentalOrderRepository.countRentedUnitsInPeriod(productId, startDate, endDate);
+        long rentedCount = rentalOrderRepository.countRentedUnitsInPeriod(
+                productId, startDate, endDate, NON_BLOCKING_RENTAL_STATUSES);
         int availableQty = product.getRentalQuantity() - (int) rentedCount;
         return availableQty >= requestedQty;
     }
@@ -98,6 +103,17 @@ public class RentalServiceImpl implements RentalService {
         }
 
         long days = calculateRentalDays(request.getStartDate().toLocalDate(), request.getEndDate().toLocalDate());
+
+        Map<Long, Integer> requestedQuantities = new LinkedHashMap<>();
+        for (RentalCheckoutItemRequest itemReq : request.getItems()) {
+            requestedQuantities.merge(itemReq.getProductId(), itemReq.getQuantity(), Integer::sum);
+        }
+        Map<Long, Product> lockedProducts = lockRentalProducts(requestedQuantities);
+        validateRentalAvailability(
+                requestedQuantities,
+                lockedProducts,
+                request.getStartDate(),
+                request.getEndDate());
 
         List<RentalOrderItem> orderItems = new ArrayList<>();
         BigDecimal totalRentalFee = BigDecimal.ZERO;
@@ -160,6 +176,41 @@ public class RentalServiceImpl implements RentalService {
         RentalOrder saved = rentalOrderRepository.save(order);
         auditLogService.logAction("RENTAL_ORDER", saved.getId(), "CREATE_ORDER", "Khách hàng đặt thuê thiết bị. Đơn hàng: " + saved.getCode(), null, saved.getStatus().name());
         return mapToResponse(saved);
+    }
+
+    private Map<Long, Product> lockRentalProducts(Map<Long, Integer> requestedQuantities) {
+        Map<Long, Product> products = new LinkedHashMap<>();
+        if (requestedQuantities.isEmpty()) {
+            return products;
+        }
+        for (Product product : productRepository.findAllByIdForUpdate(requestedQuantities.keySet())) {
+            products.put(product.getId(), product);
+        }
+        for (Long productId : requestedQuantities.keySet()) {
+            if (!products.containsKey(productId)) {
+                throw new ApplicationException(HttpStatus.NOT_FOUND, "Không tìm thấy sản phẩm ID: " + productId);
+            }
+        }
+        return products;
+    }
+
+    private void validateRentalAvailability(
+            Map<Long, Integer> requestedQuantities,
+            Map<Long, Product> products,
+            LocalDateTime startDate,
+            LocalDateTime endDate) {
+        for (Map.Entry<Long, Integer> entry : requestedQuantities.entrySet()) {
+            Product product = products.get(entry.getKey());
+            long rentedCount = rentalOrderRepository.countRentedUnitsInPeriod(
+                    entry.getKey(), startDate, endDate, NON_BLOCKING_RENTAL_STATUSES);
+            int availableQuantity = product.getRentalQuantity() - Math.toIntExact(rentedCount);
+            if (availableQuantity < entry.getValue()) {
+                throw new ApplicationException(
+                        HttpStatus.BAD_REQUEST,
+                        "Thiết bị '" + product.getName()
+                                + "' không còn đủ số lượng trống trong khoảng thời gian này.");
+            }
+        }
     }
 
     private ShippingAddress resolveRentalContactAddress(User user, Long shippingAddressId) {

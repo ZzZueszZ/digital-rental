@@ -66,6 +66,9 @@ services:
     container_name: lenshub_backend_prod
     env_file:
       - ./backend.prod.env
+    environment:
+      FFPROBE_PATH: /usr/bin/ffprobe
+      REQUIRE_LIVENESS_VIDEO_DURATION_PROBE: "true"
     depends_on:
       - lenshub-postgres
       - lenshub-redis

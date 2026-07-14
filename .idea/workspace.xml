@@ -5,12 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1ff62f6-8049-4df7-8361-6ddac974626d" name="Changes" comment="finish">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/docker-compose.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/drivers/ojdbc8-19.3.0.0.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/sql/V20231017_1__ddl_initial.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/generate_chapter2_docx.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/docker-compose.prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker/docker-compose.prod.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/deployment-guide.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/deployment-guide.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/project-roadmap.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/project-roadmap.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/(main)/profile/ekyc/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/(main)/profile/ekyc/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/lenshub/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/service/lenshub/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +115,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.Main.executor": "Debug",
-    "git-widget-placeholder": "feat/update-cicd",
+    "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/PERSONAL/hoc-ki-2-nam-4/KLTN/project/digital-rental",
     "node.js.detected.package.eslint": "true",
@@ -173,6 +172,7 @@
       <workItem from="1782408156479" duration="6580000" />
       <workItem from="1782487201433" duration="1676000" />
       <workItem from="1782646992455" duration="354000" />
+      <workItem from="1782980773164" duration="6119000" />
     </task>
     <task id="LOCAL-00001" summary="finish">
       <option name="closed" value="true" />

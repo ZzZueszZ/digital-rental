@@ -28,7 +28,8 @@ LABEL org.opencontainers.image.title="LensHub Backend" \
       org.opencontainers.image.source="${SOURCE_URL}" \
       org.opencontainers.image.revision="${VCS_REF}"
 
-RUN addgroup -S -g 10001 lenshub \
+RUN apk add --no-cache ffmpeg \
+    && addgroup -S -g 10001 lenshub \
     && adduser -S -D -H -u 10001 -G lenshub lenshub \
     && mkdir -p /app \
     && chown -R lenshub:lenshub /app
@@ -38,6 +39,8 @@ WORKDIR /app
 COPY --from=builder --chown=10001:10001 /workspace/lenshub.jar /app/lenshub.jar
 
 ENV SPRING_PROFILES_ACTIVE=prod \
+    FFPROBE_PATH=/usr/bin/ffprobe \
+    REQUIRE_LIVENESS_VIDEO_DURATION_PROBE=true \
     JAVA_TOOL_OPTIONS="-Xms256m -Xmx768m -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir=/tmp"
 
 USER 10001:10001

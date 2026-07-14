@@ -33,11 +33,12 @@ public interface RentalOrderRepository extends JpaRepository<RentalOrder, Long> 
     @Query("SELECT COUNT(ri) FROM RentalOrderItem ri " +
            "JOIN ri.rentalOrder ro " +
            "WHERE ri.product.id = :productId " +
-           "AND ro.status NOT IN ('REJECTED', 'CANCELED', 'COMPLETED') " +
+           "AND ro.status NOT IN (:excludedStatuses) " +
            "AND ro.startDate <= :endDate AND ro.endDate >= :startDate")
     long countRentedUnitsInPeriod(@Param("productId") Long productId, 
                                   @Param("startDate") LocalDateTime startDate, 
-                                  @Param("endDate") LocalDateTime endDate);
+                                  @Param("endDate") LocalDateTime endDate,
+                                  @Param("excludedStatuses") List<RentalOrderStatus> excludedStatuses);
 
     @Query("SELECT new org.web.dashboard.dto.RevenueStatResponse(" +
            "CAST(FUNCTION('DATE', COALESCE(r.rentalFeePaidAt, r.createdAt)) AS java.time.LocalDate), SUM(r.rentalFee)) " +

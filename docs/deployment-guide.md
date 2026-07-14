@@ -2,8 +2,8 @@
 
 ## Documentation Maintenance
 
-**Last Updated:** 2026-06-28
-**Document Version:** 1.2
+**Last Updated:** 2026-06-29
+**Document Version:** 1.3
 **Maintained By:** Development Team
 
 ## Scope
@@ -60,6 +60,8 @@ Required/important environment variables:
 | `MINIO_UPLOAD_EXPIRY_MINUTES`, `MINIO_DOWNLOAD_EXPIRY_MINUTES` | Presigned URL lifetimes. Default: 5 minutes.                                                                                                |
 | `APP_KYC_PROVIDER`                                             | Production profile fixes provider to `fpt`.                                                                                                 |
 | `FPT_KYC_API_KEY`                                              | Required FPT.AI credential in production.                                                                                                   |
+| `FFPROBE_PATH`                                                  | Path to `ffprobe` for liveness video duration validation. Container default: `/usr/bin/ffprobe`.                                            |
+| `REQUIRE_LIVENESS_VIDEO_DURATION_PROBE`                         | Set `true` in production so invalid/unreadable liveness video duration fails closed.                                                        |
 | `SERVER_IDENTITY_PRIV_B64`                                     | PKCS#8 EC P-256 private identity key. Accepted formats: raw PEM, base64-encoded PEM, or base64-encoded DER. Store only in a secret manager. |
 | `SERVER_IDENTITY_PUB_B64`                                      | X.509 EC P-256 public identity key. Accepted formats: raw PEM, base64-encoded PEM, or base64-encoded DER.                                   |
 
@@ -104,6 +106,7 @@ The production `Dockerfile`:
 - uses digest-pinned Java 17 Alpine builder and JRE images;
 - builds with the Gradle wrapper in a separate stage;
 - runs as non-root `10001:10001`;
+- installs `ffmpeg` so `ffprobe` is available for liveness video duration validation;
 - limits JVM heap to `-Xms256m -Xmx768m` and exits on OOM;
 - checks `/api/actuator/health/readiness`;
 - copies only the executable JAR into the runtime image.

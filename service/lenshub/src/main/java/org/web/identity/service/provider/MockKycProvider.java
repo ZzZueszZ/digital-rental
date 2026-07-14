@@ -1,7 +1,6 @@
 package org.web.identity.service.provider;
 
 import org.springframework.stereotype.Component;
-import org.web.identity.dto.request.SubmitKycRequest;
 
 import java.time.LocalDate;
 
@@ -16,18 +15,6 @@ public class MockKycProvider implements KycProvider {
     @Override
     public boolean supports(String providerName) {
         return providerName == null || providerName.isBlank() || name().equalsIgnoreCase(providerName);
-    }
-
-    @Override
-    public KycVerificationResult verify(SubmitKycRequest request) {
-        KycVerificationResult ocr = verifyOcr(request.getFrontImageUrl(), request.getBackImageUrl());
-        KycFaceMatchResult face = verifyFace(request.getFrontImageUrl(), request.getSelfieImageUrl());
-        return KycVerificationResult.builder()
-                .provider(name())
-                .frontOcr(ocr.getFrontOcr())
-                .backOcr(ocr.getBackOcr())
-                .faceMatch(face)
-                .build();
     }
 
     @Override

@@ -60,6 +60,25 @@ class FileUploadUtilTest {
         Files.deleteIfExists(saved);
     }
 
+    @Test
+    void durationParserTreatsWebmUnknownDurationAsUnavailable() {
+        assertThat(FileUploadUtil.parseDurationSeconds("N/A\n")).isEmpty();
+    }
+
+    @Test
+    void packetParserDerivesDurationForWebmWithoutContainerDuration() {
+        String packets = "0.000000,0.033000\n5.966000,0.034000\n";
+
+        assertThat(FileUploadUtil.parsePacketDurationSeconds(packets))
+                .hasValue(6.0);
+    }
+
+    @Test
+    void packetParserIgnoresMalformedMetadata() {
+        assertThat(FileUploadUtil.parsePacketDurationSeconds("N/A,N/A\ninvalid\n"))
+                .isEmpty();
+    }
+
     private MockMultipartFile webmVideo(String filename) {
         byte[] content = new byte[] {
                 0x1A, 0x45, (byte) 0xDF, (byte) 0xA3,

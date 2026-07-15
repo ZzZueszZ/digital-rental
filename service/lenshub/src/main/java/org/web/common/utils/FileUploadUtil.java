@@ -263,25 +263,30 @@ public class FileUploadUtil {
         String ffprobe = Optional.ofNullable(System.getenv("FFPROBE_PATH"))
                 .filter(value -> !value.isBlank())
                 .orElse("ffprobe");
-        ProcessBuilder builder = new ProcessBuilder(
-                ffprobe,
-                "-v", "error",
-                "-show_entries", "format=duration",
-                "-of", "default=noprint_wrappers=1:nokey=1",
-                path.toAbsolutePath().toString()
-        );
         try {
-            Process process = builder.start();
-            boolean finished = process.waitFor(5, TimeUnit.SECONDS);
-            if (!finished) {
-                process.destroyForcibly();
-                throw new ApplicationException(HttpStatus.BAD_REQUEST, "Cannot read liveness video duration");
+            OptionalDouble containerDuration = parseDurationSeconds(runFfprobe(
+                    ffprobe,
+                    "-show_entries", "format=duration",
+                    "-of", "default=noprint_wrappers=1:nokey=1",
+                    path.toAbsolutePath().toString()
+            ));
+            if (containerDuration.isPresent()) {
+                return containerDuration;
             }
-            String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
-            if (process.exitValue() != 0 || output.isBlank()) {
-                throw new ApplicationException(HttpStatus.BAD_REQUEST, "Cannot read liveness video duration");
+
+            // MediaRecorder WebM files commonly omit the container duration. In that case,
+            // derive it from the final video packet instead of rejecting an otherwise valid recording.
+            OptionalDouble packetDuration = parsePacketDurationSeconds(runFfprobe(
+                    ffprobe,
+                    "-select_streams", "v:0",
+                    "-show_entries", "packet=pts_time,duration_time",
+                    "-of", "csv=p=0",
+                    path.toAbsolutePath().toString()
+            ));
+            if (packetDuration.isPresent()) {
+                return packetDuration;
             }
-            return OptionalDouble.of(Double.parseDouble(output));
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Cannot read liveness video duration");
         } catch (ApplicationException e) {
             throw e;
         } catch (IOException e) {
@@ -290,8 +295,72 @@ public class FileUploadUtil {
             }
             log.warn("ffprobe is unavailable; liveness upload will use size and signature validation only. Set REQUIRE_LIVENESS_VIDEO_DURATION_PROBE=true to reject these uploads.", e);
             return OptionalDouble.empty();
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Cannot read liveness video duration");
+        }
+    }
+
+    private static String runFfprobe(String ffprobe, String... arguments) throws IOException, InterruptedException {
+        List<String> command = new ArrayList<>(arguments.length + 3);
+        command.add(ffprobe);
+        command.add("-v");
+        command.add("error");
+        command.addAll(Arrays.asList(arguments));
+
+        Process process = new ProcessBuilder(command).start();
+        boolean finished = process.waitFor(5, TimeUnit.SECONDS);
+        if (!finished) {
+            process.destroyForcibly();
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Cannot read liveness video duration");
+        }
+        String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
+        if (process.exitValue() != 0) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Cannot read liveness video duration");
+        }
+        return output;
+    }
+
+    static OptionalDouble parseDurationSeconds(String output) {
+        if (output == null) {
+            return OptionalDouble.empty();
+        }
+        return Arrays.stream(output.lines().toArray(String[]::new))
+                .map(String::trim)
+                .map(FileUploadUtil::finiteDouble)
+                .flatMapToDouble(OptionalDouble::stream)
+                .filter(value -> value > 0)
+                .findFirst();
+    }
+
+    static OptionalDouble parsePacketDurationSeconds(String output) {
+        if (output == null || output.isBlank()) {
+            return OptionalDouble.empty();
+        }
+        double duration = -1;
+        for (String line : output.lines().toList()) {
+            String[] values = line.trim().split(",", -1);
+            if (values.length == 0) {
+                continue;
+            }
+            OptionalDouble pts = finiteDouble(values[0]);
+            if (pts.isEmpty()) {
+                continue;
+            }
+            double packetDuration = values.length > 1
+                    ? finiteDouble(values[1]).orElse(0)
+                    : 0;
+            duration = Math.max(duration, pts.getAsDouble() + Math.max(0, packetDuration));
+        }
+        return duration > 0 ? OptionalDouble.of(duration) : OptionalDouble.empty();
+    }
+
+    private static OptionalDouble finiteDouble(String value) {
+        try {
+            double parsed = Double.parseDouble(value.trim());
+            return Double.isFinite(parsed) ? OptionalDouble.of(parsed) : OptionalDouble.empty();
+        } catch (NumberFormatException e) {
+            return OptionalDouble.empty();
         }
     }
 
